@@ -35,7 +35,7 @@ public class BlurImg {
         Allocation tmpIn = Allocation.createFromBitmap(rs, input_bitmap);
         Allocation tmpOut = Allocation.createFromBitmap(rs, output_bitmap);
 
-        sblur.setRadius((blurValue > 20) ? 20 : (blurValue < 0) ? 0 : blurValue);
+        sblur.setRadius((blurValue > 25) ? 25 : (blurValue < 0) ? 0 : blurValue);
         sblur.setInput(tmpIn);
         sblur.forEach(tmpOut);
 
