@@ -1,5 +1,6 @@
 package com.lmos.spotter;
 
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,6 +39,14 @@ public class LoginActivity extends AppCompatActivity {
                         .replace(R.id.account_fragment_holder, new FragmentSignUp(), "Sign Up")
                         .addToBackStack("Sign In")
                         .commit();
+
+                break;
+            case R.id.sign_in:
+                Intent launchToHome = new Intent(this, HomeActivity.class);
+                launchToHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(launchToHome);
+            default:
+                break;
 
         }
 

@@ -77,7 +77,8 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/button_bg"
         android:text="@string/sign_in"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/colorAccent"
+        android:onClick="clickListener"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
