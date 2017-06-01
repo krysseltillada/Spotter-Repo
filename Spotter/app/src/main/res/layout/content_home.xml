@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.lmos.spotter.HomeActivity"
-    tools:showIn="@layout/app_bar_home"
-    android:background="@color/blackTransparent">
-
-
-    <ScrollView
+ <ScrollView
         android:id="@+id/scrollView"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.lmos.spotter.HomeActivity"
+        tools:showIn="@layout/app_bar_home"
+        android:background="@color/blackTransparent">
 
-        <LinearLayout
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:weightSum="1">
 
@@ -30,8 +26,6 @@
                     android:id="@+id/popularImageView1"
                     android:layout_width="match_parent"
                     android:layout_height="201dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:adjustViewBounds="false"
                     android:background="@drawable/traveler_bg2"
                     android:cropToPadding="false"
@@ -42,8 +36,6 @@
                     android:id="@+id/popularImageView2"
                     android:layout_width="match_parent"
                     android:layout_height="201dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:adjustViewBounds="false"
                     android:background="@drawable/traveler_bg"
                     android:cropToPadding="false"
@@ -54,8 +46,6 @@
                     android:id="@+id/popularImageView3"
                     android:layout_width="match_parent"
                     android:layout_height="201dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:adjustViewBounds="false"
                     android:background="@drawable/traveler_bg3"
                     android:cropToPadding="false"
@@ -69,17 +59,13 @@
                 android:id="@+id/textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="false"
-                android:layout_centerHorizontal="true"
-
                 android:layout_marginTop="-50dp"
                 android:background="@color/blackTransparent"
                 android:gravity="right"
                 android:paddingBottom="8dp"
-                android:paddingRight="20dp"
+                android:paddingEnd="20dp"
                 android:paddingTop="8dp"
-
-                android:text="Most Popular"
+                android:text="@string/home_most_popular"
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
@@ -91,23 +77,11 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/popularImageView1">
-                <!--
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:background="?attr/colorPrimary"
-                    android:elevation="6dp"
-                    android:minHeight="52dp"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /> -->
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/pager"
                     android:layout_width="match_parent"
                     android:layout_height="458dp"
-                    android:layout_below="@+id/tab_layout"
                     android:layout_marginTop="50dp">
 
                 </android.support.v4.view.ViewPager>
@@ -116,17 +90,13 @@
                     android:id="@+id/tab_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/toolbar"
-                    android:layout_alignParentStart="true"
                     android:background="?attr/colorPrimary"
-                    android:elevation="6dp"
+                    app:elevation="6dp"
                     android:minHeight="?attr/actionBarSize"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
             </FrameLayout>
 
         </LinearLayout>
-    </ScrollView>
 
-
-</RelativeLayout>
+</ScrollView>
