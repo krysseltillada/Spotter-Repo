@@ -20,9 +20,8 @@ import android.renderscript.ScriptIntrinsicBlur;
 public class BlurImg {
 
     private static final float BITMAP_SCALE = 0.4f;
-    private static final float BITMAP_RADIUS = 2.5f;
 
-    public static Bitmap blurImg(Context context, Bitmap blurme){
+    public static Bitmap blurImg(Context context, Bitmap blurme, float blurValue){
 
         int width  = Math.round(blurme.getWidth() * BITMAP_SCALE);
         int height  = Math.round(blurme.getHeight() * BITMAP_SCALE);
@@ -36,7 +35,7 @@ public class BlurImg {
         Allocation tmpIn = Allocation.createFromBitmap(rs, input_bitmap);
         Allocation tmpOut = Allocation.createFromBitmap(rs, output_bitmap);
 
-        sblur.setRadius(BITMAP_RADIUS);
+        sblur.setRadius((blurValue > 20) ? 20 : (blurValue < 0) ? 0 : blurValue);
         sblur.setInput(tmpIn);
         sblur.forEach(tmpOut);
 

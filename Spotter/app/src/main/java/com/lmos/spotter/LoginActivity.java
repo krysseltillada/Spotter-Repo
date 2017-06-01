@@ -20,7 +20,7 @@ public class LoginActivity extends AppCompatActivity {
         background_img = (ImageView) findViewById(R.id.background_img_holder);
 
         background_img.setImageBitmap(
-                BlurImg.blurImg(this, ((BitmapDrawable) this.getResources().getDrawable(R.drawable.traveler_bg)).getBitmap())
+                BlurImg.blurImg(this, ((BitmapDrawable) this.getResources().getDrawable(R.drawable.traveler_bg)).getBitmap(), 2.0f)
         );
 
         getSupportFragmentManager().beginTransaction()
