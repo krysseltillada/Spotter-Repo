@@ -83,7 +83,9 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
 
             ImageView backgroundRowItem = (ImageView)convertView.findViewById(R.id.itemRowBackground);
 
-            BitmapDrawable drawable = ((BitmapDrawable) this.getContext().getResources().getDrawable(R.drawable.traveler_bg));
+            BitmapDrawable drawable;
+
+            drawable = ((BitmapDrawable) this.getContext().getResources().getDrawable(R.drawable.traveler_bg3));
 
             Bitmap blurRowBackground = BlurImg.blurImg(getContext(), drawable.getBitmap(), 20.0f);
 
