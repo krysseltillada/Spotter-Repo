@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            int a = 2;
             return null;
         }
     }
