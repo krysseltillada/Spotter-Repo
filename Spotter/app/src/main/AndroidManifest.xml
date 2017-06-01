@@ -13,6 +13,7 @@
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar">
+
             <!--
             <intent-filter>
 
@@ -25,7 +26,6 @@
 
         <activity
             android:name=".LoginActivity"
-
             android:theme="@style/AppTheme.NoActionBar">
 
             <intent-filter>
@@ -34,6 +34,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
 
             </intent-filter>
+
 
         </activity>
 
