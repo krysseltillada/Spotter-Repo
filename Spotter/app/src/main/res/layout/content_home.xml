@@ -83,19 +83,7 @@
                 android:textColor="@color/white"
                 android:textSize="20dp" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="-39dp"
-                android:paddingBottom="7dp"
-                android:paddingRight="20dp"
-                android:paddingTop="7dp"
-                android:text="Hotel lapiz"
-                android:textColor="@color/white"
-                android:textSize="20dp"
-                />
+       
 
             <FrameLayout
                 android:id="@+id/frameLayout"
