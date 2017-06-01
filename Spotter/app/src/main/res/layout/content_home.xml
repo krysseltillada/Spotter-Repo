@@ -21,20 +21,46 @@
             android:weightSum="1">
 
             <ViewFlipper
+                android:id="@+id/viewFlipManager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="201dp">
 
-            <ImageView
-                android:id="@+id/popularImageView"
-                android:background="@drawable/traveler_bg2"
-                android:layout_width="match_parent"
-                android:layout_height="201dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:adjustViewBounds="false"
-                android:cropToPadding="false"
-                android:scaleType="centerCrop"
-                />
+                <ImageView
+                    android:id="@+id/popularImageView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="201dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/traveler_bg2"
+                    android:cropToPadding="false"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/popularImageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="201dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/traveler_bg"
+                    android:cropToPadding="false"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/popularImageView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="201dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/traveler_bg3"
+                    android:cropToPadding="false"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+            </ViewFlipper>
 
             <TextView
                 android:id="@+id/textview"
@@ -57,9 +83,9 @@
             <FrameLayout
                 android:id="@+id/frameLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="316dp"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/popularImageView">
+                android:layout_below="@+id/popularImageView1">
                 <!--
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
@@ -75,7 +101,7 @@
                 <android.support.v4.view.ViewPager
                     android:id="@+id/pager"
                     android:layout_width="match_parent"
-                    android:layout_height="270dp"
+                    android:layout_height="match_parent"
                     android:layout_below="@+id/tab_layout"
                     android:layout_marginTop="50dp">
 

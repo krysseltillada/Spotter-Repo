@@ -26,30 +26,14 @@ class PlaceTabPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
 
-                if (prevMostviewTab == null) {
-                    prevMostviewTab = new MostViewedTab();
-                    return prevMostviewTab;
-                }
-
-                return prevMostviewTab;
+                return new MostViewedTab();
 
             case 1:
 
-
-                if (prevRatedTab == null) {
-                    Log.d("ada", "Ada");
-                    prevRatedTab = new MostRated();
-                    return prevRatedTab;
-                }
-
-                return prevRatedTab;
+                return new MostRated();
             case 2:
-                if (prevRecommendTab == null) {
-                    prevRecommendTab = new RecommendTab();
-                    return prevRecommendTab;
-                }
 
-                return prevRecommendTab;
+                return new RecommendTab();
             default:
                 return null;
 

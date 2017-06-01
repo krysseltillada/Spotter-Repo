@@ -22,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -64,14 +65,26 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    void startMostPopularFlipping () {
+
+        ViewFlipper viewFlipperManager = (ViewFlipper)findViewById(R.id.viewFlipManager);
+
+        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
+        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
+        viewFlipperManager.setFlipInterval(3000);
+
+        viewFlipperManager.startFlipping();
+
+    }
+
     void initializeUI () {
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
         tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
         tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
 
@@ -79,30 +92,14 @@ public class HomeActivity extends AppCompatActivity
                 tabLayout.getTabCount());
 
         viewPager.setAdapter(placePagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Toast.makeText(getApplicationContext(), String.valueOf(tab.getPosition()), Toast.LENGTH_LONG).show();
                 viewPager.setCurrentItem(tab.getPosition());
-
-                final Snackbar message = Snackbar.make(getCurrentFocus(), "GPS will be use on this app", Snackbar.LENGTH_LONG);
-                message.setActionTextColor(Color.WHITE);
-                message.setAction("Ok", new View.OnClickListener () {
-
-                            @Override
-                            public void onClick(View v) {
-                                message.dismiss();
-                            }
-                        }
-
-                );
-
-                message.show();
-
             }
-
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -117,8 +114,6 @@ public class HomeActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
         ActionBar homeActionBar = getSupportActionBar();
 
@@ -191,15 +186,9 @@ public class HomeActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-
-        startMostPopularAnimation(new Bitmap[] {
-                getImageResource(R.drawable.traveler_bg),
-                getImageResource(R.drawable.traveler_bg2),
-                getImageResource(R.drawable.traveler_bg3)
-        }, (ImageView)findViewById(R.id.popularImageView));
-
         initializeUI();
+        startMostPopularFlipping();
+
     }
 
     @Override

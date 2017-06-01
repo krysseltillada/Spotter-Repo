@@ -22,7 +22,7 @@
 
 
         <TextView
-            android:id="@+id/txtbPlaceName"
+            android:id="@+id/txtPlaceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -32,36 +32,36 @@
             android:textSize="20dp" />
 
         <TextView
-            android:text = "Batangas"
-            android:textSize = "20dp"
-            android:textColor ="@color/white"
+            android:id="@+id/txtLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="right"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:text="Batangas"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
 
         <TextView
-            android:layout_height="wrap_content"
+            android:id="@+id/txtPrice"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="right"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="40dp"
-            android:layout_marginRight="10dp"
-            android:text = "₱200.00"
-            android:textColor="@color/white"
-            />
+            android:text="₱200.00"
+            android:textColor="@color/white" />
 
         <TextView
+            android:id="@+id/txtReview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="70dp"
-            android:layout_marginRight="10dp"
             android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="70dp"
             android:text="Good (304 reviews)"
-            android:textColor="@color/white"
 
-            />
+            android:textColor="@color/white" />
 
         <RatingBar
             android:id="@+id/placeRating"

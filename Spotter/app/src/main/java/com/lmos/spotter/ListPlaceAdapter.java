@@ -5,12 +5,16 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -29,6 +33,16 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
     // creating a constructor that accepts a context a layout id and a collection
 
     int layoutId;
+
+    static class ViewHolder {
+        TextView txtPlace;
+        TextView txtName;
+        TextView txtPrice;
+        TextView txtReview;
+        RatingBar ratingBar;
+        ImageView imageViewBackground;
+        ImageView imageViewLogo;
+    }
 
     public ListPlaceAdapter (Context con, int listLayoutId, String[] arr) {
         // calling the base class constructor which is the constructor of the array adapter
@@ -51,12 +65,23 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
 
         String data = getItem(position);
 
+        ViewHolder viewHolder;
+        View result;
+
         if (convertView == null) {
+
+            Log.d("creating", "..");
+            viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
 
+            viewHolder.txtName = (TextView)convertView.findViewById(R.id.txtPlaceName);
+            viewHolder.txtPlace = (TextView)convertView.findViewById(R.id.txtLocation);
+            viewHolder.txtPrice = (TextView)convertView.findViewById(R.id.txtPrice);
+            viewHolder.txtReview = (TextView)convertView.findViewById(R.id.txtReview);
+            viewHolder.imageViewBackground = (ImageView)convertView.findViewById(R.id.itemRowBackground);
+            viewHolder.imageViewLogo = (ImageView)convertView.findViewById(R.id.placeCompanyLogo);
+
             ImageView backgroundRowItem = (ImageView)convertView.findViewById(R.id.itemRowBackground);
-
-
 
             BitmapDrawable drawable = ((BitmapDrawable) this.getContext().getResources().getDrawable(R.drawable.traveler_bg));
 
@@ -65,6 +90,13 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
             backgroundRowItem.setScaleType(ImageView.ScaleType.CENTER_CROP);
             backgroundRowItem.setImageBitmap(blurRowBackground);
 
+            result = convertView;
+            convertView.setTag(viewHolder);
+
+        } else {
+            viewHolder = (ViewHolder)convertView.getTag();
+            result = convertView;
+            Log.d("already", "created");
         }
 
         return convertView;
