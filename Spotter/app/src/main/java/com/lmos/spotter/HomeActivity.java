@@ -106,8 +106,6 @@ public class HomeActivity extends AppCompatActivity
                 txtHome.setVisibility(View.GONE);
 
 
-                adada
-
             }
         });
 
