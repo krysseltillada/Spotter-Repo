@@ -7,48 +7,50 @@
     <FrameLayout
         android:id="@+id/frameLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="140dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
 
 
         <ImageView
-            android:background="@drawable/sample_popular"
+            android:id = "@+id/itemRowBackground"
+            android:background="@drawable/traveler_bg2"
             android:scaleType="centerCrop"
-            android:layout_height="120dp"
+            android:layout_height="match_parent"
             android:layout_width="match_parent"
             />
 
 
         <TextView
-            android:text = "Pico Cove Hotel"
-            android:textSize="20dp"
-            android:textColor="@color/white"
+            android:id="@+id/txtbPlaceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            />
-
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/traveler_bg3"/>
+            android:text="Pico Cove Hotel"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
 
         <RatingBar
-            android:id="@+id/ratingBar"
+            android:id="@+id/placeRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/frameLayout2"
             android:layout_gravity="right"
             android:layout_marginRight="0dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="90dp"
+            android:isIndicator="true"
             android:numStars="5"
-            android:rating="5"
-            android:isIndicator="true"/>
+            android:rating="5" />
+
+        <ImageView
+            android:id="@+id/placeCompanyLogo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="59dp"
+            android:background="@drawable/traveler_bg3" />
 
     </FrameLayout>
 

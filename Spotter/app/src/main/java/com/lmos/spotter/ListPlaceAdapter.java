@@ -1,12 +1,16 @@
 package com.lmos.spotter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.util.List;
 
@@ -47,7 +51,21 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
 
         String data = getItem(position);
 
-        convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
+
+            ImageView backgroundRowItem = (ImageView)convertView.findViewById(R.id.itemRowBackground);
+
+
+
+            BitmapDrawable drawable = ((BitmapDrawable) this.getContext().getResources().getDrawable(R.drawable.traveler_bg));
+
+            Bitmap blurRowBackground = BlurImg.blurImg(getContext(), drawable.getBitmap(), 15.0f);
+
+            backgroundRowItem.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            backgroundRowItem.setImageBitmap(blurRowBackground);
+
+        }
 
         return convertView;
 

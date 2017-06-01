@@ -15,7 +15,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:weightSum="1">
 
@@ -28,7 +28,7 @@
                 android:adjustViewBounds="false"
                 android:cropToPadding="false"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/sample_popular" />
+                app:srcCompat="@color/gray" />
 
             <TextView
                 android:id="@+id/textview"
@@ -41,8 +41,8 @@
                 android:background="@color/blackTransparent"
                 android:gravity="right"
                 android:paddingBottom="8dp"
-                android:paddingTop="8dp"
                 android:paddingRight="20dp"
+                android:paddingTop="8dp"
 
                 android:text="Most Popular"
                 android:textColor="@color/white"
@@ -51,7 +51,7 @@
             <FrameLayout
                 android:id="@+id/frameLayout"
                 android:layout_width="match_parent"
-                android:layout_height="512dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/imageView2">
                 <!--
@@ -66,6 +66,15 @@
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /> -->
 
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="270dp"
+                    android:layout_below="@+id/tab_layout"
+                    android:layout_marginTop="50dp">
+
+                </android.support.v4.view.ViewPager>
+
                 <android.support.design.widget.TabLayout
                     android:id="@+id/tab_layout"
                     android:layout_width="match_parent"
@@ -76,14 +85,6 @@
                     android:elevation="6dp"
                     android:minHeight="?attr/actionBarSize"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="512dp"
-                    android:layout_below="@id/tab_layout">
-
-                </android.support.v4.view.ViewPager>
 
             </FrameLayout>
 
