@@ -1,6 +1,6 @@
 package com.lmos.spotter;
 
-import android.graphics.drawable.BitmapDrawable;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +16,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        background_img = (ImageView) findViewById(R.id.background_img_holder);
-
-        background_img.setImageBitmap(
-                BlurImg.blurImg(this, ((BitmapDrawable) this.getResources().getDrawable(R.drawable.traveler_bg)).getBitmap())
-        );
-
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.account_fragment_holder,new FragmentSignIn(), "Sign In")
                 .commit();
@@ -34,10 +28,17 @@ public class LoginActivity extends AppCompatActivity {
 
             case R.id.sign_up:
                 getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_out_left, R.anim.slide_in_right)
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
                         .replace(R.id.account_fragment_holder, new FragmentSignUp(), "Sign Up")
                         .addToBackStack("Sign In")
                         .commit();
+                break;
+            case R.id.sign_in:
+                Intent launchToHome = new Intent(this, HomeActivity.class);
+                launchToHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(launchToHome);
+            default:
+                break;
 
         }
 

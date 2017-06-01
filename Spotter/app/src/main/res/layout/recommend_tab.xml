@@ -3,14 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="152dp"
-        android:textSize = "50dp"
-        android:text="Tab Three"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+    <ListView
+        android:id="@+id/recommendList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 
 </RelativeLayout>

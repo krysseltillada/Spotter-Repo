@@ -1,44 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/alpha_transparent_bg">
+    android:layout_height="wrap_content" >
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/login_username_wrapper"
-        android:layout_width="250dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="15dp"
         android:padding="5dp"
-        android:textColorHint="@color/gray"
-        app:backgroundTint="@color/colorAccent">
-
+        android:theme="@style/TextInputLayoutTheme" >
         <EditText
             android:id="@+id/login_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_username"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:padding="10dp"
             android:imeOptions="actionNext"
             android:singleLine="true"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
-            android:textColor="@color/colorAccent"
-            app:backgroundTint="@color/colorPrimary"/>
+            android:textColor="@color/gray" />
 
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/login_password_wrapper"
-        android:layout_width="250dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@id/login_username_wrapper"
         android:padding="5dp"
-        android:textColorHint="@color/gray"
-        app:backgroundTint="@color/colorAccent">
+        android:theme="@style/TextInputLayoutTheme" >
 
         <EditText
             android:id="@+id/login_password"
@@ -47,12 +41,11 @@
             android:inputType="textPassword"
             android:hint="@string/login_password"
             android:padding="10dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:singleLine="true"
             android:imeOptions="actionGo"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_"
-            android:textColor="@color/colorAccent"
-            app:backgroundTint = "@color/colorPrimary"/>
+            android:textColor="@color/gray" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -65,27 +58,28 @@
         android:padding="5dp"
         android:clickable="true"
         android:text="@string/forgot_password"
-        android:textSize="12sp"
+        android:textSize="10sp"
         android:textColor="@color/gray"/>
 
     <Button
         android:id="@+id/sign_in"
-        android:layout_width="250dp"
+        android:layout_width="120dp"
         android:layout_height="50dp"
         android:layout_below="@id/forgot_pass"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:background="@drawable/button_bg"
         android:text="@string/sign_in"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/white"
+        android:onClick="clickListener"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/sign_in"
-        android:orientation="horizontal"
-        android:padding="10dp" >
+        android:padding="5dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
@@ -93,6 +87,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="@string/sign_up_lbl"
+            android:textSize="10sp"
             android:textColor="@color/gray"/>
 
         <TextView
@@ -103,6 +98,8 @@
             android:clickable="true"
             android:onClick="clickListener"
             android:text="@string/sign_up"
+            android:textSize="14sp"
+            android:textStyle="bold"
             android:textColor="@color/colorPrimary"/>
 
     </LinearLayout>

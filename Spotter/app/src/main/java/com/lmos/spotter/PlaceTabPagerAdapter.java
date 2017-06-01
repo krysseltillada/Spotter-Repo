@@ -2,6 +2,7 @@ package com.lmos.spotter;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 /**
  * Created by Kryssel on 6/1/2017.
@@ -16,19 +17,23 @@ class PlaceTabPagerAdapter extends FragmentStatePagerAdapter {
         numTabs = numT;
     }
 
+    MostViewedTab prevMostviewTab;
+    MostRated prevRatedTab;
+    RecommendTab prevRecommendTab;
+
     @Override
     public android.support.v4.app.Fragment getItem(int position) {
         switch (position) {
             case 0:
 
-                MostViewedTab mostViewedTab = new MostViewedTab();
-                return mostViewedTab;
+                return new MostViewedTab();
+
             case 1:
-                MostRated mostRated = new MostRated();
-                return mostRated;
+
+                return new MostRated();
             case 2:
-                RecommendTab recommendTab = new RecommendTab();
-                return recommendTab;
+
+                return new RecommendTab();
             default:
                 return null;
 

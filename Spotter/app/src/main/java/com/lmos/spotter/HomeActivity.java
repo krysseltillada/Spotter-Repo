@@ -1,17 +1,18 @@
 package com.lmos.spotter;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,55 +23,117 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    static int currentImage = 0;
+
+    void startMostPopularAnimation (final Bitmap[] slideImages, final ImageView imageView) {
+
+        Timer slideImageTimer = new Timer ();
+        slideImageTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (currentImage >= slideImages.length)
+                            currentImage = 0;
+
+                        imageView.setImageBitmap(slideImages[currentImage]);
+
+                        imageView.setAnimation(
+                                AnimationUtils.loadAnimation(getApplicationContext(),
+                                        R.anim.image_slide_left_to_right));
+
+                        ++currentImage;
+
+                    }
+                });
+
+            }
+        }, 0, 5000);
+
+    }
+
+    void startMostPopularFlipping () {
+
+        ViewFlipper viewFlipperManager = (ViewFlipper)findViewById(R.id.viewFlipManager);
+
+        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
+        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
+        viewFlipperManager.setFlipInterval(3000);
+
+        viewFlipperManager.startFlipping();
+
+    }
+
+
+     void setHeightLayoutSize (int heightPx, int idView) {
+
+        FrameLayout layout = (FrameLayout) findViewById(idView);
+
+        ViewGroup.LayoutParams params = layout.getLayoutParams();
+
+        params.height = heightPx;
+
+        layout.setLayoutParams(params);
+    }
+
+    void initializeUI () {
+        /*
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+
+        WindowManager wm = (WindowManager)getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        wm.getDefaultDisplay().getMetrics(displayMetrics);
+
+        int screenHeight = displayMetrics.heightPixels;
+        int frameLayoutHeight = screenHeight / 2;
+
+        setHeightLayoutSize(frameLayoutHeight + 100, R.id.frameLayout);
+
+        Log.d("height: ", String.valueOf(frameLayoutHeight));
+*/
+        ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView);
+        scrollView.smoothScrollTo(0, 0);
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
         tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
         tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
+
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
 
         PlaceTabPagerAdapter placePagerAdapter = new PlaceTabPagerAdapter(getSupportFragmentManager(),
-                                                                          tabLayout.getTabCount());
+                tabLayout.getTabCount());
 
         viewPager.setAdapter(placePagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Toast.makeText(getApplicationContext(), String.valueOf(tab.getPosition()), Toast.LENGTH_LONG).show();
                 viewPager.setCurrentItem(tab.getPosition());
-
-                final Snackbar message = Snackbar.make(getCurrentFocus(), "GPS will be use on this app", Snackbar.LENGTH_LONG);
-                message.setActionTextColor(Color.WHITE);
-                message.setAction("Ok", new View.OnClickListener () {
-
-                            @Override
-                            public void onClick(View v) {
-                                message.dismiss();
-                            }
-                        }
-
-                );
-
-                message.show();
-
             }
-
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -83,6 +146,8 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         ActionBar homeActionBar = getSupportActionBar();
 
@@ -142,6 +207,22 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+    }
+
+    Bitmap getImageResource (int id) {
+        return ((BitmapDrawable)getResources().getDrawable(id)).getBitmap();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
+        initializeUI();
+        startMostPopularFlipping();
+
     }
 
     @Override
