@@ -1,22 +1,16 @@
 package com.lmos.spotter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -26,19 +20,51 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    static int currentImage = 0;
+
+    void startMostPopularAnimation (final Bitmap[] slideImages, final ImageView imageView) {
+
+        Timer slideImageTimer = new Timer ();
+        slideImageTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (currentImage >= slideImages.length)
+                            currentImage = 0;
+
+                        imageView.setImageBitmap(slideImages[currentImage]);
+
+                        imageView.setAnimation(
+                                AnimationUtils.loadAnimation(getApplicationContext(),
+                                        R.anim.image_slide_left_to_right));
+
+                        ++currentImage;
+
+                    }
+                });
+
+            }
+        }, 0, 5000);
+
+    }
+
+    void initializeUI () {
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
@@ -46,10 +72,11 @@ public class HomeActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
+
         final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
 
         PlaceTabPagerAdapter placePagerAdapter = new PlaceTabPagerAdapter(getSupportFragmentManager(),
-                                                                          tabLayout.getTabCount());
+                tabLayout.getTabCount());
 
         viewPager.setAdapter(placePagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -87,6 +114,10 @@ public class HomeActivity extends AppCompatActivity
 
             }
         });
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
 
 
         ActionBar homeActionBar = getSupportActionBar();
@@ -147,6 +178,28 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+    }
+
+    Bitmap getImageResource (int id) {
+        return ((BitmapDrawable)getResources().getDrawable(id)).getBitmap();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
+
+
+        startMostPopularAnimation(new Bitmap[] {
+                getImageResource(R.drawable.traveler_bg),
+                getImageResource(R.drawable.traveler_bg2),
+                getImageResource(R.drawable.traveler_bg3)
+        }, (ImageView)findViewById(R.id.popularImageView));
+
+        initializeUI();
     }
 
     @Override
