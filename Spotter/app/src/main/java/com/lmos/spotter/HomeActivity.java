@@ -1,6 +1,7 @@
 package com.lmos.spotter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -11,6 +12,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,9 +23,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -77,7 +84,34 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+
+     void setHeightLayoutSize (int heightPx, int idView) {
+
+        FrameLayout layout = (FrameLayout) findViewById(idView);
+
+        ViewGroup.LayoutParams params = layout.getLayoutParams();
+
+        params.height = heightPx;
+
+        layout.setLayoutParams(params);
+    }
+
     void initializeUI () {
+        /*
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+
+        WindowManager wm = (WindowManager)getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        wm.getDefaultDisplay().getMetrics(displayMetrics);
+
+        int screenHeight = displayMetrics.heightPixels;
+        int frameLayoutHeight = screenHeight / 2;
+
+        setHeightLayoutSize(frameLayoutHeight + 100, R.id.frameLayout);
+
+        Log.d("height: ", String.valueOf(frameLayoutHeight));
+*/
+        ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView);
+        scrollView.smoothScrollTo(0, 0);
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
