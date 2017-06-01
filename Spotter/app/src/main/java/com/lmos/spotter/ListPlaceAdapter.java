@@ -80,6 +80,7 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
             viewHolder.txtReview = (TextView)convertView.findViewById(R.id.txtReview);
             viewHolder.imageViewBackground = (ImageView)convertView.findViewById(R.id.itemRowBackground);
             viewHolder.imageViewLogo = (ImageView)convertView.findViewById(R.id.placeCompanyLogo);
+            viewHolder.ratingBar = (RatingBar)convertView.findViewById(R.id.placeRating);
 
             ImageView backgroundRowItem = (ImageView)convertView.findViewById(R.id.itemRowBackground);
 
