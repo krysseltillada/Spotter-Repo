@@ -11,4 +11,15 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+	
+	<string name="app_name">Spotter</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="blur_img_des">This will hold the blurred background</string>
+    <string name="overlay_alpha">Overlay alpha</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_lbl">Don\'t have an account yet?</string>
+    <string name="forgot_password">Forgot Password?</string>
+	
 </resources>
