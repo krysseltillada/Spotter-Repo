@@ -5,19 +5,19 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/login_username_wrapper"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/textInputLayout_width"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:padding="5dp"
+        android:layout_marginTop="@dimen/acc_layout_mid_margin"
+        android:padding="@dimen/min_padding"
         android:theme="@style/TextInputLayoutTheme" >
         <EditText
             android:id="@+id/login_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_username"
-            android:textSize="14sp"
-            android:padding="10dp"
+            android:textSize="@dimen/max_font_size"
+            android:padding="@dimen/mid_padding"
             android:imeOptions="actionNext"
             android:singleLine="true"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
@@ -27,11 +27,11 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/login_password_wrapper"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/textInputLayout_width"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@id/login_username_wrapper"
-        android:padding="5dp"
+        android:padding="@dimen/min_padding"
         android:theme="@style/TextInputLayoutTheme" >
 
         <EditText
@@ -40,8 +40,8 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:hint="@string/login_password"
-            android:padding="10dp"
-            android:textSize="14sp"
+            android:padding="@dimen/mid_padding"
+            android:textSize="@dimen/max_font_size"
             android:singleLine="true"
             android:imeOptions="actionGo"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_"
@@ -55,20 +55,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/login_password_wrapper"
         android:layout_alignEnd="@id/login_password_wrapper"
-        android:padding="5dp"
+        android:padding="@dimen/min_padding"
         android:clickable="true"
         android:onClick="clickListener"
         android:text="@string/forgot_password"
-        android:textSize="10sp"
+        android:textSize="@dimen/min_font_size"
         android:textColor="@color/gray"/>
 
     <Button
         android:id="@+id/sign_in"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/account_btn_width"
+        android:layout_height="@dimen/account_btn_height"
         android:layout_below="@id/forgot_pass"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/acc_layout_min_margin"
         android:background="@drawable/button_bg"
         android:text="@string/sign_in"
         android:textColor="@color/white"
@@ -79,27 +79,27 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/sign_in"
-        android:padding="10dp"
+        android:padding="@dimen/mid_padding"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="5dp"
+            android:padding="@dimen/min_padding"
             android:text="@string/sign_up_lbl"
-            android:textSize="10sp"
+            android:textSize="@dimen/min_font_size"
             android:textColor="@color/gray"/>
 
         <TextView
             android:id="@+id/sign_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="@dimen/min_padding"
             android:clickable="true"
             android:onClick="clickListener"
             android:text="@string/sign_up"
-            android:textSize="14sp"
+            android:textSize="@dimen/max_font_size"
             android:textStyle="bold"
             android:textColor="@color/colorPrimary"/>
 

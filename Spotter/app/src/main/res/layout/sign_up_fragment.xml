@@ -6,10 +6,10 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/fullname_wrapper"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/textInputLayout_width"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:padding="5dp"
+        android:layout_marginTop="@dimen/acc_layout_max_margin"
+        android:padding="@dimen/min_padding"
         android:theme="@style/TextInputLayoutTheme" >
 
         <EditText
@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/fullname"
-            android:textSize="14sp"
-            android:padding="10dp"
+            android:textSize="@dimen/max_font_size"
+            android:padding="@dimen/mid_padding"
             android:imeOptions="actionNext"
             android:singleLine="true"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
@@ -28,10 +28,10 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/email_wrapper"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/textInputLayout_width"
         android:layout_height="wrap_content"
         android:layout_below="@id/fullname_wrapper"
-        android:padding="5dp"
+        android:padding="@dimen/min_padding"
         android:theme="@style/TextInputLayoutTheme" >
 
         <EditText
@@ -39,8 +39,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email"
-            android:textSize="14sp"
-            android:padding="10dp"
+            android:textSize="@dimen/max_font_size"
+            android:padding="@dimen/mid_padding"
+            android:inputType="textEmailAddress"
             android:imeOptions="actionNext"
             android:singleLine="true"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
@@ -60,7 +61,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="@dimen/min_padding"
             android:theme="@style/TextInputLayoutTheme" >
 
             <EditText
@@ -68,8 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/login_username"
-                android:textSize="14sp"
-                android:padding="10dp"
+                android:textSize="@dimen/max_font_size"
+                android:padding="@dimen/mid_padding"
                 android:imeOptions="actionNext"
                 android:singleLine="true"
                 android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
@@ -82,7 +83,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="@dimen/min_padding"
             android:theme="@style/TextInputLayoutTheme" >
 
             <EditText
@@ -90,8 +91,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/login_password"
-                android:textSize="14sp"
-                android:padding="10dp"
+                android:textSize="@dimen/max_font_size"
+                android:padding="@dimen/mid_padding"
                 android:inputType="textPassword"
                 android:imeOptions="actionNext"
                 android:singleLine="true"
@@ -104,11 +105,11 @@
 
     <Button
         android:id="@+id/sign_in"
-        android:layout_width="120dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/account_btn_width"
+        android:layout_height="@dimen/account_btn_height"
         android:layout_below="@id/credential_holder"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/acc_layout_mid_margin"
         android:background="@drawable/button_bg"
         android:text="@string/sign_up"
         android:textColor="@color/white" />

@@ -5,11 +5,11 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/recover_username_wrapper"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/textInputLayout_width"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="@dimen/acc_layout_max_margin"
         android:layout_centerHorizontal="true"
-        android:padding="5dp"
+        android:padding="@dimen/min_padding"
         android:theme="@style/TextInputLayoutTheme" >
 
         <EditText
@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_username"
-            android:textSize="14sp"
-            android:padding="10dp"
+            android:textSize="@dimen/max_font_size"
+            android:padding="@dimen/mid_padding"
             android:imeOptions="actionNext"
             android:singleLine="true"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
@@ -28,11 +28,11 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/recover_email_wrapper"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/textInputLayout_width"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/recover_username_wrapper"
-        android:padding="5dp"
+        android:padding="@dimen/min_padding"
         android:theme="@style/TextInputLayoutTheme" >
 
         <EditText
@@ -41,8 +41,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:textSize="14sp"
-            android:padding="10dp"
+            android:textSize="@dimen/max_font_size"
+            android:padding="@dimen/mid_padding"
             android:imeOptions="actionNext"
             android:singleLine="true"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
@@ -52,11 +52,11 @@
 
     <Button
         android:id="@+id/recover_account_btn"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/account_btn_width"
+        android:layout_height="@dimen/account_btn_height"
         android:layout_below="@id/recover_email_wrapper"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/acc_layout_mid_margin"
         android:background="@drawable/button_bg"
         android:text="@string/recover_account"
         android:textColor="@color/white"
@@ -67,10 +67,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/recover_account_btn"
-        android:layout_marginTop="10dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:textSize="12sp"
+        android:layout_marginTop="@dimen/acc_layout_mid_margin"
+        android:paddingStart="@dimen/acc_layout_mid_margin"
+        android:paddingEnd="@dimen/acc_layout_mid_margin"
+        android:textSize="@dimen/mid_font_size"
         android:layout_centerHorizontal="true"
         android:textAlignment="gravity"
         android:textColor="@color/gray"
@@ -80,28 +80,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/recover_acc_msg"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
+        android:paddingStart="@dimen/min_padding"
+        android:paddingEnd="@dimen/min_padding"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="5dp"
+            android:padding="@dimen/min_padding"
             android:text="@string/resend_lbl"
-            android:textSize="12sp"
+            android:textSize="@dimen/mid_font_size"
             android:textColor="@color/gray"/>
 
         <TextView
             android:id="@+id/resend_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="@dimen/min_padding"
             android:clickable="true"
             android:onClick="clickListener"
             android:text="@string/resend"
-            android:textSize="14sp"
+            android:textSize="@dimen/max_font_size"
             android:textStyle="bold"
             android:textColor="@color/colorPrimary"/>
 
