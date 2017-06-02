@@ -24,6 +24,7 @@
 
             <ImageView
                 android:id="@+id/popularImageView1"
+                android:contentDescription="@string/most_popular_desc"
                 android:layout_width="match_parent"
                 android:layout_height="201dp"
                 android:adjustViewBounds="false"
@@ -33,6 +34,7 @@
                 android:visibility="gone" />
 
             <ImageView
+                android:contentDescription="@string/most_popular_desc"
                 android:id="@+id/popularImageView2"
                 android:layout_width="match_parent"
                 android:layout_height="201dp"
@@ -44,6 +46,7 @@
 
             <ImageView
                 android:id="@+id/popularImageView3"
+                android:contentDescription="@string/most_popular_desc"
                 android:layout_width="match_parent"
                 android:layout_height="201dp"
                 android:adjustViewBounds="false"
@@ -80,14 +83,13 @@
             android:paddingTop="8dp"
             android:text="Solaire Manila city"
             android:textColor="@color/white"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
 
 
         <FrameLayout
             android:id="@+id/frameLayout"
             android:layout_width="match_parent"
             android:layout_height="400dp"
-
             >
 
             <android.support.v4.view.ViewPager

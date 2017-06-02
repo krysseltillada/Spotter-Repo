@@ -1,14 +1,7 @@
 package com.lmos.spotter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.MatrixCursor;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-
-
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
@@ -25,65 +18,58 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.support.design.widget.NavigationView;
-
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    static int currentImage = 0;
+    SearchView searchBtn;
 
-   /**
-    *
-    *
-    * void startMostPopularAnimation (final Bitmap[] slideImages, final ImageView imageView) {
+    //static int currentImage = 0;
 
-        Timer slideImageTimer = new Timer ();
-        slideImageTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
+    /**
+     * void startMostPopularAnimation (final Bitmap[] slideImages, final ImageView imageView) {
+     * <p>
+     * Timer slideImageTimer = new Timer ();
+     * slideImageTimer.scheduleAtFixedRate(new TimerTask() {
+     *
+     * @Override public void run() {
+     * <p>
+     * runOnUiThread(new Runnable() {
+     * @Override public void run() {
+     * <p>
+     * if (currentImage >= slideImages.length)
+     * currentImage = 0;
+     * <p>
+     * imageView.setImageBitmap(slideImages[currentImage]);
+     * <p>
+     * imageView.setAnimation(
+     * AnimationUtils.loadAnimation(getApplicationContext(),
+     * R.anim.image_slide_left_to_right));
+     * <p>
+     * ++currentImage;
+     * <p>
+     * }
+     * });
+     * <p>
+     * }
+     * }, 0, 5000);
+     * <p>
+     * }
+     **/
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+    void startMostPopularFlipping() {
 
-                        if (currentImage >= slideImages.length)
-                            currentImage = 0;
-
-                        imageView.setImageBitmap(slideImages[currentImage]);
-
-                        imageView.setAnimation(
-                                AnimationUtils.loadAnimation(getApplicationContext(),
-                                        R.anim.image_slide_left_to_right));
-
-                        ++currentImage;
-
-                    }
-                });
-
-            }
-        }, 0, 5000);
-
-    }
-    **/
-
-    void startMostPopularFlipping () {
-
-        ViewFlipper viewFlipperManager = (ViewFlipper)findViewById(R.id.viewFlipManager);
+        ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
 
         viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
         viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
@@ -97,7 +83,7 @@ public class HomeActivity extends AppCompatActivity
 
     // GONNA make a generalized search query class for this
 
-    void QuerySearchResults (String searchValue, SimpleCursorAdapter suggestion, String[]keywords) {
+    void QuerySearchResults(String searchValue, SimpleCursorAdapter suggestion, String[] keywords) {
 
         MatrixCursor suggestions = new MatrixCursor(new String[]{BaseColumns._ID, "judy"});
 
@@ -112,27 +98,16 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-     void setHeightLayoutSize (int heightPx, int idView) {
+    void initializeUI() {
 
-        FrameLayout layout = (FrameLayout) findViewById(idView);
-
-        ViewGroup.LayoutParams params = layout.getLayoutParams();
-
-        params.height = heightPx;
-
-        layout.setLayoutParams(params);
-    }
-
-    void initializeUI () {
-
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
         tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
         tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 
         PlaceTabPagerAdapter placePagerAdapter = new PlaceTabPagerAdapter(getSupportFragmentManager(),
                 tabLayout.getTabCount());
@@ -169,23 +144,21 @@ public class HomeActivity extends AppCompatActivity
 
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-
         final View actionBarView = inflator.inflate(R.layout.searchbar, null);
-        final FragmentManager fragmentManager = getSupportFragmentManager();
 
-        final String[] from = new String[] {"judy"};
-        final int[] to = new int[] {android.R.id.text1};
+        final String[] from = new String[]{"judy"};
+        final int[] to = new int[]{android.R.id.text1};
 
-        SearchView searchBtn = (SearchView)actionBarView.findViewById(R.id.search_view);
+
+        searchBtn = (SearchView) actionBarView.findViewById(R.id.search_view);
         final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(getApplicationContext(),
-                                                                    android.R.layout.simple_list_item_1,
-                                                                    null,
-                                                                    from,
-                                                                    to,
-                                                                    CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                android.R.layout.simple_list_item_1,
+                null,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         searchBtn.setSuggestionsAdapter(searchAdapter);
-
 
         searchBtn.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
@@ -198,6 +171,7 @@ public class HomeActivity extends AppCompatActivity
                 return true;
             }
         });
+
 
         searchBtn.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -214,13 +188,12 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-        final RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.searchFilter);
 
         searchBtn.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                TextView txtHome =  (TextView)actionBarView.findViewById(R.id.txtHome);
+                TextView txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
 
                 txtHome.setVisibility(View.GONE);
 
@@ -231,7 +204,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public boolean onClose() {
 
-                TextView txtHome =  (TextView)actionBarView.findViewById(R.id.txtHome);
+                TextView txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
 
                 txtHome.setVisibility(View.VISIBLE);
 
@@ -263,14 +236,12 @@ public class HomeActivity extends AppCompatActivity
 
 
     }
-/**
-    Bitmap getImageResource (int id) {
-        return ((BitmapDrawable)getResources().getDrawable(id)).getBitmap();
-    }
 
-
-
-**/
+    /**
+     * Bitmap getImageResource (int id) {
+     * return ((BitmapDrawable)getResources().getDrawable(id)).getBitmap();
+     * }
+     **/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -284,6 +255,10 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        if (!searchBtn.isIconified())
+            searchBtn.setIconified(true);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -296,11 +271,10 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        //int id = item.getItemId();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 }
-
