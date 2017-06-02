@@ -1,101 +1,55 @@
 package com.lmos.spotter;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 
-public class HomeActivity extends AppCompatActivity
+public class HotelActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SearchView searchBtn;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_hotel);
 
-    private void startMostPopularFlipping() {
-
-        ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
-
-        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
-        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
-        viewFlipperManager.setFlipInterval(3000);
-
-        viewFlipperManager.startFlipping();
-
-    }
-
-    String[] sampleWords = {"hello", "judy", "sample", "text", "june"};
-
-    private void initializeUI() {
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
-        tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
-        tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.hotelToolbar);
 
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-
-        PlaceTabPagerAdapter placePagerAdapter = new PlaceTabPagerAdapter(getSupportFragmentManager(),
-                tabLayout.getTabCount());
-
-        viewPager.setAdapter(placePagerAdapter);
-        viewPager.setOffscreenPageLimit(3);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.homeToolbar);
         setSupportActionBar(toolbar);
 
         final ActionBar homeActionBar = getSupportActionBar();
+
+        homeActionBar.setTitle("Hotels");
 
         homeActionBar.setDisplayHomeAsUpEnabled(true);
         homeActionBar.setDisplayShowCustomEnabled(true);
 
         final View actionBarView = inflator.inflate(R.layout.searchbar, null);
-        final TextView txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
+        final TextView txtHotel = (TextView) actionBarView.findViewById(R.id.txtHome);
 
-        txtHome.setText("Spotter");
+        txtHotel.setText("Hotels");
 
         final String[] from = new String[]{"judy"};
         final int[] to = new int[]{android.R.id.text1};
@@ -138,7 +92,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextChange(String searchValue) {
-                Utilities.QuerySearchResults(searchValue, searchAdapter, sampleWords);
+                Utilities.QuerySearchResults(searchValue, searchAdapter, new String[]{"judy"});
                 return false;
             }
         });
@@ -147,27 +101,27 @@ public class HomeActivity extends AppCompatActivity
         searchBtn.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                txtHome.setVisibility(View.GONE);
+
+                txtHotel.setVisibility(View.GONE);
+
             }
         });
 
         searchBtn.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                txtHome.setVisibility(View.VISIBLE);
+
+                txtHotel.setVisibility(View.VISIBLE);
+
                 return false;
+
             }
         });
 
-        /**
-         *
-         * this code detects a backpress event and a soft keyboard down event
-         * created a keyboard state object to store a boolean wether the
-         * keyboard is up or down gonna make this code a utility to be useful
-         *
-         */
 
-        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.home_parent_layout);
+        ///BUGGGGGGGGGGGGGGGGGGGGGGG
+
+        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.hotel_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
 
 
@@ -184,16 +138,19 @@ public class HomeActivity extends AppCompatActivity
             public void onGlobalLayout() {
                 int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
 
-                    if (heightDiff > Utilities.dpToPx(getApplicationContext(), 200)) {
-                        if (!keyboardState.isKeyboardUp)
-                            keyboardState.isKeyboardUp = true;
-                    } else {
-                        if (keyboardState.isKeyboardUp) {
-                            searchBtn.setIconified(true);
-                            keyboardState.isKeyboardUp = false;
-                        }
+                if (heightDiff > Utilities.dpToPx(getApplicationContext(), 200)) {
 
+                    Log.d("test", "aa");
+
+                    if (!keyboardState.isKeyboardUp)
+                        keyboardState.isKeyboardUp = true;
+                } else {
+                    if (keyboardState.isKeyboardUp) {
+                        searchBtn.setIconified(true);
+                        keyboardState.isKeyboardUp = false;
                     }
+
+                }
 
 
             }
@@ -223,41 +180,27 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    /**
-     * Bitmap getImageResource (int id) {
-     * return ((BitmapDrawable)getResources().getDrawable(id)).getBitmap();
-     * }
-     **/
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_home);
-        initializeUI();
-        startMostPopularFlipping();
-
-
-
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        if (searchBtn.isIconified()) {
-
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
-            searchBtn.setIconified(true);
+            super.onBackPressed();
         }
     }
 
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -265,29 +208,9 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch (id) {
-            case R.id.Home:
-                break;
-            case R.id.Hotels:
-                Intent launchHotel = new Intent(this, HotelActivity.class);
-                startActivity(launchHotel);
-                break;
-            case R.id.TouristSpots:
-                break;
-            case R.id.Restaurants:
-                break;
-
-            default:
-                break;
-        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    /// TEST ONLY
-
-
-
 }

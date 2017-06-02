@@ -4,19 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
-import java.util.List;
 
 /**
  * Created by Kryssel on 6/1/2017.
@@ -87,7 +81,7 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
 
             drawable = ((BitmapDrawable) this.getContext().getResources().getDrawable(R.drawable.traveler_bg3));
 
-            Bitmap blurRowBackground = BlurImg.blurImg(getContext(), drawable.getBitmap(), 25.0f);
+            Bitmap blurRowBackground = Utilities.BlurImg.blurImg(getContext(), drawable.getBitmap(), 25.0f);
 
             backgroundRowItem.setScaleType(ImageView.ScaleType.CENTER_CROP);
             backgroundRowItem.setImageBitmap(blurRowBackground);

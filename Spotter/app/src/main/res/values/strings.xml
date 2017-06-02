@@ -28,5 +28,6 @@
     <string name="recover_msg"><![CDATA[A temporary password will be send to your account. You can change it in Settings>Account.]]></string>
     <string name="resend">Resend</string>
     <string name="resend_lbl">Did not receive an e-mail?</string>
+    <string name="title_activity_hotel">Hotels</string>
 
 </resources>

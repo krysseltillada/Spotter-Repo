@@ -1,5 +1,7 @@
 package com.lmos.spotter;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,15 +24,17 @@ public class LoginActivity extends AppCompatActivity {
 
     public void clickListener(View view){
 
+
+
+
         switch (view.getId()){
 
             case R.id.sign_up:
                 switchFragment(new FragmentSignUp());
                 return;
             case R.id.sign_in:
-                Intent launchToHome = new Intent(this, HomeActivity.class);
-                launchToHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(launchToHome);
+                Intent launchHome = new Intent(this, HomeActivity.class);
+                startActivity(launchHome);
                 return;
             case R.id.forgot_pass:
                 switchFragment(new FragmentRecover());
@@ -67,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            int a = 2;
+
             return null;
         }
     }
