@@ -17,8 +17,8 @@
 
     <RelativeLayout
         android:id="@+id/content_holder"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="@dimen/login_layout_width"
+        android:layout_height="@dimen/login_layout_height"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:background="@drawable/layout_white_bg">
