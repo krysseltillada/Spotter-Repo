@@ -236,26 +236,22 @@ public class HomeActivity extends AppCompatActivity
         final View activityRootView = findViewById(R.id.home_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
 
-        activityRootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /// TODO TRY to make a onlick press on a screen 
-            }
-        });
+
 
         activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
 
-                    if (heightDiff > dpToPx(getApplicationContext(), 200) &&
-                            !keyboardState.isKeyboardUp) {
-                        keyboardState.isKeyboardUp = !keyboardState.isKeyboardUp;
+                    if (heightDiff > dpToPx(getApplicationContext(), 200)) {
+                        if (!keyboardState.isKeyboardUp)
+                            keyboardState.isKeyboardUp = true;
                     } else {
                         if (keyboardState.isKeyboardUp) {
                             searchBtn.setIconified(true);
-                            keyboardState.isKeyboardUp = !keyboardState.isKeyboardUp;
+                            keyboardState.isKeyboardUp = false;
                         }
+
                     }
 
 
