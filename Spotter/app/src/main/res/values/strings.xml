@@ -22,5 +22,11 @@
     <string name="sign_up_lbl">Don\'t have an account yet?</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="home_most_popular">Most Popular</string>
+    <string name="fullname">Fullname</string>
+    <string name="email">E-mail Address</string>
+    <string name="recover_account">Recover Account</string>
+    <string name="recover_msg"><![CDATA[A temporary password will be send to your account. You can change it in Settings>Account.]]></string>
+    <string name="resend">Resend</string>
+    <string name="resend_lbl">Did not receive an e-mail?</string>
 
 </resources>

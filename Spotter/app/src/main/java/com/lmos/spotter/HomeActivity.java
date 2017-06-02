@@ -7,30 +7,32 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+
+
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -38,18 +40,17 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static int currentImage = 0;
 
-    void startMostPopularAnimation (final Bitmap[] slideImages, final ImageView imageView) {
+   /**
+    *
+    *
+    * void startMostPopularAnimation (final Bitmap[] slideImages, final ImageView imageView) {
 
         Timer slideImageTimer = new Timer ();
         slideImageTimer.scheduleAtFixedRate(new TimerTask() {
@@ -78,6 +79,7 @@ public class HomeActivity extends AppCompatActivity
         }, 0, 5000);
 
     }
+    **/
 
     void startMostPopularFlipping () {
 
@@ -261,11 +263,14 @@ public class HomeActivity extends AppCompatActivity
 
 
     }
-
+/**
     Bitmap getImageResource (int id) {
         return ((BitmapDrawable)getResources().getDrawable(id)).getBitmap();
     }
 
+
+
+**/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

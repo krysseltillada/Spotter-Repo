@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,24 +10,26 @@
     <ImageView
         android:id="@+id/background_img_holder"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_weight=".5"
+        android:layout_height="@dimen/login_bg_img_holder"
         android:scaleType="centerCrop"
         android:src="@drawable/traveler_bg3"
         android:contentDescription="@string/blur_img_des"/>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:id="@+id/content_holder"
+        android:layout_width="@dimen/login_layout_width"
+        android:layout_height="@dimen/login_layout_height"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/layout_white_bg">
 
         <ProgressBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-8dp"
+            android:layout_marginTop="@dimen/negative_margin_8"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:indeterminate="true"/>
+            android:indeterminate="true"
+            android:visibility="gone"/>
 
         <FrameLayout
             android:id="@+id/account_fragment_holder"
@@ -37,4 +39,4 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
