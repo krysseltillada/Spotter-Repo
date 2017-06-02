@@ -3,13 +3,11 @@ package com.lmos.spotter;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
 
 public class LoginActivity extends AppCompatActivity {
-
-    ImageView background_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,20 +25,30 @@ public class LoginActivity extends AppCompatActivity {
         switch (view.getId()){
 
             case R.id.sign_up:
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
-                        .replace(R.id.account_fragment_holder, new FragmentSignUp(), "Sign Up")
-                        .addToBackStack("Sign In")
-                        .commit();
-                break;
+                switchFragment(new FragmentSignUp());
+                return;
             case R.id.sign_in:
                 Intent launchToHome = new Intent(this, HomeActivity.class);
                 launchToHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(launchToHome);
+                return;
+            case R.id.forgot_pass:
+                switchFragment(new FragmentRecover());
+                return;
             default:
                 break;
 
         }
+
+    }
+
+    private void switchFragment(Fragment fragment){
+
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                .replace(R.id.account_fragment_holder, fragment, "Sign Up")
+                .addToBackStack("Sign In")
+                .commit();
 
     }
 
