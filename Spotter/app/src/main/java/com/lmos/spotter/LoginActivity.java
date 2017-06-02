@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             case R.id.sign_in:
                 Intent launchToHome = new Intent(this, HomeActivity.class);
-                launchToHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                launchToHome.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(launchToHome);
                 return;
             case R.id.forgot_pass:
