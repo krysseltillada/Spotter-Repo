@@ -70,7 +70,6 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
 
         if (convertView == null) {
 
-            Log.d("creating", "..");
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(layoutId, parent, false);
 
@@ -99,7 +98,7 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
         } else {
             viewHolder = (ViewHolder)convertView.getTag();
             result = convertView;
-            Log.d("already", "created");
+
         }
 
         return convertView;

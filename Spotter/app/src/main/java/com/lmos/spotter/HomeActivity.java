@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
@@ -159,6 +160,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         final View actionBarView = inflator.inflate(R.layout.searchbar, null);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
 
         SearchView searchBtn = (SearchView)actionBarView.findViewById(R.id.search_view);
 
@@ -168,8 +170,12 @@ public class HomeActivity extends AppCompatActivity
 
                 TextView txtHome =  (TextView)actionBarView.findViewById(R.id.txtHome);
 
-                txtHome.setVisibility(View.GONE);
 
+                fragmentManager.beginTransaction()
+                               .add(R.id.scrollView, SearchFilterFragment.newInstance())
+                               .commit();
+
+                txtHome.setVisibility(View.GONE);
 
             }
         });
