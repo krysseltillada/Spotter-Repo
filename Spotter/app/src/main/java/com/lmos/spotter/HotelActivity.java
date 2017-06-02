@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
@@ -32,6 +33,14 @@ public class HotelActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hotel);
+
+        TabLayout hotelTabLayout = (TabLayout)findViewById(R.id.hotel_tab_layout);
+
+        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Most Viewed"));
+
+        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Most Rated"));
+
+        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Recommend"));
 
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
