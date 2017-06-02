@@ -2,15 +2,20 @@ package com.lmos.spotter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
@@ -30,6 +35,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,6 +91,24 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    String[] sampleWords = {"hello", "judy", "sample", "text", "june"};
+
+    // GONNA make a generalized search query class for this
+
+    void QuerySearchResults (String searchValue, SimpleCursorAdapter suggestion, String[]keywords) {
+
+        MatrixCursor suggestions = new MatrixCursor(new String[]{BaseColumns._ID, "judy"});
+
+        for (int i = 0; i != keywords.length; ++i) {
+            if (keywords[i].toLowerCase().startsWith(searchValue.toLowerCase())) {
+                Log.d("sample", searchValue);
+                suggestions.addRow(new Object[]{i, keywords[i]});
+            }
+        }
+
+        suggestion.changeCursor(suggestions);
+    }
+
 
      void setHeightLayoutSize (int heightPx, int idView) {
 
@@ -98,21 +122,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
     void initializeUI () {
-        /*
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-
-        WindowManager wm = (WindowManager)getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-        wm.getDefaultDisplay().getMetrics(displayMetrics);
-
-        int screenHeight = displayMetrics.heightPixels;
-        int frameLayoutHeight = screenHeight / 2;
-
-        setHeightLayoutSize(frameLayoutHeight + 100, R.id.frameLayout);
-
-        Log.d("height: ", String.valueOf(frameLayoutHeight));
-*/
-        ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView);
-        scrollView.smoothScrollTo(0, 0);
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
@@ -150,30 +159,66 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar homeActionBar = getSupportActionBar();
+        final ActionBar homeActionBar = getSupportActionBar();
 
         homeActionBar.setDisplayHomeAsUpEnabled(true);
         homeActionBar.setDisplayShowCustomEnabled(true);
 
 
-        LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
         final View actionBarView = inflator.inflate(R.layout.searchbar, null);
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
+        final String[] from = new String[] {"judy"};
+        final int[] to = new int[] {android.R.id.text1};
+
         SearchView searchBtn = (SearchView)actionBarView.findViewById(R.id.search_view);
+        final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(getApplicationContext(),
+                                                                    android.R.layout.simple_list_item_1,
+                                                                    null,
+                                                                    from,
+                                                                    to,
+                                                                    CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
+        searchBtn.setSuggestionsAdapter(searchAdapter);
+
+
+        searchBtn.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return true;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                return true;
+            }
+        });
+
+        searchBtn.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+
+            }
+
+            @Override
+            public boolean onQueryTextChange(String searchValue) {
+                QuerySearchResults(searchValue, searchAdapter, sampleWords);
+                return false;
+            }
+        });
+
+        final RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.searchFilter);
 
         searchBtn.setOnSearchClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
 
                 TextView txtHome =  (TextView)actionBarView.findViewById(R.id.txtHome);
-
-
-                fragmentManager.beginTransaction()
-                               .add(R.id.scrollView, SearchFilterFragment.newInstance())
-                               .commit();
 
                 txtHome.setVisibility(View.GONE);
 
