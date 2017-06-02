@@ -1,13 +1,14 @@
 package com.lmos.spotter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
@@ -22,10 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -168,6 +166,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public boolean onSuggestionClick(int position) {
+                startActivity(new Intent(getApplicationContext(), SearchResultsActivity.class));
                 return true;
             }
         });
