@@ -3,6 +3,9 @@ package com.lmos.spotter;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.MatrixCursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
@@ -32,6 +35,8 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -74,7 +79,7 @@ public class HomeActivity extends AppCompatActivity
      * }
      **/
 
-    void startMostPopularFlipping() {
+    private void startMostPopularFlipping() {
 
         ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
 
@@ -110,7 +115,8 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-    void initializeUI() {
+    private void initializeUI() {
+        final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
@@ -153,8 +159,6 @@ public class HomeActivity extends AppCompatActivity
         homeActionBar.setDisplayHomeAsUpEnabled(true);
         homeActionBar.setDisplayShowCustomEnabled(true);
 
-
-        final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         final View actionBarView = inflator.inflate(R.layout.searchbar, null);
 
@@ -233,10 +237,17 @@ public class HomeActivity extends AppCompatActivity
          *
          */
 
-        final View activityRootView = findViewById(R.id.home_parent_layout);
+        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.home_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
 
 
+        activityRootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!searchBtn.isIconified())
+                    searchBtn.setIconified(true);
+            }
+        });
 
         activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -265,7 +276,7 @@ public class HomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "GPS is required to detect places", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
