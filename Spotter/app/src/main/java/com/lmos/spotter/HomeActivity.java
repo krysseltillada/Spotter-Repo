@@ -1,6 +1,7 @@
 package com.lmos.spotter;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -18,15 +19,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class HomeActivity extends AppCompatActivity
@@ -95,6 +102,11 @@ public class HomeActivity extends AppCompatActivity
         }
 
         suggestion.changeCursor(suggestions);
+    }
+
+    static float dpToPx (Context context, float valueInDp) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
 
@@ -213,6 +225,43 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        /**
+         *
+         * this code detects a backpress event and a soft keyboard down event
+         * created a keyboard state object to store a boolean wether the
+         * keyboard is up or down gonna make this code a utility to be useful
+         *
+         */
+
+        final View activityRootView = findViewById(R.id.home_parent_layout);
+        final KeyboardState keyboardState = new KeyboardState();
+
+        activityRootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /// TODO TRY to make a onlick press on a screen 
+            }
+        });
+
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+
+                    if (heightDiff > dpToPx(getApplicationContext(), 200) &&
+                            !keyboardState.isKeyboardUp) {
+                        keyboardState.isKeyboardUp = !keyboardState.isKeyboardUp;
+                    } else {
+                        if (keyboardState.isKeyboardUp) {
+                            searchBtn.setIconified(true);
+                            keyboardState.isKeyboardUp = !keyboardState.isKeyboardUp;
+                        }
+                    }
+
+
+            }
+        });
+
 
         homeActionBar.setCustomView(actionBarView);
 
@@ -256,13 +305,16 @@ public class HomeActivity extends AppCompatActivity
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        if (!searchBtn.isIconified())
-            searchBtn.setIconified(true);
+        if (searchBtn.isIconified()) {
 
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+
         } else {
-            super.onBackPressed();
+            searchBtn.setIconified(true);
         }
     }
 
