@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -41,6 +43,36 @@ public class HotelActivity extends AppCompatActivity
         hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Most Rated"));
 
         hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Recommend"));
+
+        hotelTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        HotelTabPagerAdapter hotelTabPagerAdapter = new HotelTabPagerAdapter(getSupportFragmentManager(),
+                                                                             hotelTabLayout.getTabCount());
+
+        final ViewPager hotelViewPager = (ViewPager)findViewById(R.id.hotel_pager);
+
+        hotelViewPager.setAdapter(hotelTabPagerAdapter);
+        hotelViewPager.setOffscreenPageLimit(3);
+        hotelViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener (hotelTabLayout));
+
+        hotelTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                hotelViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+
 
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

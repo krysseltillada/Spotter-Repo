@@ -1,9 +1,7 @@
 package com.lmos.spotter;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -60,7 +58,7 @@ public class HomeActivity extends AppCompatActivity
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 
-        PlaceTabPagerAdapter placePagerAdapter = new PlaceTabPagerAdapter(getSupportFragmentManager(),
+        HomeTabPagerAdapter placePagerAdapter = new HomeTabPagerAdapter(getSupportFragmentManager(),
                 tabLayout.getTabCount());
 
         viewPager.setAdapter(placePagerAdapter);
