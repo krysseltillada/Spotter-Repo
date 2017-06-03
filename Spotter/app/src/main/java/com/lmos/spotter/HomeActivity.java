@@ -2,6 +2,7 @@ package com.lmos.spotter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -31,6 +32,7 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SearchView searchBtn;
+    SimpleCursorAdapter searchAdapter;
 
     //static int currentImage = 0;
 
@@ -77,7 +79,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    String[] sampleWords = {"hello", "judy", "sample", "text", "june"};
+    String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
     // GONNA make a generalized search query class for this
 
@@ -149,7 +151,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         searchBtn = (SearchView) actionBarView.findViewById(R.id.search_view);
-        final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(getApplicationContext(),
+        searchAdapter = new SimpleCursorAdapter(getApplicationContext(),
                 android.R.layout.simple_list_item_1,
                 null,
                 from,
@@ -166,7 +168,12 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public boolean onSuggestionClick(int position) {
-                startActivity(new Intent(getApplicationContext(), SearchResultsActivity.class));
+
+
+                Intent send_data = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                send_data.putExtra("type", getSuggestionText(position));
+                Log.d("Type", getSuggestionText(position));
+                startActivity(send_data);
                 return true;
             }
         });
@@ -234,6 +241,16 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
+    }
+
+    private String getSuggestionText(int position){
+
+        String selected_item = "";
+        Cursor searchCursor = searchAdapter.getCursor();
+        if(searchCursor.moveToPosition(position)){
+            selected_item = searchCursor.getString(1);
+        }
+        return selected_item;
     }
 
     /**

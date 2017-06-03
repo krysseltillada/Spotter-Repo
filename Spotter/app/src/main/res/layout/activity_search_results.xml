@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:expandedTitleGravity="left"
+            app:contentScrim="@color/blackTransparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
@@ -29,8 +30,8 @@
                 android:id="@+id/action_bar_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_marginBottom="50dp"
-                app:layout_scrollFlags="scroll|enterAlways"
+                android:layout_marginBottom="100dp"
+                app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
                 app:layout_collapseMode="pin" />
 
             <android.support.design.widget.TabLayout
@@ -42,7 +43,49 @@
                 app:tabTextColor="@color/white"
                 app:tabGravity="fill"
                 app:tabSelectedTextColor="@color/white"
-                app:tabIndicatorColor="@color/colorAccent"/>
+                app:tabIndicatorColor="@color/colorAccent"
+                android:visibility="gone"/>
+
+            <RelativeLayout
+                android:id="@+id/place_detail_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:padding="5dp"
+                android:background="@color/blackTransparent"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/place_icon"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@mipmap/ic_launcher_round"
+                    android:contentDescription="@string/place_icon_logo"/>
+
+                <TextView
+                    android:id="@+id/place_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/place_icon"
+                    android:layout_toEndOf="@id/place_icon"
+                    android:padding="@dimen/mid_padding"
+                    android:text="Hotel"
+                    android:textSize="30sp"/>
+
+                <TextView
+                    android:id="@+id/place_content_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/place_icon"
+                    android:layout_toEndOf="@id/place_icon"
+                    android:paddingTop="@dimen/min_padding"
+                    android:paddingBottom="@dimen/min_padding"
+                    android:paddingStart="@dimen/mid_padding"
+                    android:paddingEnd="@dimen/mid_padding"
+                    android:text="Hotel Content Description"
+                    android:textSize="@dimen/max_font_size"/>
+
+            </RelativeLayout>
 
 
         </android.support.design.widget.CollapsingToolbarLayout>
