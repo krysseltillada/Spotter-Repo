@@ -45,4 +45,10 @@
         <item name="colorControlHighlight">@color/colorPrimary</item>
     </style>
 
+    <style name="collapsingToolbarStyle" parent="Widget.Design.CollapsingToolbar">
+        <item name="android:textColor">@color/transparent</item>
+        <item name="android:textSize">0sp</item>
+        <item name="statusBarScrim">@color/transparent</item>
+    </style>
+
 </resources>

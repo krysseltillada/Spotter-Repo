@@ -2,24 +2,26 @@ package com.lmos.spotter;
 
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 /**
  * Created by linker on 02/06/2017.
+ *
+ * This class will display the result/s of places
+ * and/or specific hotels, restaurants and tourist spots.
+ *
  */
 
 public class SearchResultsActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
-    TabLayout tabLayout;
-    RelativeLayout place_name_holder;
+    TextView place_name, place_content_desc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,24 +36,35 @@ public class SearchResultsActivity extends AppCompatActivity {
         switch (fetch_intent.getString("type")){
 
             case "General":
-                tabLayout.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.search_content_holder, new FragmentSearchResultGeneral(), "General")
-                        .commit();
-                return;
+                setHeaderText("Batangas", "Bayang ng Magigiting");
+                attachFragment(new FragmentSearchResultGeneral(), "General");
+                break;
             case "Hotel":
-                place_name_holder.setVisibility(View.VISIBLE);
-                return;
+                setHeaderText("City of Dreams", "Inside Nightmare");
+                //attachFragment(new FragmentSearchResultGeneral(), "General");
+                break;
 
         }
+    }
 
+    private void setHeaderText(String name, String description){
+        place_name.setText(name);
+        place_content_desc.setText(description);
+    }
+
+    private void attachFragment(Fragment fragment, String tag){
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.search_content_holder, fragment, tag)
+                .commit();
     }
 
     private void initComp(){
 
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        tabLayout = (TabLayout) findViewById(R.id.search_tab_layout);
+
+        place_name = (TextView) findViewById(R.id.place_name);
+        place_content_desc = (TextView) findViewById(R.id.place_content_description);
 
         //Set collapse & expanded title color
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.colorPrimary));
@@ -65,16 +78,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         //Enable back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        tabLayout = (TabLayout) findViewById(R.id.search_tab_layout);
-
-        //Set tab items
-        tabLayout.addTab(tabLayout.newTab().setText("All"), true);
-        tabLayout.addTab(tabLayout.newTab().setText("Hotels"));
-        tabLayout.addTab(tabLayout.newTab().setText("Foods"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tour"));
-
-        place_name_holder = (RelativeLayout) findViewById(R.id.place_detail_holder);
 
     }
 

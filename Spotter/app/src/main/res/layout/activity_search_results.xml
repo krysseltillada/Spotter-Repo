@@ -15,6 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:expandedTitleGravity="left"
+            app:expandedTitleTextAppearance="@style/collapsingToolbarStyle"
+            app:collapsedTitleTextAppearance="@style/collapsingToolbarStyle"
+            app:statusBarScrim="@style/collapsingToolbarStyle"
             app:contentScrim="@color/blackTransparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -22,6 +25,7 @@
                 android:id="@+id/action_bar_img"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
                 android:src="@drawable/traveler_bg3"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
@@ -31,20 +35,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_marginBottom="100dp"
+                android:background="@color/transparent"
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
                 app:layout_collapseMode="pin" />
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/search_tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                app:tabBackground="@color/blackTransparent"
-                app:tabTextColor="@color/white"
-                app:tabGravity="fill"
-                app:tabSelectedTextColor="@color/white"
-                app:tabIndicatorColor="@color/colorAccent"
-                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/place_detail_holder"
@@ -52,8 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:padding="5dp"
-                android:background="@color/blackTransparent"
-                android:visibility="gone">
+                android:background="@color/blackTransparent" >
 
                 <ImageView
                     android:id="@+id/place_icon"
@@ -69,7 +61,7 @@
                     android:layout_alignTop="@id/place_icon"
                     android:layout_toEndOf="@id/place_icon"
                     android:padding="@dimen/mid_padding"
-                    android:text="Hotel"
+                    android:textColor="@color/white"
                     android:textSize="30sp"/>
 
                 <TextView
@@ -82,7 +74,7 @@
                     android:paddingBottom="@dimen/min_padding"
                     android:paddingStart="@dimen/mid_padding"
                     android:paddingEnd="@dimen/mid_padding"
-                    android:text="Hotel Content Description"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/max_font_size"/>
 
             </RelativeLayout>
