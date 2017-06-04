@@ -20,6 +20,7 @@ import android.widget.ListView;
 
 import com.lmos.spotter.MainInterface.Adapters.ListPlaceAdapter;
 import com.lmos.spotter.R;
+import com.lmos.spotter.Utilities.Utilities;
 
 public class MostRatedTab extends Fragment {
 
@@ -66,31 +67,28 @@ public class MostRatedTab extends Fragment {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 switch (view.getId()) {
                     case R.id.mainTabList:
+                        if (Utilities.checkIfLastItem(firstVisibleItem, visibleItemCount,
+                                                      totalItemCount)) {
 
-                        final int lastItem = firstVisibleItem + visibleItemCount;
+                            if (preLast > 3) {
 
-                        if (lastItem == totalItemCount) {
-                            if (preLast != lastItem) {
+                                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
-                                Log.d("lol", "last item");
+                                if (fab.getVisibility() != View.GONE) {
 
-                                if (lastItem > 4) {
-
-                                    FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-
-                                    if (fab.getVisibility() != View.GONE) {
-
-                                        fab.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_out));
-                                        fab.setVisibility(View.GONE);
-                                        fab.setClickable(false);
-
-                                    }
+                                    fab.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_out));
+                                    fab.setVisibility(View.GONE);
+                                    fab.setClickable(false);
 
                                 }
-                                preLast = lastItem;
+
+                                preLast = firstVisibleItem + visibleItemCount;
+
                             }
+
                         } else {
-                            FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
+
+                            FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
                             if (fab.getVisibility() != View.VISIBLE) {
 
@@ -100,8 +98,10 @@ public class MostRatedTab extends Fragment {
 
                             }
 
-                            preLast = lastItem;
+                            preLast = firstVisibleItem + visibleItemCount;
+
                         }
+
 
 
                 }

@@ -50,7 +50,14 @@ public class Utilities {
                 return output_bitmap;
             }
 
-        }
+    }
+
+    public static boolean checkIfLastItem (int firstVisibleItem, int visibleItem,
+                                           int totalItemCount) {
+        final int lastItem = firstVisibleItem + visibleItem;
+
+        return (lastItem == totalItemCount);
+    }
 
     public static Bitmap fastblur(Bitmap sentBitmap, float scale, int radius) {
 
