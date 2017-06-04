@@ -13,12 +13,23 @@ import com.lmos.spotter.R;
 
 public class FragmentRatedCategory extends Fragment {
 
-    public FragmentRatedCategory() {
+    int testData;
 
+    public FragmentRatedCategory() {
     }
 
-    public static FragmentRatedCategory newInstance(String param1, String param2) {
-        return new FragmentRatedCategory();
+
+    public static FragmentRatedCategory newInstance(int td) {
+
+        FragmentRatedCategory fragmentRatedCategory = new FragmentRatedCategory();
+
+        Bundle bundleData = new Bundle();
+
+        bundleData.putInt("testData", td);
+
+        fragmentRatedCategory.setArguments(bundleData);
+
+        return fragmentRatedCategory;
     }
 
     @Override
@@ -29,10 +40,12 @@ public class FragmentRatedCategory extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_rated_category, container, false);
-        ListView mostRatedList  = (ListView) view.findViewById(R.id.hotelMostRatedList);
+        View view = inflater.inflate(R.layout.fragment_sub_category, container, false);
+        ListView mostRatedList  = (ListView) view.findViewById(R.id.subCategoryList);
 
-        mostRatedList.setAdapter(new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[100]));
+        Bundle bundleData = getArguments();
+
+        mostRatedList.setAdapter(new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[bundleData.getInt("testData")]));
 
         return view;
     }

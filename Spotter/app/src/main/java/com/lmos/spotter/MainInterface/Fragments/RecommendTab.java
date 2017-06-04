@@ -20,10 +20,10 @@ public class RecommendTab extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View recommendTabView = inflater.inflate(R.layout.most_rated_tab, container, false);
-        ListView recommendListview = (ListView) recommendTabView.findViewById(R.id.mostRatedList);
+        View recommendTabView = inflater.inflate(R.layout.main_tab, container, false);
+        ListView recommendListview = (ListView) recommendTabView.findViewById(R.id.mainTabList);
 
-        ListPlaceAdapter recommendViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[10]);
+        ListPlaceAdapter recommendViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[5]);
 
         recommendListview.setAdapter(recommendViewAdapter);
 

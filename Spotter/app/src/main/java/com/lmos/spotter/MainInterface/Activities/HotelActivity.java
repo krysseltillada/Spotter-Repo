@@ -39,9 +39,9 @@ public class HotelActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hotel);
+        setContentView(R.layout.activity_sub_cat);
 
-        TabLayout hotelTabLayout = (TabLayout)findViewById(R.id.hotel_tab_layout);
+        TabLayout hotelTabLayout = (TabLayout)findViewById(R.id.sub_cat_tab_layout);
 
         hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Most Viewed"));
 
@@ -52,9 +52,9 @@ public class HotelActivity extends AppCompatActivity
         hotelTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         CategoryTabPagerAdapter categoryTabPagerAdapter = new CategoryTabPagerAdapter(getSupportFragmentManager(),
-                                                                             hotelTabLayout.getTabCount());
+                                                                             hotelTabLayout.getTabCount(), 1);
 
-        final ViewPager hotelViewPager = (ViewPager)findViewById(R.id.hotel_pager);
+        final ViewPager hotelViewPager = (ViewPager)findViewById(R.id.sub_cat_pager);
 
         hotelViewPager.setAdapter(categoryTabPagerAdapter);
         hotelViewPager.setOffscreenPageLimit(3);
@@ -80,7 +80,7 @@ public class HotelActivity extends AppCompatActivity
 
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.hotelToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.subCatToolbar);
 
         setSupportActionBar(toolbar);
 
@@ -163,7 +163,7 @@ public class HotelActivity extends AppCompatActivity
             }
         });
 
-        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.hotel_parent_layout);
+        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.sub_cat_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
 
         activityRootView.setOnClickListener(new View.OnClickListener() {

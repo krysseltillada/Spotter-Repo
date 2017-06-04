@@ -6,9 +6,8 @@
     android:orientation="vertical"
     tools:context="com.lmos.spotter.MainInterface.Fragments.FragmentViewedCategory">
 
-
     <ListView
-        android:id="@+id/hotelRecommendList"
+        android:id="@+id/subCategoryList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"

@@ -39,9 +39,9 @@ public class TouristSpotActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tourist_spot);
+        setContentView(R.layout.activity_sub_cat);
 
-        TabLayout touristTabLayout = (TabLayout)findViewById(R.id.tourist_tab_layout);
+        TabLayout touristTabLayout = (TabLayout)findViewById(R.id.sub_cat_tab_layout);
 
         touristTabLayout.addTab(touristTabLayout.newTab().setText("Most Viewed"));
 
@@ -52,9 +52,9 @@ public class TouristSpotActivity extends AppCompatActivity
         touristTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         CategoryTabPagerAdapter touristTabPagerAdapter = new CategoryTabPagerAdapter(getSupportFragmentManager(),
-                touristTabLayout.getTabCount());
+                touristTabLayout.getTabCount(), 3);
 
-        final ViewPager touristViewPager = (ViewPager)findViewById(R.id.tourist_pager);
+        final ViewPager touristViewPager = (ViewPager)findViewById(R.id.sub_cat_pager);
 
         touristViewPager.setAdapter(touristTabPagerAdapter);
         touristViewPager.setOffscreenPageLimit(3);
@@ -79,7 +79,7 @@ public class TouristSpotActivity extends AppCompatActivity
 
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.touristToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.subCatToolbar);
 
         setSupportActionBar(toolbar);
 
@@ -165,7 +165,7 @@ public class TouristSpotActivity extends AppCompatActivity
 
         ///BUGGGGGGGGGGGGGGGGGGGGGGG
 
-        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.tourist_parent_layout);
+        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.sub_cat_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
 
 

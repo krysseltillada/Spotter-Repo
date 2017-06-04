@@ -30,10 +30,10 @@ public class FragmentViewedCategory extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_viewed_category, container, false);
-        ListView mostViewedList  = (ListView) view.findViewById(R.id.hotelMostViewList);
+        View view = inflater.inflate(R.layout.fragment_sub_category, container, false);
+        ListView mostViewedList  = (ListView) view.findViewById(R.id.subCategoryList);
 
-        mostViewedList.setAdapter(new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[100]));
+        mostViewedList.setAdapter(new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[1]));
 
         return view;
 

@@ -39,8 +39,8 @@ public class RestaurantActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant);
-        TabLayout restaurantTabLayout = (TabLayout)findViewById(R.id.restaurant_tab_layout);
+        setContentView(R.layout.activity_sub_cat);
+        TabLayout restaurantTabLayout = (TabLayout)findViewById(R.id.sub_cat_tab_layout);
 
         restaurantTabLayout.addTab(restaurantTabLayout.newTab().setText("Most Viewed"));
 
@@ -51,9 +51,9 @@ public class RestaurantActivity extends AppCompatActivity
         restaurantTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         CategoryTabPagerAdapter touristTabPagerAdapter = new CategoryTabPagerAdapter(getSupportFragmentManager(),
-                restaurantTabLayout.getTabCount());
+                restaurantTabLayout.getTabCount(), 2);
 
-        final ViewPager restaurantViewPager = (ViewPager)findViewById(R.id.restaurant_pager);
+        final ViewPager restaurantViewPager = (ViewPager)findViewById(R.id.sub_cat_pager);
 
         restaurantViewPager.setAdapter(touristTabPagerAdapter);
         restaurantViewPager.setOffscreenPageLimit(3);
@@ -78,7 +78,7 @@ public class RestaurantActivity extends AppCompatActivity
 
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.restaurantToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.subCatToolbar);
 
         setSupportActionBar(toolbar);
 
@@ -162,7 +162,7 @@ public class RestaurantActivity extends AppCompatActivity
             }
         });
 
-        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.restaurant_parent_layout);
+        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.sub_cat_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
 
 

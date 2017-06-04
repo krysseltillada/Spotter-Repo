@@ -13,12 +13,13 @@ import com.lmos.spotter.MainInterface.Fragments.FragmentViewedCategory;
  */
 
 public class CategoryTabPagerAdapter extends FragmentStatePagerAdapter {
-
+    int testData;
     int tbLength;
 
-    public CategoryTabPagerAdapter(FragmentManager fragmentManager, int tabLength) {
+    public CategoryTabPagerAdapter(FragmentManager fragmentManager, int tabLength, int tData) {
         super(fragmentManager);
         tbLength = tabLength;
+        testData = tData;
     }
 
     @Override
@@ -27,7 +28,7 @@ public class CategoryTabPagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return new FragmentViewedCategory();
             case 1:
-                return new FragmentRatedCategory();
+                return FragmentRatedCategory.newInstance(testData);
             case 2:
                 return new FragmentRecommendCategory();
             default:

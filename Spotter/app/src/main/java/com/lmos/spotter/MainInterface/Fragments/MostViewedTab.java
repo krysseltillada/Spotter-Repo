@@ -23,10 +23,10 @@ public class MostViewedTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View mostViewTabView = inflater.inflate(R.layout.most_viewed_tab, container, false);
-        ListView mostViewedListview = (ListView) mostViewTabView.findViewById(R.id.mostViewList);
+        View mostViewTabView = inflater.inflate(R.layout.main_tab, container, false);
+        ListView mostViewedListview = (ListView) mostViewTabView.findViewById(R.id.mainTabList);
 
-        ListPlaceAdapter mostViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[10]);
+        ListPlaceAdapter mostViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[1]);
         mostViewedListview.setAdapter(mostViewAdapter);
 
         mostViewedListview.setOnTouchListener(new ListView.OnTouchListener() {

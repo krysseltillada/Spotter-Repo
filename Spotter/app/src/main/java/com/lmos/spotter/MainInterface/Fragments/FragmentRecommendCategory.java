@@ -28,10 +28,10 @@ public class FragmentRecommendCategory extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_recommend_category, container, false);
-        ListView recommendViewList  = (ListView) view.findViewById(R.id.hotelRecommendList);
+        View view = inflater.inflate(R.layout.fragment_sub_category, container, false);
+        ListView recommendViewList  = (ListView) view.findViewById(R.id.subCategoryList);
 
-        recommendViewList.setAdapter(new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[100]));
+        recommendViewList.setAdapter(new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[2]));
 
         return view;
     }
