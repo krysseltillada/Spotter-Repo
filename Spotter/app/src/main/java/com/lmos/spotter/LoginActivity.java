@@ -1,13 +1,13 @@
 package com.lmos.spotter;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
+import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -23,9 +23,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void clickListener(View view){
-
-
-
 
         switch (view.getId()){
 

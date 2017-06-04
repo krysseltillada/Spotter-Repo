@@ -1,8 +1,7 @@
-package com.lmos.spotter;
+package com.lmos.spotter.MainInterface.Activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -26,6 +25,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+import com.lmos.spotter.MainInterface.Adapters.HomeTabPagerAdapter;
+import com.lmos.spotter.Utilities.KeyboardState;
+import com.lmos.spotter.SearchResultsActivity;
+import com.lmos.spotter.Utilities.Utilities;
+import com.lmos.spotter.R;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -266,12 +271,13 @@ public class HomeActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.Home:
+                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class);
                 break;
             case R.id.Hotels:
-                Intent launchHotel = new Intent(this, HotelActivity.class);
-                startActivity(launchHotel);
+                Utilities.OpenActivity(getApplicationContext(), HotelActivity.class);
                 break;
             case R.id.TouristSpots:
+                Utilities.OpenActivity(getApplicationContext(), TouristSpotActivity.class);
                 break;
             case R.id.Restaurants:
                 break;

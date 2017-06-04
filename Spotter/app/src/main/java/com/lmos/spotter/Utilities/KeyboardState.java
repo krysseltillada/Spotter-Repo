@@ -1,10 +1,10 @@
-package com.lmos.spotter;
+package com.lmos.spotter.Utilities;
 
 /**
  * Created by Kryssel on 6/2/2017.
  */
 
 
-class KeyboardState {
+public class KeyboardState {
     public boolean isKeyboardUp = false;
 }

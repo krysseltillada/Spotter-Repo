@@ -1,19 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
+    android:background="@color/colorAccent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lmos.spotter.FragmentViewedCategory">
+    android:orientation="vertical"
+    tools:context="com.lmos.spotter.MainInterface.Fragments.FragmentViewedCategory">
 
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="148dp"
-        android:layout_marginTop="189dp"
-        android:indeterminate="true" />
+    <ListView
+        android:id="@+id/hotelRecommendList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
 </RelativeLayout>

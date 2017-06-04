@@ -1,4 +1,4 @@
-package com.lmos.spotter;
+package com.lmos.spotter.MainInterface.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,12 +20,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class HotelActivity extends AppCompatActivity
+import com.lmos.spotter.MainInterface.Adapters.HotelTabPagerAdapter;
+import com.lmos.spotter.R;
+import com.lmos.spotter.SearchResultsActivity;
+import com.lmos.spotter.Utilities.KeyboardState;
+import com.lmos.spotter.Utilities.Utilities;
+
+public class TouristSpotActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SearchView searchBtn;
@@ -34,31 +40,31 @@ public class HotelActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hotel);
+        setContentView(R.layout.activity_tourist_spot);
 
-        TabLayout hotelTabLayout = (TabLayout)findViewById(R.id.hotel_tab_layout);
+        TabLayout touristTabLayout = (TabLayout)findViewById(R.id.tourist_tab_layout);
 
-        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Most Viewed"));
+        touristTabLayout.addTab(touristTabLayout.newTab().setText("Most Viewed"));
 
-        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Most Rated"));
+        touristTabLayout.addTab(touristTabLayout.newTab().setText("Most Rated"));
 
-        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Recommend"));
+        touristTabLayout.addTab(touristTabLayout.newTab().setText("Recommend"));
 
-        hotelTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        touristTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        HotelTabPagerAdapter hotelTabPagerAdapter = new HotelTabPagerAdapter(getSupportFragmentManager(),
-                                                                             hotelTabLayout.getTabCount());
+        HotelTabPagerAdapter touristTabPagerAdapter = new HotelTabPagerAdapter(getSupportFragmentManager(),
+                touristTabLayout.getTabCount());
 
-        final ViewPager hotelViewPager = (ViewPager)findViewById(R.id.hotel_pager);
+        final ViewPager touristViewPager = (ViewPager)findViewById(R.id.tourist_pager);
 
-        hotelViewPager.setAdapter(hotelTabPagerAdapter);
-        hotelViewPager.setOffscreenPageLimit(3);
-        hotelViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener (hotelTabLayout));
+        touristViewPager.setAdapter(touristTabPagerAdapter);
+        touristViewPager.setOffscreenPageLimit(3);
+        touristViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener (touristTabLayout));
 
-        hotelTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        touristTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                hotelViewPager.setCurrentItem(tab.getPosition());
+                touristViewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -72,24 +78,23 @@ public class HotelActivity extends AppCompatActivity
             }
         });
 
-
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.hotelToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.touristToolbar);
 
         setSupportActionBar(toolbar);
 
-        final ActionBar homeActionBar = getSupportActionBar();
+        final ActionBar touristActionBar = getSupportActionBar();
 
-        homeActionBar.setTitle("Hotels");
+        touristActionBar.setTitle("Tourist Spots");
 
-        homeActionBar.setDisplayHomeAsUpEnabled(true);
-        homeActionBar.setDisplayShowCustomEnabled(true);
+        touristActionBar.setDisplayHomeAsUpEnabled(true);
+        touristActionBar.setDisplayShowCustomEnabled(true);
 
         final View actionBarView = inflator.inflate(R.layout.searchbar, null);
         final TextView txtHotel = (TextView) actionBarView.findViewById(R.id.txtHome);
 
-        txtHotel.setText("Hotels");
+        txtHotel.setText("Tourist Spots");
 
         final String[] from = new String[]{"judy"};
         final int[] to = new int[]{android.R.id.text1};
@@ -197,13 +202,13 @@ public class HotelActivity extends AppCompatActivity
         });
 
 
-        homeActionBar.setCustomView(actionBarView);
+        touristActionBar.setCustomView(actionBarView);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "GPS is required to detect places", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -216,30 +221,23 @@ public class HotelActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+
+        if (searchBtn.isIconified()) {
+
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+
         } else {
-            super.onBackPressed();
+            searchBtn.setIconified(true);
         }
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -248,6 +246,22 @@ public class HotelActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        switch (id) {
+            case R.id.Home:
+                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class);
+                break;
+            case R.id.Hotels:
+                Utilities.OpenActivity(getApplicationContext(), HotelActivity.class);
+                break;
+            case R.id.TouristSpots:
+                Utilities.OpenActivity(getApplicationContext(), TouristSpotActivity.class);
+                break;
+            case R.id.Restaurants:
+                break;
+
+            default:
+                break;
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -1,11 +1,10 @@
-package com.lmos.spotter;
+package com.lmos.spotter.MainInterface.Fragments;
 
 /**
  * Created by Kryssel on 6/1/2017.
  */
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,18 +14,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.lmos.spotter.MainInterface.Adapters.ListPlaceAdapter;
+import com.lmos.spotter.R;
+
 public class MostRatedTab extends Fragment {
-
-
-    View mostRatedTabView;
-    ListView mostRatedListview;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        View mostRatedTabView = inflater.inflate(R.layout.most_rated_tab, container, false);
+        ListView mostRatedListview = (ListView) mostRatedTabView.findViewById(R.id.mostRatedList);
 
-        mostRatedTabView = inflater.inflate(R.layout.most_rated_tab, container, false);
-
-        mostRatedListview = (ListView) mostRatedTabView.findViewById(R.id.mostRatedList);
+        ListPlaceAdapter mostRatedAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[10]);
+        mostRatedListview.setAdapter(mostRatedAdapter);
 
         mostRatedListview.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
@@ -50,41 +49,7 @@ public class MostRatedTab extends Fragment {
             }
         });
 
-        new ListLoader().execute();
-
         return mostRatedTabView;
     }
 
-    class ListLoader extends AsyncTask<Void, Void, Void> {
-
-        ProgressDialog progressDialog;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            progressDialog = new ProgressDialog(getContext());
-
-            progressDialog.setMessage("loading");
-            progressDialog.setIndeterminate(true);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            progressDialog.dismiss();
-
-            ListPlaceAdapter mostRatedAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[20]);
-
-            mostRatedListview.setAdapter(mostRatedAdapter);
-        }
-    }
 }

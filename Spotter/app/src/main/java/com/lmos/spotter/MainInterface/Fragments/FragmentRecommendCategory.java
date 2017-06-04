@@ -1,12 +1,13 @@
-package com.lmos.spotter;
+package com.lmos.spotter.MainInterface.Fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import com.lmos.spotter.MainInterface.Adapters.ListPlaceAdapter;
+import com.lmos.spotter.R;
 
 public class FragmentRecommendCategory extends Fragment {
 
@@ -26,8 +27,13 @@ public class FragmentRecommendCategory extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recommend_category, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_recommend_category, container, false);
+        ListView recommendViewList  = (ListView) view.findViewById(R.id.hotelRecommendList);
+
+        recommendViewList.setAdapter(new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[100]));
+
+        return view;
     }
 
 }

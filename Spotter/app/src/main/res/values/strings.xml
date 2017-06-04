@@ -29,5 +29,6 @@
     <string name="resend">Resend</string>
     <string name="resend_lbl">Did not receive an e-mail?</string>
     <string name="title_activity_hotel">Hotels</string>
+    <string name="title_activity_tourist_spot">TouristSpotActivity</string>
 
 </resources>

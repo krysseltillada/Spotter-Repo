@@ -1,7 +1,11 @@
-package com.lmos.spotter;
+package com.lmos.spotter.MainInterface.Adapters;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.lmos.spotter.MainInterface.Fragments.MostRatedTab;
+import com.lmos.spotter.MainInterface.Fragments.MostViewedTab;
+import com.lmos.spotter.MainInterface.Fragments.RecommendTab;
 
 /**
  * Created by Kryssel on 6/1/2017.
