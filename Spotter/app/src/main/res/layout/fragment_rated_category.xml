@@ -5,12 +5,9 @@
     android:layout_height="match_parent"
     tools:context="com.lmos.spotter.FragmentViewedCategory">
 
-
-    <TextView
-        android:id="@+id/textView"
-        android:gravity="center"
+    <ListView
+        android:id = "@+id/hotelMostRatedList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize = "40sp"
-        android:text="Most Rated" />
+        android:layout_height="match_parent" />
+
 </RelativeLayout>

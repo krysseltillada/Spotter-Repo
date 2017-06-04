@@ -4,6 +4,8 @@ package com.lmos.spotter;
  * Created by Kryssel on 6/1/2017.
  */
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -16,13 +18,16 @@ import android.widget.Toast;
 
 public class MostViewedTab extends Fragment {
 
+    View mostViewTabView;
+    ListView mostViewedListview;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View mostViewTabView = inflater.inflate(R.layout.most_viewed_tab, container, false);
+        mostViewTabView = inflater.inflate(R.layout.most_viewed_tab, container, false);
 
-        ListView mostViewedListview = (ListView) mostViewTabView.findViewById(R.id.mostViewList);
+        mostViewedListview = (ListView) mostViewTabView.findViewById(R.id.mostViewList);
 
         mostViewedListview.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
@@ -46,11 +51,46 @@ public class MostViewedTab extends Fragment {
             }
         });
 
-        ListPlaceAdapter mostViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[20]);
+        new ListLoader().execute();
 
-
-        mostViewedListview.setAdapter(mostViewAdapter);
 
         return mostViewTabView;
     }
+
+    class ListLoader extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog progressDialog;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog = new ProgressDialog(getContext());
+
+            progressDialog.setMessage("loading");
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            progressDialog.dismiss();
+
+            ListPlaceAdapter mostViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[20]);
+
+
+            mostViewedListview.setAdapter(mostViewAdapter);
+        }
+    }
+
+
+
 }

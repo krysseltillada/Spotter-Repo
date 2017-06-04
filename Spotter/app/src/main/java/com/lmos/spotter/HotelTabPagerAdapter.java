@@ -14,7 +14,7 @@ public class HotelTabPagerAdapter extends FragmentStatePagerAdapter {
 
     public HotelTabPagerAdapter (FragmentManager fragmentManager, int tabLength) {
         super(fragmentManager);
-        tabLength = tabLength;
+        tbLength = tabLength;
     }
 
     @Override
@@ -25,11 +25,12 @@ public class HotelTabPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return new FragmentRatedCategory();
             case 2:
-                break;
-
+                return new FragmentRecommendCategory();
             default:
                 break;
         }
+
+        return null;
     }
 
     @Override

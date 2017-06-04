@@ -4,6 +4,8 @@ package com.lmos.spotter;
  * Created by Kryssel on 6/1/2017.
  */
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -13,16 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-public class MostRated extends Fragment {
+public class MostRatedTab extends Fragment {
 
-    @Nullable
-    @Override
+
+    View mostRatedTabView;
+    ListView mostRatedListview;
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
-        View mostRatedTabView = inflater.inflate(R.layout.most_rated_tab, container, false);
+        mostRatedTabView = inflater.inflate(R.layout.most_rated_tab, container, false);
 
-        ListView mostRatedListview = (ListView) mostRatedTabView.findViewById(R.id.mostRatedList);
+        mostRatedListview = (ListView) mostRatedTabView.findViewById(R.id.mostRatedList);
 
         mostRatedListview.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
@@ -46,10 +50,41 @@ public class MostRated extends Fragment {
             }
         });
 
-        ListPlaceAdapter mostRatedAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[7]);
-
-        mostRatedListview.setAdapter(mostRatedAdapter);
+        new ListLoader().execute();
 
         return mostRatedTabView;
+    }
+
+    class ListLoader extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog progressDialog;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog = new ProgressDialog(getContext());
+
+            progressDialog.setMessage("loading");
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            progressDialog.dismiss();
+
+            ListPlaceAdapter mostRatedAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[20]);
+
+            mostRatedListview.setAdapter(mostRatedAdapter);
+        }
     }
 }

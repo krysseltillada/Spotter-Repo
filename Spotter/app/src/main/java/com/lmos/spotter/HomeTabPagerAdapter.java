@@ -2,13 +2,12 @@ package com.lmos.spotter;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
 
 /**
  * Created by Kryssel on 6/1/2017.
  */
 
-class HomeTabPagerAdapter extends FragmentStatePagerAdapter {
+public class HomeTabPagerAdapter extends FragmentStatePagerAdapter {
 
     int numTabs;
 
@@ -23,7 +22,7 @@ class HomeTabPagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return new MostViewedTab();
             case 1:
-                return new MostRated();
+                return new MostRatedTab();
             case 2:
                 return new RecommendTab();
             default:

@@ -73,7 +73,6 @@ public class HotelActivity extends AppCompatActivity
         });
 
 
-
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.hotelToolbar);
