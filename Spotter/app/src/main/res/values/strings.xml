@@ -32,5 +32,6 @@
     <string name="title_activity_tourist_spot">TouristSpotActivity</string>
     <string name="title_activity_restaurant">RestaurantActivity</string>
     <string name="title_activity_favorites">FavoritesActivity</string>
+    <string name="place_icon_logo">This will hold the icon or logo of the chosen place</string>
 
 </resources>

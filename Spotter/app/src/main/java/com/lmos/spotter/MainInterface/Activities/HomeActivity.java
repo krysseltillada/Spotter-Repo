@@ -2,6 +2,7 @@ package com.lmos.spotter.MainInterface.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -25,7 +26,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-
 import com.lmos.spotter.MainInterface.Adapters.HomeTabPagerAdapter;
 import com.lmos.spotter.Utilities.KeyboardState;
 import com.lmos.spotter.SearchResultsActivity;
@@ -36,6 +36,7 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SearchView searchBtn;
+    SimpleCursorAdapter searchAdapter;
 
 
     private void startMostPopularFlipping() {
@@ -50,7 +51,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    String[] sampleWords = {"hello", "judy", "sample", "text", "june"};
+    String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
     private void initializeUI() {
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -106,7 +107,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         searchBtn = (SearchView) actionBarView.findViewById(R.id.search_view);
-        final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(getApplicationContext(),
+        searchAdapter = new SimpleCursorAdapter(getApplicationContext(),
                 android.R.layout.simple_list_item_1,
                 null,
                 from,
@@ -123,7 +124,11 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public boolean onSuggestionClick(int position) {
-                startActivity(new Intent(getApplicationContext(), SearchResultsActivity.class));
+
+
+                Intent send_data = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                send_data.putExtra("type", getSuggestionText(position));
+                startActivity(send_data);
                 return true;
             }
         });
@@ -225,6 +230,16 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
+    }
+
+    private String getSuggestionText(int position){
+
+        String selected_item = "";
+        Cursor searchCursor = searchAdapter.getCursor();
+        if(searchCursor.moveToPosition(position)){
+            selected_item = searchCursor.getString(1);
+        }
+        return selected_item;
     }
 
     /**

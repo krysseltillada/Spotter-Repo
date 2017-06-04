@@ -21,14 +21,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".SearchResultsActivity"
-            android:parentActivityName=".MainInterface.Activities.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
+
         <activity
             android:name=".MainInterface.Activities.HotelActivity"
             android:label="@string/title_activity_hotel"
@@ -44,7 +45,7 @@
         <activity
             android:name=".MainInterface.Activities.FavoritesActivity"
             android:label="@string/title_activity_favorites"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
