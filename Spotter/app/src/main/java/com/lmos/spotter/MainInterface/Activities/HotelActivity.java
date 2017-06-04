@@ -163,12 +163,8 @@ public class HotelActivity extends AppCompatActivity
             }
         });
 
-
-        ///BUGGGGGGGGGGGGGGGGGGGGGGG
-
         final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.hotel_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
-
 
         activityRootView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,8 +180,6 @@ public class HotelActivity extends AppCompatActivity
                 int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
 
                 if (heightDiff > Utilities.dpToPx(getApplicationContext(), 200)) {
-
-                    Log.d("test", "aa");
 
                     if (!keyboardState.isKeyboardUp)
                         keyboardState.isKeyboardUp = true;

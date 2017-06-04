@@ -181,8 +181,6 @@ public class RestaurantActivity extends AppCompatActivity
 
                 if (heightDiff > Utilities.dpToPx(getApplicationContext(), 200)) {
 
-                    Log.d("test", "aa");
-
                     if (!keyboardState.isKeyboardUp)
                         keyboardState.isKeyboardUp = true;
                 } else {
