@@ -17,7 +17,6 @@
             app:expandedTitleGravity="left"
             app:expandedTitleTextAppearance="@style/collapsingToolbarStyle"
             app:collapsedTitleTextAppearance="@style/collapsingToolbarStyle"
-            app:statusBarScrim="@style/collapsingToolbarStyle"
             app:contentScrim="@color/blackTransparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -34,7 +33,7 @@
                 android:id="@+id/action_bar_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_marginBottom="100dp"
+                android:layout_marginBottom="70dp"
                 android:background="@color/transparent"
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
                 app:layout_collapseMode="pin" />
