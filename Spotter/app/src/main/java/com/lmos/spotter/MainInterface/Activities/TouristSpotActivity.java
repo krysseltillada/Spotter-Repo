@@ -20,13 +20,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.lmos.spotter.MainInterface.Adapters.HotelTabPagerAdapter;
+import com.lmos.spotter.MainInterface.Adapters.CategoryTabPagerAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchResultsActivity;
 import com.lmos.spotter.Utilities.KeyboardState;
@@ -52,7 +51,7 @@ public class TouristSpotActivity extends AppCompatActivity
 
         touristTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        HotelTabPagerAdapter touristTabPagerAdapter = new HotelTabPagerAdapter(getSupportFragmentManager(),
+        CategoryTabPagerAdapter touristTabPagerAdapter = new CategoryTabPagerAdapter(getSupportFragmentManager(),
                 touristTabLayout.getTabCount());
 
         final ViewPager touristViewPager = (ViewPager)findViewById(R.id.tourist_pager);
@@ -166,7 +165,7 @@ public class TouristSpotActivity extends AppCompatActivity
 
         ///BUGGGGGGGGGGGGGGGGGGGGGGG
 
-        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.hotel_parent_layout);
+        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.tourist_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
 
 
@@ -208,7 +207,7 @@ public class TouristSpotActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "GPS is required to detect near places", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -253,11 +252,11 @@ public class TouristSpotActivity extends AppCompatActivity
             case R.id.Hotels:
                 Utilities.OpenActivity(getApplicationContext(), HotelActivity.class);
                 break;
-            case R.id.TouristSpots:
-                Utilities.OpenActivity(getApplicationContext(), TouristSpotActivity.class);
-                break;
             case R.id.Restaurants:
+                Utilities.OpenActivity(getApplicationContext(), RestaurantActivity.class);
                 break;
+            case R.id.Favorites:
+                Utilities.OpenActivity(getApplicationContext(), FavoritesActivity.class);
 
             default:
                 break;

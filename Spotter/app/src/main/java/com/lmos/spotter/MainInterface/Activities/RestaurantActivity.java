@@ -26,12 +26,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.lmos.spotter.MainInterface.Adapters.CategoryTabPagerAdapter;
-import com.lmos.spotter.Utilities.KeyboardState;
-import com.lmos.spotter.SearchResultsActivity;
-import com.lmos.spotter.Utilities.Utilities;
 import com.lmos.spotter.R;
+import com.lmos.spotter.SearchResultsActivity;
+import com.lmos.spotter.Utilities.KeyboardState;
+import com.lmos.spotter.Utilities.Utilities;
 
-public class HotelActivity extends AppCompatActivity
+public class RestaurantActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SearchView searchBtn;
@@ -39,31 +39,30 @@ public class HotelActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hotel);
+        setContentView(R.layout.activity_restaurant);
+        TabLayout restaurantTabLayout = (TabLayout)findViewById(R.id.restaurant_tab_layout);
 
-        TabLayout hotelTabLayout = (TabLayout)findViewById(R.id.hotel_tab_layout);
+        restaurantTabLayout.addTab(restaurantTabLayout.newTab().setText("Most Viewed"));
 
-        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Most Viewed"));
+        restaurantTabLayout.addTab(restaurantTabLayout.newTab().setText("Most Rated"));
 
-        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Most Rated"));
+        restaurantTabLayout.addTab(restaurantTabLayout.newTab().setText("Recommend"));
 
-        hotelTabLayout.addTab(hotelTabLayout.newTab().setText("Recommend"));
+        restaurantTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        hotelTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        CategoryTabPagerAdapter touristTabPagerAdapter = new CategoryTabPagerAdapter(getSupportFragmentManager(),
+                restaurantTabLayout.getTabCount());
 
-        CategoryTabPagerAdapter categoryTabPagerAdapter = new CategoryTabPagerAdapter(getSupportFragmentManager(),
-                                                                             hotelTabLayout.getTabCount());
+        final ViewPager restaurantViewPager = (ViewPager)findViewById(R.id.restaurant_pager);
 
-        final ViewPager hotelViewPager = (ViewPager)findViewById(R.id.hotel_pager);
+        restaurantViewPager.setAdapter(touristTabPagerAdapter);
+        restaurantViewPager.setOffscreenPageLimit(3);
+        restaurantViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener (restaurantTabLayout));
 
-        hotelViewPager.setAdapter(categoryTabPagerAdapter);
-        hotelViewPager.setOffscreenPageLimit(3);
-        hotelViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener (hotelTabLayout));
-
-        hotelTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        restaurantTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                hotelViewPager.setCurrentItem(tab.getPosition());
+                restaurantViewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -77,30 +76,30 @@ public class HotelActivity extends AppCompatActivity
             }
         });
 
-
         final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.hotelToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.restaurantToolbar);
 
         setSupportActionBar(toolbar);
 
-        final ActionBar hotelActionBar = getSupportActionBar();
+        final ActionBar restaurantActionBar = getSupportActionBar();
 
-        hotelActionBar.setTitle("Hotels");
+        restaurantActionBar.setTitle("Restaurants");
 
-        hotelActionBar.setDisplayHomeAsUpEnabled(true);
-        hotelActionBar.setDisplayShowCustomEnabled(true);
+        restaurantActionBar.setDisplayHomeAsUpEnabled(true);
+        restaurantActionBar.setDisplayShowCustomEnabled(true);
 
         final View actionBarView = inflator.inflate(R.layout.searchbar, null);
         final TextView txtHotel = (TextView) actionBarView.findViewById(R.id.txtHome);
 
-        txtHotel.setText("Hotels");
+        txtHotel.setText("Restaurants");
 
         final String[] from = new String[]{"judy"};
         final int[] to = new int[]{android.R.id.text1};
 
 
         searchBtn = (SearchView) actionBarView.findViewById(R.id.search_view);
+
         final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(getApplicationContext(),
                 android.R.layout.simple_list_item_1,
                 null,
@@ -163,10 +162,7 @@ public class HotelActivity extends AppCompatActivity
             }
         });
 
-
-        ///BUGGGGGGGGGGGGGGGGGGGGGGG
-
-        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.hotel_parent_layout);
+        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.restaurant_parent_layout);
         final KeyboardState keyboardState = new KeyboardState();
 
 
@@ -202,7 +198,7 @@ public class HotelActivity extends AppCompatActivity
         });
 
 
-        hotelActionBar.setCustomView(actionBarView);
+        restaurantActionBar.setCustomView(actionBarView);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -221,14 +217,11 @@ public class HotelActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         if (searchBtn.isIconified()) {
 
             if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -242,18 +235,6 @@ public class HotelActivity extends AppCompatActivity
         }
     }
 
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -264,11 +245,11 @@ public class HotelActivity extends AppCompatActivity
             case R.id.Home:
                 Utilities.OpenActivity(getApplicationContext(), HomeActivity.class);
                 break;
+            case R.id.Hotels:
+                Utilities.OpenActivity(getApplicationContext(), HotelActivity.class);
+                break;
             case R.id.TouristSpots:
                 Utilities.OpenActivity(getApplicationContext(), TouristSpotActivity.class);
-                break;
-            case R.id.Restaurants:
-                Utilities.OpenActivity(getApplicationContext(), RestaurantActivity.class);
                 break;
             case R.id.Favorites:
                 Utilities.OpenActivity(getApplicationContext(), FavoritesActivity.class);
@@ -276,7 +257,6 @@ public class HotelActivity extends AppCompatActivity
             default:
                 break;
         }
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -36,6 +36,14 @@
         <activity
             android:name=".MainInterface.Activities.TouristSpotActivity"
             android:label="@string/title_activity_tourist_spot"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainInterface.Activities.RestaurantActivity"
+            android:label="@string/title_activity_restaurant"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainInterface.Activities.FavoritesActivity"
+            android:label="@string/title_activity_favorites"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

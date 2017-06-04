@@ -30,5 +30,7 @@
     <string name="resend_lbl">Did not receive an e-mail?</string>
     <string name="title_activity_hotel">Hotels</string>
     <string name="title_activity_tourist_spot">TouristSpotActivity</string>
+    <string name="title_activity_restaurant">RestaurantActivity</string>
+    <string name="title_activity_favorites">FavoritesActivity</string>
 
 </resources>

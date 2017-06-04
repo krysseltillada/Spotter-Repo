@@ -210,7 +210,7 @@ public class HomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "GPS is required to detect places", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "GPS is required to detect near places", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -270,9 +270,7 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.Home:
-                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class);
-                break;
+
             case R.id.Hotels:
                 Utilities.OpenActivity(getApplicationContext(), HotelActivity.class);
                 break;
@@ -280,7 +278,10 @@ public class HomeActivity extends AppCompatActivity
                 Utilities.OpenActivity(getApplicationContext(), TouristSpotActivity.class);
                 break;
             case R.id.Restaurants:
+                Utilities.OpenActivity(getApplicationContext(), RestaurantActivity.class);
                 break;
+            case R.id.Favorites:
+                Utilities.OpenActivity(getApplicationContext(), FavoritesActivity.class);
 
             default:
                 break;

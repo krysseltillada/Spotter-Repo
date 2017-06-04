@@ -12,11 +12,11 @@ import com.lmos.spotter.MainInterface.Fragments.FragmentViewedCategory;
  * Created by Kryssel on 6/3/2017.
  */
 
-public class HotelTabPagerAdapter extends FragmentStatePagerAdapter {
+public class CategoryTabPagerAdapter extends FragmentStatePagerAdapter {
 
     int tbLength;
 
-    public HotelTabPagerAdapter (FragmentManager fragmentManager, int tabLength) {
+    public CategoryTabPagerAdapter(FragmentManager fragmentManager, int tabLength) {
         super(fragmentManager);
         tbLength = tabLength;
     }
