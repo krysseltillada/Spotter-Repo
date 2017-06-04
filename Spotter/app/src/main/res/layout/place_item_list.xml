@@ -11,7 +11,7 @@
         <ImageView
             android:contentDescription="most popular places"
             android:id = "@+id/itemRowBackground"
-           
+
             android:scaleType="centerCrop"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
@@ -59,7 +59,7 @@
             android:layout_marginTop="70dp"
             android:text="Good (304 reviews)"
             android:textColor="@color/white" />
-
+        <!--
         <RatingBar
             android:id="@+id/placeRating"
             android:layout_width="wrap_content"
@@ -68,7 +68,29 @@
             android:layout_marginTop="90dp"
             android:isIndicator="true"
             android:numStars="5"
-            android:rating="5" />
+            android:rating="5" /> -->
+
+        <ImageView
+            android:id="@+id/grade_icon"
+            android:layout_width="@dimen/grade_width"
+            android:layout_height="@dimen/grade_height"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="92dp"
+            android:src="@drawable/ic_grade_black_18dp"
+            android:alpha="0.5"/>
+
+        <TextView
+            android:id="@+id/general_rating_digit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="91dp"
+            android:layout_marginEnd="25dp"
+            android:paddingTop="@dimen/min_padding"
+            android:paddingBottom="@dimen/min_padding"
+            android:text="3.9"
+            android:textSize="@dimen/min_font_size"/>
 
         <ImageView
             android:id="@+id/placeCompanyLogo"
