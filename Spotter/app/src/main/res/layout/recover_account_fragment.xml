@@ -73,15 +73,16 @@
         android:textSize="@dimen/mid_font_size"
         android:layout_centerHorizontal="true"
         android:textAlignment="gravity"
-        android:textColor="@color/gray"
+        android:textColor="@color/white"
         android:text="@string/recover_msg"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/recover_acc_msg"
-        android:paddingStart="@dimen/min_padding"
-        android:paddingEnd="@dimen/min_padding"
+        android:paddingStart="@dimen/mid_padding"
+        android:layout_marginStart="@dimen/min_padding"
+        android:paddingEnd="@dimen/mid_padding"
         android:orientation="horizontal">
 
         <TextView
@@ -91,7 +92,7 @@
             android:padding="@dimen/min_padding"
             android:text="@string/resend_lbl"
             android:textSize="@dimen/mid_font_size"
-            android:textColor="@color/gray"/>
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/resend_btn"
