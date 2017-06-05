@@ -10,18 +10,19 @@
     <ImageView
         android:id="@+id/background_img_holder"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/login_bg_img_holder"
+        android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/traveler_bg3"
-        android:contentDescription="@string/blur_img_des"/>
+        android:contentDescription="@string/blur_img_des"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
     <RelativeLayout
         android:id="@+id/content_holder"
-        android:layout_width="@dimen/login_layout_width"
-        android:layout_height="@dimen/login_layout_height"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/layout_white_bg">
+        android:background="@drawable/alpha_transparent_bg">
 
         <ProgressBar
             android:layout_width="match_parent"
@@ -34,8 +35,8 @@
         <FrameLayout
             android:id="@+id/account_fragment_holder"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
 

@@ -60,7 +60,7 @@
         android:onClick="clickListener"
         android:text="@string/forgot_password"
         android:textSize="@dimen/min_font_size"
-        android:textColor="@color/gray"/>
+        android:textColor="@color/white"/>
 
     <Button
         android:id="@+id/sign_in"
@@ -89,7 +89,7 @@
             android:padding="@dimen/min_padding"
             android:text="@string/sign_up_lbl"
             android:textSize="@dimen/min_font_size"
-            android:textColor="@color/gray"/>
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/sign_up"
