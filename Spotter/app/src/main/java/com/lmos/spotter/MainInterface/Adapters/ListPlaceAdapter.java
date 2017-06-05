@@ -66,10 +66,11 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
             views.add((TextView) convertView.findViewById(R.id.txtLocation));
             views.add((TextView) convertView.findViewById(R.id.txtPrice));
             views.add((TextView) convertView.findViewById(R.id.txtReview));
-            views.add((ImageView) convertView.findViewById(R.id.itemRowBackground));
+           // views.add((ImageView) convertView.findViewById(R.id.itemRowBackground));
             views.add((ImageView) convertView.findViewById(R.id.placeCompanyLogo));
             //views.add((RatingBar) convertView.findViewById(R.id.placeRating));
 
+            /*
             ImageView backgroundRowItem = (ImageView) views.get(4);
 
             BitmapDrawable drawable;
@@ -77,7 +78,7 @@ public class ListPlaceAdapter extends ArrayAdapter <String> {
             drawable = ((BitmapDrawable) this.getContext().getResources().getDrawable(R.drawable.traveler_bg3));
 
             new ImageBlurLoader(backgroundRowItem,
-                    getContext()).execute(drawable.getBitmap());
+                    getContext()).execute(drawable.getBitmap());*/
 
             for (View view : views)
                 view.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fade_in));
