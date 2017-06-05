@@ -29,8 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/negative_margin_8"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:indeterminate="true"
-            android:visibility="gone"/>
+            android:indeterminate="true" />
 
         <FrameLayout
             android:id="@+id/account_fragment_holder"
