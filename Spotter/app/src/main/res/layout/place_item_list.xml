@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="145dp"
     android:layout_alignParentStart="true"
     android:layout_alignParentTop="true"
     android:background="@drawable/layout_white_bg">
@@ -11,7 +11,6 @@
         <ImageView
             android:id="@+id/itemRowBackground"
             android:layout_width="match_parent"
-
             android:layout_height="match_parent"
             android:contentDescription="most popular places"
             android:scaleType="centerCrop" />
@@ -25,7 +24,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:text="Pico Cove Hotel"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             android:textSize="20sp" />
 
         <TextView
@@ -36,7 +35,6 @@
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             android:text="Batangas"
-            android:textColor="@color/white"
             android:textSize="20sp" />
 
         <TextView
@@ -47,7 +45,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginTop="40dp"
             android:text="₱200.00"
-            android:textColor="@color/white" />
+             />
 
         <TextView
             android:id="@+id/txtReview"
@@ -56,8 +54,9 @@
             android:layout_gravity="right"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="70dp"
+            android:textColor = "@color/sprayBlue"
             android:text="Good (304 reviews)"
-            android:textColor="@color/white" />
+            />
         <!--
         <RatingBar
             android:id="@+id/placeRating"
@@ -69,27 +68,17 @@
             android:numStars="5"
             android:rating="5" /> -->
 
-        <ImageView
-            android:id="@+id/grade_icon"
-            android:layout_width="@dimen/grade_width"
-            android:layout_height="@dimen/grade_height"
-            android:layout_gravity="end"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="92dp"
-            android:alpha="0.5"
-            android:src="@drawable/ic_grade_black_18dp" />
-
         <TextView
             android:id="@+id/general_rating_digit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_marginEnd="25dp"
+            android:layout_marginEnd="36dp"
             android:layout_marginTop="91dp"
             android:paddingBottom="@dimen/min_padding"
             android:paddingTop="@dimen/min_padding"
             android:text="3.9"
-            android:textSize="@dimen/min_font_size" />
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/placeCompanyLogo"
@@ -98,6 +87,16 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="45dp"
             android:background="@drawable/traveler_bg3" />
+
+        <ImageView
+            android:id="@+id/grade_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="9dp"
+            android:layout_marginTop="93dp"
+            android:alpha="0.5"
+            android:src="@drawable/ic_grade_black_18dp" />
 
 </FrameLayout>
 

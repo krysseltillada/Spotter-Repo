@@ -1,99 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:background="@color/colorAccent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.lmos.spotter.MainInterface.Activities.HomeActivity"
-        tools:showIn="@layout/app_bar_home"
-        android:id="@+id/home_parent_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/home_parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.lmos.spotter.MainInterface.Activities.HomeActivity"
+    tools:showIn="@layout/app_bar_home">
 
     <ViewFlipper
-            android:id="@+id/viewFlipManager"
+        android:id="@+id/viewFlipManager"
+        android:layout_width="match_parent"
+        android:layout_height="180dp">
+
+        <ImageView
+            android:id="@+id/popularImageView1"
             android:layout_width="match_parent"
-            android:layout_height="201dp">
+            android:layout_height="201dp"
+            android:adjustViewBounds="false"
+            android:background="@drawable/traveler_bg2"
+            android:contentDescription="@string/most_popular_desc"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/popularImageView1"
-                android:contentDescription="@string/most_popular_desc"
-                android:layout_width="match_parent"
-                android:layout_height="201dp"
-                android:adjustViewBounds="false"
-                android:background="@drawable/traveler_bg2"
-                android:cropToPadding="false"
-                android:scaleType="centerCrop"
-                android:visibility="gone" />
-
-            <ImageView
-                android:contentDescription="@string/most_popular_desc"
-                android:id="@+id/popularImageView2"
-                android:layout_width="match_parent"
-                android:layout_height="201dp"
-                android:adjustViewBounds="false"
-                android:background="@drawable/traveler_bg"
-                android:cropToPadding="false"
-                android:scaleType="centerCrop"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/popularImageView3"
-                android:contentDescription="@string/most_popular_desc"
-                android:layout_width="match_parent"
-                android:layout_height="201dp"
-                android:adjustViewBounds="false"
-                android:background="@drawable/traveler_bg3"
-                android:cropToPadding="false"
-                android:scaleType="centerCrop"
-                android:visibility="gone" />
-        </ViewFlipper>
-
-
-        <TextView
-            android:id="@+id/textview"
+        <ImageView
+            android:id="@+id/popularImageView2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-50dp"
-            android:background="@color/blackTransparent"
-            android:gravity="end"
-            android:paddingBottom="8dp"
-            android:paddingEnd="20dp"
-            android:paddingStart="20dp"
-            android:paddingTop="8dp"
-            android:text="@string/home_most_popular"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:layout_height="201dp"
+            android:adjustViewBounds="false"
+            android:background="@drawable/traveler_bg"
+            android:contentDescription="@string/most_popular_desc"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/textview2"
+        <ImageView
+            android:id="@+id/popularImageView3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="-43dp"
-            android:gravity="left"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:text="Solaire Manila city"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:layout_height="201dp"
+            android:adjustViewBounds="false"
+            android:background="@drawable/traveler_bg3"
+            android:contentDescription="@string/most_popular_desc"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+    </ViewFlipper>
+
+
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-50dp"
+        android:background="@color/blackTransparent"
+        android:gravity="end"
+        android:paddingBottom="8dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:paddingTop="8dp"
+        android:text="@string/home_most_popular"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textview2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="-43dp"
+        android:gravity="left"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="Solaire Manila city"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="320dp">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="50dp">
-
-        </android.support.v4.view.ViewPager>
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
@@ -104,6 +95,13 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:elevation="6dp" />
 
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp" />
+
+
     </FrameLayout>
- </LinearLayout>
+</LinearLayout>
 
