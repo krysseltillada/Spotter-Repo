@@ -1,20 +1,34 @@
 package com.lmos.spotter;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.lmos.spotter.MainInterface.Activities.HomeActivity;
+import com.lmos.spotter.Utilities.Utilities;
 
 public class LoginActivity extends AppCompatActivity {
+
+    ImageView imgHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        imgHolder = (ImageView) findViewById(R.id.background_img_holder);
+        imgHolder.setImageBitmap(
+                Utilities.BlurImg.blurImg(
+                        this,
+                        ((BitmapDrawable) getResources().getDrawable(R.drawable.traveler_bg)).getBitmap(),
+                        2f
+                )
+        );
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.account_fragment_holder,new FragmentSignIn(), "Sign In")
