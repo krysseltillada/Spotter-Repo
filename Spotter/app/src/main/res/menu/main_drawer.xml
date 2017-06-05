@@ -41,15 +41,11 @@
     <item android:title="Settings">
         <menu>
 
-
             <item
-                android:id="@+id/accountSettings"
-                android:icon="@drawable/accounts"
-                android:title="account settings" />
-            <item
-                android:id="@+id/appSettings"
+                android:id="@+id/Settings"
                 android:icon="@drawable/settings"
-                android:title="app settings" />
+                android:title="settings" />
+
         </menu>
     </item>
 
