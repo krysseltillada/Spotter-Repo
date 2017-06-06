@@ -1,21 +1,22 @@
 package com.lmos.spotter.Utilities;
 
-import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
+import android.graphics.BitmapFactory;
 import android.provider.BaseColumns;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Created by Kryssel on 6/2/2017.
@@ -48,6 +49,18 @@ public class Utilities {
                 tmpOut.copyTo(output_bitmap);
 
                 return output_bitmap;
+            }
+
+            public static String toString(Bitmap bitmap){
+                ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
+                byte[] b = byteOutputStream.toByteArray();
+                return Base64.encodeToString(b, Base64.DEFAULT);
+            }
+
+            public static Bitmap getBitmap(String encodedBitmap){
+                byte[] decodeBitmap = Base64.decode(encodedBitmap, Base64.DEFAULT);
+                 return BitmapFactory.decodeByteArray(decodeBitmap, 0, decodeBitmap.length);
             }
 
     }

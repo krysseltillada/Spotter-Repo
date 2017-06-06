@@ -41,7 +41,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 break;
             case "Hotel":
                 setHeaderText("City of Dreams", "Inside Nightmare");
-                //attachFragment(new FragmentSearchResultGeneral(), "General");
+                attachFragment(new FragmentSearchResult(), "Hotel");
                 break;
 
         }
