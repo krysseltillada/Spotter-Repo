@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -27,10 +28,17 @@ public class FragmentSearchResult extends Fragment  implements OnMapReadyCallbac
 
         View thisView = inflater.inflate(R.layout.search_result_hotel, container, false);
 
-        Bundle mapViewBundle = null;
-
         mapView = (MapView) thisView.findViewById(R.id.map);
-        mapView.onCreate(mapViewBundle);
+        mapView.onCreate(savedInstanceState);
+
+        mapView.onResume();
+
+        try{
+            MapsInitializer.initialize(getContext().getApplicationContext());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         mapView.getMapAsync(this);
 
         return thisView;
@@ -39,6 +47,7 @@ public class FragmentSearchResult extends Fragment  implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        //googleMap.setMyLocationEnabled(true);
         googleMap.addMarker(new MarkerOptions()
             .position(new LatLng(120, 118))
             .title("Testing Map"));
@@ -48,6 +57,18 @@ public class FragmentSearchResult extends Fragment  implements OnMapReadyCallbac
     public void onStart() {
         super.onStart();
         mapView.onStart();
+    }
+
+    @Override
+    public void onPause() {
+        mapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
     }
 
     @Override
