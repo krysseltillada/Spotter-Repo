@@ -135,7 +135,6 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public boolean onSuggestionClick(int position) {
 
-
                 Intent send_data = new Intent(getApplicationContext(), SearchResultsActivity.class);
                 send_data.putExtra("type", getSuggestionText(position));
                 startActivity(send_data);

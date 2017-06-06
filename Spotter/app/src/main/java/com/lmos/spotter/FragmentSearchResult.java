@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -51,6 +52,7 @@ public class FragmentSearchResult extends Fragment  implements OnMapReadyCallbac
         googleMap.addMarker(new MarkerOptions()
             .position(new LatLng(120, 118))
             .title("Testing Map"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-33.88, 151.21), 15f));
     }
 
     @Override
