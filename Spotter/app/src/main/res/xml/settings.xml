@@ -4,9 +4,16 @@
         android:title = "Account settings">
 
         <EditTextPreference
+            android:key = "email"
+            android:title = "Email"
+            android:summary = "krysseltillada@gmail.com"
+            />
+
+        <EditTextPreference
             android:key = "username"
             android:title = "username"
-            android:summary = "krysseltillada"/>
+            android:summary ="krysseltillada"
+            />
 
         <EditTextPreference
             android:key = "password"
@@ -19,6 +26,11 @@
     <PreferenceCategory
         android:title="App settings"
         >
+
+        <CheckBoxPreference
+            android:key = "notifyGPS"
+            android:title="Always Notify GPS"
+            android:summary="always notify the user regarding on gps"/>
 
         <Preference
             android:key = "clearFavorites"
