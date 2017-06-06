@@ -30,9 +30,6 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         clearFavoritesItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                                                             @Override
                                                             public boolean onPreferenceClick(Preference preference) {
-                                                                new AlertDialog.Builder(SettingsActivity.this)
-                                                                               .setTitle("Are you sure?").show();
-
                                                                 return false;
                                                             }
                                                         }
