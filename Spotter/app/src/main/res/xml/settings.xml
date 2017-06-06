@@ -20,6 +20,11 @@
         android:title="App settings"
         >
 
+        <Preference
+            android:key = "clearFavorites"
+            android:title = "Clear Favorites"
+            android:summary="this will clear all of your saved places"
+            />
 
     </PreferenceCategory>
 
