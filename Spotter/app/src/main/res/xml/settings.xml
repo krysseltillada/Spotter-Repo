@@ -23,7 +23,6 @@
 
     </PreferenceCategory>
 
-
     <PreferenceCategory
         android:title="App settings"
         >
@@ -39,7 +38,26 @@
             android:summary="this will clear all of your saved places"
             />
 
+
+
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="About">
+
+        <Preference
+            android:title = "Version"
+            android:summary = "0.1"
+            />
+
+        <Preference
+            android:title = "Developers email"
+            android:summary = "krysseltillada@gmail.com \nemmanmisodiel@gmail.com"
+            />
+
+    </PreferenceCategory>
+
+
 
 
 </PreferenceScreen>
