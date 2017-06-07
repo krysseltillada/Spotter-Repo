@@ -9,4 +9,5 @@
 	<color name="gray">#455A64</color>
     <color name="transparent">#00000000</color>
     <color name="sprayBlue"> #81CFE0 </color>
+    <color name="pink"> #F06292 </color>
 </resources>
