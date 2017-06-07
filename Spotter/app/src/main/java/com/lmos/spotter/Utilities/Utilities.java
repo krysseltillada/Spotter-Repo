@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.renderscript.Allocation;
 import android.renderscript.Element;

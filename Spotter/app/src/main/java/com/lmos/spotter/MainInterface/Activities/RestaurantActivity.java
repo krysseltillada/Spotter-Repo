@@ -251,7 +251,6 @@ public class RestaurantActivity extends AppCompatActivity
                 break;
             case R.id.Favorites:
                 Utilities.OpenActivity(getApplicationContext(), FavoritesActivity.class);
-
             default:
                 break;
         }
