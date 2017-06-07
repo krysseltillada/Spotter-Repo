@@ -35,6 +35,6 @@
     <dimen name="text_margin">16dp</dimen>
 
     <!-- image size -->
-    <dimen name="image_size_min">50dp</dimen>
+    <dimen name="image_size_min">70dp</dimen>
 
 </resources>

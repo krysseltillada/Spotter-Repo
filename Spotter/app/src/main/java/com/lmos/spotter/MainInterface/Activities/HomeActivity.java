@@ -24,14 +24,14 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+
 import com.lmos.spotter.MainInterface.Adapters.HomeTabPagerAdapter;
-import com.lmos.spotter.Utilities.KeyboardState;
-import com.lmos.spotter.SearchResultsActivity;
-import com.lmos.spotter.Utilities.Utilities;
 import com.lmos.spotter.R;
+import com.lmos.spotter.SearchResultsActivity;
+import com.lmos.spotter.Utilities.KeyboardState;
+import com.lmos.spotter.Utilities.Utilities;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -140,6 +140,7 @@ public class HomeActivity extends AppCompatActivity
                 send_data.putExtra("type", getSuggestionText(position));
                 startActivity(send_data);
                 return true;
+
             }
         });
 

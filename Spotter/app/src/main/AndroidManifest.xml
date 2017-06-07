@@ -3,12 +3,18 @@
     package="com.lmos.spotter">
 
     <application
+        android:largeHeap="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAsY2k2M1rOeO-P2F1fxkEmkCAqe_263kw" />
+
         <activity
             android:name=".MainInterface.Activities.HomeActivity"
             android:label="@string/title_activity_home"
