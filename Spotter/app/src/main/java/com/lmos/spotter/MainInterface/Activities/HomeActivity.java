@@ -299,7 +299,9 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.Favorites:
                 Utilities.OpenActivity(getApplicationContext(), FavoritesActivity.class);
-
+                break;
+            case R.id.Settings:
+                Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class);
             default:
                 break;
         }

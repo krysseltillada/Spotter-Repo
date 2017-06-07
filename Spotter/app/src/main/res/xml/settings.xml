@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title = "Account settings">
+
+        <EditTextPreference
+            android:key = "email"
+            android:title = "Email"
+            android:summary = "krysseltillada@gmail.com"
+            
+            />
+
+        <EditTextPreference
+            android:key = "username"
+            android:title = "username"
+            android:summary ="krysseltillada"
+            />
+
+        <EditTextPreference
+            android:key = "password"
+            android:title = "password"
+            android:summary = "123456" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="App settings"
+        >
+
+        <CheckBoxPreference
+            android:key = "notifyGPS"
+            android:title="Always Notify GPS"
+            android:summary="always notify the user regarding on gps"/>
+
+        <Preference
+            android:key = "clearFavorites"
+            android:title = "Clear Favorites"
+            android:summary="this will clear all of your saved places"
+            />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

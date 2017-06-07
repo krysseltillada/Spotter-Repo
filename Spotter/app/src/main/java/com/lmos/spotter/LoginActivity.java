@@ -44,8 +44,7 @@ public class LoginActivity extends AppCompatActivity {
                 switchFragment(new FragmentSignUp());
                 return;
             case R.id.sign_in:
-                Intent launchHome = new Intent(this, HomeActivity.class);
-                startActivity(launchHome);
+                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class);
                 return;
             case R.id.forgot_pass:
                 switchFragment(new FragmentRecover());
