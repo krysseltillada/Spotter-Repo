@@ -1,21 +1,12 @@
 package com.lmos.spotter.MainInterface.Activities;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
@@ -26,27 +17,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.google.android.gms.location.LocationServices;
 import com.lmos.spotter.MainInterface.Adapters.HomeTabPagerAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchResultsActivity;
 import com.lmos.spotter.Utilities.KeyboardState;
 import com.lmos.spotter.Utilities.Utilities;
 
-import java.io.IOException;
-import java.security.Provider;
-import java.util.List;
-import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,6 +40,27 @@ public class HomeActivity extends AppCompatActivity
     SearchView searchBtn;
     SimpleCursorAdapter searchAdapter;
 
+    public static void HideView (final View view) {
+        view.setAnimation(AnimationUtils.loadAnimation(view.getContext(), R.anim.slide_down));
+        view.getAnimation().setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+    }
 
     private void startMostPopularFlipping() {
 
@@ -77,80 +84,14 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more detail
-                    ActivityCompat.requestPermissions(HomeActivity.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION},
-                            1);
-
-                }
-
-                LocationListener locationListener = new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-
-                        Snackbar.make(HomeActivity.this.getCurrentFocus(),
-                                     "Location lat: " + String.valueOf(location.getLatitude()) + "\n"
-                                                      + "long: " + String.valueOf(location.getLongitude()), Snackbar.LENGTH_LONG).show();
+                Intent launchFindPlaceActivity = new Intent (HomeActivity.this.getApplicationContext(),
+                                                                               FindPlacesActivity.class);
 
 
-                        /*
 
-                        Geocoder geocoder = new Geocoder(HomeActivity.this, Locale.getDefault());
+                startActivity(launchFindPlaceActivity);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
-                        try {
-
-                            List<Address>  cityAddress = geocoder.getFromLocation(location.getLatitude(),
-                                                                                  location.getLongitude(),
-                                                                                  1);
-
-                            if (cityAddress.size() > 0) {
-
-                                String message = "your at " + cityAddress.get(0).getAddressLine(0);
-
-                                Snackbar.make(HomeActivity.this.getCurrentFocus(), message, Snackbar.LENGTH_LONG).show();
-
-                            }
-                        } catch (IOException e) {
-
-                            Log.d("exception", e.getMessage());
-
-                            e.printStackTrace();
-                        }
-
-                        */
-
-
-                    }
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                        Log.d("Loc Callback", "onStatusChanged");
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-                        Log.d("Loc Callback", "onProviderEnabled");
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-                        Log.d("Loc Callback", "onProviderDisabled");
-                    }
-                };
-
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-
-               // Snackbar.make(view, "GPS is required to detect near places", Snackbar.LENGTH_LONG)
-                 //       .setAction("Action", null).show();
             }
         });
 
