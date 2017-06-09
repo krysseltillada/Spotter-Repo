@@ -54,6 +54,9 @@ public class SearchResultsActivity extends AppCompatActivity {
             case "Hotel":
                 setHeaderText("City of Dreams", "Inside Nightmare");
                 attachFragment(new FragmentSearchResult(), "Hotel", R.id.search_content_holder);
+                findViewById(R.id.search_content_wrapper).setBackground(
+                        getResources().getDrawable(R.drawable.layout_white_bg)
+                );
                 break;
 
         }

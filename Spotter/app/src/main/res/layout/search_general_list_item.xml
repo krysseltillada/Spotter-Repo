@@ -9,7 +9,7 @@
         android:layout_width="80dp"
         android:layout_height="90dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/traveler_bg2" />
+        android:src="@drawable/place3" />
     <TextView
         android:id="@+id/general_list_name"
         android:layout_width="wrap_content"

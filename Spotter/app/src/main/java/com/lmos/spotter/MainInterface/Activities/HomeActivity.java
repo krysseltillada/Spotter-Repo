@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
@@ -16,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -182,6 +184,7 @@ public class HomeActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "Favorites", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.Settings:
+                Utilities.OpenActivity(this,SettingsActivity.class, "");
                 Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -204,8 +207,6 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Intent launchSearchResult = new Intent(getApplication(), SearchResultsActivity.class);
-        getApplicationContext().startActivity(launchSearchResult);
         return false;
     }
 
@@ -217,6 +218,16 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (searchBtn.isIconified()) {
+
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+
+        } else {
+            searchBtn.setIconified(true);
+        }
     }
 }

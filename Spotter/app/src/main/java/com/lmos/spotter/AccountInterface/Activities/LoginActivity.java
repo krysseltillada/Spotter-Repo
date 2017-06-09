@@ -1,5 +1,7 @@
 package com.lmos.spotter.AccountInterface.Activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
                 switchFragment(new FragmentSignUp());
                 return;
             case R.id.sign_in:
-                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, "login");
+                startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 return;
             case R.id.forgot_pass:
                 switchFragment(new FragmentRecover());
