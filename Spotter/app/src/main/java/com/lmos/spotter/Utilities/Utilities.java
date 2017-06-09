@@ -283,6 +283,7 @@ public class Utilities {
 
     public static void OpenActivity (Context con, Class<?> cname) {
         Intent requestActivity = new Intent(con, cname);
+        requestActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         con.startActivity(requestActivity);
     }
 

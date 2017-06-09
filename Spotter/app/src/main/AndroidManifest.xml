@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
@@ -59,12 +58,7 @@
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".MainInterface.Activities.FindPlacesActivity"
-            android:label="@string/title_activity_find_places"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MainInterface.Activities.lol"
-            android:label="@string/title_activity_lol"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

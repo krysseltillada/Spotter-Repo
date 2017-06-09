@@ -40,27 +40,6 @@ public class HomeActivity extends AppCompatActivity
     SearchView searchBtn;
     SimpleCursorAdapter searchAdapter;
 
-    public static void HideView (final View view) {
-        view.setAnimation(AnimationUtils.loadAnimation(view.getContext(), R.anim.slide_down));
-        view.getAnimation().setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-    }
 
     private void startMostPopularFlipping() {
 
@@ -90,7 +69,7 @@ public class HomeActivity extends AppCompatActivity
 
 
                 startActivity(launchFindPlaceActivity);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
             }
         });
