@@ -16,6 +16,11 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.lmos.spotter.R;
 
 import java.io.ByteArrayOutputStream;
 
@@ -299,6 +304,11 @@ public class Utilities {
         }
 
         suggestion.changeCursor(suggestions);
+    }
+
+    public static void loadGifImageView (Context context, ImageView target, int drawableId) {
+        GlideDrawableImageViewTarget gifLoaderImage = new GlideDrawableImageViewTarget(target);
+        Glide.with(context).load(drawableId).into(gifLoaderImage);
     }
 
     public static float dpToPx(Context context, float valueInDp) {

@@ -9,21 +9,24 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.lmos.spotter.R;
+import com.lmos.spotter.Utilities.Utilities;
 
 import java.io.IOException;
 import java.util.List;
@@ -102,12 +105,6 @@ public class FindPlacesActivity extends AppCompatActivity implements GoogleApiCl
             @Override
             public void onLocationChanged(Location location) {
 
-                TextView txtLatitude = (TextView)findViewById(R.id.latitude);
-                TextView txtLongtitude = (TextView)findViewById(R.id.longtitude);
-
-                txtLatitude.setText("Latitude: " + String.valueOf(location.getLatitude()));
-                txtLongtitude.setText("Longtitude: " + String.valueOf(location.getLongitude()));
-
                 getNamedLocation(location, this, locationManager);
 
             }
@@ -161,6 +158,11 @@ public class FindPlacesActivity extends AppCompatActivity implements GoogleApiCl
         getSupportActionBar().setTitle("");
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        ImageView gpsImageView = (ImageView) findViewById(R.id.gpsLoaderGif);
+
+        Utilities.loadGifImageView(this, gpsImageView, R.drawable.loadingplaces);
 
         test();
 

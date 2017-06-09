@@ -8,9 +8,11 @@
     tools:context="com.lmos.spotter.MainInterface.Activities.FindPlacesActivity">
 
     <ImageView
-        android:id = "@+id/loadingImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/loadingplaces"/>
+        android:id = "@+id/gpsLoaderGif"
+
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
