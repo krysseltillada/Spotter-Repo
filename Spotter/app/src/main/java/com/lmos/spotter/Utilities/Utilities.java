@@ -281,8 +281,12 @@ public class Utilities {
         return (bitmap);
     }
 
-    public static void OpenActivity (Context con, Class<?> cname) {
+    public static void OpenActivity (Context con, Class<?> cname, String callingActivity) {
         Intent requestActivity = new Intent(con, cname);
+
+        if(callingActivity.equals("login")){
+         requestActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
         con.startActivity(requestActivity);
     }
 

@@ -1,4 +1,4 @@
-package com.lmos.spotter;
+package com.lmos.spotter.SearchInterface.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.lmos.spotter.R;
 
 /**
  * Created by linker on 02/06/2017.
@@ -29,7 +31,7 @@ public class FragmentSearchResultGeneral extends Fragment {
 
         View thisView = inflater.inflate(R.layout.search_result_general, container, false);
 
-        tabLayout = (TabLayout) thisView.findViewById(R.id.tab_layout);
+        tabLayout = (TabLayout) thisView.findViewById(R.id.search_tab_layout);
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         mAdapter = new GeneralResultsAdapter();
         layoutManager = new LinearLayoutManager(getContext());

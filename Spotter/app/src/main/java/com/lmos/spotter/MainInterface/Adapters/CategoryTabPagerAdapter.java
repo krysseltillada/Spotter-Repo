@@ -4,10 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.lmos.spotter.MainInterface.Fragments.FragmentRatedCategory;
-import com.lmos.spotter.MainInterface.Fragments.FragmentRecommendCategory;
-import com.lmos.spotter.MainInterface.Fragments.FragmentViewedCategory;
-
 /**
  * Created by Kryssel on 6/3/2017.
  */
@@ -26,11 +22,11 @@ public class CategoryTabPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new FragmentViewedCategory();
+                //return new FragmentViewedCategory();
             case 1:
-                return FragmentRatedCategory.newInstance(testData);
+                //return FragmentRatedCategory.newInstance(testData);
             case 2:
-                return new FragmentRecommendCategory();
+                //return new FragmentRecommendCategory();
             default:
                 break;
         }

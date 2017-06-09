@@ -1,6 +1,5 @@
-package com.lmos.spotter;
+package com.lmos.spotter.AccountInterface.Activities;
 
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,8 +7,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
-
+import com.lmos.spotter.AccountInterface.Fragments.FragmentRecover;
+import com.lmos.spotter.AccountInterface.Fragments.FragmentSignIn;
+import com.lmos.spotter.AccountInterface.Fragments.FragmentSignUp;
 import com.lmos.spotter.MainInterface.Activities.HomeActivity;
+import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
 public class LoginActivity extends AppCompatActivity {
@@ -44,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
                 switchFragment(new FragmentSignUp());
                 return;
             case R.id.sign_in:
-                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class);
+                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, "login");
                 return;
             case R.id.forgot_pass:
                 switchFragment(new FragmentRecover());

@@ -24,7 +24,7 @@
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".AccountInterface.Activities.LoginActivity"
             android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,28 +33,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SearchResultsActivity"
+            android:name=".SearchInterface.Activities.SearchResultsActivity"
             android:theme="@style/NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
-        <activity
-            android:name=".MainInterface.Activities.HotelActivity"
-            android:label="@string/title_activity_hotel"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MainInterface.Activities.TouristSpotActivity"
-            android:label="@string/title_activity_tourist_spot"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MainInterface.Activities.RestaurantActivity"
-            android:label="@string/title_activity_restaurant"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MainInterface.Activities.FavoritesActivity"
-            android:label="@string/title_activity_favorites"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainInterface.Activities.SettingsActivity"
             android:label="@string/title_activity_settings" />

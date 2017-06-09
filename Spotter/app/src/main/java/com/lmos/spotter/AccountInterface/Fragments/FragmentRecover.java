@@ -1,4 +1,4 @@
-package com.lmos.spotter;
+package com.lmos.spotter.AccountInterface.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,19 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.lmos.spotter.R;
+
 /**
- * Created by linker on 06/06/2017.
+ * Created by linker on 02/06/2017.
  */
 
-public class FragmentSearchResult extends Fragment{
+public class FragmentRecover extends Fragment {
 
-     @Nullable
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View thisView = inflater.inflate(R.layout.search_result_hotel, container, false);
-
-
-        return thisView;
+        return inflater.inflate(R.layout.recover_account_fragment, container, false);
     }
 }
