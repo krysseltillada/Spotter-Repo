@@ -7,38 +7,10 @@
     android:background = "@color/colorPrimary"
     tools:context="com.lmos.spotter.MainInterface.Activities.FindPlacesActivity">
 
-    <TextView
-        android:id = "@+id/latitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text = "latitude: "
-        android:textSize = "20sp"
-        android:textColor = "@color/white"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/info"
-        android:layout_marginTop="107dp" />
-
-    <TextView
-        android:id = "@+id/longtitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text = "longtitude: "
-        android:textSize = "20sp"
-        android:textColor = "@color/white"
-        android:layout_marginTop="19dp"
-        android:layout_below="@+id/latitude"
-        android:layout_alignStart="@+id/latitude" />
-
-    <TextView
-        android:id="@+id/info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="finding places near you.."
-        android:textColor="@color/white"
-        android:textSize="30sp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="189dp" />
+    <ImageView
+        android:id = "@+id/loadingImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/loadingplaces"/>
 
 </RelativeLayout>
