@@ -11,10 +11,12 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.annotation.Dimension;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Size;
 import android.util.TypedValue;
 import android.widget.ImageView;
 
