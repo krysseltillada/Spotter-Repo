@@ -8,7 +8,7 @@
 
     <!-- width -->
     <dimen name="login_layout_width">300dp</dimen>
-    <dimen name="textInputLayout_width">180dp</dimen>
+    <dimen name="textInputLayout_width">220dp</dimen>
     <dimen name="account_btn_width">120dp</dimen>
     <dimen name="grade_width">15dp</dimen>
 

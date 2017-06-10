@@ -23,6 +23,30 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
+    private double Lat, Lng;
+
+    public static MapsLayoutFragment newInstance(double lat, double lng){
+
+        MapsLayoutFragment mapsLayoutFragment = new MapsLayoutFragment();
+
+        Bundle args = new Bundle();
+        args.putDouble("Lat", lat);
+        args.putDouble("Lang", lng);
+        mapsLayoutFragment.setArguments(args);
+
+        return mapsLayoutFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle getArgs = getArguments();
+        Lat = getArgs.getDouble("Lat");
+        Lng = getArgs.getDouble("Lng");
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -40,7 +64,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        LatLng ph = new LatLng(12.8797, 121.7740);
+        LatLng ph = new LatLng(Lat, Lng);
 
         googleMap.addMarker(new MarkerOptions().position(ph).title("It's more fun in the Philippines!"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(ph));

@@ -77,7 +77,6 @@
 
             </RelativeLayout>
 
-
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
@@ -93,19 +92,20 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/metallictoad"
+            android:background="@color/white"
             android:fillViewport="true">
 
             <FrameLayout
                 android:id="@+id/search_content_holder"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:fillViewport="true" />
 
             <FrameLayout
                 android:id="@+id/map_content_holder"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="300dp"
                 android:fillViewport="true"/>
 
             <TextView
@@ -120,18 +120,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:stepSize="0.5"
                 android:numStars="5"
-                android:rating="@integer/google_play_services_version"
-                android:progress="@integer/google_play_services_version"
-                android:progressTint="@color/colorAccent"/>
+                android:rating="3.5" />
 
             <include
                 layout="@layout/recycler_view_layout"
                 android:layout_width="match_parent"
-                android:layout_height="100dp" />
+                android:layout_height="200dp" />
 
         </LinearLayout>
-
 
     </android.support.v4.widget.NestedScrollView>
 

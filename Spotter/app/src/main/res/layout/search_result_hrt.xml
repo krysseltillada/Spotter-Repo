@@ -21,6 +21,12 @@
         android:lineSpacingMultiplier="1.2"
         android:text="Hotel is about something that I cannot think about but I still have to do this for layout purposes but I must admin that I cannot think of anything to say so I'll just say whatever it is to say."/>
 
+    <LinearLayout
+        android:id="@+id/place_deals"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

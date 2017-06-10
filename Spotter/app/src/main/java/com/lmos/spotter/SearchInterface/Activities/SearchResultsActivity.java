@@ -4,10 +4,14 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.lmos.spotter.MapsLayoutFragment;
 import com.lmos.spotter.R;
+import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
 
@@ -34,8 +39,10 @@ public class SearchResultsActivity extends AppCompatActivity {
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
     TextView place_name, place_content_desc;
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    SearchReviewsAdapter mAdapter;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
@@ -89,15 +96,22 @@ public class SearchResultsActivity extends AppCompatActivity {
         //Set the title on collapsing toolbar
         collapsingToolbarLayout.setTitle("");
 
+        /** Set RecyclerView for user reviews. **/
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mAdapter = new SearchReviewsAdapter();
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mAdapter);
+        /** End setting RecyclerView **/
+
         // Inflate map into Framelayout
-        attachFragment(new MapsLayoutFragment(), "Maps", R.id.map_content_holder);
+        attachFragment(MapsLayoutFragment.newInstance(12.8797, 121.7740), "Maps", R.id.map_content_holder);
 
         setSupportActionBar(toolbar);
 
         //Enable back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
 
     }
 

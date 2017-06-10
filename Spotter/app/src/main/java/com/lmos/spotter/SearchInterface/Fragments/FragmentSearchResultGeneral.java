@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.GeneralResultsAdapter;
@@ -36,6 +37,19 @@ public class FragmentSearchResultGeneral extends Fragment {
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         mAdapter = new GeneralResultsAdapter();
         layoutManager = new LinearLayoutManager(getContext());
+
+        // Set RecyclerView onClickListener
+        mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
+            @Override
+            public void OnItemClick(int pos, View view) {
+                Toast.makeText(getContext(), String.valueOf(pos), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void OnItemLongClick(int pos, View view) {
+                Toast.makeText(getContext(), String.valueOf(pos), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Set recyclerview params
         recyclerView.setLayoutManager(layoutManager);
