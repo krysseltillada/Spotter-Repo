@@ -38,6 +38,7 @@ public class FindPlacesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_places);
 
@@ -57,6 +58,7 @@ public class FindPlacesActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
             default:
                 break;
         }

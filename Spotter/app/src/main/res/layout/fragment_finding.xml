@@ -15,7 +15,7 @@
         android:layout_marginTop="89dp" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/findingMessage"
         android:layout_marginTop="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

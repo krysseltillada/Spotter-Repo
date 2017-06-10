@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id = "@+id/findedPlaces"
         android:text = "Finded places"
         android:textSize = "40sp"
         android:gravity="center"

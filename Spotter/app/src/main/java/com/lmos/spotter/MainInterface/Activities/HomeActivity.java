@@ -2,11 +2,15 @@ package com.lmos.spotter.MainInterface.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
@@ -25,6 +29,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lmos.spotter.MainInterface.Adapters.HomeTabPagerAdapter;
@@ -63,13 +68,34 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                Intent launchFindPlaceActivity = new Intent (HomeActivity.this.getApplicationContext(),
-                                                                               FindPlacesActivity.class);
+                SharedPreferences getUserPreferences = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
+
+                if (getUserPreferences.getBoolean("notifyGPS", false)) {
+
+                    Snackbar.make(HomeActivity.this.getCurrentFocus(),
+                                 "GPS is required to detect places in your city",
+                                 Snackbar.LENGTH_LONG).setAction("allow gps", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
+                                    FindPlacesActivity.class);
+
+                            overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
 
+                        }
+                    }).show();
 
-                startActivity(launchFindPlaceActivity);
-                overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+                } else {
+
+                    Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
+                            FindPlacesActivity.class);z
+
+                    overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+
+                }
+
 
             }
         });
@@ -265,7 +291,6 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         initializeUI();
         startMostPopularFlipping();
-
 
 
     }

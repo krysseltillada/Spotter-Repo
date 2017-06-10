@@ -98,6 +98,10 @@ public class FavoritesActivity extends AppCompatActivity
                 break;
             case R.id.Hotels:
                 Utilities.OpenActivity(getApplicationContext(), HotelActivity.class);
+                break;
+            case R.id.Settings:
+                Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class);
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

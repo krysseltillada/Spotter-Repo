@@ -46,12 +46,17 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
         Preference preference = findPreference(key);
-        preference.setSummary(sharedPreferences.getString(key, ""));
 
-        String message = (key.equals("username")) ? "username changed" :
-                                               (key.equals("email")) ? "email change" : "password changed";
+        if (!key.equals("notifyGPS")) {
 
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            preference.setSummary(sharedPreferences.getString(key, ""));
+
+            String message = (key.equals("username")) ? "username changed" :
+                    (key.equals("email")) ? "email change" : "password changed";
+
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
+        }
 
     }
 }
