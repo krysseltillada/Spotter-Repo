@@ -2,7 +2,6 @@ package com.lmos.spotter.MainInterface.Fragments;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,10 +12,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +24,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -41,7 +40,7 @@ import java.util.TimerTask;
  * Created by Kryssel on 6/10/2017.
  */
 
-public class FindPlaceFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class FindPlaceFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     @Nullable
 
     GoogleApiClient fuseApi;
@@ -119,9 +118,8 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        if (fuseApi != null)
-            fuseApi.connect();
 
+        fuseApi.connect();
     }
 
     private String getNamedLocation (double latitude, double longtitude)  {
@@ -134,7 +132,24 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
                     longtitude, 1);
 
             if (userCity.size() > 0) {
-                return "your at " + userCity.get(0).getLocality() + "\n test data: " + userCity.get(0).getAddressLine(1);
+
+                Address userAddress = userCity.get(0);
+
+                String testResult = "";
+
+                for (int i = 0; i != userAddress.getMaxAddressLineIndex(); ++i)
+                    testResult += "n[" +  i + "] -> " + userAddress.getAddressLine(i) + "\n";
+
+                testResult += "locality: " + userAddress.getLocality() + "\n";
+                testResult += "admin area: " + userAddress.getAdminArea() + "\n";
+                testResult += "sub locality: " + userAddress.getSubLocality() + "\n";
+                testResult += "sub admin area: " + userAddress.getSubAdminArea() + "\n";
+                testResult += "latitude: " + userAddress.getLatitude() + "\n";
+                testResult += "longtitude: " + userAddress.getLongitude() + "\n";
+                testResult += "Postal code: " + userAddress.getPostalCode() + "\n";
+                testResult += "api used: fused api";
+
+                return testResult;
             }
 
 
@@ -187,10 +202,13 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
                                                      .replace(R.id.findPlaceFragment, new FindedPlacesFragment(), "FindedPlaces")
                                                      .commit(); */
 
-        findPlaceInCity();
+        findPlaceInCityFused();
 
         return view;
     }
+
+    /*
+
 
     @Override
     public void onResume() {
@@ -218,6 +236,9 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
 
     }
 
+    */
+
+
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -227,6 +248,12 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
     public void onConnected(@Nullable Bundle bundle) {
 
 
+
+
+        LocationRequest locationRequest = LocationRequest.create()
+                                                         .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                                         .setInterval(1000)
+                                                         .setFastestInterval(5000);
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -239,24 +266,28 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
 
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
-            return;
         }
 
-        Location location = LocationServices.FusedLocationApi.getLastLocation(fuseApi);
+        LocationServices.FusedLocationApi.requestLocationUpdates(fuseApi, locationRequest, this);
 
+    }
 
-        String latitude = String.valueOf(location.getLatitude());
-        String longtitude = String.valueOf(location.getLongitude());
+    public void onLocationChanged (Location location) {
+        String msg = "Updated Location: " +
+                Double.toString(location.getLatitude()) + "," +
+                Double.toString(location.getLongitude());
+        Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(getContext(), "latitude: " + latitude + "\nlongtitude: " + longtitude, Toast.LENGTH_LONG).show();
+        LocationServices.FusedLocationApi.removeLocationUpdates(fuseApi, this);
 
+        new GetUserLocationHandler().execute(location);
 
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-        Toast.makeText(getContext(), "connection failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), connectionResult.getErrorMessage(), Toast.LENGTH_LONG).show();
 
     }
 

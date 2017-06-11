@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lmos.spotter.R;
+import com.lmos.spotter.Utilities.Utilities;
 
 import java.io.IOException;
 import java.security.Provider;
@@ -41,7 +43,6 @@ public class FindedPlacesFragment extends Fragment {
         return findedPlacesFragment;
 
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
