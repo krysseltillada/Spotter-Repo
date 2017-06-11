@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <item android:checkableBehavior="single"
+          android:title = "Menu">
+
+        <menu>
         <item
             android:id="@+id/Home"
             android:icon = "@drawable/ic_home_black_24dp"
@@ -35,16 +38,19 @@
 
             />
 
+        </menu>
 
-    </group>
+    </item>
 
-    <item android:title="Settings">
+    <item android:title="Settings"
+          android:id="@+id/settingsTitle">
         <menu>
 
             <item
                 android:id="@+id/Settings"
                 android:icon="@drawable/settings"
-                android:title="Settings" />
+                android:title="Settings"
+                />
 
         </menu>
     </item>

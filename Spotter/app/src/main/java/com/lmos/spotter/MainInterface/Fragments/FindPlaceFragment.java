@@ -4,9 +4,12 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +31,9 @@ import com.google.android.gms.location.LocationServices;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -69,11 +75,12 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
 
                     Toast.makeText(getContext(), "Latitude: " + strLatitude + "\nLongtitude: " + strLongtitude, Toast.LENGTH_LONG).show();
 
-                    getActivity().getSupportFragmentManager()
-                                 .beginTransaction()
-                                 .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                                 .replace(R.id.findPlaceFragment, FindedPlacesFragment.createObject(location.getLatitude(), location.getLongitude()))
-                                 .commit();
+                    Location userGPSLocation = new Location(LocationManager.GPS_PROVIDER);
+
+                    userGPSLocation.setLatitude(location.getLatitude());
+                    userGPSLocation.setLongitude(location.getLongitude());
+
+                    new GetUserLocationHandler().execute(userGPSLocation);
 
                 }
 
@@ -116,6 +123,29 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
             fuseApi.connect();
 
     }
+
+    private String getNamedLocation (double latitude, double longtitude)  {
+
+        Geocoder locationToName = new Geocoder(getActivity() , Locale.getDefault());
+
+        try {
+
+            List<Address> userCity = locationToName.getFromLocation(latitude,
+                    longtitude, 1);
+
+            if (userCity.size() > 0) {
+                return "your at " + userCity.get(0).getLocality() + "\n test data: " + userCity.get(0).getAddressLine(1);
+            }
+
+
+        } catch (IOException err) {
+            Log.d("Error: ", err.getMessage());
+        }
+
+
+        return "cannot clearly find your location";
+    }
+
 
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -229,6 +259,39 @@ public class FindPlaceFragment extends Fragment implements GoogleApiClient.Conne
         Toast.makeText(getContext(), "connection failed", Toast.LENGTH_LONG).show();
 
     }
+
+    class GetUserLocationHandler extends AsyncTask<Location, Void, String> {
+
+        @Override
+        protected String doInBackground(Location... params) {
+
+            Location userLocation = params[0];
+
+            return getNamedLocation(userLocation.getLatitude(),
+                    userLocation.getLongitude());
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Toast.makeText(getContext(), s, Toast.LENGTH_LONG).show();
+
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                    .replace(R.id.findPlaceFragment, FindedPlacesFragment.createObject(s))
+                    .commit();
+
+        }
+    }
+
 
 
 }

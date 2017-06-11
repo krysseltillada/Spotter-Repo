@@ -21,7 +21,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -90,7 +93,7 @@ public class HomeActivity extends AppCompatActivity
                 } else {
 
                     Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
-                            FindPlacesActivity.class);z
+                            FindPlacesActivity.class);
 
                     overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
 
@@ -263,6 +266,17 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        Menu navigationMenu = navigationView.getMenu();
+
+        MenuItem tools = navigationMenu.findItem(R.id.settingsTitle);
+
+        SpannableString spannableString = new SpannableString(tools.getTitle());
+
+        spannableString.setSpan(new TextAppearanceSpan(this, R.style.navDrawerTitleStyle), 0, spannableString.length(), 0);
+
+        tools.setTitle(spannableString);
+
         navigationView.setNavigationItemSelectedListener(this);
 
 
