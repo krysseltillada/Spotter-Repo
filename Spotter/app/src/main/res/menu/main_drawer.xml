@@ -2,7 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:checkableBehavior="single"
-          android:title = "Menu">
+          android:title = "Menu"
+          android:id = "@+id/menuTitle">
 
         <menu>
         <item

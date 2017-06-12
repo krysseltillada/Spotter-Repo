@@ -214,6 +214,17 @@ public class RestaurantActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        Utilities.setNavTitleStyle(this,
+                R.id.nav_view,
+                R.id.settingsTitle,
+                R.style.navDrawerTitleStyle);
+
+        Utilities.setNavTitleStyle(this,
+                R.id.nav_view,
+                R.id.menuTitle,
+                R.style.navDrawerTitleStyle);
+
         navigationView.setNavigationItemSelectedListener(this);
     }
 

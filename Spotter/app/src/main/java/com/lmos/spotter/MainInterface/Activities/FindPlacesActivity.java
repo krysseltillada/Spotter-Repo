@@ -25,6 +25,7 @@ import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.lmos.spotter.MainInterface.Fragments.FindedPlacesFragment;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -46,8 +47,13 @@ public class FindPlacesActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        /*
         getSupportFragmentManager().beginTransaction()
                                    .add(R.id.findPlaceFragment, new FindPlaceFragment(), "FindPlace")
+                                   .commit();*/
+
+        getSupportFragmentManager().beginTransaction()
+                                   .add(R.id.findPlaceFragment, new FindedPlacesFragment(), "FindedPlace")
                                    .commit();
 
     }

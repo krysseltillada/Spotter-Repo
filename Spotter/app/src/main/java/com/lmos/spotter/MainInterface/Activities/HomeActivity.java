@@ -265,17 +265,18 @@ public class HomeActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
 
-        Menu navigationMenu = navigationView.getMenu();
+        Utilities.setNavTitleStyle(this,
+                                   R.id.nav_view,
+                                   R.id.settingsTitle,
+                                   R.style.navDrawerTitleStyle);
 
-        MenuItem tools = navigationMenu.findItem(R.id.settingsTitle);
+        Utilities.setNavTitleStyle(this,
+                                   R.id.nav_view,
+                                   R.id.menuTitle,
+                                   R.style.navDrawerTitleStyle);
 
-        SpannableString spannableString = new SpannableString(tools.getTitle());
-
-        spannableString.setSpan(new TextAppearanceSpan(this, R.style.navDrawerTitleStyle), 0, spannableString.length(), 0);
-
-        tools.setTitle(spannableString);
 
         navigationView.setNavigationItemSelectedListener(this);
 

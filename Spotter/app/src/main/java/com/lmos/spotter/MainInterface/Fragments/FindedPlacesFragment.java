@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +52,14 @@ public class FindedPlacesFragment extends Fragment {
 
         TextView txtLocationResult = (TextView) view.findViewById(R.id.findedPlaces);
 
-        txtLocationResult.setText(getArguments().getString("userCityLocation"));
+        TabLayout placesResultsTab = (TabLayout)view.findViewById(R.id.tab_places_layout);
+
+        placesResultsTab.addTab(placesResultsTab.newTab().setText("Hotels"));
+        placesResultsTab.addTab(placesResultsTab.newTab().setText("Tourist Spots"));
+        placesResultsTab.addTab(placesResultsTab.newTab().setText("Restaurants"));
+
+
+        //txtLocationResult.setText(getArguments().getString("userCityLocation"));
 
         return view;
     }

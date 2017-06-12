@@ -12,12 +12,19 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.Dimension;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.TextAppearanceSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -306,6 +313,22 @@ public class Utilities {
         }
 
         suggestion.changeCursor(suggestions);
+    }
+
+    public static void setNavTitleStyle (AppCompatActivity appCompatActivity,  int navId, int titleId, int styleId) {
+
+        NavigationView navigationView = (NavigationView) appCompatActivity.findViewById(navId);
+
+        Menu navigationMenu = navigationView.getMenu();
+
+        MenuItem tools = navigationMenu.findItem(titleId);
+
+        SpannableString spannableString = new SpannableString(tools.getTitle());
+
+        spannableString.setSpan(new TextAppearanceSpan(appCompatActivity.getApplicationContext(), styleId), 0, spannableString.length(), 0);
+
+        tools.setTitle(spannableString);
+
     }
 
     public static void loadGifImageView (Context context, ImageView target, int drawableId) {
