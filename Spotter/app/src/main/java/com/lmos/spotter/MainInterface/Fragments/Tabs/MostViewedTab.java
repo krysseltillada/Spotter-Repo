@@ -1,8 +1,9 @@
-package com.lmos.spotter.MainInterface.Fragments;
+package com.lmos.spotter.MainInterface.Fragments.Tabs;
 
 /**
  * Created by Kryssel on 6/1/2017.
  */
+
 
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -20,20 +21,21 @@ import com.lmos.spotter.MainInterface.Adapters.ListPlaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
-public class RecommendTab extends Fragment {
+public class MostViewedTab extends Fragment {
 
     int preLast;
 
+    @Nullable
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View recommendTabView = inflater.inflate(R.layout.main_tab, container, false);
-        ListView recommendListview = (ListView) recommendTabView.findViewById(R.id.mainTabList);
+        View mostViewTabView = inflater.inflate(R.layout.main_tab, container, false);
+        ListView mostViewedListview = (ListView) mostViewTabView.findViewById(R.id.mainTabList);
 
-        ListPlaceAdapter recommendViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[5]);
+        ListPlaceAdapter mostViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[20]);
+        mostViewedListview.setAdapter(mostViewAdapter);
 
-        recommendListview.setAdapter(recommendViewAdapter);
-
-        recommendListview.setOnTouchListener(new ListView.OnTouchListener() {
+        mostViewedListview.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getAction();
@@ -55,7 +57,7 @@ public class RecommendTab extends Fragment {
             }
         });
 
-        recommendListview.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mostViewedListview.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -107,9 +109,8 @@ public class RecommendTab extends Fragment {
             }
         });
 
-        return recommendTabView;
+        return mostViewTabView;
     }
-
 
 
 }

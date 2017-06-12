@@ -1,4 +1,4 @@
-package com.lmos.spotter.MainInterface.Fragments;
+package com.lmos.spotter.MainInterface.Fragments.Tabs;
 
 /**
  * Created by Kryssel on 6/1/2017.
@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,21 +22,19 @@ import com.lmos.spotter.MainInterface.Adapters.ListPlaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
-public class MostViewedTab extends Fragment {
+public class MostRatedTab extends Fragment {
 
     int preLast;
 
-    @Nullable
-    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View mostViewTabView = inflater.inflate(R.layout.main_tab, container, false);
-        ListView mostViewedListview = (ListView) mostViewTabView.findViewById(R.id.mainTabList);
+        View mostRatedTabView = inflater.inflate(R.layout.main_tab, container, false);
+        ListView mostRatedListview = (ListView) mostRatedTabView.findViewById(R.id.mainTabList);
 
-        ListPlaceAdapter mostViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[20]);
-        mostViewedListview.setAdapter(mostViewAdapter);
+        ListPlaceAdapter mostRatedAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[10]);
+        mostRatedListview.setAdapter(mostRatedAdapter);
 
-        mostViewedListview.setOnTouchListener(new ListView.OnTouchListener() {
+        mostRatedListview.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getAction();
@@ -57,7 +56,7 @@ public class MostViewedTab extends Fragment {
             }
         });
 
-        mostViewedListview.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mostRatedListview.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -69,9 +68,11 @@ public class MostViewedTab extends Fragment {
                 switch (view.getId()) {
                     case R.id.mainTabList:
                         if (Utilities.checkIfLastItem(firstVisibleItem, visibleItemCount,
-                                totalItemCount)) {
+                                                      totalItemCount)) {
 
                             if (preLast > 3) {
+
+
 
                                 FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
@@ -109,8 +110,7 @@ public class MostViewedTab extends Fragment {
             }
         });
 
-        return mostViewTabView;
+        return mostRatedTabView;
     }
-
 
 }

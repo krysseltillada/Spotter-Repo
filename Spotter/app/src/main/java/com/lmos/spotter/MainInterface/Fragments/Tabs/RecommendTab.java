@@ -1,15 +1,13 @@
-package com.lmos.spotter.MainInterface.Fragments;
+package com.lmos.spotter.MainInterface.Fragments.Tabs;
 
 /**
  * Created by Kryssel on 6/1/2017.
  */
 
-
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,19 +20,20 @@ import com.lmos.spotter.MainInterface.Adapters.ListPlaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
-public class MostRatedTab extends Fragment {
+public class RecommendTab extends Fragment {
 
     int preLast;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View mostRatedTabView = inflater.inflate(R.layout.main_tab, container, false);
-        ListView mostRatedListview = (ListView) mostRatedTabView.findViewById(R.id.mainTabList);
+        View recommendTabView = inflater.inflate(R.layout.main_tab, container, false);
+        ListView recommendListview = (ListView) recommendTabView.findViewById(R.id.mainTabList);
 
-        ListPlaceAdapter mostRatedAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[10]);
-        mostRatedListview.setAdapter(mostRatedAdapter);
+        ListPlaceAdapter recommendViewAdapter = new ListPlaceAdapter(getContext(), R.layout.place_item_list, new String[5]);
 
-        mostRatedListview.setOnTouchListener(new ListView.OnTouchListener() {
+        recommendListview.setAdapter(recommendViewAdapter);
+
+        recommendListview.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getAction();
@@ -56,7 +55,7 @@ public class MostRatedTab extends Fragment {
             }
         });
 
-        mostRatedListview.setOnScrollListener(new AbsListView.OnScrollListener() {
+        recommendListview.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -68,7 +67,7 @@ public class MostRatedTab extends Fragment {
                 switch (view.getId()) {
                     case R.id.mainTabList:
                         if (Utilities.checkIfLastItem(firstVisibleItem, visibleItemCount,
-                                                      totalItemCount)) {
+                                totalItemCount)) {
 
                             if (preLast > 3) {
 
@@ -108,7 +107,9 @@ public class MostRatedTab extends Fragment {
             }
         });
 
-        return mostRatedTabView;
+        return recommendTabView;
     }
+
+
 
 }

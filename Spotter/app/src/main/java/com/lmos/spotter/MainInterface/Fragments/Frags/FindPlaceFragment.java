@@ -1,4 +1,4 @@
-package com.lmos.spotter.MainInterface.Fragments;
+package com.lmos.spotter.MainInterface.Fragments.Frags;
 
 import android.Manifest;
 import android.content.Context;
@@ -26,7 +26,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 

@@ -1,4 +1,4 @@
-package com.lmos.spotter.MainInterface.Fragments;
+package com.lmos.spotter.MainInterface.Fragments.Frags;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
