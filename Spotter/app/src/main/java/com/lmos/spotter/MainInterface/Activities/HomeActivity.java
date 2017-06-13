@@ -2,18 +2,14 @@ package com.lmos.spotter.MainInterface.Activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
@@ -21,192 +17,100 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
+import android.widget.CursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-
-import com.lmos.spotter.MainInterface.Adapters.HomeTabPagerAdapter;
 import com.lmos.spotter.R;
-import com.lmos.spotter.SearchResultsActivity;
-import com.lmos.spotter.Utilities.KeyboardState;
+import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.Utilities;
 
-
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        SearchView.OnSuggestionListener,
+        SearchView.OnQueryTextListener{
 
-    SearchView searchBtn;
-    SimpleCursorAdapter searchAdapter;
-
-
-    private void startMostPopularFlipping() {
-
-        ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
-
-        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
-        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
-        viewFlipperManager.setFlipInterval(3000);
-
-        viewFlipperManager.startFlipping();
-
-    }
+    private Toolbar toolbar;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private LayoutInflater inflater;
+    private ActionBar homeActionBar;
+    private View actionBarView;
+    private TextView txtHome;
+    private SearchView searchBtn;
+    private SimpleCursorAdapter searchAdapter;
+    private DrawerLayout drawerLayout;
 
     String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
-    private void initializeUI() {
-        final LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        initComp();
+        startMostPopularFlipping();
 
-                SharedPreferences getUserPreferences = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
+    }
 
-                if (getUserPreferences.getBoolean("notifyGPS", false)) {
+    private void initComp(){
+       setContentView(R.layout.activity_home_menu);
 
-                    Snackbar.make(HomeActivity.this.getCurrentFocus(),
-                                 "GPS is required to detect places in your city",
-                                 Snackbar.LENGTH_LONG).setAction("allow gps", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
-                                    FindPlacesActivity.class);
-
-                            overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorPrimary));
+        collapsingToolbarLayout.setTitle(getResources().getString(R.string.app_name));
 
 
-                        }
-                    }).show();
-
-                } else {
-
-                    Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
-                            FindPlacesActivity.class);
-
-                    overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
-
-                }
-
-
-            }
-        });
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        /** Set TabLayout **/
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
         tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
         tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        /** End setting of tab layout **/
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-
-        HomeTabPagerAdapter placePagerAdapter = new HomeTabPagerAdapter(getSupportFragmentManager(),
-                tabLayout.getTabCount());
-
-        viewPager.setAdapter(placePagerAdapter);
-        viewPager.setOffscreenPageLimit(3);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.homeToolbar);
+        /** Set toolbar and action bar **/
+        toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
         setSupportActionBar(toolbar);
+        homeActionBar = getSupportActionBar();
 
-        final ActionBar homeActionBar = getSupportActionBar();
+        // Set LayoutInflater to inflate a custom search view in action bar.
+        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         homeActionBar.setDisplayHomeAsUpEnabled(true);
         homeActionBar.setDisplayShowCustomEnabled(true);
 
-        final View actionBarView = inflator.inflate(R.layout.searchbar, null);
-        final TextView txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
+        actionBarView = inflater.inflate(R.layout.searchbar, null);
+        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
 
-        txtHome.setText("Spotter");
+        txtHome.setText(getResources().getString(R.string.app_name));
 
-        final String[] from = new String[]{"judy"};
-        final int[] to = new int[]{android.R.id.text1};
-
+        // Set search adapter for search view.
+        String[] from = new String[]{"Judy"};
+        int[] to = new int[]{android.R.id.text1};
 
         searchBtn = (SearchView) actionBarView.findViewById(R.id.search_view);
-        searchAdapter = new SimpleCursorAdapter(getApplicationContext(),
-                android.R.layout.simple_list_item_1,
+        searchAdapter = new SimpleCursorAdapter(
+                getApplicationContext(),
+                android.R.layout.simple_list_item_2,
                 null,
                 from,
                 to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        );
         searchBtn.setSuggestionsAdapter(searchAdapter);
-
-        searchBtn.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                return true;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-
-                Intent send_data = new Intent(getApplicationContext(), SearchResultsActivity.class);
-                send_data.putExtra("type", getSuggestionText(position));
-                startActivity(send_data);
-                return true;
-
-            }
-        });
-
-
-        searchBtn.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-                Intent launchSearchResult = new Intent(getApplication(), SearchResultsActivity.class);
-                getApplicationContext().startActivity(launchSearchResult);
-
-                return false;
-
-            }
-
-            @Override
-            public boolean onQueryTextChange(String searchValue) {
-                Utilities.QuerySearchResults(searchValue, searchAdapter, sampleWords);
-                return false;
-            }
-        });
-
-
+        searchBtn.setOnSuggestionListener(this);
+        searchBtn.setOnQueryTextListener(this);
         searchBtn.setOnSearchClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 txtHome.setVisibility(View.GONE);
             }
         });
-
         searchBtn.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
@@ -214,56 +118,21 @@ public class HomeActivity extends AppCompatActivity
                 return false;
             }
         });
-
-        /**
-         *
-         * this code detects a backpress event and a soft keyboard down event
-         * created a keyboard state object to store a boolean wether the
-         * keyboard is up or down gonna make this code a utility to be useful
-         *
-         */
-
-        final LinearLayout activityRootView = (LinearLayout) findViewById(R.id.home_parent_layout);
-        final KeyboardState keyboardState = new KeyboardState();
-
-
-        activityRootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!searchBtn.isIconified())
-                    searchBtn.setIconified(true);
-            }
-        });
-
-        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
-
-                    if (heightDiff > Utilities.dpToPx(getApplicationContext(), 200)) {
-                        if (!keyboardState.isKeyboardUp)
-                            keyboardState.isKeyboardUp = true;
-                    } else {
-                        if (keyboardState.isKeyboardUp) {
-                            searchBtn.setIconified(true);
-                            keyboardState.isKeyboardUp = false;
-                        }
-
-                    }
-
-
-            }
-        });
-
-
         homeActionBar.setCustomView(actionBarView);
+        /** End of toolbar and action bar settings **/
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        /** Set drawer and navigation layout **/
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.syncState();
 
         NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
 
@@ -279,7 +148,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         navigationView.setNavigationItemSelectedListener(this);
-
+        /** End of setting drawer and navigation drawer **/
 
     }
 
@@ -293,31 +162,75 @@ public class HomeActivity extends AppCompatActivity
         return selected_item;
     }
 
-    /**
-     * Bitmap getImageResource (int id) {
-     * return ((BitmapDrawable)getResources().getDrawable(id)).getBitmap();
-     * }
-     **/
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    private void startMostPopularFlipping(){
 
-        super.onCreate(savedInstanceState);
+        ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
+        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
+        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
+        viewFlipperManager.setFlipInterval(3000);
 
-        setContentView(R.layout.activity_home);
-        initializeUI();
-        startMostPopularFlipping();
-
+        viewFlipperManager.startFlipping();
 
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+        switch (item.getItemId()){
+            case R.id.Hotels:
+                Toast.makeText(getApplicationContext(), "Hotels", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.Home:
+                Toast.makeText(getApplicationContext(), "Home", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.TouristSpots:
+                Toast.makeText(getApplicationContext(), "TouristSpots", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.Restaurants:
+                Toast.makeText(getApplicationContext(), "Restaurants", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.Favorites:
+                Toast.makeText(getApplicationContext(), "Favorites", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.Settings:
+                Utilities.OpenActivity(this,SettingsActivity.class, "");
+                Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onSuggestionSelect(int position) {
+        return true;
+    }
+
+    @Override
+    public boolean onSuggestionClick(int position) {
+        Intent send_data = new Intent(getApplicationContext(), SearchResultsActivity.class);
+        send_data.putExtra("type", getSuggestionText(position));
+        startActivity(send_data);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String searchValue) {
+        Utilities.QuerySearchResults(searchValue, searchAdapter, sampleWords);
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
         if (searchBtn.isIconified()) {
 
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
             } else {
                 super.onBackPressed();
             }
@@ -326,42 +239,4 @@ public class HomeActivity extends AppCompatActivity
             searchBtn.setIconified(true);
         }
     }
-
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        switch (id) {
-
-            case R.id.Hotels:
-                Utilities.OpenActivity(getApplicationContext(), HotelActivity.class);
-                break;
-            case R.id.TouristSpots:
-                Utilities.OpenActivity(getApplicationContext(), TouristSpotActivity.class);
-                break;
-            case R.id.Restaurants:
-                Utilities.OpenActivity(getApplicationContext(), RestaurantActivity.class);
-                break;
-            case R.id.Favorites:
-                Utilities.OpenActivity(getApplicationContext(), FavoritesActivity.class);
-                break;
-            case R.id.Settings:
-                Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class);
-            default:
-                break;
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    /// TEST ONLY
-
-
-
-
 }

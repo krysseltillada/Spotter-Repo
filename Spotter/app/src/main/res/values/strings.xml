@@ -108,5 +108,6 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_find_places">FindPlacesActivity</string>
     <string name="title_activity_lol">lol</string>
+    <string name="skip">Not now</string>
 
 </resources>

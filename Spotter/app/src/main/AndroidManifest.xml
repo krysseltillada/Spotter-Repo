@@ -18,48 +18,43 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAsY2k2M1rOeO-P2F1fxkEmkCAqe_263kw" />
 
-        <activity
-            android:name=".MainInterface.Activities.HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".LoginActivity"
-            android:theme="@style/NoActionBar">
+        <activity android:name=".SplashScreen"
+            android:theme="@style/SplashScreen"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".SearchResultsActivity"
+            android:name=".MainInterface.Activities.HomeActivity"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"/>
+
+        <activity
+            android:name=".AccountInterface.Activities.LoginActivity"
+            android:theme="@style/NoActionBar" />
+
+        <activity
+            android:name=".SearchInterface.Activities.SearchResultsActivity"
             android:theme="@style/NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
         <activity
-            android:name=".MainInterface.Activities.HotelActivity"
-            android:label="@string/title_activity_hotel"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MainInterface.Activities.TouristSpotActivity"
-            android:label="@string/title_activity_tourist_spot"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MainInterface.Activities.RestaurantActivity"
-            android:label="@string/title_activity_restaurant"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MainInterface.Activities.FavoritesActivity"
-            android:label="@string/title_activity_favorites"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".MainInterface.Activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".MainInterface.Activities.FindPlacesActivity"
-            android:theme="@style/AppTheme" />
+            android:thee="@style/AppTheme" >
+            android:label="@string/title_activity_settings" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainInterface.Activities.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
-package com.lmos.spotter;
+package com.lmos.spotter.AccountInterface.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,11 +9,16 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
-
+import com.lmos.spotter.AccountInterface.Fragments.FragmentRecover;
+import com.lmos.spotter.AccountInterface.Fragments.FragmentSignIn;
+import com.lmos.spotter.AccountInterface.Fragments.FragmentSignUp;
 import com.lmos.spotter.MainInterface.Activities.HomeActivity;
+import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private static final String LOGIN_PREFS = "LoginSharedPreference";
 
     ImageView imgHolder;
 
@@ -44,15 +50,37 @@ public class LoginActivity extends AppCompatActivity {
                 switchFragment(new FragmentSignUp());
                 return;
             case R.id.sign_in:
-                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class);
+                startActivity(new Intent(this, HomeActivity.class));
+                finish();
                 return;
             case R.id.forgot_pass:
                 switchFragment(new FragmentRecover());
+                return;
+            case R.id.skip_login:
+                startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                setSharedPreferences("true");
+                finish();
                 return;
             default:
                 break;
 
         }
+
+    }
+
+    private void setSharedPreferences(String... params){
+
+        /*
+         * param[0] = status
+         * param[1] = username
+         * param[2] = password
+         */
+
+        SharedPreferences login_prefs = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor set_login_prefs = login_prefs.edit();
+        set_login_prefs.clear();
+        set_login_prefs.putString("status", params[0]);
+        set_login_prefs.apply();
 
     }
 

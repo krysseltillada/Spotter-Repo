@@ -1,5 +1,6 @@
 package com.lmos.spotter.Utilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.MatrixCursor;
@@ -295,7 +296,7 @@ public class Utilities {
         return (bitmap);
     }
 
-    public static void OpenActivity (Context con, Class<?> cname) {
+    public static void OpenActivity (Context con, Class<?> cname, String callingActivity) {
         Intent requestActivity = new Intent(con, cname);
         requestActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         con.startActivity(requestActivity);
