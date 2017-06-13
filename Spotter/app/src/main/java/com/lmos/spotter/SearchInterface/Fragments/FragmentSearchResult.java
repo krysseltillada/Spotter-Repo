@@ -19,6 +19,13 @@ import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 
 public class FragmentSearchResult extends Fragment{
 
+    public static FragmentSearchResult newInstance(String... params){
+
+        FragmentSearchResult fragmentSearchResult = new FragmentSearchResult();
+
+        return fragmentSearchResult;
+    }
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View thisView = inflater.inflate(R.layout.search_result_hrt, container, false);

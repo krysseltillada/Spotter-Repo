@@ -19,6 +19,15 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAsY2k2M1rOeO-P2F1fxkEmkCAqe_263kw" />
 
+        <activity android:name=".SplashScreen"
+            android:theme="@style/SplashScreen"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".MainInterface.Activities.HomeActivity"
             android:label="@string/title_activity_home"
@@ -27,12 +36,8 @@
 
         <activity
             android:name=".AccountInterface.Activities.LoginActivity"
-            android:theme="@style/NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/NoActionBar" />
+
         <activity
             android:name=".SearchInterface.Activities.SearchResultsActivity"
             android:theme="@style/NoActionBar">

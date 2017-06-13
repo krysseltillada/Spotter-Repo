@@ -9,6 +9,9 @@ import com.lmos.spotter.R;
 
 /**
  * Created by emman on 6/9/2017.
+ * This class will load informations -
+ * data about list of places in a certain city -
+ * into RecyclerView.
  */
 
 public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAdapter.GeneralResultsViewHolder>{
@@ -17,7 +20,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
     public interface OnClickListener{
 
-        void OnItemClick(int pos, View view);
+        void OnItemClick(int pos, View view, String... params);
         void OnItemLongClick(int pos, View view);
 
     }
@@ -80,7 +83,9 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         @Override
         public void onClick(View v) {
-            onClickListener.OnItemClick(getAdapterPosition(), v);
+            onClickListener.OnItemClick(getAdapterPosition(), v,
+                    name.getText().toString(), place.getText().toString(), rating.getText().toString()
+            );
         }
 
         @Override

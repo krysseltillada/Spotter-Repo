@@ -1,7 +1,9 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.NotificationCompat;
@@ -9,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.lmos.spotter.FavoritesDbHelper;
 import com.lmos.spotter.MapsLayoutFragment;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
@@ -42,6 +47,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     SearchReviewsAdapter mAdapter;
+    FavoritesDbHelper favoritesDbHelper;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,21 +58,23 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         Bundle fetch_intent = getIntent().getExtras();
 
-        switch (fetch_intent.getString("type")){
+        switchFragment(fetch_intent.getString("type"), "");
 
-            case "General":
-                setHeaderText("Batangas", "Bayang ng Magigiting");
-                attachFragment(new FragmentSearchResultGeneral(), "General", R.id.search_content_holder);
-                break;
-            case "Hotel":
-                setHeaderText("City of Dreams", "Inside Nightmare");
-                attachFragment(new FragmentSearchResult(), "Hotel", R.id.search_content_holder);
-                findViewById(R.id.search_content_wrapper).setBackground(
-                        getResources().getDrawable(R.drawable.layout_white_bg)
-                );
-                break;
-
-        }
+        Snackbar snackbar = Snackbar.make(
+                findViewById(R.id.search_view_wrapper),
+                "Add to Favorites",
+                Snackbar.LENGTH_INDEFINITE
+        );
+        snackbar.setAction(
+                "ADD",
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addToFavorites();
+                    }
+                }
+        );
+        snackbar.show();
 
     }
 
@@ -75,10 +83,51 @@ public class SearchResultsActivity extends AppCompatActivity {
         place_content_desc.setText(description);
     }
 
+    private void switchFragment(String type, String... params){
+
+        Fragment fragment;
+        String tag, backStack;
+
+        if(type.equals("General")){ tag = "General"; backStack = ""; }
+        else{ tag = "type"; backStack = "General"; }
+
+        switch (type){
+
+            case "General":
+                setHeaderText("Batangas", "Bayan ng magigiting");
+                fragment = new FragmentSearchResultGeneral();
+                backStack = null;
+                break;
+            default:
+                setHeaderText("City of Dreams", "Nightmares it is");
+                fragment = FragmentSearchResult.newInstance(params);
+                backStack = "General";
+                break;
+        }
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.search_content_holder, fragment, type)
+                .addToBackStack(backStack)
+                .commit();
+
+        Toast.makeText(this, String.valueOf(getSupportFragmentManager().getBackStackEntryCount()), Toast.LENGTH_LONG).show();
+
+    }
+
     private void attachFragment(Fragment fragment, String tag, int view_id){
+
         getSupportFragmentManager().beginTransaction()
                 .add(view_id, fragment, tag)
                 .commit();
+
+    }
+
+    private void addToFavorites(){
+
+        favoritesDbHelper = new FavoritesDbHelper(this);
+        Log.d("ADD", "Triggered");
+        favoritesDbHelper.addToFavorites();
+
     }
 
     private void initComp(){

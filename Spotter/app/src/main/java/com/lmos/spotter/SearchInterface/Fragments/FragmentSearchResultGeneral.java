@@ -41,8 +41,10 @@ public class FragmentSearchResultGeneral extends Fragment {
         // Set RecyclerView onClickListener
         mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
             @Override
-            public void OnItemClick(int pos, View view) {
-                Toast.makeText(getContext(), String.valueOf(pos), Toast.LENGTH_SHORT).show();
+            public void OnItemClick(int pos, View view, String... params) {
+                Toast.makeText(getContext(), String.valueOf(pos) +
+                        " " + params[0] + " " + params[1] + params[2]
+                        , Toast.LENGTH_SHORT).show();
             }
 
             @Override

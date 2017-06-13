@@ -1,7 +1,7 @@
 package com.lmos.spotter.AccountInterface.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +17,8 @@ import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private static final String LOGIN_PREFS = "LoginSharedPreference";
 
     ImageView imgHolder;
 
@@ -48,15 +50,37 @@ public class LoginActivity extends AppCompatActivity {
                 switchFragment(new FragmentSignUp());
                 return;
             case R.id.sign_in:
-                startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                startActivity(new Intent(this, HomeActivity.class));
+                finish();
                 return;
             case R.id.forgot_pass:
                 switchFragment(new FragmentRecover());
+                return;
+            case R.id.skip_login:
+                startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                setSharedPreferences("true");
+                finish();
                 return;
             default:
                 break;
 
         }
+
+    }
+
+    private void setSharedPreferences(String... params){
+
+        /*
+         * param[0] = status
+         * param[1] = username
+         * param[2] = password
+         */
+
+        SharedPreferences login_prefs = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor set_login_prefs = login_prefs.edit();
+        set_login_prefs.clear();
+        set_login_prefs.putString("status", params[0]);
+        set_login_prefs.apply();
 
     }
 
