@@ -4,13 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-<<<<<<< HEAD
-import com.lmos.spotter.MainInterface.Fragments.Frags.FragmentRatedCategory;
-import com.lmos.spotter.MainInterface.Fragments.Frags.FragmentRecommendCategory;
-import com.lmos.spotter.MainInterface.Fragments.Frags.FragmentViewedCategory;
-
-=======
->>>>>>> im_senpai
 /**
  * Created by Kryssel on 6/3/2017.
  */

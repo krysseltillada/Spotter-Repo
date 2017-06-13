@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.lmos.spotter.MainInterface.Fragments.Frags.FindedPlacesFragment;
+import com.lmos.spotter.MainInterface.Fragments.FindedPlacesFragment;
 import com.lmos.spotter.R;
 
 public class FindPlacesActivity extends AppCompatActivity {

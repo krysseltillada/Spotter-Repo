@@ -1,4 +1,4 @@
-package com.lmos.spotter.MainInterface.Fragments.Frags;
+package com.lmos.spotter.MainInterface.Fragments;
 
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;

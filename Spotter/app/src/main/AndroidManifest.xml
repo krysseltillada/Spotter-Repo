@@ -49,8 +49,7 @@
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".MainInterface.Activities.FindPlacesActivity"
-            android:thee="@style/AppTheme" >
-            android:label="@string/title_activity_settings" >
+            android:theme="@style/AppTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
