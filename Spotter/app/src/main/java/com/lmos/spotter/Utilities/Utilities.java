@@ -1,19 +1,26 @@
 package com.lmos.spotter.Utilities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.support.annotation.Dimension;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
@@ -21,16 +28,18 @@ import android.text.style.TextAppearanceSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Size;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import com.lmos.spotter.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.ByteArrayOutputStream;
 
@@ -42,47 +51,47 @@ public class Utilities {
 
     public static class BlurImg {
 
-            private static final float BITMAP_SCALE = 0.4f;
+        private static final float BITMAP_SCALE = 0.4f;
 
-            public static Bitmap blurImg(Context context, Bitmap blurme, float blurValue){
+        public static Bitmap blurImg(Context context, Bitmap blurme, float blurValue) {
 
-                int width  = Math.round(blurme.getWidth() * BITMAP_SCALE);
-                int height  = Math.round(blurme.getHeight() * BITMAP_SCALE);
+            int width = Math.round(blurme.getWidth() * BITMAP_SCALE);
+            int height = Math.round(blurme.getHeight() * BITMAP_SCALE);
 
-                Bitmap input_bitmap = Bitmap.createScaledBitmap(blurme, width, height, true);
-                Bitmap output_bitmap = Bitmap.createBitmap(input_bitmap);
+            Bitmap input_bitmap = Bitmap.createScaledBitmap(blurme, width, height, true);
+            Bitmap output_bitmap = Bitmap.createBitmap(input_bitmap);
 
-                RenderScript rs = RenderScript.create(context);
-                ScriptIntrinsicBlur sblur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+            RenderScript rs = RenderScript.create(context);
+            ScriptIntrinsicBlur sblur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
 
-                Allocation tmpIn = Allocation.createFromBitmap(rs, input_bitmap);
-                Allocation tmpOut = Allocation.createFromBitmap(rs, output_bitmap);
+            Allocation tmpIn = Allocation.createFromBitmap(rs, input_bitmap);
+            Allocation tmpOut = Allocation.createFromBitmap(rs, output_bitmap);
 
-                sblur.setRadius((blurValue > 25) ? 25 : (blurValue < 0) ? 0 : blurValue);
-                sblur.setInput(tmpIn);
-                sblur.forEach(tmpOut);
+            sblur.setRadius((blurValue > 25) ? 25 : (blurValue < 0) ? 0 : blurValue);
+            sblur.setInput(tmpIn);
+            sblur.forEach(tmpOut);
 
-                tmpOut.copyTo(output_bitmap);
+            tmpOut.copyTo(output_bitmap);
 
-                return output_bitmap;
-            }
+            return output_bitmap;
+        }
 
-            public static String toString(Bitmap bitmap){
-                ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
-                byte[] b = byteOutputStream.toByteArray();
-                return Base64.encodeToString(b, Base64.DEFAULT);
-            }
+        public static String toString(Bitmap bitmap) {
+            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
+            byte[] b = byteOutputStream.toByteArray();
+            return Base64.encodeToString(b, Base64.DEFAULT);
+        }
 
-            public static Bitmap getBitmap(String encodedBitmap){
-                byte[] decodeBitmap = Base64.decode(encodedBitmap, Base64.DEFAULT);
-                 return BitmapFactory.decodeByteArray(decodeBitmap, 0, decodeBitmap.length);
-            }
+        public static Bitmap getBitmap(String encodedBitmap) {
+            byte[] decodeBitmap = Base64.decode(encodedBitmap, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodeBitmap, 0, decodeBitmap.length);
+        }
 
     }
 
-    public static boolean checkIfLastItem (int firstVisibleItem, int visibleItem,
-                                           int totalItemCount) {
+    public static boolean checkIfLastItem(int firstVisibleItem, int visibleItem,
+                                          int totalItemCount) {
         final int lastItem = firstVisibleItem + visibleItem;
 
         return (lastItem == totalItemCount);
@@ -245,7 +254,7 @@ public class Utilities {
             stackpointer = radius;
             for (y = 0; y < h; y++) {
                 // Preserve alpha channel: ( 0xff000000 & pix[yi] )
-                pix[yi] = ( 0xff000000 & pix[yi] ) | ( dv[rsum] << 16 ) | ( dv[gsum] << 8 ) | dv[bsum];
+                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16) | (dv[gsum] << 8) | dv[bsum];
 
                 rsum -= routsum;
                 gsum -= goutsum;
@@ -296,7 +305,7 @@ public class Utilities {
         return (bitmap);
     }
 
-    public static void OpenActivity (Context con, Class<?> cname, String callingActivity) {
+    public static void OpenActivity(Context con, Class<?> cname, String callingActivity) {
         Intent requestActivity = new Intent(con, cname);
         requestActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         con.startActivity(requestActivity);
@@ -316,7 +325,7 @@ public class Utilities {
         suggestion.changeCursor(suggestions);
     }
 
-    public static void setNavTitleStyle (AppCompatActivity appCompatActivity,  int navId, int titleId, int styleId) {
+    public static void setNavTitleStyle(AppCompatActivity appCompatActivity, int navId, int titleId, int styleId) {
 
         NavigationView navigationView = (NavigationView) appCompatActivity.findViewById(navId);
 
@@ -332,7 +341,7 @@ public class Utilities {
 
     }
 
-    public static void loadGifImageView (Context context, ImageView target, int drawableId) {
+    public static void loadGifImageView(Context context, ImageView target, int drawableId) {
         GlideDrawableImageViewTarget gifLoaderImage = new GlideDrawableImageViewTarget(target);
         Glide.with(context).load(drawableId).into(gifLoaderImage);
     }
@@ -340,6 +349,55 @@ public class Utilities {
     public static float dpToPx(Context context, float valueInDp) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
+    }
+
+    public static class LocationHandler {
+
+        public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+        private static GoogleApiClient apiClient;
+        private static LocationListener locationListener;
+        private static LocationRequest locationRequest;
+
+        public static void getLocationService(final Activity activity) {
+
+            apiClient = new GoogleApiClient.Builder(activity.getApplicationContext())
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                        @RequiresApi(api = Build.VERSION_CODES.M)
+                        @Override
+                        public void onConnected(@Nullable Bundle bundle) {
+
+                            locationRequest = LocationRequest.create()
+                                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                    .setInterval(1000)
+                                    .setFastestInterval(5000);
+
+                            if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                    ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission_group.LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onConnectionSuspended(int i) {
+
+                        }
+                    })
+                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                        }
+                    })
+                    .build();
+
+        }
+
     }
 
 }

@@ -54,6 +54,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
+
+        <service android:name=".LocationHandler"
+            android:exported="false" />
+
     </application>
 
 </manifest>

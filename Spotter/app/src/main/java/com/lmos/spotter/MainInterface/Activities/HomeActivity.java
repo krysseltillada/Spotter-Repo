@@ -1,14 +1,18 @@
 package com.lmos.spotter.MainInterface.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -17,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +48,7 @@ public class HomeActivity extends AppCompatActivity
     private SearchView searchBtn;
     private SimpleCursorAdapter searchAdapter;
     private DrawerLayout drawerLayout;
+    private FloatingActionButton floatingActionButton;
 
     String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
@@ -52,7 +58,7 @@ public class HomeActivity extends AppCompatActivity
 
         initComp();
         startMostPopularFlipping();
-
+        Utilities.LocationHandler.getLocationService(this);
     }
 
     private void initComp(){
@@ -150,6 +156,14 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         /** End of setting drawer and navigation drawer **/
 
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), FindPlacesActivity.class));
+            }
+        });
+
     }
 
     private String getSuggestionText(int position){
@@ -238,5 +252,24 @@ public class HomeActivity extends AppCompatActivity
         } else {
             searchBtn.setIconified(true);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode){
+
+            case Utilities.LocationHandler.LOCATION_PERMISSION_REQUEST_CODE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.d("Permission Result", "Granted");
+                }
+                else{
+                    Log.d("Permission Result", "Denied");
+                }
+                return;
+
+        }
+
     }
 }
