@@ -302,6 +302,13 @@ public class Utilities {
         con.startActivity(requestActivity);
     }
 
+    public static void OpenActivityWithBundle (Context con, Class<?> cname, String callingActivity, Bundle bundle) {
+        Intent requestActivity = new Intent(con, cname);
+        requestActivity.putExtras(bundle);
+        requestActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        con.startActivity(requestActivity);
+    }
+
     public static void QuerySearchResults(String searchValue, SimpleCursorAdapter suggestion, String[] keywords) {
 
         MatrixCursor suggestions = new MatrixCursor(new String[]{BaseColumns._ID, "judy"});

@@ -3,8 +3,9 @@
     package="com.lmos.spotter">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
@@ -18,25 +19,24 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAsY2k2M1rOeO-P2F1fxkEmkCAqe_263kw" />
 
-        <activity android:name=".SplashScreen"
-            android:theme="@style/SplashScreen"
-            android:launchMode="singleTask" >
+        <activity
+            android:name=".SplashScreen"
+            android:launchMode="singleTask"
+            android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainInterface.Activities.HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask"/>
-
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AccountInterface.Activities.LoginActivity"
             android:theme="@style/NoActionBar" />
-
         <activity
             android:name=".SearchInterface.Activities.SearchResultsActivity"
             android:theme="@style/NoActionBar">
@@ -49,11 +49,15 @@
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".MainInterface.Activities.FindPlacesActivity"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
+        <activity
+            android:name=".MainInterface.Activities.HTRActivity"
+            android:label="@string/title_activity_htr"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

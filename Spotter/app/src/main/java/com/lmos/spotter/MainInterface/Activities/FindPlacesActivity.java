@@ -27,7 +27,7 @@ public class FindPlacesActivity extends AppCompatActivity {
                                    .commit();*/
 
         getSupportFragmentManager().beginTransaction()
-                                   .add(R.id.findPlaceFragment, new FindedPlacesFragment(), "FindedPlace")
+                                   .add(R.id.findPlaceFragment, FindedPlacesFragment.createObject("Batangas"), "FindedPlace")
                                    .commit();
 
     }

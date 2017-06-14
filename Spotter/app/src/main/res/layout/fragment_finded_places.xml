@@ -14,18 +14,8 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:elevation="6dp" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/places_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp" />
-
-    <TextView
-        android:id = "@+id/findedPlaces"
-        android:text = "Finded places"
-        android:textSize = "16sp"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+     <include
+         layout = "@layout/recycler_view_layout"
+         />
 
 </LinearLayout>

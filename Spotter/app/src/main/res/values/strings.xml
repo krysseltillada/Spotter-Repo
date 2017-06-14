@@ -109,5 +109,6 @@
     <string name="title_activity_find_places">FindPlacesActivity</string>
     <string name="title_activity_lol">lol</string>
     <string name="skip">Not now</string>
+    <string name="title_activity_htr">HTRActivity</string>
 
 </resources>

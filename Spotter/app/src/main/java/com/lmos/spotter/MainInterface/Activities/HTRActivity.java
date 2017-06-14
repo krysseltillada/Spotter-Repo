@@ -1,17 +1,14 @@
 package com.lmos.spotter.MainInterface.Activities;
 
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -37,13 +34,12 @@ import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.Utilities;
 
-public class HomeActivity extends AppCompatActivity
+public class HTRActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         SearchView.OnSuggestionListener,
         SearchView.OnQueryTextListener{
 
     private Toolbar toolbar;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
     private LayoutInflater inflater;
     private ActionBar homeActionBar;
     private View actionBarView;
@@ -59,51 +55,13 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         initComp();
-        startMostPopularFlipping();
 
     }
 
     private void initComp(){
-        setContentView(R.layout.activity_home_menu);
+        setContentView(R.layout.content_htr);
 
-        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                SharedPreferences userPreference = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
-
-                if (userPreference.getBoolean("notifyGPS", false)) {
-
-                    Snackbar.make(v, "GPS is used to detect place in your city", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Allow", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                    Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
-                                            FindPlacesActivity.class,
-                                            "");
-
-                                }
-                            }).show();
-
-
-                } else {
-
-                    Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
-                            FindPlacesActivity.class,
-                            "");
-
-                }
-
-            }
-        });
-
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
-        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
-        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorPrimary));
-        collapsingToolbarLayout.setTitle(getResources().getString(R.string.app_name));
+        Bundle receivedBundle = getIntent().getExtras();
 
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
@@ -158,7 +116,6 @@ public class HomeActivity extends AppCompatActivity
         /** End setting of tab layout **/
 
 
-
         /** Set toolbar and action bar **/
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
         setSupportActionBar(toolbar);
@@ -173,7 +130,7 @@ public class HomeActivity extends AppCompatActivity
         actionBarView = inflater.inflate(R.layout.searchbar, null);
         txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
 
-        txtHome.setText(getResources().getString(R.string.app_name));
+        txtHome.setText(receivedBundle.getString("Category"));
 
         // Set search adapter for search view.
         String[] from = new String[]{"Judy"};
@@ -223,14 +180,14 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
 
         Utilities.setNavTitleStyle(this,
-                                   R.id.nav_view,
-                                   R.id.settingsTitle,
-                                   R.style.navDrawerTitleStyle);
+                R.id.nav_view,
+                R.id.settingsTitle,
+                R.style.navDrawerTitleStyle);
 
         Utilities.setNavTitleStyle(this,
-                                   R.id.nav_view,
-                                   R.id.menuTitle,
-                                   R.style.navDrawerTitleStyle);
+                R.id.nav_view,
+                R.id.menuTitle,
+                R.style.navDrawerTitleStyle);
 
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -248,16 +205,6 @@ public class HomeActivity extends AppCompatActivity
         return selected_item;
     }
 
-    private void startMostPopularFlipping(){
-
-        ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
-        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
-        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
-        viewFlipperManager.setFlipInterval(3000);
-
-        viewFlipperManager.startFlipping();
-
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -274,10 +221,10 @@ public class HomeActivity extends AppCompatActivity
                 bundle.putString("Category", "Hotels");
 
                 Utilities.OpenActivityWithBundle(getApplicationContext(),
-                                                 HTRActivity.class,
-                                                 "",
-                                                 bundle
-                                                 );
+                        HTRActivity.class,
+                        "",
+                        bundle
+                );
                 break;
             case R.id.Home:
 
@@ -308,11 +255,14 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.Favorites:
 
+
+
                 break;
             case R.id.Settings:
                 Utilities.OpenActivity(this,SettingsActivity.class, "");
                 break;
         }
+
 
         return true;
     }

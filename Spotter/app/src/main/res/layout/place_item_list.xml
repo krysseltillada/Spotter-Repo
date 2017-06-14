@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/frameLayout2"
+    android:id="@+id/placeItemRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentStart="true"
@@ -69,7 +69,7 @@
             android:background="@drawable/place1" />
 
         <ImageView
-            android:id="@+id/grade_icon"
+            android:id="@+id/gradeIcon"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="end"
@@ -79,7 +79,7 @@
             android:src="@drawable/ic_grade_black_18dp" />
 
         <TextView
-            android:id="@+id/general_rating_digit"
+            android:id="@+id/txtGeneralRatingDigit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
