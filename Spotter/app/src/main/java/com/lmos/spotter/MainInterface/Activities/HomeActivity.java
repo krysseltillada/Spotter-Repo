@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
@@ -65,6 +64,7 @@ public class HomeActivity extends AppCompatActivity
 
     private void initComp(){
         setContentView(R.layout.activity_home_menu);
+
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
 
@@ -210,6 +210,7 @@ public class HomeActivity extends AppCompatActivity
 
         /** Set drawer and navigation layout **/
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
