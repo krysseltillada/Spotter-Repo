@@ -1,10 +1,12 @@
 package com.lmos.spotter.MainInterface.Activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +23,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.telecom.PhoneAccount;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -49,6 +52,8 @@ public class HomeActivity extends AppCompatActivity
     private SimpleCursorAdapter searchAdapter;
     private DrawerLayout drawerLayout;
     private FloatingActionButton floatingActionButton;
+    private final int LOCATION_REQUEST_CODE = 1;
+    Activity activity = this;
 
     String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
@@ -58,7 +63,7 @@ public class HomeActivity extends AppCompatActivity
 
         initComp();
         startMostPopularFlipping();
-        Utilities.LocationHandler.getLocationService(this);
+
     }
 
     private void initComp(){
@@ -160,7 +165,30 @@ public class HomeActivity extends AppCompatActivity
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), FindPlacesActivity.class));
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    {
+
+                        ActivityCompat.requestPermissions(activity, new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                        }, LOCATION_REQUEST_CODE);
+
+                    }
+
+                }
+                else{
+
+                    if(Utilities.checkPlayServices(activity)){
+
+                            String location =new Utilities.LocationHandler(activity).findLocation();
+                            Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
+                        }
+
+                }
+
             }
         });
 
@@ -260,14 +288,18 @@ public class HomeActivity extends AppCompatActivity
 
         switch (requestCode){
 
-            case Utilities.LocationHandler.LOCATION_PERMISSION_REQUEST_CODE:
+            case LOCATION_REQUEST_CODE:
+
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Log.d("Permission Result", "Granted");
+
+                    if(Utilities.checkPlayServices(activity)){
+
+                        String location =new Utilities.LocationHandler(activity).findLocation();
+                        Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
+                    }
+
                 }
-                else{
-                    Log.d("Permission Result", "Denied");
-                }
-                return;
+                break;
 
         }
 

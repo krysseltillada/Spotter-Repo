@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,16 +34,22 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Kryssel on 6/2/2017.
@@ -351,50 +359,119 @@ public class Utilities {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
+    public static boolean checkPlayServices(Activity activity) {
+
+        final int PLAY_SERVICES_RESOLUTION_REQUEST = 1400;
+
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
+
+        if (resultCode != ConnectionResult.SUCCESS) {
+
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+
+                GooglePlayServicesUtil.getErrorDialog(
+                        resultCode,
+                        activity,
+                        PLAY_SERVICES_RESOLUTION_REQUEST
+                ).show();
+
+            }
+
+            return false;
+
+        }
+
+        return true;
+    }
+
     public static class LocationHandler {
 
-        public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+        private GoogleApiClient apiClient;
+        private LocationRequest locationRequest;
+        private Activity activity;
+        private final int INTERVAL = 5000, FAST_INTERVAL = 2000;
+        private String response = "";
 
-        private static GoogleApiClient apiClient;
-        private static LocationListener locationListener;
-        private static LocationRequest locationRequest;
+        public LocationHandler(Activity activity) {
+            this.activity = activity;
+        }
 
-        public static void getLocationService(final Activity activity) {
+        public String findLocation() {
+            Log.d("LocationHandler", "Finding location...");
+            setLocationRequest();
+            buildGoogleClient();
+            apiClient.connect();
+            Log.d("LocationHandler", "Returning location");
+            return response;
+        }
 
-            apiClient = new GoogleApiClient.Builder(activity.getApplicationContext())
+        private void buildGoogleClient() {
+            Log.d("LocationHandler", "Building client");
+            apiClient = new GoogleApiClient.Builder(activity)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                        @RequiresApi(api = Build.VERSION_CODES.M)
                         @Override
                         public void onConnected(@Nullable Bundle bundle) {
 
-                            locationRequest = LocationRequest.create()
-                                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                                    .setInterval(1000)
-                                    .setFastestInterval(5000);
-
-                            if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                                    ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission_group.LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-
-
+                            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                    ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                               return;
                             }
+                            LocationServices.FusedLocationApi.requestLocationUpdates(
+                                    apiClient,
+                                    locationRequest,
+                                    new LocationListener() {
+                                        @Override
+                                        public void onLocationChanged(Location location) {
+                                            Log.d("LocationHandler", "Lat:" + location.getLatitude() + " Lng:" + location.getLongitude());
+                                            locationToString(activity, location.getLatitude(), location.getLongitude());
+                                            LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
+                                        }
+                                    }
+                            );
 
                         }
 
                         @Override
                         public void onConnectionSuspended(int i) {
-
+                            Log.d("LocationHandler", "Connection Suspended");
                         }
                     })
                     .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                         @Override
                         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+                            response = connectionResult.toString();
                         }
                     })
                     .build();
+
+        }
+
+        private void locationToString(Activity activity, double lat, double lng){
+            Log.d("LocationHandler", "Parsing latitude and longitude");
+            String locationName;
+
+            Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
+
+            try{
+
+                List<Address> addresses = getLocationName.getFromLocation(lat, lng,1);
+                Address address = addresses.get(0);
+                locationName = address.getLocality();
+
+            } catch (IOException e) {
+                locationName = e.getMessage();
+            }
+
+           response = locationName;
+        }
+
+        private void setLocationRequest(){
+            Log.d("LocationHandler", "Requesting location");
+            locationRequest = LocationRequest.create()
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(INTERVAL)
+                    .setFastestInterval(FAST_INTERVAL);
 
         }
 

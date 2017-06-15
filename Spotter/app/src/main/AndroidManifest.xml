@@ -55,8 +55,8 @@
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
 
-        <service android:name=".LocationHandler"
-            android:exported="false" />
+        <activity android:name=".Test"
+            android:theme="@style/NoActionBar" />
 
     </application>
 
