@@ -54,10 +54,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
-        <activity
-            android:name=".MainInterface.Activities.HTRActivity"
-            android:label="@string/title_activity_htr"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+
     </application>
 
 </manifest>

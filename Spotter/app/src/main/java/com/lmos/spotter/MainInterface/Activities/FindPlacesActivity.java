@@ -21,8 +21,8 @@ public class FindPlacesActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        /*
-        getSupportFragmentManager().beginTransaction()
+
+        /*getSupportFragmentManager().beginTransaction()
                                    .add(R.id.findPlaceFragment, new FindPlaceFragment(), "FindPlace")
                                    .commit();*/
 

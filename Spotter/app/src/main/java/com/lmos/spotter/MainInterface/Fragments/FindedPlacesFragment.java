@@ -39,6 +39,7 @@ public class FindedPlacesFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.home_content_layout, container, false);
@@ -97,39 +98,6 @@ public class FindedPlacesFragment extends Fragment {
 
             }
         });
-
-        ViewGroup actionBarLayout = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.searchbar, null);
-
-        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(actionBarLayout);
-
-        final TextView appBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.txtHome);
-
-        SearchView placesSearchBar = (SearchView)actionBar.getCustomView().findViewById(R.id.search_view);
-
-        placesSearchBar.setOnSearchClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                appBarTitle.setVisibility(View.GONE);
-            }
-        });
-
-        placesSearchBar.setOnCloseListener(new SearchView.OnCloseListener() {
-
-            @Override
-            public boolean onClose() {
-                appBarTitle.setVisibility(View.VISIBLE);
-                return false;
-            }
-        });
-
-        appBarTitle.setTextSize(16.0f);
-        appBarTitle.setText("Places at Las pinas city");
 
 
     }
