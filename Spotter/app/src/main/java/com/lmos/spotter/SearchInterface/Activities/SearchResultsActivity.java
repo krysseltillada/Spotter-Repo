@@ -1,5 +1,7 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -30,6 +32,7 @@ import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
+import com.lmos.spotter.Utilities.Utilities;
 
 /**
  * Created by linker on 02/06/2017.
@@ -48,11 +51,11 @@ public class SearchResultsActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     SearchReviewsAdapter mAdapter;
     FavoritesDbHelper favoritesDbHelper;
+    Activity activity = this;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
-
 
         initComp();
 
@@ -85,7 +88,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     private void switchFragment(String type, String... params){
 
-        Fragment fragment;
+        Fragment fragment = null;
         String tag, backStack;
 
         if(type.equals("General")){ tag = "General"; backStack = ""; }
@@ -93,6 +96,8 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         switch (type){
 
+            case "Location":
+                break;
             case "General":
                 setHeaderText("Batangas", "Bayan ng magigiting");
                 fragment = new FragmentSearchResultGeneral();
@@ -105,11 +110,11 @@ public class SearchResultsActivity extends AppCompatActivity {
                 break;
         }
 
-        getSupportFragmentManager().beginTransaction()
+        /*getSupportFragmentManager().beginTransaction()
                 .replace(R.id.search_content_holder, fragment, type)
                 .addToBackStack(backStack)
                 .commit();
-
+*/
         Toast.makeText(this, String.valueOf(getSupportFragmentManager().getBackStackEntryCount()), Toast.LENGTH_LONG).show();
 
     }

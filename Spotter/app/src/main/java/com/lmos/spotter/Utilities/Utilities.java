@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
@@ -11,7 +12,8 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.renderscript.Allocation;
@@ -20,7 +22,6 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -34,17 +35,22 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,6 +59,14 @@ import java.util.Locale;
 
 /**
  * Created by Kryssel on 6/2/2017.
+ *
+ * This class will hold static methods and classes
+ * that is reusable in any given time.
+ * Included in this are the following:
+ *  **Classes**
+ *    BlurImg - (public methods: blurImg, toString, getBitmap)
+ *    LocationHandler
+ *     (public methods: changeApiState, findLocation, buildApi)
  */
 
 public class Utilities {
@@ -319,7 +333,7 @@ public class Utilities {
         con.startActivity(requestActivity);
     }
 
-    public static void OpenActivityWithBundle (Context con, Class<?> cname, String callingActivity, Bundle bundle) {
+    public static void OpenActivityWithBundle(Context con, Class<?> cname, String callingActivity, Bundle bundle) {
         Intent requestActivity = new Intent(con, cname);
         requestActivity.putExtras(bundle);
         requestActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -356,6 +370,7 @@ public class Utilities {
 
     }
 
+
     public static void loadGifImageView(Context context, ImageView target, int drawableId) {
         GlideDrawableImageViewTarget gifLoaderImage = new GlideDrawableImageViewTarget(target);
         Glide.with(context).load(drawableId).into(gifLoaderImage);
@@ -366,7 +381,16 @@ public class Utilities {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
+    public static boolean checkNetworkState(Activity activity){
+
+        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
     public static boolean checkPlayServices(Activity activity) {
+
 
         final int PLAY_SERVICES_RESOLUTION_REQUEST = 1400;
 
@@ -396,52 +420,110 @@ public class Utilities {
         private GoogleApiClient apiClient;
         private LocationRequest locationRequest;
         private Activity activity;
-        private final int INTERVAL = 5000, FAST_INTERVAL = 2000;
-        private String response = "";
+        private final int INTERVAL = 2000, FAST_INTERVAL = 500;
+        private String response = " HI ";
+        OnLocationFoundListener OnLocationFoundListener;
 
-        public LocationHandler(Activity activity) {
+        public LocationHandler(Activity activity, OnLocationFoundListener OnLocationFoundListener) {
             this.activity = activity;
+            this.OnLocationFoundListener = OnLocationFoundListener;
         }
 
         public String findLocation() {
-            Log.d("LocationHandler", "Finding location...");
-            setLocationRequest();
-            buildGoogleClient();
-            apiClient.connect();
-            Log.d("LocationHandler", "Returning location");
             return response;
         }
 
-        private void buildGoogleClient() {
+        public void changeApiState(String state) {
+
+            switch (state){
+
+                case "connect":
+                    apiClient.connect();
+                    checkLocationSettingsState();
+                    if (apiClient.isConnecting())
+                        Log.d("LocationHandler", "Connecting...");
+
+                    break;
+                case "disconnect":
+                    apiClient.disconnect();
+                    break;
+                case "reconnect":
+                    apiClient.reconnect();
+                    break;
+            }
+
+        }
+
+        public void checkPermission(){
+
+            if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
+
+                ActivityCompat.requestPermissions(activity, new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                }, Utilities.REQUEST_CODES.LOCATION_REQUEST_CODE);
+
+            }
+
+
+        }
+
+        private void checkLocationSettingsState(){
+
+            LocationSettingsRequest.Builder buildSettingsRequest = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
+
+            PendingResult<LocationSettingsResult> resultPendingResult =
+                    LocationServices.SettingsApi.checkLocationSettings(
+                            apiClient,
+                            buildSettingsRequest.build()
+                    );
+
+            resultPendingResult.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+
+                    final Status status = locationSettingsResult.getStatus();
+                    final LocationSettingsStates LS_state = locationSettingsResult.getLocationSettingsStates();
+
+                    switch (status.getStatusCode()){
+
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            setLocationRequest();
+                            break;
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            try{
+                                status.startResolutionForResult(
+                                        activity,
+                                        REQUEST_CODES.CHECK_SETTING_REQUEST_CODE
+                                );
+                            }catch (IntentSender.SendIntentException e){
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
+
+                }
+            });
+
+        }
+
+        public void buildGoogleClient() {
             Log.d("LocationHandler", "Building client");
             apiClient = new GoogleApiClient.Builder(activity)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                         @Override
                         public void onConnected(@Nullable Bundle bundle) {
-
-                            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                                    ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                               return;
-                            }
-                            LocationServices.FusedLocationApi.requestLocationUpdates(
-                                    apiClient,
-                                    locationRequest,
-                                    new LocationListener() {
-                                        @Override
-                                        public void onLocationChanged(Location location) {
-                                            Log.d("LocationHandler", "Lat:" + location.getLatitude() + " Lng:" + location.getLongitude());
-                                            locationToString(activity, location.getLatitude(), location.getLongitude());
-                                            LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
-                                        }
-                                    }
-                            );
-
+                            setLocationRequest();
+                            findLocation();
                         }
 
                         @Override
                         public void onConnectionSuspended(int i) {
-                            Log.d("LocationHandler", "Connection Suspended");
+                            response = "Connection suspended";
                         }
                     })
                     .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
@@ -454,34 +536,63 @@ public class Utilities {
 
         }
 
-        private void locationToString(Activity activity, double lat, double lng){
+        private void getLocationName(Activity activity, double lat, double lng) {
             Log.d("LocationHandler", "Parsing latitude and longitude");
-            String locationName;
 
             Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
 
-            try{
+            try {
 
-                List<Address> addresses = getLocationName.getFromLocation(lat, lng,1);
+                List<Address> addresses = getLocationName.getFromLocation(lat, lng, 1);
                 Address address = addresses.get(0);
-                locationName = address.getLocality();
+                Log.d("LocationHandler", address.getLocality());
+                response = address.getLocality();
+                OnLocationFoundListener.onLocationFound(address.getLocality());
 
             } catch (IOException e) {
-                locationName = e.getMessage();
+                response = e.getMessage();
             }
 
-           response = locationName;
         }
 
-        private void setLocationRequest(){
+        private void setLocationRequest() {
             Log.d("LocationHandler", "Requesting location");
             locationRequest = LocationRequest.create()
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                     .setInterval(INTERVAL)
                     .setFastestInterval(FAST_INTERVAL);
 
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+
+                    ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    apiClient,
+                    locationRequest,
+                    new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            Log.d("LocationHandler", "Lat:" + location.getLatitude() + " Lng:" + location.getLongitude());
+                            getLocationName(activity, location.getLatitude(), location.getLongitude());
+                            LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
+                        }
+                    }
+            );
+
         }
 
+    }
+
+    public static class REQUEST_CODES{
+
+        public static final int LOCATION_REQUEST_CODE = 1400;
+        public static final int CHECK_SETTING_REQUEST_CODE = 1500;
+
+    }
+
+    public interface OnLocationFoundListener {
+        public void onLocationFound(String location);
     }
 
 }

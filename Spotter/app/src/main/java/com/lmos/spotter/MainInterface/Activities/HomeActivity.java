@@ -1,15 +1,12 @@
 package com.lmos.spotter.MainInterface.Activities;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -17,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -28,7 +24,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.telecom.PhoneAccount;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -36,7 +31,6 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
@@ -47,7 +41,8 @@ import com.lmos.spotter.Utilities.Utilities;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         SearchView.OnSuggestionListener,
-        SearchView.OnQueryTextListener{
+        SearchView.OnQueryTextListener,
+        Utilities.OnLocationFoundListener {
 
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -59,7 +54,7 @@ public class HomeActivity extends AppCompatActivity
     private SimpleCursorAdapter searchAdapter;
     private DrawerLayout drawerLayout;
     private FloatingActionButton floatingActionButton;
-    private final int LOCATION_REQUEST_CODE = 1;
+    Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
     Activity activity = this;
 
     String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
@@ -69,47 +64,19 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         initComp();
+        locationHandler.buildGoogleClient();
         startMostPopularFlipping();
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        locationHandler.changeApiState("connect");
+    }
+
     private void initComp(){
         setContentView(R.layout.activity_home_menu);
-
-
-        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                SharedPreferences userPreference = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
-
-                if (userPreference.getBoolean("notifyGPS", false)) {
-
-                    Snackbar.make(v, "GPS is used to detect place in your city", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Allow", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                    Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
-                                            FindPlacesActivity.class,
-                                            "");
-
-                                }
-                            }).show();
-
-
-                } else {
-
-                    Utilities.OpenActivity(HomeActivity.this.getApplicationContext(),
-                            FindPlacesActivity.class,
-                            "");
-
-                }
-
-            }
-        });
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
@@ -250,33 +217,22 @@ public class HomeActivity extends AppCompatActivity
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                            && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                    {
-
-                        ActivityCompat.requestPermissions(activity, new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION
-                        }, LOCATION_REQUEST_CODE);
-
-                    }
-
+                    locationHandler.checkPermission();
                 }
                 else{
 
                     if(Utilities.checkPlayServices(activity)){
-
-                            String location =new Utilities.LocationHandler(activity).findLocation();
-                            Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
-                        }
+                        Log.d("LocationHandler", locationHandler.findLocation());
+                    }
 
                 }
 
             }
+
         });
 
     }
@@ -400,25 +356,60 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onDestroy() {
+        locationHandler.changeApiState("disconnect");
+        super.onDestroy();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode){
 
-            case LOCATION_REQUEST_CODE:
+            case Utilities.REQUEST_CODES.LOCATION_REQUEST_CODE:
+
 
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-                    if(Utilities.checkPlayServices(activity)){
-
-                        String location =new Utilities.LocationHandler(activity).findLocation();
-                        Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
-                    }
 
                 }
                 break;
 
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+
+            case Utilities.REQUEST_CODES.CHECK_SETTING_REQUEST_CODE:
+                switch (resultCode){
+
+                    case Activity.RESULT_OK:
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // Handle system response when the user did not enable gps/network settings.
+                        break;
+
+                }
+                break;
+
+        }
+
+    }
+
+    @Override
+    public void onLocationFound(String location) {
+
+        Snackbar sb = Snackbar.make(
+                findViewById(R.id.home_content_wrapper),
+                location,
+                Snackbar.LENGTH_LONG
+        );
+        sb.setAction("OK", null);
+        sb.show();
     }
 }
