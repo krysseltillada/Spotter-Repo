@@ -55,11 +55,12 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         return testCount;
     }
 
-    class MainInterfaceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+   public class MainInterfaceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
         View rowV;
-        ImageView placeCompanyLogo, gradeIcon;
-        TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview;
+
+        public ImageView placeCompanyLogo, gradeIcon;
+        public TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview;
 
 
         public MainInterfaceViewHolder (View rowView) {

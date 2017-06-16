@@ -54,7 +54,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
-
+        <activity
+            android:name=".MainInterface.Activities.BookMarksActivity"
+            android:label="@string/title_activity_book_marks"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

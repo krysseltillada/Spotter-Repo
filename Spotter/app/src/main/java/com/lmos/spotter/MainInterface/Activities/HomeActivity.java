@@ -88,6 +88,8 @@ public class HomeActivity extends AppCompatActivity
             tabLayout.clearOnTabSelectedListeners();
             tabLayout.removeAllTabs();
         }
+
+
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
         tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
         tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
@@ -289,6 +291,10 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.TouristSpots:
                 loadPlacesByType("Tourist Spots");
+                break;
+            case R.id.Favorites:
+                Utilities.OpenActivity(getApplicationContext(),
+                                       BookMarksActivity.class, "");
                 break;
             case R.id.Settings:
 
