@@ -2,6 +2,7 @@ package com.lmos.spotter.MainInterface.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
+
+import java.util.ArrayList;
 
 /**
  * Created by Kryssel on 6/14/2017.
@@ -24,16 +27,34 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
     private ActivityType activityType;
 
+    private boolean isCheckBoxShow = false;
+
+    private ArrayList<Boolean> checkBoxToggleList;
+
     private Context context;
 
     public MainInterfaceAdapter(Context con, ActivityType acType,  int tc) {
+
+        Log.d("Debug", "MainInterfaceAdapter constructor");
+
+        checkBoxToggleList = new ArrayList<Boolean>(tc);
+
         testCount = tc;
         context = con;
         activityType = acType;
     }
 
+    public MainInterfaceAdapter setVisibilityCheckBox(boolean isShow) {
+        isCheckBoxShow = isShow;
+        notifyDataSetChanged();
+        return this;
+    }
+
     @Override
     public MainInterfaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        Log.d("Debug", "OnCreateViewHolder");
+
         return new MainInterfaceViewHolder(LayoutInflater.from(parent.getContext())
                                                          .inflate((activityType == ActivityType.HOME_ACTIVITY) ? R.layout.place_item_list :
                                                                                                                  R.layout.bookmarks_item_list,
@@ -42,6 +63,17 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
     @Override
     public void onBindViewHolder(MainInterfaceViewHolder holder, int position) {
+
+        Log.d("Debug", "item rendereed at position: " + String.valueOf(position));
+
+        if (holder.cbDelete != null) {
+
+            if (isCheckBoxShow)
+                holder.cbDelete.setVisibility(View.VISIBLE);
+            else
+                holder.cbDelete.setVisibility(View.GONE);
+
+        }
 
         setAnimation(holder.rowV.findViewById(R.id.placeItemRow), position);
 
@@ -62,21 +94,38 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         return testCount;
     }
 
-   public class MainInterfaceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+   public class MainInterfaceViewHolder extends RecyclerView.ViewHolder {
 
         View rowV;
 
         public ImageView placeCompanyImage, gradeIcon;
         public TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview;
 
-        CheckBox cbDelete;
+        public CheckBox cbDelete;
 
         public MainInterfaceViewHolder (View rowView) {
 
             super(rowView);
 
-            if (activityType == ActivityType.BOOKMARKS_ACTIVITY)
-                cbDelete = (CheckBox)rowView.findViewById(R.id.cbDelete);
+            Log.d("Debug", "MainInterfaceViewHolder constructor");
+
+            if (activityType == ActivityType.BOOKMARKS_ACTIVITY) {
+                cbDelete = (CheckBox) rowView.findViewById(R.id.cbDelete);
+
+                rowView.findViewById(R.id.placeItemRow).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        CheckBox cbDelete = (CheckBox)v.findViewById(R.id.cbDelete);
+
+                        cbDelete.toggle();
+
+
+
+                    }
+                });
+
+            }
 
             placeCompanyImage = (ImageView) rowView.findViewById(R.id.placeCompanyImage);
             gradeIcon = (ImageView) rowView.findViewById(R.id.gradeIcon);
@@ -89,18 +138,10 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
             rowV = rowView;
 
-            rowView.findViewById(R.id.placeItemRow).setOnClickListener(this);
+
 
         }
 
-        @Override
-        public void onClick(View v) {
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            return false;
-        }
 
     }
 

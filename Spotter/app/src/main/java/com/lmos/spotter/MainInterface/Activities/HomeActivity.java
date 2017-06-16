@@ -19,7 +19,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -31,11 +30,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.CursorAdapter;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -44,7 +41,6 @@ import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.ActivityType;
-import com.lmos.spotter.Utilities.LockableNestedScrollView;
 import com.lmos.spotter.Utilities.Utilities;
 
 public class HomeActivity extends AppCompatActivity
@@ -188,13 +184,6 @@ public class HomeActivity extends AppCompatActivity
 
             }
         });
-
-        LockableNestedScrollView homeScrollView = (LockableNestedScrollView) findViewById(R.id.homeContentScrollView);
-
-
-
-
-
 
         appBarLayout = (AppBarLayout)findViewById(R.id.app_bar_layout);
 

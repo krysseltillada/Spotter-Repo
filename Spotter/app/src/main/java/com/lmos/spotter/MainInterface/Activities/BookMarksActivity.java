@@ -5,20 +5,27 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 
+import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
+import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.Utilities;
 
 public class BookMarksActivity extends AppCompatActivity {
 
-    FloatingActionButton fab;
     Menu bookMarksMenu;
     Toolbar toolbar;
+
+    TabLayout bookMarksTabLayout;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +34,32 @@ public class BookMarksActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        TabLayout bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
-        RecyclerView bookMarksRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+         bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
+
+        final RecyclerView bookMarksRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView = bookMarksRecyclerView;
 
         bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText("Hotel"));
+
+        bookMarksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
+                                                                       LinearLayoutManager.VERTICAL,
+                                                                       false));
+
+        bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                  ActivityType.BOOKMARKS_ACTIVITY,
+                                                                  10));
+
+
 
         bookMarksTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         bookMarksTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+
+                bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                        ActivityType.BOOKMARKS_ACTIVITY,
+                        10));
 
 
 
@@ -61,14 +84,6 @@ public class BookMarksActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Bookmarks");
 
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     @Override
@@ -99,6 +114,8 @@ public class BookMarksActivity extends AppCompatActivity {
                                                 R.menu.book_marks_delete_menu,
                                                 "Delete");
 
+                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(true);
+
                 break;
 
             case R.id.cancelDelete:
@@ -108,6 +125,8 @@ public class BookMarksActivity extends AppCompatActivity {
                                                 bookMarksMenu,
                                                 R.menu.book_marks_menu,
                                                 "Bookmarks");
+
+                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(false);
 
                 break;
 
