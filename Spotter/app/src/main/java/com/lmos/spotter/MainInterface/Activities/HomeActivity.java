@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +19,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,11 +28,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.CursorAdapter;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -38,6 +43,8 @@ import android.widget.ViewFlipper;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
+import com.lmos.spotter.Utilities.ActivityType;
+import com.lmos.spotter.Utilities.LockableNestedScrollView;
 import com.lmos.spotter.Utilities.Utilities;
 
 public class HomeActivity extends AppCompatActivity
@@ -55,6 +62,7 @@ public class HomeActivity extends AppCompatActivity
     private SimpleCursorAdapter searchAdapter;
     private DrawerLayout drawerLayout;
     private FloatingActionButton floatingActionButton;
+    private AppBarLayout appBarLayout;
 
     private final int LOCATION_REQUEST_CODE = 1;
 
@@ -76,7 +84,7 @@ public class HomeActivity extends AppCompatActivity
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
-        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(1, getApplicationContext()));
+        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(), ActivityType.HOME_ACTIVITY, 10));
 
         tabLayoutRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
@@ -103,13 +111,19 @@ public class HomeActivity extends AppCompatActivity
 
                 switch (tab.getPosition()) {
                     case 0:
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(1, getApplicationContext()));
+                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                                  ActivityType.HOME_ACTIVITY,
+                                                                                  10));
                         break;
                     case 1:
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(5, getApplicationContext()));
+                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                                  ActivityType.HOME_ACTIVITY,
+                                                                                  5));
                         break;
                     case 2:
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(2, getApplicationContext()));
+                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                                  ActivityType.HOME_ACTIVITY,
+                                                                                  4));
                         break;
                 }
 
@@ -175,9 +189,30 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        LockableNestedScrollView homeScrollView = (LockableNestedScrollView) findViewById(R.id.homeContentScrollView);
+
+
+
+
+
+
+        appBarLayout = (AppBarLayout)findViewById(R.id.app_bar_layout);
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                if (verticalOffset <= -380) {
+                    Log.d("Debug", "toolbar collapse at: " + String.valueOf(verticalOffset));
+                }
+            }
+        });
+
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
+
         collapsingToolbarLayout.setTitleEnabled(false);
+
 
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
 

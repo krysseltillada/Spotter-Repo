@@ -57,6 +57,7 @@ import java.util.Locale;
  * Created by Kryssel on 6/2/2017.
  */
 
+
 public class Utilities {
 
     public static class BlurImg {

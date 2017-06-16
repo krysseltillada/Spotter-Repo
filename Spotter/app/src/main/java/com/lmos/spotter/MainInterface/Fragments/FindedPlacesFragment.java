@@ -1,3 +1,5 @@
+
+/*
 package com.lmos.spotter.MainInterface.Fragments;
 
 import android.support.v4.view.ViewPager;
@@ -18,9 +20,6 @@ import android.widget.TextView;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
 
-/**
- * Created by Kryssel on 6/10/2017.
- */
 
 public class FindedPlacesFragment extends Fragment {
     @Nullable
@@ -104,3 +103,5 @@ public class FindedPlacesFragment extends Fragment {
 
 
 }
+
+*/

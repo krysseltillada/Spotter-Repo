@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,10 +27,33 @@ public class BookMarksActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
+        TabLayout bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
+        RecyclerView bookMarksRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Hotel"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText("Hotel"));
+
+        bookMarksTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        bookMarksTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+
+
+        });
 
         setSupportActionBar(toolbar);
 
