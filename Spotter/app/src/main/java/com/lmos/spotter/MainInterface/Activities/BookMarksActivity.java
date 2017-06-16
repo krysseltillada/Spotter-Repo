@@ -2,6 +2,7 @@ package com.lmos.spotter.MainInterface.Activities;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -31,11 +32,11 @@ public class BookMarksActivity extends AppCompatActivity {
     TabLayout bookMarksTabLayout;
     RecyclerView recyclerView;
 
-    private void selectAllCheckBox (RecyclerView recView, ArrayList<Boolean> checkDeleteList) {
+    private void selectAllCheckBox (final RecyclerView recView, ArrayList<Boolean> checkDeleteList) {
         for (int rowItemCount = 0; rowItemCount != recView.getAdapter().getItemCount(); ++rowItemCount) {
 
             checkDeleteList.set(rowItemCount, true);
-            /*
+            
 
             View view = recView.getLayoutManager().findViewByPosition(rowItemCount);
 
@@ -44,13 +45,11 @@ public class BookMarksActivity extends AppCompatActivity {
                 CheckBox cbDelete = (CheckBox) view.findViewById(R.id.cbDelete);
                 cbDelete.setChecked(checkDeleteList.get(rowItemCount));
 
-            } */
+            }
 
 
         }
 
-        recView.getAdapter().notifyDataSetChanged();
-        recView.getAdapter().notifyDataSetChanged();
 
         MainInterfaceAdapter.displayCheckListValues(checkDeleteList);
     }

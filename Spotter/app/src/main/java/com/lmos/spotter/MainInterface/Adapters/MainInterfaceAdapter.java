@@ -79,6 +79,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
     @Override
     public void onBindViewHolder(MainInterfaceViewHolder holder, int position) {
 
+        if (holder.isRecyclable())
+            holder.setIsRecyclable(false);
 
         if (holder.cbDelete != null && activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE)
             holder.cbDelete.setChecked(checkBoxToggleList.get(position));
