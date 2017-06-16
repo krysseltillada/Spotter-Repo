@@ -16,16 +16,14 @@
         <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="275dp"
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/home_collapsing_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:contentScrim="@color/colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
 
                 <ViewFlipper
                     android:id="@+id/viewFlipManager"
@@ -68,11 +66,20 @@
 
                 </ViewFlipper>
 
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/action_bar_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginBottom="48dp"
+                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+                    app:layout_collapseMode="pin" />
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
+                    android:layout_marginTop="185dp"
                     android:background="@color/blackTransparent"
                     app:layout_collapseMode="parallax">
 
@@ -103,17 +110,25 @@
 
                 </LinearLayout>
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/action_bar_toolbar"
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/home_tabLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
-                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-                    app:layout_collapseMode="pin" />
+                    android:minHeight="?attr/actionBarSize"
+                    android:layout_gravity="bottom"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:elevation="6dp" />
+
+
 
             </android.support.design.widget.CollapsingToolbarLayout>
 
+
         </android.support.design.widget.AppBarLayout>
+
+
 
         <com.lmos.spotter.Utilities.LockableNestedScrollView
             android:id = "@+id/homeContentScrollView"
@@ -123,7 +138,7 @@
             android:scrollY="0dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <include layout="@layout/home_content_layout" />
+            <include layout="@layout/recycler_view_layout" />
 
         </com.lmos.spotter.Utilities.LockableNestedScrollView>
 

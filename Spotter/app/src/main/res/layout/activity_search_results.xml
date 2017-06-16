@@ -77,16 +77,6 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/max_font_size"/>
 
-            <android.support.design.widget.TabLayout
-                    android:id="@+id/home_tabLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
-                    android:minHeight="?attr/actionBarSize"
-                    android:layout_marginTop="70dp"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                    app:elevation="6dp" />
-
             </RelativeLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
