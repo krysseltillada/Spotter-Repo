@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="170dp"
+    android:background="@drawable/layout_white_bg"
+    android:padding="1dp">
+
+    <TextView
+        android:id="@+id/dialog_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/acc_layout_mid_margin"
+        android:layout_marginEnd="@dimen/acc_layout_mid_margin"
+        android:layout_marginStart="@dimen/acc_layout_mid_margin"
+        android:maxLines="5"
+        android:padding="@dimen/mid_padding"
+        android:text="asdadasdasdasdasdassd"
+        android:textColor="#000"/>
+
+    <Button
+        android:id="@+id/positive_button"
+        style="?android:textViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/dialog_msg"
+        android:layout_marginBottom="@dimen/acc_layout_mid_margin"
+        android:layout_marginEnd="@dimen/acc_layout_max_margin"
+        android:background="@color/transparent"
+        android:onClick="onClick"
+        android:text="Enable"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/max_font_size"/>
+
+    <Button
+        android:id="@+id/negative_button"
+        style="?android:textViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/dialog_msg"
+        android:layout_marginBottom="@dimen/acc_layout_mid_margin"
+        android:layout_toStartOf="@id/positive_button"
+        android:background="@color/transparent"
+        android:onClick="onClick"
+        android:text="Cancel"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/max_font_size"/>
+
+</RelativeLayout>

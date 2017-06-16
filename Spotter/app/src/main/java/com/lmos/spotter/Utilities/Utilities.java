@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
@@ -14,6 +13,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.renderscript.Allocation;
@@ -36,6 +36,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
@@ -43,14 +44,14 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.lmos.spotter.DialogActivity;
+import com.lmos.spotter.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -72,47 +73,6 @@ import java.util.Locale;
 
 
 public class Utilities {
-
-    public static class BlurImg {
-
-        private static final float BITMAP_SCALE = 0.4f;
-
-        public static Bitmap blurImg(Context context, Bitmap blurme, float blurValue) {
-
-            int width = Math.round(blurme.getWidth() * BITMAP_SCALE);
-            int height = Math.round(blurme.getHeight() * BITMAP_SCALE);
-
-            Bitmap input_bitmap = Bitmap.createScaledBitmap(blurme, width, height, true);
-            Bitmap output_bitmap = Bitmap.createBitmap(input_bitmap);
-
-            RenderScript rs = RenderScript.create(context);
-            ScriptIntrinsicBlur sblur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-
-            Allocation tmpIn = Allocation.createFromBitmap(rs, input_bitmap);
-            Allocation tmpOut = Allocation.createFromBitmap(rs, output_bitmap);
-
-            sblur.setRadius((blurValue > 25) ? 25 : (blurValue < 0) ? 0 : blurValue);
-            sblur.setInput(tmpIn);
-            sblur.forEach(tmpOut);
-
-            tmpOut.copyTo(output_bitmap);
-
-            return output_bitmap;
-        }
-
-        public static String toString(Bitmap bitmap) {
-            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
-            byte[] b = byteOutputStream.toByteArray();
-            return Base64.encodeToString(b, Base64.DEFAULT);
-        }
-
-        public static Bitmap getBitmap(String encodedBitmap) {
-            byte[] decodeBitmap = Base64.decode(encodedBitmap, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(decodeBitmap, 0, decodeBitmap.length);
-        }
-
-    }
 
     public static boolean checkIfLastItem(int firstVisibleItem, int visibleItem,
                                           int totalItemCount) {
@@ -381,7 +341,6 @@ public class Utilities {
 
     }
 
-
     public static void loadGifImageView(Context context, ImageView target, int drawableId) {
         GlideDrawableImageViewTarget gifLoaderImage = new GlideDrawableImageViewTarget(target);
         Glide.with(context).load(drawableId).into(gifLoaderImage);
@@ -398,6 +357,14 @@ public class Utilities {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public static void showDialogActivity(Activity activity, int requestCode ,int stringId){
+
+        Intent showDialogActivity = new Intent(activity, DialogActivity.class);
+        showDialogActivity.putExtra("message", stringId);
+        activity.startActivityForResult(showDialogActivity, requestCode);
+
     }
 
     public static boolean checkPlayServices(Activity activity) {
@@ -426,14 +393,59 @@ public class Utilities {
         return true;
     }
 
+    public interface OnLocationFoundListener {
+        void onLocationFound(String location);
+    }
+
+    public static class BlurImg {
+
+        private static final float BITMAP_SCALE = 0.4f;
+
+        public static Bitmap blurImg(Context context, Bitmap blurme, float blurValue) {
+
+            int width = Math.round(blurme.getWidth() * BITMAP_SCALE);
+            int height = Math.round(blurme.getHeight() * BITMAP_SCALE);
+
+            Bitmap input_bitmap = Bitmap.createScaledBitmap(blurme, width, height, true);
+            Bitmap output_bitmap = Bitmap.createBitmap(input_bitmap);
+
+            RenderScript rs = RenderScript.create(context);
+            ScriptIntrinsicBlur sblur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+
+            Allocation tmpIn = Allocation.createFromBitmap(rs, input_bitmap);
+            Allocation tmpOut = Allocation.createFromBitmap(rs, output_bitmap);
+
+            sblur.setRadius((blurValue > 25) ? 25 : (blurValue < 0) ? 0 : blurValue);
+            sblur.setInput(tmpIn);
+            sblur.forEach(tmpOut);
+
+            tmpOut.copyTo(output_bitmap);
+
+            return output_bitmap;
+        }
+
+        public static String toString(Bitmap bitmap) {
+            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
+            byte[] b = byteOutputStream.toByteArray();
+            return Base64.encodeToString(b, Base64.DEFAULT);
+        }
+
+        public static Bitmap getBitmap(String encodedBitmap) {
+            byte[] decodeBitmap = Base64.decode(encodedBitmap, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodeBitmap, 0, decodeBitmap.length);
+        }
+
+    }
+
     public static class LocationHandler {
 
+        private final int INTERVAL = 2000, FAST_INTERVAL = 500;
+        OnLocationFoundListener OnLocationFoundListener;
         private GoogleApiClient apiClient;
         private LocationRequest locationRequest;
         private Activity activity;
-        private final int INTERVAL = 2000, FAST_INTERVAL = 500;
         private String response = " HI ";
-        OnLocationFoundListener OnLocationFoundListener;
 
         public LocationHandler(Activity activity) { this.activity = activity; }
 
@@ -455,7 +467,6 @@ public class Utilities {
                     checkLocationSettingsState();
                     if (apiClient.isConnecting())
                         Log.d("LocationHandler", "Connecting...");
-
                     break;
                 case "disconnect":
                     apiClient.disconnect();
@@ -485,8 +496,11 @@ public class Utilities {
 
         private void checkLocationSettingsState(){
 
+            Log.d("LocationHandler", "Checking GPS status");
+
             LocationSettingsRequest.Builder buildSettingsRequest = new LocationSettingsRequest.Builder()
                     .addLocationRequest(locationRequest);
+
 
             PendingResult<LocationSettingsResult> resultPendingResult =
                     LocationServices.SettingsApi.checkLocationSettings(
@@ -498,26 +512,11 @@ public class Utilities {
                 @Override
                 public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
 
-                    final Status status = locationSettingsResult.getStatus();
                     final LocationSettingsStates LS_state = locationSettingsResult.getLocationSettingsStates();
-
-                    switch (status.getStatusCode()){
-
-                        case LocationSettingsStatusCodes.SUCCESS:
-                            setLocationRequest();
-                            break;
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            try{
-                                status.startResolutionForResult(
-                                        activity,
-                                        REQUEST_CODES.CHECK_SETTING_REQUEST_CODE
-                                );
-                            }catch (IntentSender.SendIntentException e){
-                                e.printStackTrace();
-                            }
-                            break;
-                    }
-
+                    if(LS_state.isGpsUsable() && LS_state.isNetworkLocationUsable())
+                        setLocationRequest();
+                    else
+                        showDialogActivity(activity, REQUEST_CODES.CHECK_SETTING_REQUEST_CODE, R.string.enable_gps_network );
                 }
             });
 
@@ -531,7 +530,6 @@ public class Utilities {
                         @Override
                         public void onConnected(@Nullable Bundle bundle) {
                             setLocationRequest();
-                            findLocation();
                         }
 
                         @Override
@@ -546,33 +544,6 @@ public class Utilities {
                         }
                     })
                     .build();
-
-        }
-
-        private void getLocationName(Activity activity, double lat, double lng) {
-            Log.d("LocationHandler", "Parsing latitude and longitude");
-
-            Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
-            List<Address> addresses;
-            Address address = null;
-            try {
-
-                addresses = getLocationName.getFromLocation(lat, lng, 1);
-                address = addresses.get(0);
-                Log.d("LocationHandler", address.getLocality());
-                response = address.getLocality();
-
-            }
-            catch (SocketTimeoutException e){
-                response = e.getMessage();
-                Log.d("LocationHandler", response);
-            }
-            catch (IOException e) {
-                response = e.getMessage() + "\nHAhahaha";
-                Log.d("LocationHandler", response);
-            }
-
-            OnLocationFoundListener.onLocationFound(address.getLocality());
 
         }
 
@@ -595,12 +566,48 @@ public class Utilities {
                         @Override
                         public void onLocationChanged(Location location) {
                             Log.d("LocationHandler", "Lat:" + location.getLatitude() + " Lng:" + location.getLongitude());
-                            getLocationName(activity, location.getLatitude(), location.getLongitude());
+                            new getLocationName().execute(location.getLatitude(), location.getLongitude());
                             LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
                         }
                     }
             );
 
+        }
+
+        class getLocationName extends AsyncTask<Double, Void, Void>{
+
+            @Override
+            protected Void doInBackground(Double... params) {
+
+                Log.d("LocationHandler", "Parsing latitude and longitude");
+                // params[0] = latitude, params[1] = longitude
+
+                Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
+                List<Address> addresses;
+                try {
+
+                    addresses = getLocationName.getFromLocation(params[0], params[1], 1);
+                    Address address = addresses.get(0);
+                    Log.d("LocationHandler", address.getLocality());
+                    response = address.getLocality();
+
+                }
+                catch (SocketTimeoutException e){
+                    response = e.getMessage();
+                    Log.d("LocationHandler", response);
+                }
+                catch (IOException e) {
+                    response =  e.getMessage() + "\nHAhahaha";
+                    Log.d("LocationHandler", response);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                OnLocationFoundListener.onLocationFound(response);
+            }
         }
 
     }
@@ -610,10 +617,6 @@ public class Utilities {
         public static final int LOCATION_REQUEST_CODE = 1400;
         public static final int CHECK_SETTING_REQUEST_CODE = 1500;
 
-    }
-
-    public interface OnLocationFoundListener {
-        void onLocationFound(String location);
     }
 
 }

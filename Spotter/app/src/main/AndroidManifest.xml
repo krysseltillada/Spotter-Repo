@@ -48,17 +48,16 @@
         <activity
             android:name=".MainInterface.Activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity
-            android:name=".MainInterface.Activities.FindPlacesActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainInterface.Activities.HomeActivity" />
-        </activity>
+
         <activity
             android:name=".MainInterface.Activities.BookMarksActivity"
             android:label="@string/title_activity_book_marks"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".DialogActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/DialogTheme" />
+
     </application>
 
 </manifest>

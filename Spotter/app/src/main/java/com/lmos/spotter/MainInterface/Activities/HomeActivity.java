@@ -1,6 +1,5 @@
 package com.lmos.spotter.MainInterface.Activities;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +16,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -50,6 +48,9 @@ public class HomeActivity extends AppCompatActivity
         SearchView.OnQueryTextListener,
         Utilities.OnLocationFoundListener {
 
+    Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
+    Activity activity = this;
+    String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private LayoutInflater inflater;
@@ -60,14 +61,7 @@ public class HomeActivity extends AppCompatActivity
     private SimpleCursorAdapter searchAdapter;
     private DrawerLayout drawerLayout;
     private FloatingActionButton floatingActionButton;
-    Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
     private AppBarLayout appBarLayout;
-
-    private final int LOCATION_REQUEST_CODE = 1;
-
-    Activity activity = this;
-
-    String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -406,14 +400,16 @@ public class HomeActivity extends AppCompatActivity
             case Utilities.REQUEST_CODES.CHECK_SETTING_REQUEST_CODE:
                 switch (resultCode){
 
-                    case Activity.RESULT_OK:
+                    case RESULT_OK:
+                        Log.d("LocationHandler", "Permission granted");
                         String location = new Utilities.LocationHandler(activity).findLocation();
                         Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
                         break;
-                    case Activity.RESULT_CANCELED:
+                    case RESULT_CANCELED:
                         // Handle system response when the user did not enable gps/network settings.
                         break;
                 }
+                break;
 
         }
 
@@ -423,7 +419,7 @@ public class HomeActivity extends AppCompatActivity
     public void onLocationFound(String location) {
 
         Snackbar sb = Snackbar.make(
-                findViewById(R.id.home_content_wrapper),
+                findViewById(R.id.homeLayout),
                 location,
                 Snackbar.LENGTH_LONG
         );
