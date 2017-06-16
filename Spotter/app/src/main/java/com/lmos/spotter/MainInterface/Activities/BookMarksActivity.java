@@ -117,6 +117,7 @@ public class BookMarksActivity extends AppCompatActivity {
                                                 "Delete");
 
                 ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(true);
+                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(true);
 
                 break;
 
