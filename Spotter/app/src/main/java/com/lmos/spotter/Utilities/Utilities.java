@@ -54,6 +54,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Locale;
 
@@ -424,6 +425,8 @@ public class Utilities {
         private String response = " HI ";
         OnLocationFoundListener OnLocationFoundListener;
 
+        public LocationHandler(Activity activity) { this.activity = activity; }
+
         public LocationHandler(Activity activity, OnLocationFoundListener OnLocationFoundListener) {
             this.activity = activity;
             this.OnLocationFoundListener = OnLocationFoundListener;
@@ -540,18 +543,26 @@ public class Utilities {
             Log.d("LocationHandler", "Parsing latitude and longitude");
 
             Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
-
+            List<Address> addresses;
+            Address address = null;
             try {
 
-                List<Address> addresses = getLocationName.getFromLocation(lat, lng, 1);
-                Address address = addresses.get(0);
+                addresses = getLocationName.getFromLocation(lat, lng, 1);
+                address = addresses.get(0);
                 Log.d("LocationHandler", address.getLocality());
                 response = address.getLocality();
-                OnLocationFoundListener.onLocationFound(address.getLocality());
 
-            } catch (IOException e) {
-                response = e.getMessage();
             }
+            catch (SocketTimeoutException e){
+                response = e.getMessage();
+                Log.d("LocationHandler", response);
+            }
+            catch (IOException e) {
+                response = e.getMessage() + "\nHAhahaha";
+                Log.d("LocationHandler", response);
+            }
+
+            OnLocationFoundListener.onLocationFound(address.getLocality());
 
         }
 
@@ -592,7 +603,7 @@ public class Utilities {
     }
 
     public interface OnLocationFoundListener {
-        public void onLocationFound(String location);
+        void onLocationFound(String location);
     }
 
 }

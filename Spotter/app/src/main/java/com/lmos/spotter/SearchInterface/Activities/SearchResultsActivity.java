@@ -110,11 +110,11 @@ public class SearchResultsActivity extends AppCompatActivity {
                 break;
         }
 
-        /*getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.search_content_holder, fragment, type)
                 .addToBackStack(backStack)
                 .commit();
-*/
+
         Toast.makeText(this, String.valueOf(getSupportFragmentManager().getBackStackEntryCount()), Toast.LENGTH_LONG).show();
 
     }
