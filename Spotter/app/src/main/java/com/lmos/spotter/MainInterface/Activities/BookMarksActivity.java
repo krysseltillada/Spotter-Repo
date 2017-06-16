@@ -45,6 +45,8 @@ public class BookMarksActivity extends AppCompatActivity {
                                                                        LinearLayoutManager.VERTICAL,
                                                                        false));
 
+        bookMarksRecyclerView.setNestedScrollingEnabled(false);
+
         bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                   ActivityType.BOOKMARKS_ACTIVITY,
                                                                   10));

@@ -116,6 +116,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
                     @Override
                     public void onClick(View v) {
 
+                        Log.d("Debug", String.valueOf(isCheckBoxShow));
+
                         CheckBox cbDelete = (CheckBox)v.findViewById(R.id.cbDelete);
 
                         cbDelete.toggle();

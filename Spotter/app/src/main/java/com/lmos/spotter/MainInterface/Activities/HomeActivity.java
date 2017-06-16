@@ -82,6 +82,8 @@ public class HomeActivity extends AppCompatActivity
 
         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(), ActivityType.HOME_ACTIVITY, 10));
 
+        tabLayoutRecyclerView.setNestedScrollingEnabled(false);
+
         tabLayoutRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
                 false));
