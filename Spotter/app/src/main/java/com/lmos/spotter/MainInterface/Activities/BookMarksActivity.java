@@ -1,5 +1,6 @@
 package com.lmos.spotter.MainInterface.Activities;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,11 +14,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.Utilities;
+
+import java.util.ArrayList;
 
 public class BookMarksActivity extends AppCompatActivity {
 
@@ -26,6 +30,30 @@ public class BookMarksActivity extends AppCompatActivity {
 
     TabLayout bookMarksTabLayout;
     RecyclerView recyclerView;
+
+    private void selectAllCheckBox (RecyclerView recView, ArrayList<Boolean> checkDeleteList) {
+        for (int rowItemCount = 0; rowItemCount != recView.getAdapter().getItemCount(); ++rowItemCount) {
+
+            checkDeleteList.set(rowItemCount, true);
+            /*
+
+            View view = recView.getLayoutManager().findViewByPosition(rowItemCount);
+
+            if (view != null) {
+
+                CheckBox cbDelete = (CheckBox) view.findViewById(R.id.cbDelete);
+                cbDelete.setChecked(checkDeleteList.get(rowItemCount));
+
+            } */
+
+
+        }
+
+        recView.getAdapter().notifyDataSetChanged();
+        recView.getAdapter().notifyDataSetChanged();
+
+        MainInterfaceAdapter.displayCheckListValues(checkDeleteList);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +76,7 @@ public class BookMarksActivity extends AppCompatActivity {
         bookMarksRecyclerView.setNestedScrollingEnabled(false);
 
         bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                  ActivityType.BOOKMARKS_ACTIVITY,
+                                                                  ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                                                                   10));
 
 
@@ -60,7 +88,7 @@ public class BookMarksActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                        ActivityType.BOOKMARKS_ACTIVITY,
+                        ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                         10));
 
 
@@ -116,8 +144,10 @@ public class BookMarksActivity extends AppCompatActivity {
                                                 R.menu.book_marks_delete_menu,
                                                 "Delete");
 
-                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(true);
-                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(true);
+                recyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                 ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
+                                                                 recyclerView.getAdapter().getItemCount()));
+
 
                 break;
 
@@ -129,11 +159,35 @@ public class BookMarksActivity extends AppCompatActivity {
                                                 R.menu.book_marks_menu,
                                                 "Bookmarks");
 
-                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(false);
+
+                recyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                 ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                                                                 recyclerView.getAdapter().getItemCount()));
 
                 break;
 
+            case R.id.delete:
 
+                ArrayList<Boolean> checkToggleList = ((MainInterfaceAdapter)recyclerView.getAdapter()).getCheckBoxToggleList();
+
+                String deleteList = "";
+
+                for (Boolean isChecked : checkToggleList)
+                    deleteList += String.valueOf(isChecked) + "\n";
+
+                Toast.makeText(getApplicationContext(),
+                               deleteList,
+                               Toast.LENGTH_LONG).show();
+
+
+                break;
+
+            case R.id.selectAll:
+
+                selectAllCheckBox(recyclerView,
+                                 ((MainInterfaceAdapter)recyclerView.getAdapter()).getCheckBoxToggleList());
+
+                break;
 
         }
 

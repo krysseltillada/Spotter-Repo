@@ -27,8 +27,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
     private ActivityType activityType;
 
-    private boolean isCheckBoxShow = false;
-
     private ArrayList<Boolean> checkBoxToggleList;
 
     private Context context;
@@ -37,18 +35,36 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
         Log.d("Debug", "MainInterfaceAdapter constructor");
 
-        checkBoxToggleList = new ArrayList<Boolean>(tc);
+        checkBoxToggleList = new ArrayList<Boolean>();
+
+        for (int i = 0; i != tc; ++i)
+            checkBoxToggleList.add(false);
 
         testCount = tc;
         context = con;
         activityType = acType;
     }
 
-    public MainInterfaceAdapter setVisibilityCheckBox(boolean isShow) {
-        isCheckBoxShow = isShow;
-        notifyDataSetChanged();
-        return this;
+    public ArrayList<Boolean> getCheckBoxToggleList () {
+        return checkBoxToggleList;
     }
+
+
+    private int getLayoutIdByType (ActivityType type) {
+
+        switch (type) {
+            case HOME_ACTIVITY:
+                return R.layout.place_item_list;
+            case BOOKMARKS_ACTIVITY_NORMAL_MODE:
+                return R.layout.bookmarks_item_list;
+            case BOOKMARKS_ACTIVITY_DELETE_MODE:
+                return R.layout.bookmarks_item_list_delete_mode;
+        }
+
+        return 0;
+
+    }
+
 
     @Override
     public MainInterfaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -56,27 +72,24 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         Log.d("Debug", "OnCreateViewHolder");
 
         return new MainInterfaceViewHolder(LayoutInflater.from(parent.getContext())
-                                                         .inflate((activityType == ActivityType.HOME_ACTIVITY) ? R.layout.place_item_list :
-                                                                                                                 R.layout.bookmarks_item_list,
-                                                                 parent, false));
+                                                                     .inflate(getLayoutIdByType(activityType), parent, false));
+
     }
 
     @Override
     public void onBindViewHolder(MainInterfaceViewHolder holder, int position) {
 
-        Log.d("Debug", "item rendereed at position: " + String.valueOf(position));
 
-        if (holder.cbDelete != null) {
-
-            if (isCheckBoxShow)
-                holder.cbDelete.setVisibility(View.VISIBLE);
-            else
-                holder.cbDelete.setVisibility(View.GONE);
-
-        }
+        if (holder.cbDelete != null && activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE)
+            holder.cbDelete.setChecked(checkBoxToggleList.get(position));
 
         setAnimation(holder.rowV.findViewById(R.id.placeItemRow), position);
 
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
 
 
@@ -94,6 +107,15 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         return testCount;
     }
 
+    public static void displayCheckListValues (ArrayList<Boolean> checkList) {
+
+        for (int i = 0; i != checkList.size(); ++i)
+            Log.d("Debug: ", "position: " + String.valueOf(i) + " Value: " + String.valueOf((boolean)checkList.get(i)));
+
+        Log.d("Debug", "\n\n");
+
+    }
+
    public class MainInterfaceViewHolder extends RecyclerView.ViewHolder {
 
         View rowV;
@@ -109,19 +131,20 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
             Log.d("Debug", "MainInterfaceViewHolder constructor");
 
-            if (activityType == ActivityType.BOOKMARKS_ACTIVITY) {
+            if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
                 cbDelete = (CheckBox) rowView.findViewById(R.id.cbDelete);
 
                 rowView.findViewById(R.id.placeItemRow).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        Log.d("Debug", String.valueOf(isCheckBoxShow));
-
                         CheckBox cbDelete = (CheckBox)v.findViewById(R.id.cbDelete);
 
                         cbDelete.toggle();
 
+                        checkBoxToggleList.set(MainInterfaceViewHolder.this.getPosition(), cbDelete.isChecked());
+
+                        displayCheckListValues(checkBoxToggleList);
 
 
                     }

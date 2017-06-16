@@ -7,6 +7,7 @@ package com.lmos.spotter.Utilities;
 public enum ActivityType {
 
     HOME_ACTIVITY,
-    BOOKMARKS_ACTIVITY
+    BOOKMARKS_ACTIVITY_NORMAL_MODE,
+    BOOKMARKS_ACTIVITY_DELETE_MODE
 
 }
