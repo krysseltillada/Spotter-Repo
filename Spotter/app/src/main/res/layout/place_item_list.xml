@@ -45,8 +45,8 @@
             android:layout_gravity="end"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="36dp"
-            android:textSize = "16sp"
-            android:text="₱200.00"
+            android:textSize = "14sp"
+            android:text="₱200.00 - 50000.00"
              />
 
         <!--
@@ -61,7 +61,7 @@
             android:rating="5" /> -->
 
         <ImageView
-            android:id="@+id/placeCompanyLogo"
+            android:id="@+id/placeCompanyImage"
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:layout_marginStart="10dp"
@@ -88,7 +88,7 @@
             android:paddingBottom="@dimen/min_padding"
             android:paddingTop="@dimen/min_padding"
             android:text="3.9"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/txtReview"
@@ -99,7 +99,8 @@
             android:layout_marginTop="82dp"
             android:text="Good (304 reviews)"
             android:textSize="14sp"
-            android:textColor="@color/sprayBlue" />
+             />
+
 
 </FrameLayout>
 

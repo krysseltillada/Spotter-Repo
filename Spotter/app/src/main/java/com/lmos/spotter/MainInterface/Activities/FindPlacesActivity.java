@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.lmos.spotter.MainInterface.Fragments.FindedPlacesFragment;
+//import com.lmos.spotter.MainInterface.Fragments.FindedPlacesFragment;
 import com.lmos.spotter.R;
 
 public class FindPlacesActivity extends AppCompatActivity {
@@ -22,13 +22,15 @@ public class FindPlacesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        /*getSupportFragmentManager().beginTransaction()
+        /*
+        getSupportFragmentManager().beginTransaction()
                                    .add(R.id.findPlaceFragment, new FindPlaceFragment(), "FindPlace")
-                                   .commit();*/
+                                   .commit();
 
         getSupportFragmentManager().beginTransaction()
                                    .add(R.id.findPlaceFragment, FindedPlacesFragment.createObject("Batangas"), "FindedPlace")
                                    .commit();
+                                   */
 
     }
 

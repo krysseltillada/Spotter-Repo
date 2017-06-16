@@ -33,9 +33,9 @@
 
         <item
 
-            android:icon="@android:drawable/star_on"
+            android:icon="@drawable/ic_book_white_48dp"
             android:id = "@+id/Favorites"
-            android:title = "Favorites"
+            android:title = "Bookmarks"
 
             />
 

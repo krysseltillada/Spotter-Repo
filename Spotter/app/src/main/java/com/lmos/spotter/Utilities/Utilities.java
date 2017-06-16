@@ -26,6 +26,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
 import android.util.Base64;
@@ -35,7 +36,6 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
@@ -69,6 +69,7 @@ import java.util.Locale;
  *    LocationHandler
  *     (public methods: changeApiState, findLocation, buildApi)
  */
+
 
 public class Utilities {
 
@@ -353,6 +354,15 @@ public class Utilities {
         }
 
         suggestion.changeCursor(suggestions);
+    }
+
+    public static void changeActionBarLayout (AppCompatActivity activity, Toolbar toolbar, Menu menu,
+                                              int menuLayout, String title) {
+
+        toolbar.getMenu().clear();
+        activity.getMenuInflater().inflate(menuLayout, menu);
+        activity.getSupportActionBar().setTitle(title);
+
     }
 
     public static void setNavTitleStyle(AppCompatActivity appCompatActivity, int navId, int titleId, int styleId) {

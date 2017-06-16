@@ -1,5 +1,6 @@
 package com.lmos.spotter.MainInterface.Activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +10,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -31,11 +35,13 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
+import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.Utilities;
 
 public class HomeActivity extends AppCompatActivity
@@ -55,6 +61,10 @@ public class HomeActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private FloatingActionButton floatingActionButton;
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
+    private AppBarLayout appBarLayout;
+
+    private final int LOCATION_REQUEST_CODE = 1;
+
     Activity activity = this;
 
     String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
@@ -66,6 +76,7 @@ public class HomeActivity extends AppCompatActivity
         initComp();
         locationHandler.buildGoogleClient();
         startMostPopularFlipping();
+        loadPlacesByType("Home");
 
     }
 
@@ -75,25 +86,36 @@ public class HomeActivity extends AppCompatActivity
         locationHandler.changeApiState("connect");
     }
 
-    private void initComp(){
-        setContentView(R.layout.activity_home_menu);
+    private void loadPlacesByType (String type) {
 
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
-        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
-        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorPrimary));
-        collapsingToolbarLayout.setTitle(getResources().getString(R.string.app_name));
+        CoordinatorLayout mainLayout = (CoordinatorLayout)findViewById(R.id.homeLayout);
+
+        mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
+                                                             R.anim.fade_in));
+
+        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
+
+        txtHome.setText(type);
 
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
+
+        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(), ActivityType.HOME_ACTIVITY, 10));
+
+        tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
         tabLayoutRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
                 false));
 
-        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(1, getApplicationContext()));
+        if (tabLayout.getTabCount() > 0) {
+
+            tabLayoutRecyclerView.removeAllViews();
+            tabLayout.clearOnTabSelectedListeners();
+            tabLayout.removeAllTabs();
+        }
 
 
-        /** Set TabLayout **/
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
         tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
         tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
@@ -107,15 +129,19 @@ public class HomeActivity extends AppCompatActivity
 
                 switch (tab.getPosition()) {
                     case 0:
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(1, getApplicationContext()));
+                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                                  ActivityType.HOME_ACTIVITY,
+                                                                                  10));
                         break;
-
                     case 1:
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(5, getApplicationContext()));
+                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                                  ActivityType.HOME_ACTIVITY,
+                                                                                  5));
                         break;
-
                     case 2:
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(2, getApplicationContext()));
+                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                                  ActivityType.HOME_ACTIVITY,
+                                                                                  4));
                         break;
                 }
 
@@ -133,25 +159,42 @@ public class HomeActivity extends AppCompatActivity
         });
 
 
-        /** End setting of tab layout **/
+       homeActionBar.setCustomView(actionBarView);
+
+    }
+
+    private void initComp(){
+        setContentView(R.layout.activity_home_menu);
+
+        appBarLayout = (AppBarLayout)findViewById(R.id.app_bar_layout);
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                if (verticalOffset <= -380) {
+                    Log.d("Debug", "toolbar collapse at: " + String.valueOf(verticalOffset));
+                }
+            }
+        });
 
 
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
 
-        /** Set toolbar and action bar **/
+        collapsingToolbarLayout.setTitleEnabled(false);
+
+
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
-        setSupportActionBar(toolbar);
-        homeActionBar = getSupportActionBar();
 
-        // Set LayoutInflater to inflate a custom search view in action bar.
+        setSupportActionBar(toolbar);
+
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        actionBarView = inflater.inflate(R.layout.searchbar, null);
+
+        homeActionBar = getSupportActionBar();
         homeActionBar.setDisplayHomeAsUpEnabled(true);
         homeActionBar.setDisplayShowCustomEnabled(true);
-
-        actionBarView = inflater.inflate(R.layout.searchbar, null);
-        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
-
-        txtHome.setText(getResources().getString(R.string.app_name));
 
         // Set search adapter for search view.
         String[] from = new String[]{"Judy"};
@@ -160,7 +203,7 @@ public class HomeActivity extends AppCompatActivity
         searchBtn = (SearchView) actionBarView.findViewById(R.id.search_view);
         searchAdapter = new SimpleCursorAdapter(
                 getApplicationContext(),
-                android.R.layout.simple_list_item_2,
+                android.R.layout.simple_list_item_1,
                 null,
                 from,
                 to,
@@ -182,9 +225,6 @@ public class HomeActivity extends AppCompatActivity
                 return false;
             }
         });
-        homeActionBar.setCustomView(actionBarView);
-        /** End of toolbar and action bar settings **/
-
 
         /** Set drawer and navigation layout **/
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -213,6 +253,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         navigationView.setNavigationItemSelectedListener(this);
+
         /** End of setting drawer and navigation drawer **/
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
@@ -261,56 +302,34 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        Bundle bundle = new Bundle();
-
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
 
-        switch (item.getItemId()){
-            case R.id.Hotels:
-
-                bundle.putString("Category", "Hotels");
-
-                Utilities.OpenActivityWithBundle(getApplicationContext(),
-                                                 HTRActivity.class,
-                                                 "",
-                                                 bundle
-                                                 );
-                break;
+        switch (item.getItemId()) {
             case R.id.Home:
-
-                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, "");
-
+                loadPlacesByType("Home");
                 break;
-            case R.id.TouristSpots:
-
-                bundle.putString("Category", "Tourist Spots");
-
-                Utilities.OpenActivityWithBundle(getApplicationContext(),
-                        HTRActivity.class,
-                        "",
-                        bundle
-                );
-
+            case R.id.Hotels:
+                loadPlacesByType("Hotel");
                 break;
             case R.id.Restaurants:
-
-                bundle.putString("Category", "Restaurants");
-
-                Utilities.OpenActivityWithBundle(getApplicationContext(),
-                        HTRActivity.class,
-                        "",
-                        bundle
-                );
-
+                loadPlacesByType("Restaurants");
+                break;
+            case R.id.TouristSpots:
+                loadPlacesByType("Tourist Spots");
                 break;
             case R.id.Favorites:
-
+                Utilities.OpenActivity(getApplicationContext(),
+                                       BookMarksActivity.class, "");
                 break;
             case R.id.Settings:
-                Utilities.OpenActivity(this,SettingsActivity.class, "");
+
+                Utilities.OpenActivity(getApplicationContext(),
+                                       SettingsActivity.class, "");
+
                 break;
+
         }
 
         return true;
@@ -374,7 +393,6 @@ public class HomeActivity extends AppCompatActivity
 
                 }
                 break;
-
         }
 
     }
@@ -389,13 +407,13 @@ public class HomeActivity extends AppCompatActivity
                 switch (resultCode){
 
                     case Activity.RESULT_OK:
+                        String location = new Utilities.LocationHandler(activity).findLocation();
+                        Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
                         break;
                     case Activity.RESULT_CANCELED:
                         // Handle system response when the user did not enable gps/network settings.
                         break;
-
                 }
-                break;
 
         }
 

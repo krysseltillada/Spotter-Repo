@@ -110,5 +110,6 @@
     <string name="title_activity_lol">lol</string>
     <string name="skip">Not now</string>
     <string name="title_activity_htr">HTRActivity</string>
+    <string name="title_activity_book_marks">BookMarksActivity</string>
 
 </resources>
