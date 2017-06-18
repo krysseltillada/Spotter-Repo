@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,7 +43,10 @@ import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
+import com.lmos.spotter.Utilities.TestData;
 import com.lmos.spotter.Utilities.Utilities;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -78,13 +82,17 @@ public class HomeActivity extends AppCompatActivity
 
         txtHome.setText(type);
 
+
+
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                   ActivityType.HOME_ACTIVITY,
                                                                   PlaceType.NONE,
-                                                                  10));
+                                                                  TestData.PlaceData.testDataMostViewed
+                                                                  ));
+
 
         tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
@@ -113,22 +121,25 @@ public class HomeActivity extends AppCompatActivity
 
                 switch (tab.getPosition()) {
                     case 0:
+
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
                                                                                   PlaceType.NONE,
-                                                                                  10));
+                                                                                  TestData.PlaceData.testDataMostViewed));
                         break;
                     case 1:
+
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
                                                                                   PlaceType.NONE,
-                                                                                  5));
+                                                                                  TestData.PlaceData.testDataMostRated));
                         break;
                     case 2:
+
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
                                                                                   PlaceType.NONE,
-                                                                                  4));
+                                                                                  TestData.PlaceData.testDataRecommend));
                         break;
                 }
 
@@ -402,4 +413,5 @@ public class HomeActivity extends AppCompatActivity
         }
 
     }
+
 }

@@ -1,6 +1,10 @@
 package com.lmos.spotter.MainInterface.Adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Debug;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,11 +15,16 @@ import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
+import com.lmos.spotter.Utilities.Utilities;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -30,6 +39,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
     private ActivityType activityType;
 
     private static ArrayList<ArrayList<Boolean>> checkBoxToggleList = new ArrayList<>();
+
+    private ArrayList<Object[]> testData;
 
     public static PlaceType currentSelectedTab;
     public static boolean ifDoneInitialized = false;
@@ -70,9 +81,11 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
     }
 
 
-    public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, int tc) {
+    public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, ArrayList<Object[]> td) {
 
         Log.d("Debug", "MainInterfaceAdapter constructor");
+
+        testData = td;
 
         if (acType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE ||
             acType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
@@ -87,7 +100,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
                 if (checkBoxToggleList.get(toggleIndex).size() <= 0) {
 
-                    for (int i = 0; i != tc; ++i)
+                    for (int i = 0; i != td.size(); ++i)
                         checkBoxToggleList.get(toggleIndex).add(false);
 
                 }
@@ -97,7 +110,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         }
 
 
-        testCount = tc;
+        //testCount = tc;
         context = con;
         activityType = acType;
     }
@@ -136,6 +149,42 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
     @Override
     public void onBindViewHolder(MainInterfaceViewHolder holder, int position) {
 
+        /*
+
+        holder.placeCompanyImage.setImageDrawable(null);
+
+        Drawable drawable = context.getResources()
+                                   .getDrawable((int) testData.get(position)[0]);
+
+        Bitmap bitmap = Utilities.getResizedBitmap(((BitmapDrawable)drawable).getBitmap(),
+                                                    60,
+                                                    60);
+
+        holder.placeCompanyImage.setImageDrawable(new BitmapDrawable(context.getResources(), bitmap));
+
+        holder.placeCompanyImage.setScaleType(ImageView.ScaleType.CENTER_CROP); */
+
+        Picasso.with(context)
+                .load((int)testData.get(position)[0])
+                .placeholder(R.drawable.loadingplace)
+                .into(holder.placeCompanyImage);
+
+        holder.txtPlaceName.setText((String)testData.get(position)[1]);
+        holder.txtLocation.setText((String)testData.get(position)[2]);
+
+        double userRating = (double)testData.get(position)[3];
+        double userPriceMin = (double)testData.get(position)[5];
+        double userPriceMax = (double)testData.get(position)[6];
+
+        int userReviews = (int)testData.get(position)[4];
+
+        String reviewInfo = "Good(" + userReviews + " reviews)";
+        String priceRangeInfo = "₱" + userPriceMin + " - " + userPriceMax;
+
+        holder.txtReview.setText(reviewInfo);
+        holder.txtGeneralRatingDigit.setText(String.valueOf(userRating));
+        holder.txtPrice.setText(priceRangeInfo);
+
         if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
 
             if (holder.isRecyclable())
@@ -151,6 +200,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         }
 
         setAnimation(holder.rowV.findViewById(R.id.placeItemRow), position);
+
+
 
     }
 
@@ -171,7 +222,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
     @Override
     public int getItemCount() {
-        return testCount;
+        return testData.size();
     }
 
     public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {
@@ -206,6 +257,17 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
             super(rowView);
 
+            placeCompanyImage = (ImageView) rowView.findViewById(R.id.placeCompanyImage);
+            gradeIcon = (ImageView) rowView.findViewById(R.id.gradeIcon);
+
+            txtPlaceName = (TextView) rowView.findViewById(R.id.txtPlaceName);
+            txtLocation = (TextView) rowView.findViewById(R.id.txtLocation);
+            txtPrice = (TextView) rowView.findViewById(R.id.txtPrice);
+            txtGeneralRatingDigit = (TextView) rowView.findViewById(R.id.txtGeneralRatingDigit);
+            txtReview = (TextView) rowView.findViewById(R.id.txtReview);
+
+            rowV = rowView;
+
             Log.d("Debug", "MainInterfaceViewHolder constructor");
 
             if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
@@ -219,7 +281,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
                         cbDelete.toggle();
 
-
                         int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
 
 
@@ -232,22 +293,27 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
                     }
                 });
 
+            } else if (activityType == ActivityType.HOME_ACTIVITY ||
+                       activityType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE) {
+
+                rowView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Toast.makeText(context,
+                                       "place: " + txtPlaceName.getText() + "\n" +
+                                       "row item position: " + getPosition()    ,
+                                       Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
             }
 
-            placeCompanyImage = (ImageView) rowView.findViewById(R.id.placeCompanyImage);
-            gradeIcon = (ImageView) rowView.findViewById(R.id.gradeIcon);
 
-            txtPlaceName = (TextView) rowView.findViewById(R.id.txtPlaceName);
-            txtLocation = (TextView) rowView.findViewById(R.id.txtLocation);
-            txtPrice = (TextView) rowView.findViewById(R.id.txtPrice);
-            txtGeneralRatingDigit = (TextView) rowView.findViewById(R.id.txtGeneralRatingDigit);
-            txtReview = (TextView) rowView.findViewById(R.id.txtReview);
-
-            rowV = rowView;
 
         }
 
 
     }
-
 }

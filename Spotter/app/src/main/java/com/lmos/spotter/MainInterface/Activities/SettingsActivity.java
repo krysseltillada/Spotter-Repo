@@ -27,7 +27,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
-        Preference clearFavoritesItem = findPreference("clearFavorites");
+        Preference clearFavoritesItem = findPreference("clearBookmarks");
 
         clearFavoritesItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
