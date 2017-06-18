@@ -1,6 +1,7 @@
 package com.lmos.spotter.MainInterface.Adapters;
 
 import android.content.Context;
+import android.os.Debug;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
+import com.lmos.spotter.Utilities.PlaceType;
 
 import java.util.ArrayList;
 
@@ -27,25 +29,80 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
     private ActivityType activityType;
 
-    private ArrayList<Boolean> checkBoxToggleList;
+    private static ArrayList<ArrayList<Boolean>> checkBoxToggleList = new ArrayList<>();
+
+    public static PlaceType currentSelectedTab;
+    public static boolean ifDoneInitialized = false;
 
     private Context context;
 
-    public MainInterfaceAdapter(Context con, ActivityType acType,  int tc) {
+    public static int getPlaceTypeByIndex (PlaceType type) {
+        return  (PlaceType.HOTEL == type) ? 0 :
+                (PlaceType.RESTAURANT == type) ? 1 :
+                                                 2;
+    }
+
+    public static void initCheckBoxToggleList () {
+
+        if (!ifDoneInitialized) {
+
+            checkBoxToggleList.add(new ArrayList<Boolean>());
+            checkBoxToggleList.add(new ArrayList<Boolean>());
+            checkBoxToggleList.add(new ArrayList<Boolean>());
+
+            ifDoneInitialized = true;
+
+        }
+    }
+
+    public static void clearCheckBoxToggleList () {
+
+        if (checkBoxToggleList.size() > 0) {
+
+            for (int i = 0; i != checkBoxToggleList.size(); ++i) {
+
+                for (int j = 0; j != checkBoxToggleList.get(i).size(); ++j)
+                    checkBoxToggleList.get(i).set(j, false);
+
+            }
+
+        }
+    }
+
+
+    public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, int tc) {
 
         Log.d("Debug", "MainInterfaceAdapter constructor");
 
-        checkBoxToggleList = new ArrayList<Boolean>();
+        if (acType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE ||
+            acType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
 
-        for (int i = 0; i != tc; ++i)
-            checkBoxToggleList.add(false);
+            currentSelectedTab = placeType;
+
+            int toggleIndex = getPlaceTypeByIndex(placeType);
+
+            Log.d("Debug", "initialize three hotel restaurant and tourist spots list");
+
+            initCheckBoxToggleList();
+
+                if (checkBoxToggleList.get(toggleIndex).size() <= 0) {
+
+                    for (int i = 0; i != tc; ++i)
+                        checkBoxToggleList.get(toggleIndex).add(false);
+
+                }
+
+            displayCheckListValues(checkBoxToggleList);
+
+        }
+
 
         testCount = tc;
         context = con;
         activityType = acType;
     }
 
-    public ArrayList<Boolean> getCheckBoxToggleList () {
+    public static ArrayList<ArrayList<Boolean>> getCheckBoxToggleList () {
         return checkBoxToggleList;
     }
 
@@ -79,11 +136,19 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
     @Override
     public void onBindViewHolder(MainInterfaceViewHolder holder, int position) {
 
-        if (holder.isRecyclable())
-            holder.setIsRecyclable(false);
+        if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
 
-        if (holder.cbDelete != null && activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE)
-            holder.cbDelete.setChecked(checkBoxToggleList.get(position));
+            if (holder.isRecyclable())
+                holder.setIsRecyclable(false);
+
+
+            int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
+
+            if (holder.cbDelete != null)
+                holder.cbDelete.setChecked(checkBoxToggleList.get(toggleIndex).get(position));
+
+
+        }
 
         setAnimation(holder.rowV.findViewById(R.id.placeItemRow), position);
 
@@ -109,12 +174,22 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         return testCount;
     }
 
-    public static void displayCheckListValues (ArrayList<Boolean> checkList) {
+    public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {
 
-        for (int i = 0; i != checkList.size(); ++i)
-            Log.d("Debug: ", "position: " + String.valueOf(i) + " Value: " + String.valueOf((boolean)checkList.get(i)));
+        Log.d("Debug", "Size for hotel: " + String.valueOf(checkList.get(0).size()));
 
-        Log.d("Debug", "\n\n");
+        Log.d("Debug", "Size for Restaurant: " + String.valueOf(checkList.get(1).size()));
+
+        Log.d("Debug", "Size for Tourist spots: " + String.valueOf(checkList.get(2).size()));
+
+        for (int i = 0; i != checkList.size(); ++i) {
+
+            Log.d("Debug", "for index: " + String.valueOf(i));
+
+            for (int j = 0; j != checkList.get(i).size(); ++j) {
+                Log.d("Debug", "position: " + String.valueOf(checkList.get(i).get(j)));
+            }
+        }
 
     }
 
@@ -144,7 +219,12 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
                         cbDelete.toggle();
 
-                        checkBoxToggleList.set(MainInterfaceViewHolder.this.getPosition(), cbDelete.isChecked());
+
+                        int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
+
+
+                        checkBoxToggleList.get(toggleIndex).set(MainInterfaceViewHolder.this.getPosition(),
+                                                                cbDelete.isChecked());
 
                         displayCheckListValues(checkBoxToggleList);
 
@@ -164,8 +244,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
             txtReview = (TextView) rowView.findViewById(R.id.txtReview);
 
             rowV = rowView;
-
-
 
         }
 

@@ -41,6 +41,7 @@ import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.ActivityType;
+import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.Utilities;
 
 public class HomeActivity extends AppCompatActivity
@@ -80,7 +81,10 @@ public class HomeActivity extends AppCompatActivity
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
-        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(), ActivityType.HOME_ACTIVITY, 10));
+        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                  ActivityType.HOME_ACTIVITY,
+                                                                  PlaceType.NONE,
+                                                                  10));
 
         tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
@@ -111,16 +115,19 @@ public class HomeActivity extends AppCompatActivity
                     case 0:
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
+                                                                                  PlaceType.NONE,
                                                                                   10));
                         break;
                     case 1:
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
+                                                                                  PlaceType.NONE,
                                                                                   5));
                         break;
                     case 2:
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
+                                                                                  PlaceType.NONE,
                                                                                   4));
                         break;
                 }
@@ -138,8 +145,8 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
-
-       homeActionBar.setCustomView(actionBarView);
+        appBarLayout.setExpanded(true);
+        homeActionBar.setCustomView(actionBarView);
 
     }
 
