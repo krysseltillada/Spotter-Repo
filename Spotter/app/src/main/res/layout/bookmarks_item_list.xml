@@ -8,76 +8,82 @@
     android:layout_alignParentTop="true"
     android:background="@drawable/layout_white_bg">
 
-    <ImageView
-        android:id="@+id/placeCompanyImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="centerCrop"
-        app:srcCompat="@drawable/place3" />
+    <FrameLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        android:background="?attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/txtPlaceName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="110dp"
-        android:text="Pico Hotel De rizal"
-        android:textColor="@color/colorPrimary"
-        />
+            <ImageView
+                android:id="@+id/placeCompanyImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/place3" />
 
-    <TextView
-        android:id = "@+id/txtCityName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="110dp"
-        android:layout_marginTop= "20dp"
-        android:text="Manila"
-        android:textSize="12sp"
-        />
+            <TextView
+                android:id="@+id/txtPlaceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="110dp"
+                android:text="Pico Hotel De rizal"
+                android:textColor="@color/colorPrimary"
+                />
 
-    <TextView
-        android:id="@+id/txtReview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="110dp"
-        android:layout_marginTop= "40dp"
-        android:text="Good (304 reviews)"
-        android:textSize="12sp"
+            <TextView
+                android:id = "@+id/txtLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="110dp"
+                android:layout_marginTop= "20dp"
+                android:text="Manila"
+                android:textSize="12sp"
+                />
 
-        />
+            <TextView
+                android:id="@+id/txtReview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="110dp"
+                android:layout_marginTop= "40dp"
+                android:text="Good (304 reviews)"
+                android:textSize="12sp"
+
+                />
 
 
-    <TextView
-        android:id="@+id/txtPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="110dp"
-        android:layout_marginTop= "80dp"
-        android:text="₱200.00 - 1000.0"
-        android:textSize="12sp"
-        />
+            <TextView
+                android:id="@+id/txtPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="110dp"
+                android:layout_marginTop= "80dp"
+                android:text="₱200.00 - 1000.0"
+                android:textSize="12sp"
+                />
 
-    <ImageView
-        android:id="@+id/gradeIcon"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="end"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="-2dp"
-        android:alpha="0.5"
-        android:src="@drawable/ic_grade_black_18dp" />
+            <ImageView
+                android:id="@+id/gradeIcon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="-2dp"
+                android:alpha="0.5"
+                android:src="@drawable/ic_grade_black_18dp" />
 
-    <TextView
-        android:id="@+id/txtGeneralRatingDigit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="36dp"
-        android:layout_marginTop="-3dp"
-        android:paddingBottom="@dimen/min_padding"
-        android:paddingTop="@dimen/min_padding"
-        android:text="3.9"
-        android:textSize="14sp" />
+            <TextView
+                android:id="@+id/txtGeneralRatingDigit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="36dp"
+                android:layout_marginTop="-3dp"
+                android:paddingBottom="@dimen/min_padding"
+                android:paddingTop="@dimen/min_padding"
+                android:text="3.9"
+                android:textSize="14sp" />
 
+        </FrameLayout>
 
 
 

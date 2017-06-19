@@ -100,7 +100,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
                 if (checkBoxToggleList.get(toggleIndex).size() <= 0) {
 
-                    for (int i = 0; i != td.size(); ++i)
+                    for (int i = 0; i != testData.size(); ++i)
                         checkBoxToggleList.get(toggleIndex).add(false);
 
                 }
@@ -175,6 +175,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         double userRating = (double)testData.get(position)[3];
         double userPriceMin = (double)testData.get(position)[5];
         double userPriceMax = (double)testData.get(position)[6];
+
+
 
         int userReviews = (int)testData.get(position)[4];
 
