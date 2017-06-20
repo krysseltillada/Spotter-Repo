@@ -1,12 +1,8 @@
 package com.lmos.spotter.MainInterface.Activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -14,7 +10,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,6 +18,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -31,15 +27,19 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.CursorAdapter;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.ActivityType;
+import com.lmos.spotter.Utilities.PlaceType;
+import com.lmos.spotter.Utilities.TestData;
 import com.lmos.spotter.Utilities.Utilities;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -68,6 +68,42 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    public void userNavDropDown (View view) {
+
+        PopupMenu userNavDropDownMenu = new PopupMenu(HomeActivity.this, view);
+
+        userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu, userNavDropDownMenu.getMenu());
+
+        userNavDropDownMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                switch (item.getItemId()) {
+
+                    case R.id.sign_out:
+                        Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, "");
+                        break;
+
+                    case R.id.user_settings:
+                        Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class, "");
+                        break;
+
+                }
+
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                }
+
+                return true;
+            }
+
+        });
+
+        userNavDropDownMenu.show();
+
+    }
+
     private void loadPlacesByType (String type) {
 
         CoordinatorLayout mainLayout = (CoordinatorLayout)findViewById(R.id.homeLayout);
@@ -79,10 +115,17 @@ public class HomeActivity extends AppCompatActivity
 
  //       txtHome.setText(type);
 
+
+
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
-        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(), ActivityType.HOME_ACTIVITY, 10));
+        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                                                  ActivityType.HOME_ACTIVITY,
+                                                                  PlaceType.NONE,
+                                                                  TestData.PlaceData.testDataMostViewed
+                                                                  ));
+
 
         tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
@@ -111,19 +154,25 @@ public class HomeActivity extends AppCompatActivity
 
                 switch (tab.getPosition()) {
                     case 0:
+
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
-                                                                                  10));
+                                                                                  PlaceType.NONE,
+                                                                                  TestData.PlaceData.testDataMostViewed));
                         break;
                     case 1:
+
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
-                                                                                  5));
+                                                                                  PlaceType.NONE,
+                                                                                  TestData.PlaceData.testDataMostRated));
                         break;
                     case 2:
+
                         tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                                   ActivityType.HOME_ACTIVITY,
-                                                                                  4));
+                                                                                  PlaceType.NONE,
+                                                                                  TestData.PlaceData.testDataRecommend));
                         break;
                 }
 
@@ -139,9 +188,6 @@ public class HomeActivity extends AppCompatActivity
 
             }
         });
-
-
-       //homeActionBar.setCustomView(actionBarView);
 
     }
 
@@ -320,4 +366,5 @@ public class HomeActivity extends AppCompatActivity
     public void onSearchAdapterClicked(String... params) {
 
     }
+
 }

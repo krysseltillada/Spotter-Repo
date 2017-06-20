@@ -33,9 +33,9 @@
             android:summary="always notify the user regarding on gps"/>
 
         <Preference
-            android:key = "clearFavorites"
-            android:title = "Clear Favorites"
-            android:summary="this will clear all of your saved places"
+            android:key = "clearBookmarks"
+            android:title = "Clear Bookmarks"
+            android:summary="this will clear all of your saved bookmarks"
             />
 
 

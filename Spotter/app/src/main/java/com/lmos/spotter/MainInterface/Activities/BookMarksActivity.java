@@ -1,9 +1,13 @@
 package com.lmos.spotter.MainInterface.Activities;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,11 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
+import com.lmos.spotter.Utilities.PlaceType;
+import com.lmos.spotter.Utilities.TestData;
 import com.lmos.spotter.Utilities.Utilities;
+
+import java.util.ArrayList;
 
 public class BookMarksActivity extends AppCompatActivity {
 
@@ -26,6 +35,174 @@ public class BookMarksActivity extends AppCompatActivity {
 
     TabLayout bookMarksTabLayout;
     RecyclerView recyclerView;
+
+    private void changeBookMarkMode (ActivityType activityType, final RecyclerView recyclerViewTabLayout,
+                                     TabLayout tabLayout) {
+
+        tabLayout.clearOnTabSelectedListeners();
+
+        if (activityType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE) {
+
+            recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                    ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                    MainInterfaceAdapter.currentSelectedTab,
+                    TestData.PlaceData.testDataMostViewed
+                   ));
+
+            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+
+                    switch (tab.getPosition()) {
+
+                        case 0:
+
+                            MainInterfaceAdapter.currentSelectedTab = PlaceType.HOTEL;
+
+                            recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                                    PlaceType.HOTEL,
+                                    TestData.PlaceData.testDataMostViewed));
+
+                            break;
+
+                        case 1:
+
+                            MainInterfaceAdapter.currentSelectedTab = PlaceType.RESTAURANT;
+
+                            recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                                    PlaceType.RESTAURANT,
+                                    TestData.PlaceData.testDataMostViewed));
+                            break;
+
+                        case 2:
+
+                            MainInterfaceAdapter.currentSelectedTab = PlaceType.TOURIST_SPOTS;
+
+                            recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                                    PlaceType.TOURIST_SPOTS,
+                                    TestData.PlaceData.testDataMostViewed));
+
+                            break;
+
+                    }
+
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+
+
+
+                }
+
+
+            });
+
+        } else {
+
+            recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                    ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
+                    MainInterfaceAdapter.currentSelectedTab,
+                    TestData.PlaceData.testDataMostRated));
+
+
+            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+
+                    switch (tab.getPosition()) {
+
+                        case 0:
+
+                            MainInterfaceAdapter.currentSelectedTab = PlaceType.HOTEL;
+
+                            recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
+                                    PlaceType.HOTEL,
+                                    TestData.PlaceData.testDataMostViewed));
+
+                            break;
+
+                        case 1:
+
+                            MainInterfaceAdapter.currentSelectedTab = PlaceType.RESTAURANT;
+
+                            recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
+                                    PlaceType.RESTAURANT,
+                                    TestData.PlaceData.testDataMostViewed));
+
+                            break;
+
+                        case 2:
+
+                            MainInterfaceAdapter.currentSelectedTab = PlaceType.TOURIST_SPOTS;
+
+                            recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
+                                    PlaceType.TOURIST_SPOTS,
+                                    TestData.PlaceData.testDataMostViewed));
+
+                            break;
+
+                    }
+
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+
+
+
+                }
+
+
+            });
+
+        }
+    }
+
+    private void selectAllCheckBox (final RecyclerView recView, ArrayList<Boolean> checkDeleteList, boolean isSelected) {
+
+        for (int rowItemCount = 0; rowItemCount != checkDeleteList.size(); ++rowItemCount) {
+
+            checkDeleteList.set(rowItemCount, isSelected);
+
+
+            View view = recView.getLayoutManager().findViewByPosition(rowItemCount);
+
+            if (view != null) {
+
+                CheckBox cbDelete = (CheckBox) view.findViewById(R.id.cbDelete);
+                cbDelete.setChecked(checkDeleteList.get(rowItemCount));
+
+            }
+
+
+        }
+
+        MainInterfaceAdapter.displayCheckListValues(MainInterfaceAdapter.getCheckBoxToggleList());
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +217,8 @@ public class BookMarksActivity extends AppCompatActivity {
         recyclerView = bookMarksRecyclerView;
 
         bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText("Hotel"));
+        bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText("Restaurants"));
+        bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText("Tourist Spots"));
 
         bookMarksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                                                                        LinearLayoutManager.VERTICAL,
@@ -48,37 +227,17 @@ public class BookMarksActivity extends AppCompatActivity {
         bookMarksRecyclerView.setNestedScrollingEnabled(false);
 
         bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                  ActivityType.BOOKMARKS_ACTIVITY,
-                                                                  10));
-
+                                                                  ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                                                                  PlaceType.HOTEL,
+                                                                  TestData.PlaceData.testDataMostViewed));
 
 
         bookMarksTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        bookMarksTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+        changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                           bookMarksRecyclerView,
+                           bookMarksTabLayout);
 
-                bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                        ActivityType.BOOKMARKS_ACTIVITY,
-                        10));
-
-
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-
-
-        });
 
         setSupportActionBar(toolbar);
 
@@ -116,8 +275,9 @@ public class BookMarksActivity extends AppCompatActivity {
                                                 R.menu.book_marks_delete_menu,
                                                 "Delete");
 
-                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(true);
-                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(true);
+                changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
+                                   recyclerView,
+                                   bookMarksTabLayout);
 
                 break;
 
@@ -129,11 +289,102 @@ public class BookMarksActivity extends AppCompatActivity {
                                                 R.menu.book_marks_menu,
                                                 "Bookmarks");
 
-                ((MainInterfaceAdapter)recyclerView.getAdapter()).setVisibilityCheckBox(false);
+                MainInterfaceAdapter.clearCheckBoxToggleList();
+
+                changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                        recyclerView,
+                        bookMarksTabLayout);
+
+                break;
+
+            case R.id.delete:
+
+
+                final ArrayList<ArrayList<Boolean>> checkToggleList = (((MainInterfaceAdapter)recyclerView.getAdapter())).getCheckBoxToggleList();
+
+                if (checkToggleList.get(0).contains(true) ||
+                    checkToggleList.get(1).contains(true) ||
+                    checkToggleList.get(2).contains(true)) {
+
+                    final AlertDialog deleteDialog =
+                            new AlertDialog.Builder(this)
+                                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            String deleteList = "";
+
+                                            for (int i = 0; i != checkToggleList.size(); ++i) {
+
+                                                deleteList += "For index array: " + i + "\n";
+
+                                                for (int j = 0; j != checkToggleList.get(i).size(); ++j) {
+
+                                                    deleteList += "position: " + j + " value: " + checkToggleList.get(i).get(j) + "\n";
+
+                                                }
+
+                                                deleteList += "\n";
+
+                                            }
+
+                                            Toast.makeText(getApplicationContext(),
+                                                    deleteList,
+                                                    Toast.LENGTH_LONG).show();
+
+                                            MainInterfaceAdapter.clearCheckBoxToggleList();
+
+                                            Utilities.changeActionBarLayout(BookMarksActivity.this,
+                                                    toolbar,
+                                                    bookMarksMenu,
+                                                    R.menu.book_marks_menu,
+                                                    "Bookmarks");
+
+                                            changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                                                    recyclerView,
+                                                    bookMarksTabLayout);
+
+                                        }
+                                    })
+                                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    }).create();
+
+
+                    deleteDialog.setTitle("Delete");
+                    deleteDialog.setMessage("delete selected bookmarks?");
+
+                    deleteDialog.show();
+
+                } else {
+
+                    new AlertDialog.Builder(BookMarksActivity.this)
+                                   .setTitle("warning")
+                                   .setMessage("Please select any places")
+                                   .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                       @Override
+                                       public void onClick(DialogInterface dialog, int which) {
+                                           dialog.dismiss();
+                                       }
+                                   })
+                                   .show();
+
+                }
 
                 break;
 
 
+            case R.id.selectAll:
+
+                    selectAllCheckBox(recyclerView,
+                            (MainInterfaceAdapter.getCheckBoxToggleList()
+                                    .get(MainInterfaceAdapter.getPlaceTypeByIndex(MainInterfaceAdapter.currentSelectedTab))),
+                                    true);
+
+                break;
 
         }
 
