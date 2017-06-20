@@ -15,43 +15,57 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="16dp">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@android:drawable/sym_def_app_icon" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                app:srcCompat="@android:drawable/sym_def_app_icon" />
 
-    <LinearLayout
-        android:layout_marginTop="11dp"
-        android:layout_marginLeft="9dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-    <TextView
-        android:id="@+id/userName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Kryssel tillada"
-        android:textColor = "@color/white"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            <LinearLayout
+                android:layout_marginTop="11dp"
+                android:layout_marginLeft="9dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/userEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor = "@color/white"
-        android:text="krysseltillada@gmail.com" />
+                    <TextView
+                        android:id="@+id/userName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/nav_header_vertical_spacing"
+                        android:text="Kryssel tillada"
+                        android:textColor = "@color/white"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-        </LinearLayout>
+                    <TextView
+                        android:id="@+id/userEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor = "@color/white"
+                        android:text="krysseltillada@gmail.com" />
 
-        <ImageButton
-            android:id = "@+id/dropDownButton"
-            android:background=""
-            android:layout_width="50dp"
-            android:layout_height="50dp" />
+            </LinearLayout>
+
+
+        <FrameLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageButton
+                android:id = "@+id/userNavDropDown"
+                android:onClick="userNavDropDown"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background = "@drawable/ic_expand_more_white_48dp"/>
+
+        </FrameLayout>
+
+
 
     </LinearLayout>
 
