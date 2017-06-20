@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
@@ -44,13 +43,9 @@ import com.lmos.spotter.Utilities.Utilities;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        SearchView.OnSuggestionListener,
-        SearchView.OnQueryTextListener,
-        Utilities.OnLocationFoundListener {
+        Utilities.OnSearchAdapterClickListener{
 
-    Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
     Activity activity = this;
-    String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private LayoutInflater inflater;
@@ -68,16 +63,9 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         initComp();
-        locationHandler.buildGoogleClient();
         startMostPopularFlipping();
         loadPlacesByType("Home");
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        locationHandler.changeApiState("connect");
     }
 
     private void loadPlacesByType (String type) {
@@ -87,9 +75,9 @@ public class HomeActivity extends AppCompatActivity
         mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
                                                              R.anim.fade_in));
 
-        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
+//        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
 
-        txtHome.setText(type);
+ //       txtHome.setText(type);
 
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
@@ -153,7 +141,7 @@ public class HomeActivity extends AppCompatActivity
         });
 
 
-       homeActionBar.setCustomView(actionBarView);
+       //homeActionBar.setCustomView(actionBarView);
 
     }
 
@@ -182,7 +170,9 @@ public class HomeActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Utilities.setSearchBar(this, this);
+
+        /**inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         actionBarView = inflater.inflate(R.layout.searchbar, null);
 
@@ -218,7 +208,7 @@ public class HomeActivity extends AppCompatActivity
                 txtHome.setVisibility(View.VISIBLE);
                 return false;
             }
-        });
+        }); **/
 
         /** Set drawer and navigation layout **/
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -255,31 +245,13 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    locationHandler.checkPermission();
-                }
-                else{
-
-                    if(Utilities.checkPlayServices(activity)){
-                        Log.d("LocationHandler", locationHandler.findLocation());
-                    }
-
-                }
-
+                startActivity(
+                        new Intent(getApplicationContext(), SearchResultsActivity.class)
+                                .putExtra("type", "Location"));
             }
 
         });
 
-    }
-
-    private String getSuggestionText(int position){
-
-        String selected_item = "";
-        Cursor searchCursor = searchAdapter.getCursor();
-        if(searchCursor.moveToPosition(position)){
-            selected_item = searchCursor.getString(1);
-        }
-        return selected_item;
     }
 
     private void startMostPopularFlipping(){
@@ -330,30 +302,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onSuggestionSelect(int position) {
-        return true;
-    }
-
-    @Override
-    public boolean onSuggestionClick(int position) {
-        Intent send_data = new Intent(getApplicationContext(), SearchResultsActivity.class);
-        send_data.putExtra("type", getSuggestionText(position));
-        startActivity(send_data);
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String searchValue) {
-        Utilities.QuerySearchResults(searchValue, searchAdapter, sampleWords);
-        return false;
-    }
-
-    @Override
     public void onBackPressed() {
         if (searchBtn.isIconified()) {
 
@@ -369,61 +317,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onDestroy() {
-        locationHandler.changeApiState("disconnect");
-        super.onDestroy();
-    }
+    public void onSearchAdapterClicked(String... params) {
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode){
-
-            case Utilities.REQUEST_CODES.LOCATION_REQUEST_CODE:
-
-
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-                }
-                break;
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode){
-
-            case Utilities.REQUEST_CODES.CHECK_SETTING_REQUEST_CODE:
-                switch (resultCode){
-
-                    case RESULT_OK:
-                        Log.d("LocationHandler", "Permission granted");
-                        String location = new Utilities.LocationHandler(activity).findLocation();
-                        Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
-                        break;
-                    case RESULT_CANCELED:
-                        // Handle system response when the user did not enable gps/network settings.
-                        break;
-                }
-                break;
-
-        }
-
-    }
-
-    @Override
-    public void onLocationFound(String location) {
-
-        Snackbar sb = Snackbar.make(
-                findViewById(R.id.homeLayout),
-                location,
-                Snackbar.LENGTH_LONG
-        );
-        sb.setAction("OK", null);
-        sb.show();
     }
 }

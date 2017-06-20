@@ -23,7 +23,13 @@ public class DialogActivity extends AppCompatActivity{
         Bundle bundle = getIntent().getExtras();
         msg = (TextView) findViewById(R.id.dialog_msg);
         msg.setText(bundle.getInt("message"));
+        setFinishOnTouchOutside(false);
         Log.d("DialogActivity", "So bad");
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Do nothing.
     }
 
     public void onClick(View view){

@@ -4,7 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,9 +25,13 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
@@ -33,8 +39,10 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -44,18 +52,19 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.lmos.spotter.DialogActivity;
 import com.lmos.spotter.R;
+import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Locale;
 
@@ -316,6 +325,69 @@ public class Utilities {
         suggestion.changeCursor(suggestions);
     }
 
+    public static void setSearchBar(final AppCompatActivity activity, OnSearchAdapterClickListener onSearchAdapterItemClicked){
+
+        String[] from = new String[]{"Judy"};
+        int[] to = new int[]{android.R.id.text1};
+        final String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
+
+        LayoutInflater layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View actionBarView = layoutInflater.inflate(R.layout.searchbar, null);
+        ActionBar homeActionBar = activity.getSupportActionBar();
+        SearchView searchView = (SearchView) actionBarView.findViewById(R.id.search_view);
+        final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(
+                activity,
+                android.R.layout.simple_list_item_1,
+                null,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        );
+        searchView.setSuggestionsAdapter(searchAdapter);
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                Intent send_data = new Intent(activity, SearchResultsActivity.class);
+                send_data.putExtra("type", getSuggestionText(position, searchAdapter));
+                activity.startActivity(send_data);
+                return true;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String searchValue) {
+                Utilities.QuerySearchResults(searchValue, searchAdapter, sampleWords);
+                return false;
+            }
+        });
+
+        homeActionBar.setDisplayHomeAsUpEnabled(true);
+        homeActionBar.setDisplayShowCustomEnabled(true);
+
+        homeActionBar.setCustomView(actionBarView);
+
+    }
+
+    private static String getSuggestionText(int position, SimpleCursorAdapter searchAdapter){
+
+        String selected_item = "";
+        Cursor searchCursor = searchAdapter.getCursor();
+         if(searchCursor.moveToPosition(position)){
+         selected_item = searchCursor.getString(1);
+         }
+        return selected_item;
+    }
+
     public static void changeActionBarLayout (AppCompatActivity activity, Toolbar toolbar, Menu menu,
                                               int menuLayout, String title) {
 
@@ -367,6 +439,21 @@ public class Utilities {
 
     }
 
+    public static void showSnackBar(View container, String message, int duration, String action_msg, View.OnClickListener onClickListener){
+
+        Snackbar sb = Snackbar.make(
+                container,
+                message,
+                duration
+        );
+
+        if(action_msg != null || action_msg.isEmpty())
+            sb.setAction(action_msg, onClickListener);
+
+        sb.show();
+
+    }
+
     public static boolean checkPlayServices(Activity activity) {
 
 
@@ -391,10 +478,6 @@ public class Utilities {
         }
 
         return true;
-    }
-
-    public interface OnLocationFoundListener {
-        void onLocationFound(String location);
     }
 
     public static class BlurImg {
@@ -447,15 +530,13 @@ public class Utilities {
         private Activity activity;
         private String response = " HI ";
 
-        public LocationHandler(Activity activity) { this.activity = activity; }
-
         public LocationHandler(Activity activity, OnLocationFoundListener OnLocationFoundListener) {
             this.activity = activity;
             this.OnLocationFoundListener = OnLocationFoundListener;
         }
 
-        public String findLocation() {
-            return response;
+        public void findLocation() {
+            setLocationRequest();
         }
 
         public void changeApiState(String state) {
@@ -463,10 +544,10 @@ public class Utilities {
             switch (state){
 
                 case "connect":
-                    apiClient.connect();
-                    checkLocationSettingsState();
-                    if (apiClient.isConnecting())
-                        Log.d("LocationHandler", "Connecting...");
+                    if(!apiClient.isConnected())
+                        apiClient.connect();
+                        if (apiClient.isConnecting())
+                            Log.d("LocationHandler", "Connecting...");
                     break;
                 case "disconnect":
                     apiClient.disconnect();
@@ -494,6 +575,8 @@ public class Utilities {
 
         }
 
+        public boolean checkApiState(){ return apiClient.isConnected(); }
+
         private void checkLocationSettingsState(){
 
             Log.d("LocationHandler", "Checking GPS status");
@@ -501,6 +584,7 @@ public class Utilities {
             LocationSettingsRequest.Builder buildSettingsRequest = new LocationSettingsRequest.Builder()
                     .addLocationRequest(locationRequest);
 
+            buildSettingsRequest.setAlwaysShow(true);
 
             PendingResult<LocationSettingsResult> resultPendingResult =
                     LocationServices.SettingsApi.checkLocationSettings(
@@ -508,28 +592,49 @@ public class Utilities {
                             buildSettingsRequest.build()
                     );
 
+
             resultPendingResult.setResultCallback(new ResultCallback<LocationSettingsResult>() {
                 @Override
                 public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
 
-                    final LocationSettingsStates LS_state = locationSettingsResult.getLocationSettingsStates();
-                    if(LS_state.isGpsUsable() && LS_state.isNetworkLocationUsable())
-                        setLocationRequest();
-                    else
-                        showDialogActivity(activity, REQUEST_CODES.CHECK_SETTING_REQUEST_CODE, R.string.enable_gps_network );
+
+                    final Status status = locationSettingsResult.getStatus();
+
+                    switch (status.getStatusCode()){
+
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            break;
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            try {
+                                status.startResolutionForResult(activity, REQUEST_CODES.CHECK_SETTING_REQUEST_CODE);
+                            } catch (IntentSender.SendIntentException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+
+                            break;
+
+                    }
+
                 }
             });
 
         }
 
         public void buildGoogleClient() {
+
+            checkPermission();
+
             Log.d("LocationHandler", "Building client");
             apiClient = new GoogleApiClient.Builder(activity)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                         @Override
                         public void onConnected(@Nullable Bundle bundle) {
+                            Log.d("LocationHandler", "Connected");
                             setLocationRequest();
+                            checkLocationSettingsState();
                         }
 
                         @Override
@@ -566,8 +671,10 @@ public class Utilities {
                         @Override
                         public void onLocationChanged(Location location) {
                             Log.d("LocationHandler", "Lat:" + location.getLatitude() + " Lng:" + location.getLongitude());
-                            new getLocationName().execute(location.getLatitude(), location.getLongitude());
-                            LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
+                            if(checkNetworkState(activity)) {
+                                new getLocationName().execute(location.getLatitude(), location.getLongitude());
+                                LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
+                            }
                         }
                     }
             );
@@ -592,10 +699,6 @@ public class Utilities {
                     response = address.getLocality();
 
                 }
-                catch (SocketTimeoutException e){
-                    response = e.getMessage();
-                    Log.d("LocationHandler", response);
-                }
                 catch (IOException e) {
                     response =  e.getMessage() + "\nHAhahaha";
                     Log.d("LocationHandler", response);
@@ -619,4 +722,15 @@ public class Utilities {
 
     }
 
+    /** Intefaces **/
+
+    public interface OnLocationFoundListener {
+        void onLocationFound(String location);
+    }
+
+    public interface OnSearchAdapterClickListener{
+        void onSearchAdapterClicked(String... params);
+    }
+
+    /** End of Interfaces **/
 }

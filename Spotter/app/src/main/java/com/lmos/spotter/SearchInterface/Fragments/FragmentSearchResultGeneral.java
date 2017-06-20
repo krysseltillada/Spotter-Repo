@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lmos.spotter.R;
+import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.SearchInterface.Adapters.GeneralResultsAdapter;
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -29,6 +30,17 @@ public class FragmentSearchResultGeneral extends Fragment {
     RecyclerView recyclerView;
     GeneralResultsAdapter mAdapter;
     RecyclerView.LayoutManager layoutManager;
+
+    public static FragmentSearchResultGeneral newInstance(String... params){
+
+        FragmentSearchResultGeneral fsg = new FragmentSearchResultGeneral();
+
+        Bundle bundle = new Bundle();
+
+        fsg.setArguments(bundle);
+
+        return fsg;
+    }
 
     @Nullable
     @Override
@@ -45,10 +57,12 @@ public class FragmentSearchResultGeneral extends Fragment {
         mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
             @Override
             public void OnItemClick(int pos, View view, String... params) {
-                Toast.makeText(getContext(), String.valueOf(pos) +
+                /**Toast.makeText(getContext(), String.valueOf(pos) +
                         " " + params[0] + " " + params[1] + params[2]
-                        , Toast.LENGTH_SHORT).show();
-                Log.d("LocationHandler", new Utilities.LocationHandler(getActivity()).findLocation());
+                        , Toast.LENGTH_SHORT).show();**/
+
+                ((SearchResultsActivity) getContext()).switchFragment("asd", "replace", params);
+
             }
 
             @Override
