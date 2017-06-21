@@ -15,8 +15,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
@@ -41,11 +41,11 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
@@ -327,16 +327,16 @@ public class Utilities {
         suggestion.changeCursor(suggestions);
     }
 
-    public static void setSearchBar(final AppCompatActivity activity, OnSearchAdapterClickListener onSearchAdapterItemClicked){
+    public static void setSearchBar(final AppCompatActivity activity, View actionBarView){
 
         String[] from = new String[]{"Judy"};
         int[] to = new int[]{android.R.id.text1};
         final String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
-        LayoutInflater layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View actionBarView = layoutInflater.inflate(R.layout.searchbar, null);
         ActionBar homeActionBar = activity.getSupportActionBar();
         SearchView searchView = (SearchView) actionBarView.findViewById(R.id.search_view);
+        final TextView title = (TextView) actionBarView.findViewById(R.id.txtHome);
+
         final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(
                 activity,
                 android.R.layout.simple_list_item_1,
@@ -369,6 +369,21 @@ public class Utilities {
             @Override
             public boolean onQueryTextChange(String searchValue) {
                 Utilities.QuerySearchResults(searchValue, searchAdapter, sampleWords);
+                return false;
+            }
+        });
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                title.setVisibility(View.GONE);
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                title.setVisibility(View.VISIBLE);
                 return false;
             }
         });
@@ -463,7 +478,7 @@ public class Utilities {
                 duration
         );
 
-        if(action_msg != null || action_msg.isEmpty())
+        if(action_msg != null)
             sb.setAction(action_msg, onClickListener);
 
         sb.show();
@@ -494,6 +509,16 @@ public class Utilities {
         }
 
         return true;
+    }
+
+    /** Intefaces **/
+
+    public interface OnLocationFoundListener {
+        void onLocationFound(String location);
+    }
+
+    public interface OnDbResponseListener{
+        void onDbResponse(String response);
     }
 
     public static class BlurImg {
@@ -736,16 +761,6 @@ public class Utilities {
         public static final int LOCATION_REQUEST_CODE = 1400;
         public static final int CHECK_SETTING_REQUEST_CODE = 1500;
 
-    }
-
-    /** Intefaces **/
-
-    public interface OnLocationFoundListener {
-        void onLocationFound(String location);
-    }
-
-    public interface OnSearchAdapterClickListener{
-        void onSearchAdapterClicked(String... params);
     }
 
     /** End of Interfaces **/

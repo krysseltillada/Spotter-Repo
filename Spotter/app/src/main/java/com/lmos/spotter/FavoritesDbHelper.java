@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.lmos.spotter.Utilities.Utilities;
+
 /**
  * Created by emman on 6/13/2017.
  */
@@ -24,10 +26,12 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
     private static final String KEY_LNG = "longtitude";
     private static final String KEY_RATING = "rating";
     Context context;
+    Utilities.OnDbResponseListener onDbResponseListener;
 
-    public FavoritesDbHelper(Context context) {
+    public FavoritesDbHelper(Context context, Utilities.OnDbResponseListener onDbResponseListener) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
+        this.onDbResponseListener = onDbResponseListener;
         Log.d("DB", "Constructor called");
     }
 
@@ -58,6 +62,8 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
 
         db.insert(TABLE_NAME, null, cv);
         Log.d("DB", "Added!");
+        onDbResponseListener.onDbResponse("Place has been bookmarked.");
+
     }
 
 }

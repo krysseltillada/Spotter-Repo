@@ -1,43 +1,31 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.lmos.spotter.FavoritesDbHelper;
 import com.lmos.spotter.MapsLayoutFragment;
 import com.lmos.spotter.R;
@@ -56,7 +44,8 @@ import com.lmos.spotter.Utilities.Utilities;
 
 public class SearchResultsActivity extends AppCompatActivity
     implements
-    Utilities.OnLocationFoundListener{
+    Utilities.OnLocationFoundListener,
+    Utilities.OnDbResponseListener{
 
     /** Initialize views **/
     Toolbar toolbar;
@@ -65,6 +54,7 @@ public class SearchResultsActivity extends AppCompatActivity
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     SearchReviewsAdapter mAdapter;
+    View actionBarView;
     FavoritesDbHelper favoritesDbHelper;
     RelativeLayout loading_screen, desc_tab_holder;
     AppBarLayout appBarLayout;
@@ -74,8 +64,8 @@ public class SearchResultsActivity extends AppCompatActivity
     /** End of initializing views **/
 
     Activity activity = this;
-    private String type;
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
+    private String type;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +73,10 @@ public class SearchResultsActivity extends AppCompatActivity
 
         initComp();
         locationHandler.buildGoogleClient();
+        headerSettings("default");
 
         Bundle fetch_intent = getIntent().getExtras();
+        type = fetch_intent.getString("type");
         switchFragment(fetch_intent.getString("type"), "add","");
 
     }
@@ -95,10 +87,13 @@ public class SearchResultsActivity extends AppCompatActivity
         locationHandler.changeApiState("connect");
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.bookmark_info, menu);
+        if(!type.equals("Location"))
+            getMenuInflater().inflate(R.menu.bookmark_info, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -124,6 +119,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 setHeaderText("Batangas", "Bayan ng magigiting");
                 fragment = new FragmentSearchResultGeneral();
                 loading_screen.setVisibility(View.GONE);
+                Utilities.setSearchBar(this, actionBarView);
                 break;
             case "Map":
                 fragment = MapsLayoutFragment.newInstance(12.8797, 121.7740);
@@ -134,6 +130,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 setHeaderText("City of Dreams", "Nightmares it is");
                 fragment = FragmentSearchResult.newInstance(params);
                 loading_screen.setVisibility(View.GONE);
+                Utilities.setSearchBar(this, actionBarView);
                 break;
         }
 
@@ -159,7 +156,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void addToFavorites(){
 
-        favoritesDbHelper = new FavoritesDbHelper(this);
+        favoritesDbHelper = new FavoritesDbHelper(this, this);
         Log.d("ADD", "Triggered");
         favoritesDbHelper.addToFavorites();
 
@@ -191,6 +188,9 @@ public class SearchResultsActivity extends AppCompatActivity
                         R.anim.fade_out
                 ));
                 break;
+            default:
+                params.bottomMargin = 200;
+                break;
 
         }
 
@@ -212,6 +212,10 @@ public class SearchResultsActivity extends AppCompatActivity
         loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        actionBarView = layoutInflater.inflate(R.layout.searchbar, null);
+
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
@@ -225,6 +229,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
         //Set the title on collapsing toolbar
         collapsingToolbarLayout.setTitle("");
+
         /** End of setting header **/
 
         /** Set RecyclerView for user reviews. **/
@@ -261,15 +266,6 @@ public class SearchResultsActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onLocationFound(String location) {
-        Utilities.showSnackBar(
-                findViewById(R.id.homeLayout),
-                location,
-                Snackbar.LENGTH_LONG,
-                "OK", null);
     }
 
     @Override
@@ -319,4 +315,23 @@ public class SearchResultsActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onLocationFound(String location) {
+        Utilities.showSnackBar(
+                findViewById(R.id.homeLayout),
+                location,
+                Snackbar.LENGTH_LONG,
+                "OK", null);
+    }
+
+    @Override
+    public void onDbResponse(String response) {
+        Utilities.showSnackBar(
+                findViewById(R.id.search_view_wrapper),
+                response,
+                Snackbar.LENGTH_SHORT,
+                "Undo",
+                null
+        );
+    }
 }

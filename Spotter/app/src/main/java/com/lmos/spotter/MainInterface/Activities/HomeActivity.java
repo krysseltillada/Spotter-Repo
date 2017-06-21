@@ -1,6 +1,6 @@
 package com.lmos.spotter.MainInterface.Activities;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,14 +13,11 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,22 +36,14 @@ import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.TestData;
 import com.lmos.spotter.Utilities.Utilities;
 
-import java.util.ArrayList;
-
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        Utilities.OnSearchAdapterClickListener{
+        implements NavigationView.OnNavigationItemSelectedListener{
 
-    Activity activity = this;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    private LayoutInflater inflater;
-    private ActionBar homeActionBar;
+    private DrawerLayout drawerLayout;
     private View actionBarView;
     private TextView txtHome;
-    private SearchView searchBtn;
-    private SimpleCursorAdapter searchAdapter;
-    private DrawerLayout drawerLayout;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
 
@@ -111,9 +100,9 @@ public class HomeActivity extends AppCompatActivity
         mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
                                                              R.anim.fade_in));
 
-//        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
+        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
 
- //       txtHome.setText(type);
+        txtHome.setText(type);
 
 
 
@@ -216,45 +205,9 @@ public class HomeActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        Utilities.setSearchBar(this, this);
-
-        /**inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        actionBarView = inflater.inflate(R.layout.searchbar, null);
-
-        homeActionBar = getSupportActionBar();
-        homeActionBar.setDisplayHomeAsUpEnabled(true);
-        homeActionBar.setDisplayShowCustomEnabled(true);
-
-        // Set search adapter for search view.
-        String[] from = new String[]{"Judy"};
-        int[] to = new int[]{android.R.id.text1};
-
-        searchBtn = (SearchView) actionBarView.findViewById(R.id.search_view);
-        searchAdapter = new SimpleCursorAdapter(
-                getApplicationContext(),
-                android.R.layout.simple_list_item_1,
-                null,
-                from,
-                to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-        );
-        searchBtn.setSuggestionsAdapter(searchAdapter);
-        searchBtn.setOnSuggestionListener(this);
-        searchBtn.setOnQueryTextListener(this);
-        searchBtn.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                txtHome.setVisibility(View.GONE);
-            }
-        });
-        searchBtn.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                txtHome.setVisibility(View.VISIBLE);
-                return false;
-            }
-        }); **/
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        actionBarView = layoutInflater.inflate(R.layout.searchbar, null);
+        Utilities.setSearchBar(this, actionBarView);
 
         /** Set drawer and navigation layout **/
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -270,7 +223,7 @@ public class HomeActivity extends AppCompatActivity
         drawerToggle.syncState();
 
         NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
-
+        navigationView.setNavigationItemSelectedListener(this);
         Utilities.setNavTitleStyle(this,
                                    R.id.nav_view,
                                    R.id.settingsTitle,
@@ -349,22 +302,11 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (searchBtn.isIconified()) {
-
-            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            searchBtn.setIconified(true);
+            super.onBackPressed();
         }
-    }
-
-    @Override
-    public void onSearchAdapterClicked(String... params) {
-
     }
 
 }
