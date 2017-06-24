@@ -103,6 +103,7 @@ public class HomeActivity extends AppCompatActivity
 
         txtHome.setText(type);
 
+        appBarLayout.setExpanded(true);
 
 
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
@@ -186,6 +187,7 @@ public class HomeActivity extends AppCompatActivity
 
         collapsingToolbarLayout.setTitleEnabled(false);
 
+        appBarLayout = (AppBarLayout)findViewById(R.id.app_bar_layout);
 
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
 
