@@ -46,12 +46,14 @@ public class FragmentSearchResultGeneral extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+
         View thisView = inflater.inflate(R.layout.search_result_general, container, false);
 
-        tabLayout = (TabLayout) thisView.findViewById(R.id.search_tab_layout);
+
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         mAdapter = new GeneralResultsAdapter();
         layoutManager = new LinearLayoutManager(getContext());
+
 
         // Set RecyclerView onClickListener
         mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
@@ -61,7 +63,7 @@ public class FragmentSearchResultGeneral extends Fragment {
                         " " + params[0] + " " + params[1] + params[2]
                         , Toast.LENGTH_SHORT).show();**/
 
-                ((SearchResultsActivity) getContext()).switchFragment("asd", "replace", params);
+                ((SearchResultsActivity) getContext()).switchFragment("place", "replace", params);
 
             }
 

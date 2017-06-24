@@ -2,7 +2,9 @@ package com.lmos.spotter.Utilities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -50,6 +52,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -363,6 +366,11 @@ public class Utilities {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
+                Intent send_data = new Intent(activity, SearchResultsActivity.class);
+                send_data.putExtra("type", query);
+                activity.startActivity(send_data);
+
                 return false;
             }
 
@@ -485,7 +493,7 @@ public class Utilities {
 
     }
 
-    public static boolean checkPlayServices(Activity activity) {
+    public static boolean checkPlayServices(Activity activity, DialogInterface.OnDismissListener onDismissListener) {
 
 
         final int PLAY_SERVICES_RESOLUTION_REQUEST = 1400;
@@ -496,11 +504,15 @@ public class Utilities {
 
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
 
-                GooglePlayServicesUtil.getErrorDialog(
+                Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
                         resultCode,
                         activity,
                         PLAY_SERVICES_RESOLUTION_REQUEST
-                ).show();
+                );
+
+                errorDialog.setOnDismissListener(onDismissListener);
+
+                errorDialog.show();
 
             }
 
@@ -730,19 +742,25 @@ public class Utilities {
                 Log.d("LocationHandler", "Parsing latitude and longitude");
                 // params[0] = latitude, params[1] = longitude
 
-                Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
-                List<Address> addresses;
-                try {
+                while (true) {
 
-                    addresses = getLocationName.getFromLocation(params[0], params[1], 1);
-                    Address address = addresses.get(0);
-                    Log.d("LocationHandler", address.getLocality());
-                    response = address.getLocality();
+                    Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
+                    List<Address> addresses;
 
-                }
-                catch (IOException e) {
-                    response =  e.getMessage() + "\nHAhahaha";
-                    Log.d("LocationHandler", response);
+                    try {
+
+                        addresses = getLocationName.getFromLocation(params[0], params[1], 1);
+                        Address address = addresses.get(0);
+                        Log.d("LocationHandler", address.getLocality());
+                        response = address.getLocality();
+                        break;
+
+                    } catch (IOException e) {
+                        response = e.getMessage();
+                        Log.d("LocationHandler", response);
+                        continue;
+                    }
+
                 }
                 return null;
             }

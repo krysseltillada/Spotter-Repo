@@ -110,6 +110,7 @@
             android:padding="@dimen/min_padding"
             android:clickable="true"
             android:onClick="clickListener"
+            android:textColor="@color/colorAccent"
             android:text="@string/skip"/>
 
     </LinearLayout>

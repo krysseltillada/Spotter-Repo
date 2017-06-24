@@ -2,12 +2,15 @@ package com.lmos.spotter.SearchInterface.Activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
@@ -25,6 +28,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lmos.spotter.FavoritesDbHelper;
 import com.lmos.spotter.MapsLayoutFragment;
@@ -61,6 +65,7 @@ public class SearchResultsActivity extends AppCompatActivity
     NestedScrollView nsview;
     ImageView loading_img;
     TextView loading_msg, loading_error_msg;
+    TabLayout searchResultsTab;
     /** End of initializing views **/
 
     Activity activity = this;
@@ -69,6 +74,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_search_results);
 
         initComp();
@@ -77,7 +83,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
         Bundle fetch_intent = getIntent().getExtras();
         type = fetch_intent.getString("type");
-        switchFragment(fetch_intent.getString("type"), "add","");
+        switchFragment(fetch_intent.getString("type"), "add", "");
 
     }
 
@@ -105,36 +111,54 @@ public class SearchResultsActivity extends AppCompatActivity
 
     public void switchFragment(String type, String cmd, String... params){
 
-        Fragment fragment;
+        final Fragment fragment;
         int view_id = R.id.search_content_holder;
 
         switch (type){
 
-            case "Location":
-                headerSettings("hide");
-                setHeaderText("Batangas", "Bayan ng magigiting");
-                fragment = FragmentSearchResult.newInstance(params);
-                break;
-            case "General":
-                setHeaderText("Batangas", "Bayan ng magigiting");
-                fragment = new FragmentSearchResultGeneral();
-                loading_screen.setVisibility(View.GONE);
-                Utilities.setSearchBar(this, actionBarView);
-                break;
-            case "Map":
-                fragment = MapsLayoutFragment.newInstance(12.8797, 121.7740);
-                view_id = R.id.map_content_holder;
-                break;
-            default:
-                cmd = "replace";
+            case "place":
+                searchResultsTab.setVisibility(View.GONE);
                 setHeaderText("City of Dreams", "Nightmares it is");
                 fragment = FragmentSearchResult.newInstance(params);
                 loading_screen.setVisibility(View.GONE);
                 Utilities.setSearchBar(this, actionBarView);
                 break;
+
+            case "Map":
+                Log.d("debug", "Map");
+                fragment = MapsLayoutFragment.newInstance(12.8797, 121.7740);
+                view_id = R.id.map_content_holder;
+                break;
+            default:
+                cmd = "general";
+                searchResultsTab.setVisibility(View.VISIBLE);
+                setHeaderText("Batangas", "Bayan ng magigiting");
+                fragment = new FragmentSearchResultGeneral();
+                loading_screen.setVisibility(View.GONE);
+                Utilities.setSearchBar(this, actionBarView);
+
+                break;
         }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+
+        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+
+            @Override
+            public void onBackStackChanged() {
+
+
+
+                if (fragmentManager.getBackStackEntryCount() == 1) {
+
+                    if (searchResultsTab.getVisibility() != View.VISIBLE)
+                        searchResultsTab.setVisibility(View.VISIBLE);
+
+                }
+
+            }
+
+        });
 
         if(cmd.equals("add")){
 
@@ -200,6 +224,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void initComp(){
 
+        searchResultsTab = (TabLayout)findViewById(R.id.search_tab_layout);
         loading_screen = (RelativeLayout) findViewById(R.id.loading_screen);
         desc_tab_holder = (RelativeLayout) findViewById(R.id.description_tab_holder);
         nsview = (NestedScrollView) findViewById(R.id.search_nsview);
@@ -208,8 +233,23 @@ public class SearchResultsActivity extends AppCompatActivity
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
 
-        Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
-        loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
+        /*
+
+        boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
+
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                onBackPressed();
+            }
+
+        });
+
+        if (isPlayServicesAvailable) {
+
+            Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
+            loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
+
+        } */
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
 
@@ -317,11 +357,9 @@ public class SearchResultsActivity extends AppCompatActivity
 
     @Override
     public void onLocationFound(String location) {
-        Utilities.showSnackBar(
-                findViewById(R.id.homeLayout),
-                location,
-                Snackbar.LENGTH_LONG,
-                "OK", null);
+
+        Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
+
     }
 
     @Override

@@ -94,7 +94,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void loadPlacesByType (String type) {
-
         CoordinatorLayout mainLayout = (CoordinatorLayout)findViewById(R.id.homeLayout);
 
         mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
@@ -183,19 +182,6 @@ public class HomeActivity extends AppCompatActivity
     private void initComp(){
         setContentView(R.layout.activity_home_menu);
 
-        appBarLayout = (AppBarLayout)findViewById(R.id.app_bar_layout);
-
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
-                if (verticalOffset <= -380) {
-                    Log.d("Debug", "toolbar collapse at: " + String.valueOf(verticalOffset));
-                }
-            }
-        });
-
-
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
 
         collapsingToolbarLayout.setTitleEnabled(false);
@@ -219,6 +205,7 @@ public class HomeActivity extends AppCompatActivity
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         );
+
         drawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
