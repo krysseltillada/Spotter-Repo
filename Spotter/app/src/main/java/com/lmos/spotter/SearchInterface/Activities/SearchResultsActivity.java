@@ -273,7 +273,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
         /** Set RecyclerView for user reviews. **/
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mAdapter = new SearchReviewsAdapter();
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);

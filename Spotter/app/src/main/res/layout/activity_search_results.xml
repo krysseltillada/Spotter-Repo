@@ -27,11 +27,21 @@
                 android:layout_weight="1"
                 android:fillViewport="true" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:layout_gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:text = "show all"/>
+
             <FrameLayout
                 android:id="@+id/map_content_holder"
                 android:layout_width="match_parent"
                 android:layout_height="370dp"
                 android:fillViewport="true"/>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,7 +63,16 @@
             <include
                 layout="@layout/recycler_view_layout"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="375dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:layout_gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:text = "show all"/>
 
         </LinearLayout>
 

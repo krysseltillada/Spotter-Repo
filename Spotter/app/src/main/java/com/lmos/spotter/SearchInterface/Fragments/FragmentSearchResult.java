@@ -21,6 +21,8 @@ import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 
 public class FragmentSearchResult extends Fragment{
 
+    private RecyclerView placeImageList;
+
     public static FragmentSearchResult newInstance(String... params){
 
         FragmentSearchResult fragmentSearchResult = new FragmentSearchResult();
@@ -32,6 +34,7 @@ public class FragmentSearchResult extends Fragment{
 
 
         View thisView = inflater.inflate(R.layout.search_result_hrt, container, false);
+
 
 
          return thisView;
