@@ -30,6 +30,7 @@ public class FragmentSearchResult extends Fragment{
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+
         View thisView = inflater.inflate(R.layout.search_result_hrt, container, false);
 
 

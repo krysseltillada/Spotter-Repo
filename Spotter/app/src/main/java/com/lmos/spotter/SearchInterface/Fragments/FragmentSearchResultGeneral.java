@@ -49,7 +49,6 @@ public class FragmentSearchResultGeneral extends Fragment {
 
         View thisView = inflater.inflate(R.layout.search_result_general, container, false);
 
-
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         mAdapter = new GeneralResultsAdapter();
         layoutManager = new LinearLayoutManager(getContext());

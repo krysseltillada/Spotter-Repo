@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,7 +68,10 @@ public class SearchResultsActivity extends AppCompatActivity
     ImageView loading_img;
     TextView loading_msg, loading_error_msg;
     TabLayout searchResultsTab;
+    CoordinatorLayout coordinatorLayout;
     /** End of initializing views **/
+
+    boolean isLastFragment = false;
 
     Activity activity = this;
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
@@ -78,6 +83,7 @@ public class SearchResultsActivity extends AppCompatActivity
         setContentView(R.layout.activity_search_results);
 
         initComp();
+        Utilities.setSearchBar(this, actionBarView);
         locationHandler.buildGoogleClient();
         headerSettings("default");
 
@@ -93,8 +99,6 @@ public class SearchResultsActivity extends AppCompatActivity
         locationHandler.changeApiState("connect");
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -109,10 +113,18 @@ public class SearchResultsActivity extends AppCompatActivity
         place_content_desc.setText(description);
     }
 
+    private void fadeInView () {
+        coordinatorLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
+                                                                    android.R.anim.fade_in));
+    }
+
     public void switchFragment(String type, String cmd, String... params){
 
         final Fragment fragment;
         int view_id = R.id.search_content_holder;
+
+        if (!type.equals("Map"))
+            fadeInView();
 
         switch (type){
 
@@ -121,7 +133,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 setHeaderText("City of Dreams", "Nightmares it is");
                 fragment = FragmentSearchResult.newInstance(params);
                 loading_screen.setVisibility(View.GONE);
-                Utilities.setSearchBar(this, actionBarView);
+
                 break;
 
             case "Map":
@@ -129,36 +141,20 @@ public class SearchResultsActivity extends AppCompatActivity
                 fragment = MapsLayoutFragment.newInstance(12.8797, 121.7740);
                 view_id = R.id.map_content_holder;
                 break;
+
             default:
                 cmd = "general";
                 searchResultsTab.setVisibility(View.VISIBLE);
                 setHeaderText("Batangas", "Bayan ng magigiting");
                 fragment = new FragmentSearchResultGeneral();
                 loading_screen.setVisibility(View.GONE);
-                Utilities.setSearchBar(this, actionBarView);
+
 
                 break;
         }
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
-        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-
-            @Override
-            public void onBackStackChanged() {
-
-
-
-                if (fragmentManager.getBackStackEntryCount() == 1) {
-
-                    if (searchResultsTab.getVisibility() != View.VISIBLE)
-                        searchResultsTab.setVisibility(View.VISIBLE);
-
-                }
-
-            }
-
-        });
 
         if(cmd.equals("add")){
 
@@ -177,6 +173,7 @@ public class SearchResultsActivity extends AppCompatActivity
         }
 
     }
+
 
     private void addToFavorites(){
 
@@ -224,6 +221,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void initComp(){
 
+        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.search_view_wrapper);
         searchResultsTab = (TabLayout)findViewById(R.id.search_tab_layout);
         loading_screen = (RelativeLayout) findViewById(R.id.loading_screen);
         desc_tab_holder = (RelativeLayout) findViewById(R.id.description_tab_holder);
@@ -257,6 +255,7 @@ public class SearchResultsActivity extends AppCompatActivity
         actionBarView = layoutInflater.inflate(R.layout.searchbar, null);
 
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
+
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
 
@@ -296,12 +295,14 @@ public class SearchResultsActivity extends AppCompatActivity
 
         switch (item.getItemId()){
 
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
             case R.id.add_to_bookmark:
                 addToFavorites();
                 break;
-            default:
-                NavUtils.navigateUpFromSameTask(this);
-                break;
+
 
         }
 
@@ -351,6 +352,25 @@ public class SearchResultsActivity extends AppCompatActivity
                 }
                 break;
 
+        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+
+            if (searchResultsTab.getVisibility() != View.VISIBLE)
+                searchResultsTab.setVisibility(View.VISIBLE);
+
+
+            fadeInView();
+
+            getSupportFragmentManager().popBackStack();
+
+        } else {
+            finish();
         }
 
     }
