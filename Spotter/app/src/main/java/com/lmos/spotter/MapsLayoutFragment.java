@@ -1,17 +1,28 @@
 package com.lmos.spotter;
 
+import android.graphics.Color;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.lmos.spotter.Utilities.MapDirections;
 
 /**
  * Created by emman on 6/8/2017.
@@ -24,6 +35,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
     private double Lat, Lng;
+
+    private int width, height;
 
     public static MapsLayoutFragment newInstance(double lat, double lng){
 
@@ -50,7 +63,10 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.map_layout, container, false);
+
+        final View mainLayout = inflater.inflate(R.layout.map_layout, container, false);
+
+        return mainLayout;
     }
 
     @Override
@@ -58,16 +74,58 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         super.onViewCreated(view, savedInstanceState);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_holder);
+
         mapFragment.getMapAsync(this);
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
 
-        LatLng ph = new LatLng(Lat, Lng);
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
 
-        googleMap.addMarker(new MarkerOptions().position(ph).title("It's more fun in the Philippines!"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(ph));
+        final LatLng sourcePosition = new LatLng(14.4793, 121.0198);
+        final LatLng destPosition = new LatLng(13.7565, 121.0503);
+
+        Marker sourceMarker = googleMap.addMarker(new MarkerOptions().position(sourcePosition)
+                                                                     .title("your here")
+                                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+        Marker destMarker = googleMap.addMarker(new MarkerOptions().position(destPosition).title("destination"));
+
+        new MapDirections(getContext(),
+                          googleMap,
+                          sourcePosition,
+                          destPosition,
+                          Color.CYAN,
+                          5
+                          ).drawDirections()
+                           .setOnDoneDrawDirectionListener(new MapDirections.OnDoneDrawDirectionListener() {
+                               @Override
+                               public void onDoneDrawDirection(String duration, String distance) {
+
+                                   String directionMessage = "travel time: " +  duration +
+                                                             "travel distance: " + distance;
+
+                                   Snackbar.make(getView(), directionMessage, Snackbar.LENGTH_INDEFINITE).show();
+
+                               }
+                           });
+
+        LatLngBounds.Builder zoomBuilder = new LatLngBounds.Builder();
+
+        zoomBuilder.include(sourcePosition);
+        zoomBuilder.include(destPosition);
+
+        final LatLngBounds zoomBounds = zoomBuilder.build();
+
+        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds, 120));
+            }
+        });
+
 
     }
 }
