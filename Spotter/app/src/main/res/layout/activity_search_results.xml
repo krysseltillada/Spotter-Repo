@@ -33,7 +33,7 @@
                 android:padding="15dp"
                 android:layout_gravity="center"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:text = "show all"/>
 
             <FrameLayout
@@ -71,7 +71,7 @@
                 android:padding="15dp"
                 android:layout_gravity="center"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:text = "show all"/>
 
         </LinearLayout>

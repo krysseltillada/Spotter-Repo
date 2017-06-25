@@ -106,6 +106,7 @@ public class SearchResultsActivity extends AppCompatActivity
             getMenuInflater().inflate(R.menu.bookmark_info, menu);
 
         return super.onCreateOptionsMenu(menu);
+
     }
 
     private void setHeaderText(String name, String description){
@@ -154,7 +155,6 @@ public class SearchResultsActivity extends AppCompatActivity
         }
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
-
 
         if(cmd.equals("add")){
 
