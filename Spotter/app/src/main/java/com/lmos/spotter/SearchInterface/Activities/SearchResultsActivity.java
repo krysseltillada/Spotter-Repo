@@ -32,6 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.lmos.spotter.FavoritesDbHelper;
 import com.lmos.spotter.MapsLayoutFragment;
 import com.lmos.spotter.R;
@@ -71,7 +72,8 @@ public class SearchResultsActivity extends AppCompatActivity
     CoordinatorLayout coordinatorLayout;
     /** End of initializing views **/
 
-    boolean isLastFragment = false;
+
+    boolean isLocationFragment = false;
 
     Activity activity = this;
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
@@ -129,12 +131,23 @@ public class SearchResultsActivity extends AppCompatActivity
 
         switch (type){
 
+            case "Location":
+
+                isLocationFragment = true;
+
+                headerSettings("hide");
+                searchResultsTab.setVisibility(View.GONE);
+                loading_screen.setVisibility(View.VISIBLE);
+                fragment = FragmentSearchResultGeneral.newInstance();
+                actionBarView.setVisibility(View.GONE);
+
+                break;
+
             case "place":
                 searchResultsTab.setVisibility(View.GONE);
                 setHeaderText("City of Dreams", "Nightmares it is");
                 fragment = FragmentSearchResult.newInstance(params);
                 loading_screen.setVisibility(View.GONE);
-
                 break;
 
             case "Map":
@@ -144,12 +157,20 @@ public class SearchResultsActivity extends AppCompatActivity
                 break;
 
             default:
-                cmd = "general";
+                cmd = "add";
+                headerSettings("show");
+                actionBarView.setVisibility(View.VISIBLE);
                 searchResultsTab.setVisibility(View.VISIBLE);
                 setHeaderText("Batangas", "Bayan ng magigiting");
-                fragment = new FragmentSearchResultGeneral();
+                fragment = FragmentSearchResultGeneral.newInstance();
                 loading_screen.setVisibility(View.GONE);
 
+                if (isLocationFragment) {
+
+                    Log.d("debug", "is location fragment");
+                    view_id = R.id.search_content_holder;
+
+                }
 
                 break;
         }
@@ -231,7 +252,7 @@ public class SearchResultsActivity extends AppCompatActivity
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
 
-        /*
+
 
         boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
 
@@ -247,7 +268,7 @@ public class SearchResultsActivity extends AppCompatActivity
             Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
             loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
 
-        } */
+        }
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
 
@@ -376,9 +397,21 @@ public class SearchResultsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLocationFound(String location) {
+    public void onLocationFoundCity(String location) {
 
         Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    public void onLocationFoundLatLng(double lat, double lng) {
+
+        if (isLocationFragment)
+            switchFragment("", "add", "");
+
+
+        MapsLayoutFragment mapsLayoutFragment = (MapsLayoutFragment)getSupportFragmentManager().findFragmentByTag("Map");
+        mapsLayoutFragment.setUserPosition(new LatLng(lat, lng));
 
     }
 

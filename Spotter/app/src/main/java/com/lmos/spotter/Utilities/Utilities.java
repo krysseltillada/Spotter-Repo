@@ -526,7 +526,8 @@ public class Utilities {
     /** Intefaces **/
 
     public interface OnLocationFoundListener {
-        void onLocationFound(String location);
+        void onLocationFoundCity(String city);
+        void onLocationFoundLatLng(double lat, double lng);
     }
 
     public interface OnDbResponseListener{
@@ -736,6 +737,9 @@ public class Utilities {
 
         class getLocationName extends AsyncTask<Double, Void, Void>{
 
+            private double latitude;
+            private double longtitude;
+
             @Override
             protected Void doInBackground(Double... params) {
 
@@ -747,18 +751,35 @@ public class Utilities {
                     Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
                     List<Address> addresses;
 
+                    latitude = params[0];
+                    longtitude = params[1];
+
                     try {
 
-                        addresses = getLocationName.getFromLocation(params[0], params[1], 1);
-                        Address address = addresses.get(0);
-                        Log.d("LocationHandler", address.getLocality());
-                        response = address.getLocality();
+                        addresses = getLocationName.getFromLocation(latitude, longtitude, 1);
+
+                        /*
+
+                        for (int i = 0; i != addresses.get(0).getMaxAddressLineIndex(); ++i)
+                            response += "[" + i + "]" + addresses.get(0).getAddressLine(i) + "\n";
+
+
+                        response += addresses.get(0).getLocality();
+                        response += addresses.get(0).getAdminArea();
+                        response += addresses.get(0).getCountryName();
+                        response += addresses.get(0).getPostalCode();
+                        response += addresses.get(0).getFeatureName();
+
+                        Log.d("debug", response); */
+
+                        response = addresses.get(0).getLocality();
+                        Log.d("debug", response);
+
                         break;
 
                     } catch (IOException e) {
                         response = e.getMessage();
                         Log.d("LocationHandler", response);
-                        continue;
                     }
 
                 }
@@ -768,7 +789,8 @@ public class Utilities {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                OnLocationFoundListener.onLocationFound(response);
+                OnLocationFoundListener.onLocationFoundCity(response);
+                OnLocationFoundListener.onLocationFoundLatLng(latitude, longtitude);
             }
         }
 

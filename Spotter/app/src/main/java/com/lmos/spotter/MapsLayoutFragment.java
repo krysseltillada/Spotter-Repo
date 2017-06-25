@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.lmos.spotter.Utilities.MapDirections;
@@ -78,14 +79,83 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         mapFragment.getMapAsync(this);
     }
 
-    @Override
-    public void onMapReady(final GoogleMap googleMap) {
+    LatLng srcPosition;
+    GoogleMap googleMap;
+
+    public void setUserPosition (LatLng userPosition) {
+
+        srcPosition = userPosition;
 
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
 
-        final LatLng sourcePosition = new LatLng(14.4793, 121.0198);
-        final LatLng destPosition = new LatLng(13.7565, 121.0503);
+        final LatLng sourcePosition =  new LatLng(srcPosition.latitude, srcPosition.longitude);
+        final LatLng destPosition = new LatLng(14.4845, 120.9921);
+
+        Marker sourceMarker = googleMap.addMarker(new MarkerOptions().position(sourcePosition)
+                .title("your here")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+        Marker destMarker = googleMap.addMarker(new MarkerOptions().position(destPosition).title("destination"));
+
+        new MapDirections(getContext(),
+                googleMap,
+                sourcePosition,
+                destPosition,
+                Color.CYAN,
+                5
+        ).drawDirections()
+                .setOnDoneDrawDirectionListener(new MapDirections.OnDoneDrawDirectionListener() {
+                    @Override
+                    public void onDoneDrawDirection(String duration, String distance) {
+
+                        String directionMessage = "travel time: " +  duration +
+                                "travel distance: " + distance;
+
+                        Snackbar.make(getView(), directionMessage, Snackbar.LENGTH_INDEFINITE).show();
+
+                    }
+                });
+
+        LatLngBounds.Builder zoomBuilder = new LatLngBounds.Builder();
+
+        zoomBuilder.include(sourcePosition);
+        zoomBuilder.include(destPosition);
+
+        final LatLngBounds zoomBounds = zoomBuilder.build();
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(userPosition));
+
+        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds, 120));
+            }
+        });
+
+    }
+
+    @Override
+    public void onMapReady(final GoogleMap gMap) {
+
+        googleMap = gMap;
+
+        if (!googleMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.flat_map_style))))
+            Log.d("debug", "style set up success");
+
+        googleMap.setTrafficEnabled(true);
+        googleMap.setBuildingsEnabled(true);
+
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
+
+
+        /*
+
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+
+        final LatLng sourcePosition =  new LatLng(srcPosition.latitude, srcPosition.longitude);
+        final LatLng destPosition = new LatLng(13.7565, 121.0583);
 
         Marker sourceMarker = googleMap.addMarker(new MarkerOptions().position(sourcePosition)
                                                                      .title("your here")
@@ -125,6 +195,8 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds, 120));
             }
         });
+
+        */
 
 
     }
