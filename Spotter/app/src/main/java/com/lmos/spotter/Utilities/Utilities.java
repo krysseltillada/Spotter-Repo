@@ -339,7 +339,7 @@ public class Utilities {
         suggestion.changeCursor(suggestions);
     }
 
-    public static void setSearchBar(final AppCompatActivity activity, View actionBarView){
+    public static void setSearchBar(final AppCompatActivity activity, final View actionBarView){
 
         String[] from = new String[]{"Judy"};
         int[] to = new int[]{android.R.id.text1};
@@ -376,9 +376,19 @@ public class Utilities {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                Intent send_data = new Intent(activity, SearchResultsActivity.class);
-                send_data.putExtra("type", query);
-                activity.startActivity(send_data);
+                if (!searchView.isIconified()) {
+
+                    Utilities.hideSoftKeyboard(activity.getCurrentFocus(), activity);
+                    searchView.setIconified(true);
+                    onQueryTextSubmit(query);
+
+                } else {
+
+                    Intent send_data = new Intent(activity, SearchResultsActivity.class);
+                    send_data.putExtra("type", query);
+                    activity.startActivity(send_data);
+
+                }
 
                 return false;
             }

@@ -134,6 +134,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
         appBarLayout.setExpanded(true);
         nsview.smoothScrollTo(0, 0);
+        recyclerView.smoothScrollToPosition(0);
 
         if (!type.equals("Map"))
             fadeInView();
@@ -406,6 +407,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
             appBarLayout.setExpanded(true);
             nsview.smoothScrollTo(0, 0);
+            recyclerView.smoothScrollToPosition(0);
+            
             fadeInView();
 
             getSupportFragmentManager().popBackStack();
