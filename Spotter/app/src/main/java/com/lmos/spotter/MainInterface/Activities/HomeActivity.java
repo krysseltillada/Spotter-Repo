@@ -63,14 +63,10 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
-        searchBTN.setIconified(true);
-
-
+    protected void onPause() {
+        super.onPause();
     }
+
 
     public void userNavDropDown (View view) {
 

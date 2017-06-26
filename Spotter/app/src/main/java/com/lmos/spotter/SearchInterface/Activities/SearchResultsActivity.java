@@ -132,6 +132,9 @@ public class SearchResultsActivity extends AppCompatActivity
         final Fragment fragment;
         int view_id = R.id.search_content_holder;
 
+        appBarLayout.setExpanded(true);
+        nsview.smoothScrollTo(0, 0);
+
         if (!type.equals("Map"))
             fadeInView();
 
@@ -401,7 +404,8 @@ public class SearchResultsActivity extends AppCompatActivity
             if (searchResultsTab.getVisibility() != View.VISIBLE)
                 searchResultsTab.setVisibility(View.VISIBLE);
 
-
+            appBarLayout.setExpanded(true);
+            nsview.smoothScrollTo(0, 0);
             fadeInView();
 
             getSupportFragmentManager().popBackStack();

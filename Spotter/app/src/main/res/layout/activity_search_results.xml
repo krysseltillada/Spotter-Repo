@@ -27,28 +27,41 @@
                 android:layout_weight="1"
                 android:fillViewport="true" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:text = "Show all"/>
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/mid_padding"
-                android:text="Direction"
-                android:textColor="@color/colorPrimary"
-                android:textSize="20sp"/>
-
-
             <FrameLayout
+                android:backgroundTint="@color/colorPrimary"
                 android:background="@drawable/layout_white_bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/showAllSearchResults"
+                    android:background="?attr/selectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:text = "Show all"/>
+
+            </FrameLayout>
+
+
+
+            <LinearLayout
+                android:background="@drawable/layout_white_bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/mid_padding"
+                    android:text="Direction"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20sp"/>
 
                 <FrameLayout
                     android:id="@+id/map_content_holder"
@@ -56,26 +69,132 @@
                     android:layout_height="370dp"
                     android:fillViewport="true"/>
 
+            </LinearLayout>
+
+
+            <FrameLayout
+                android:background="@drawable/layout_white_bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/mid_padding"
+                        android:text="User Reviews (30)"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="20sp"/>
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginTop="13dp"
+                        android:backgroundTint="#757575"
+                        android:background="@drawable/ic_person_black_48dp"/>
+
+                </LinearLayout>
+
+
+
             </FrameLayout>
 
+            <LinearLayout
+                android:layout_marginTop="-7dp"
+                android:background="@drawable/layout_white_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/mid_padding"
-                android:text="Reviews"
-                android:textColor="@color/colorPrimary"
-                android:textSize="20sp"/>
+                    <RatingBar
+                        android:paddingTop="10dp"
+                        style="?android:attr/ratingBarStyleIndicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:numStars="5"
+                        android:rating="3.5"
+                        android:isIndicator="true"
+                        android:stepSize="0.5" />
 
-            <RatingBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:numStars="5"
-                android:rating="3.5"
-                android:isIndicator="true"
-                android:stepSize="0.5" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="10dp"
+                        android:text="3.5 Stars"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="7dp"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_marginStart="41dp"
+                        android:layout_gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:backgroundTint="#757575"
+                            android:background="@drawable/ic_thumb_up_black_48dp"/>
+
+                        <TextView
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10 People recommend this"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_gravity="center"
+                        android:layout_marginStart="38dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:backgroundTint="#757575"
+                                android:background="@drawable/ic_bookmark_black_48dp"/>
+
+                        <TextView
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10 People bookmarked this"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
 
             <include
                 layout="@layout/recycler_view_layout"
@@ -83,7 +202,8 @@
                 android:layout_height="375dp" />
 
             <FrameLayout
-                android:background="@drawable/layout_green_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:background="@drawable/layout_white_bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -91,7 +211,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="14dp"
+                    android:textColor="@color/white"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -103,36 +223,6 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-    <RelativeLayout
-        android:id="@+id/loading_screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
-
-        <ImageView
-            android:id="@+id/loading_img_holder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:contentDescription="This will hold the gif for loading"/>
-
-        <TextView
-            android:id="@+id/loading_error_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:padding="@dimen/mid_padding"/>
-
-        <TextView
-            android:id="@+id/loading_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/loading_img_holder"
-            android:layout_centerHorizontal="true"
-            android:padding="@dimen/mid_padding"/>
-
-    </RelativeLayout>
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -252,6 +342,36 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/loading_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/loading_img_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:contentDescription="This will hold the gif for loading" />
+
+        <TextView
+            android:id="@+id/loading_error_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/mid_padding" />
+
+        <TextView
+            android:id="@+id/loading_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/loading_img_holder"
+            android:layout_centerHorizontal="true"
+            android:padding="@dimen/mid_padding" />
+
+    </RelativeLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

@@ -66,6 +66,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.lmos.spotter.DialogActivity;
+import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
@@ -345,7 +346,7 @@ public class Utilities {
         final String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
         ActionBar homeActionBar = activity.getSupportActionBar();
-        SearchView searchView = (SearchView) actionBarView.findViewById(R.id.search_view);
+        final SearchView searchView = (SearchView) actionBarView.findViewById(R.id.search_view);
         final TextView title = (TextView) actionBarView.findViewById(R.id.txtHome);
 
         final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(
