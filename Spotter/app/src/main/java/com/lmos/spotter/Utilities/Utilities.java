@@ -46,6 +46,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -87,6 +88,13 @@ import java.util.Locale;
 
 
 public class Utilities {
+
+    public static void hideSoftKeyboard(View currentView, AppCompatActivity appCompatActivity) {
+        if (currentView != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager)appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(currentView.getWindowToken(), 0);
+        }
+    }
 
     public static boolean checkIfLastItem(int firstVisibleItem, int visibleItem,
                                           int totalItemCount) {

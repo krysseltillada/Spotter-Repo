@@ -129,7 +129,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds, 120));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds, 150));
             }
         });
 

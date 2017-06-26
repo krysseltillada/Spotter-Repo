@@ -157,7 +157,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 break;
 
             default:
-                cmd = "add";
+                type = "General";
                 headerSettings("show");
                 actionBarView.setVisibility(View.VISIBLE);
                 searchResultsTab.setVisibility(View.VISIBLE);
@@ -179,6 +179,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
         if(cmd.equals("add")){
 
+            Log.d("debug", "add");
+
             fragmentManager.beginTransaction()
                     .add(view_id, fragment, type)
                     .commit();
@@ -186,12 +188,17 @@ public class SearchResultsActivity extends AppCompatActivity
         }
         else{
 
+            Log.d("debug", "replace");
+
             fragmentManager.beginTransaction()
-                    .replace(view_id, fragment, type)
                     .addToBackStack("General")
+                    .replace(view_id, fragment, type)
                     .commit();
 
         }
+
+        Log.d("debug", String.valueOf(fragmentManager.getBackStackEntryCount()));
+
 
     }
 
@@ -221,6 +228,7 @@ public class SearchResultsActivity extends AppCompatActivity
             case "show":
                 desc_tab_holder.setVisibility(View.VISIBLE);
                 params.bottomMargin = 200;
+                nsview.setVisibility(View.VISIBLE);
                 collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.blackTransparent));
                 appBarLayout.setExpanded(true, true);
                 appBarLayout.setActivated(true);
@@ -380,7 +388,9 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
 
-        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+        Log.d("debug", String.valueOf(getSupportFragmentManager().getBackStackEntryCount()));
+
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 
             if (searchResultsTab.getVisibility() != View.VISIBLE)
                 searchResultsTab.setVisibility(View.VISIBLE);
@@ -411,7 +421,9 @@ public class SearchResultsActivity extends AppCompatActivity
 
 
         MapsLayoutFragment mapsLayoutFragment = (MapsLayoutFragment)getSupportFragmentManager().findFragmentByTag("Map");
-        mapsLayoutFragment.setUserPosition(new LatLng(lat, lng));
+
+        if (mapsLayoutFragment != null)
+            mapsLayoutFragment.setUserPosition(new LatLng(lat, lng));
 
     }
 
