@@ -266,6 +266,7 @@ public class SearchResultsActivity extends AppCompatActivity
         desc_tab_holder = (RelativeLayout) findViewById(R.id.description_tab_holder);
         nsview = (NestedScrollView) findViewById(R.id.search_nsview);
 
+
         loading_img = (ImageView) findViewById(R.id.loading_img_holder);
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
@@ -408,7 +409,7 @@ public class SearchResultsActivity extends AppCompatActivity
             appBarLayout.setExpanded(true);
             nsview.smoothScrollTo(0, 0);
             recyclerView.smoothScrollToPosition(0);
-            
+
             fadeInView();
 
             getSupportFragmentManager().popBackStack();

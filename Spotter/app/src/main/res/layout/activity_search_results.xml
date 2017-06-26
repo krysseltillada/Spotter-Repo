@@ -72,10 +72,11 @@
             </LinearLayout>
 
 
-            <FrameLayout
+            <LinearLayout
+                android:layout_marginTop="-7dp"
                 android:background="@drawable/layout_white_bg"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -101,17 +102,6 @@
 
                 </LinearLayout>
 
-
-
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_marginTop="-7dp"
-                android:background="@drawable/layout_white_bg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
                 <LinearLayout
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
@@ -119,7 +109,7 @@
                     android:orientation="horizontal">
 
                     <RatingBar
-                        android:paddingTop="10dp"
+
                         style="?android:attr/ratingBarStyleIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -132,7 +122,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginLeft="10dp"
                         android:text="3.5 Stars"/>
 
