@@ -109,8 +109,8 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
                     @Override
                     public void onDoneDrawDirection(String duration, String distance) {
 
-                        String directionMessage = "travel time: " +  duration +
-                                "travel distance: " + distance;
+                        String directionMessage = "time: " +  duration +
+                                " distance: " + distance;
 
                         Snackbar.make(getView(), directionMessage, Snackbar.LENGTH_INDEFINITE).show();
 

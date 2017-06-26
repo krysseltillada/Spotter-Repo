@@ -30,17 +30,34 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
                 android:layout_gravity="center"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/white"
                 android:textSize="16sp"
-                android:text = "show all"/>
+                android:text = "Show all"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/mid_padding"
+                android:text="Direction"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp"/>
+
 
             <FrameLayout
-                android:id="@+id/map_content_holder"
+                android:background="@drawable/layout_white_bg"
                 android:layout_width="match_parent"
-                android:layout_height="370dp"
-                android:fillViewport="true"/>
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:id="@+id/map_content_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="370dp"
+                    android:fillViewport="true"/>
+
+            </FrameLayout>
+
 
 
             <TextView
@@ -65,14 +82,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="375dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:layout_gravity="center"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
-                android:text = "show all"/>
+            <FrameLayout
+                android:background="@drawable/layout_green_bg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:background="?attr/selectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="14dp"
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:text = "Show all"/>
+
+            </FrameLayout>
+
 
         </LinearLayout>
 

@@ -69,15 +69,15 @@ public class SearchResultsActivity extends AppCompatActivity
     ImageView loading_img;
     TextView loading_msg, loading_error_msg;
     TabLayout searchResultsTab;
+    Menu toolbarMenu;
     CoordinatorLayout coordinatorLayout;
     /** End of initializing views **/
-
 
     boolean isLocationFragment = false;
 
     Activity activity = this;
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
-    private String type;
+    private String fragmentType;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +90,7 @@ public class SearchResultsActivity extends AppCompatActivity
         headerSettings("default");
 
         Bundle fetch_intent = getIntent().getExtras();
-        type = fetch_intent.getString("type");
+        fragmentType = fetch_intent.getString("type");
         switchFragment(fetch_intent.getString("type"), "add", "");
 
     }
@@ -104,8 +104,14 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(!type.equals("Location"))
+        if(!fragmentType.equals("Location")) {
+            Log.d("debug", "hittttttttttttttttttttt");
             getMenuInflater().inflate(R.menu.bookmark_info, menu);
+        }
+
+
+        toolbarMenu = menu;
+
 
         return super.onCreateOptionsMenu(menu);
 
@@ -158,6 +164,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
             default:
                 type = "General";
+                fragmentType = type;
                 headerSettings("show");
                 actionBarView.setVisibility(View.VISIBLE);
                 searchResultsTab.setVisibility(View.VISIBLE);
@@ -167,7 +174,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
                 if (isLocationFragment) {
 
-                    Log.d("debug", "is location fragment");
+                    onCreateOptionsMenu(toolbarMenu);
                     view_id = R.id.search_content_holder;
 
                 }
@@ -198,7 +205,6 @@ public class SearchResultsActivity extends AppCompatActivity
         }
 
         Log.d("debug", String.valueOf(fragmentManager.getBackStackEntryCount()));
-
 
     }
 
@@ -260,7 +266,7 @@ public class SearchResultsActivity extends AppCompatActivity
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
 
-
+        /*
 
         boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
 
@@ -276,7 +282,7 @@ public class SearchResultsActivity extends AppCompatActivity
             Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
             loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
 
-        }
+        } */
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
 
