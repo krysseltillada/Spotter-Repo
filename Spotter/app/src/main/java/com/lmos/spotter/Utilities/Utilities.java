@@ -2,7 +2,9 @@ package com.lmos.spotter.Utilities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -47,12 +49,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -65,6 +69,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.lmos.spotter.DialogActivity;
+import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
@@ -87,6 +92,13 @@ import java.util.Locale;
 
 
 public class Utilities {
+
+    public static void hideSoftKeyboard(View currentView, AppCompatActivity appCompatActivity) {
+        if (currentView != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager)appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(currentView.getWindowToken(), 0);
+        }
+    }
 
     public static boolean checkIfLastItem(int firstVisibleItem, int visibleItem,
                                           int totalItemCount) {
@@ -332,14 +344,14 @@ public class Utilities {
         suggestion.changeCursor(suggestions);
     }
 
-    public static void setSearchBar(final AppCompatActivity activity, View actionBarView){
+    public static void setSearchBar(final AppCompatActivity activity, final View actionBarView){
 
         String[] from = new String[]{"Judy"};
         int[] to = new int[]{android.R.id.text1};
         final String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
 
         ActionBar homeActionBar = activity.getSupportActionBar();
-        SearchView searchView = (SearchView) actionBarView.findViewById(R.id.search_view);
+        final SearchView searchView = (SearchView) actionBarView.findViewById(R.id.search_view);
         final TextView title = (TextView) actionBarView.findViewById(R.id.txtHome);
 
         final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(
@@ -368,6 +380,21 @@ public class Utilities {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
+                if (!searchView.isIconified()) {
+
+                    Utilities.hideSoftKeyboard(activity.getCurrentFocus(), activity);
+                    searchView.setIconified(true);
+                    onQueryTextSubmit(query);
+
+                } else {
+
+                    Intent send_data = new Intent(activity, SearchResultsActivity.class);
+                    send_data.putExtra("type", query);
+                    activity.startActivity(send_data);
+
+                }
+
                 return false;
             }
 
@@ -499,7 +526,7 @@ public class Utilities {
 
     }
 
-    public static boolean checkPlayServices(Activity activity) {
+    public static boolean checkPlayServices(Activity activity, DialogInterface.OnDismissListener onDismissListener) {
 
 
         final int PLAY_SERVICES_RESOLUTION_REQUEST = 1400;
@@ -510,11 +537,15 @@ public class Utilities {
 
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
 
-                GooglePlayServicesUtil.getErrorDialog(
+                Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
                         resultCode,
                         activity,
                         PLAY_SERVICES_RESOLUTION_REQUEST
-                ).show();
+                );
+
+                errorDialog.setOnDismissListener(onDismissListener);
+
+                errorDialog.show();
 
             }
 
@@ -528,7 +559,8 @@ public class Utilities {
     /** Intefaces **/
 
     public interface OnLocationFoundListener {
-        void onLocationFound(String location);
+        void onLocationFoundCity(String city);
+        void onLocationFoundLatLng(double lat, double lng);
     }
 
     public interface OnDbResponseListener{
@@ -738,25 +770,51 @@ public class Utilities {
 
         class getLocationName extends AsyncTask<Double, Void, Void>{
 
+            private double latitude;
+            private double longtitude;
+
             @Override
             protected Void doInBackground(Double... params) {
 
                 Log.d("LocationHandler", "Parsing latitude and longitude");
                 // params[0] = latitude, params[1] = longitude
 
-                Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
-                List<Address> addresses;
-                try {
+                while (true) {
 
-                    addresses = getLocationName.getFromLocation(params[0], params[1], 1);
-                    Address address = addresses.get(0);
-                    Log.d("LocationHandler", address.getLocality());
-                    response = address.getLocality();
+                    Geocoder getLocationName = new Geocoder(activity, Locale.getDefault());
+                    List<Address> addresses;
 
-                }
-                catch (IOException e) {
-                    response =  e.getMessage() + "\nHAhahaha";
-                    Log.d("LocationHandler", response);
+                    latitude = params[0];
+                    longtitude = params[1];
+
+                    try {
+
+                        addresses = getLocationName.getFromLocation(latitude, longtitude, 1);
+
+                        /*
+
+                        for (int i = 0; i != addresses.get(0).getMaxAddressLineIndex(); ++i)
+                            response += "[" + i + "]" + addresses.get(0).getAddressLine(i) + "\n";
+
+
+                        response += addresses.get(0).getLocality();
+                        response += addresses.get(0).getAdminArea();
+                        response += addresses.get(0).getCountryName();
+                        response += addresses.get(0).getPostalCode();
+                        response += addresses.get(0).getFeatureName();
+
+                        Log.d("debug", response); */
+
+                        response = addresses.get(0).getLocality();
+                        Log.d("debug", response);
+
+                        break;
+
+                    } catch (IOException e) {
+                        response = e.getMessage();
+                        Log.d("LocationHandler", response);
+                    }
+
                 }
                 return null;
             }
@@ -764,7 +822,8 @@ public class Utilities {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                OnLocationFoundListener.onLocationFound(response);
+                OnLocationFoundListener.onLocationFoundCity(response);
+                OnLocationFoundListener.onLocationFoundLatLng(latitude, longtitude);
             }
         }
 

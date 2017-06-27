@@ -19,10 +19,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
@@ -45,19 +47,28 @@ public class HomeActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private View actionBarView;
     private TextView txtHome;
+    private SearchView searchBTN;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
     Activity activity = this;
+    ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         initComp();
         startMostPopularFlipping();
         loadPlacesByType("Home");
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
 
     public void userNavDropDown (View view) {
 
@@ -97,6 +108,7 @@ public class HomeActivity extends AppCompatActivity
 
     private void loadPlacesByType (String type) {
 
+
         CoordinatorLayout mainLayout = (CoordinatorLayout)findViewById(R.id.homeLayout);
 
         mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
@@ -106,6 +118,7 @@ public class HomeActivity extends AppCompatActivity
 
         txtHome.setText(type);
 
+        appBarLayout.setExpanded(true);
 
 
         final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
@@ -136,12 +149,17 @@ public class HomeActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
         tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
 
+
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+
+                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                searchBTN.setIconified(true);
+
 
                 switch (tab.getPosition()) {
                     case 0:
@@ -176,7 +194,8 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                searchBTN.setIconified(true);
             }
         });
 
@@ -185,23 +204,11 @@ public class HomeActivity extends AppCompatActivity
     private void initComp(){
         setContentView(R.layout.activity_home_menu);
 
-        appBarLayout = (AppBarLayout)findViewById(R.id.app_bar_layout);
-
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
-                if (verticalOffset <= -380) {
-                    Log.d("Debug", "toolbar collapse at: " + String.valueOf(verticalOffset));
-                }
-            }
-        });
-
-
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
 
         collapsingToolbarLayout.setTitleEnabled(false);
 
+        appBarLayout = (AppBarLayout)findViewById(R.id.app_bar_layout);
 
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
 
@@ -211,21 +218,59 @@ public class HomeActivity extends AppCompatActivity
         actionBarView = layoutInflater.inflate(R.layout.searchbar, null);
         Utilities.setSearchBar(this, actionBarView);
 
+        final SearchView searchButton = (SearchView) actionBarView.findViewById(R.id.search_view);
+        searchBTN = searchButton;
+
         /** Set drawer and navigation layout **/
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
+
+        drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
                 toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         );
+
+
+
         drawerLayout.setDrawerListener(drawerToggle);
+
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                searchButton.setIconified(true);
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+
+                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                searchButton.setIconified(true);
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+
         drawerToggle.syncState();
 
         NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         Utilities.setNavTitleStyle(this,
                                    R.id.nav_view,
                                    R.id.settingsTitle,
@@ -237,8 +282,6 @@ public class HomeActivity extends AppCompatActivity
                                    R.style.navDrawerTitleStyle);
 
 
-        navigationView.setNavigationItemSelectedListener(this);
-
         /** End of setting drawer and navigation drawer **/
 
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
@@ -246,6 +289,10 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
+
+                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                searchBTN.setIconified(true);
+
                 startActivity(
                         new Intent(getApplicationContext(), SearchResultsActivity.class)
                                 .putExtra("type", "Location"));
@@ -258,6 +305,17 @@ public class HomeActivity extends AppCompatActivity
     private void startMostPopularFlipping(){
 
         ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
+
+        viewFlipperManager.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                searchBTN.setIconified(true);
+                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+            }
+
+        });
+
         viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
         viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
         viewFlipperManager.setFlipInterval(3000);
@@ -265,6 +323,7 @@ public class HomeActivity extends AppCompatActivity
         viewFlipperManager.startFlipping();
 
     }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -307,8 +366,16 @@ public class HomeActivity extends AppCompatActivity
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            if (!searchBTN.isIconified())
+                searchBTN.setIconified(true);
+            else
+                super.onBackPressed();
+
         }
     }
+
+
+
 
 }

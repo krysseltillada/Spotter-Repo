@@ -34,16 +34,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
             {"Solaire Resorts and Casino", "Dun sa banda dun", "3.5"},
             {"OKADA", "Honto ni watashi no baka", "4.5"},
             {"Siayan Travelers Inn", "Punta ka lang sa kanto tapos deretso", "5"},
-            {"Vikings", "Kanan ka sa bandang kaliwa", "2.5"},
-            {"Aling Puring", "Deretso lang boss", "1.5"},
-            {"Mang Inadobo", "Dun sa banda dun", "3.5"},
-            {"LUGAW AT KAPE", "Honto ni watashi no baka", "4.5"},
-            {"Caffeine", "Punta ka lang sa kanto tapos deretso", "5"},
-            {"Pico de Loro", "Kanan ka sa bandang kaliwa", "2.5"},
-            {"Mt. Butak", "Deretso lang boss", "1.5"},
-            {"Pagsanghan falls", "Dun sa banda dun", "3.5"},
-            {"Calaruega", "Honto ni watashi no baka", "4.5"},
-            {"Underground River", "Punta ka lang sa kanto tapos deretso", "5"}
+
 
     };
 

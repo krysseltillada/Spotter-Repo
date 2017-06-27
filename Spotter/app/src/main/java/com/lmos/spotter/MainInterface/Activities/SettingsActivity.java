@@ -25,15 +25,21 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         addPreferencesFromResource(R.xml.settings);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         Preference clearFavoritesItem = findPreference("clearBookmarks");
+
+        Preference passEditText = findPreference("password");
+
+        passEditText.setSummary(sharedPreferences.getString("password", "")
+                                                 .replaceAll(".", "*"));
 
         clearFavoritesItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
 
-                Toast.makeText(getApplicationContext(), "favorites erased", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Bookmarks erased", Toast.LENGTH_SHORT).show();
 
                 return false;
             }
@@ -49,7 +55,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
         if (!key.equals("notifyGPS")) {
 
-            preference.setSummary(sharedPreferences.getString(key, ""));
+            preference.setSummary(sharedPreferences.getString(key, "")
+                                                   .replaceAll(".", "*"));
 
             String message = (key.equals("username")) ? "username changed" :
                     (key.equals("email")) ? "email change" : "password changed";

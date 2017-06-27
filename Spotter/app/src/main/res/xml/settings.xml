@@ -19,18 +19,13 @@
         <EditTextPreference
             android:key = "password"
             android:title = "password"
-            android:summary = "123456" />
+            android:inputType="textPassword"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="App settings"
         >
-
-        <CheckBoxPreference
-            android:key = "notifyGPS"
-            android:title="Always Notify GPS"
-            android:summary="always notify the user regarding on gps"/>
 
         <Preference
             android:key = "clearBookmarks"

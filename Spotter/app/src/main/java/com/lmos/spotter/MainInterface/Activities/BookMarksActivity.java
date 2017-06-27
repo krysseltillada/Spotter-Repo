@@ -328,6 +328,8 @@ public class BookMarksActivity extends AppCompatActivity {
 
                                             }
 
+                                            Log.d("debug:bookmark", deleteList);
+
                                             Toast.makeText(getApplicationContext(),
                                                     deleteList,
                                                     Toast.LENGTH_LONG).show();
