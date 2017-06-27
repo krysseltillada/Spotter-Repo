@@ -1,5 +1,6 @@
 package com.lmos.spotter.MainInterface.Activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -51,9 +52,10 @@ public class HomeActivity extends AppCompatActivity
     private SearchView searchBTN;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
-    private ActionBarDrawerToggle drawerToggle;
-
+    
     String placeType;
+    Activity activity = this;
+    ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,11 +88,11 @@ public class HomeActivity extends AppCompatActivity
                 switch (item.getItemId()) {
 
                     case R.id.sign_out:
-                        Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, "");
+                        Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
                         break;
 
                     case R.id.user_settings:
-                        Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class, "");
+                        Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class, null);
                         break;
 
                 }
@@ -359,12 +361,12 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.Favorites:
                 Utilities.OpenActivity(getApplicationContext(),
-                                       BookMarksActivity.class, "");
+                                       BookMarksActivity.class, null);
                 break;
             case R.id.Settings:
 
                 Utilities.OpenActivity(getApplicationContext(),
-                                       SettingsActivity.class, "");
+                                       SettingsActivity.class, null);
 
                 break;
 
