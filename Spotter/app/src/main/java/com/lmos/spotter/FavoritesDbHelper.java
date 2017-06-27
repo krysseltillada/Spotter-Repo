@@ -39,9 +39,15 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d("DB", "Creating");
         db.execSQL(
-                "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY," +
-                KEY_NAME + " TEXT," + KEY_STREET + " TEXT," + KEY_DESC + " TEXT," + KEY_STATE + " TEXT," +
-                        KEY_LAT + " INTEGER," + KEY_LNG + " INTEGER," + KEY_RATING + " INTEGER)"
+                "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
+                        KEY_ID + " INTEGER PRIMARY KEY," +
+                        KEY_NAME + " TEXT," +
+                        KEY_STREET + " TEXT," +
+                        KEY_DESC + " TEXT," +
+                        KEY_STATE + " TEXT," +
+                        KEY_LAT + " INTEGER," +
+                        KEY_LNG + " INTEGER," +
+                        KEY_RATING + " INTEGER)"
         );
         Log.d("DB", "PATH=" + context.getDatabasePath(DATABASE_NAME));
     }
@@ -51,7 +57,7 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addToFavorites(){
+    public void addToFavorites(Place place){
         Log.d("DB", "Adding...");
         SQLiteDatabase db = this.getWritableDatabase();
 

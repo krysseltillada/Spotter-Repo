@@ -7,9 +7,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -66,9 +68,16 @@ public class FragmentSearchResultGeneral extends Fragment {
             }
 
             @Override
-            public void OnItemLongClick(int pos, View view) {
-                Toast.makeText(getContext(), String.valueOf(pos), Toast.LENGTH_SHORT).show();
+            public void OnItemLongClick(int pos, View parent, View view) {
+                Utilities.inflateOptionItem(getContext(), view, R.menu.bookmark_option, new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(getContext(), "Aw I was clicked", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                });
             }
+
         });
 
         // Set recyclerview params

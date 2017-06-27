@@ -21,7 +21,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
     public interface OnClickListener{
 
         void OnItemClick(int pos, View view, String... params);
-        void OnItemLongClick(int pos, View view);
+        void OnItemLongClick(int pos, View parent, View view);
 
     }
 
@@ -79,6 +79,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
             place = (TextView) itemView.findViewById(R.id.general_list_address);
             rating = (TextView) itemView.findViewById(R.id.general_rating_digit);
             itemView.findViewById(R.id.search_general_viewContainer).setOnClickListener(this);
+            itemView.findViewById(R.id.search_general_viewContainer).setOnLongClickListener(this);
         }
 
         @Override
@@ -90,8 +91,8 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         @Override
         public boolean onLongClick(View v) {
-            onClickListener.OnItemLongClick(getAdapterPosition(), v);
-            return false;
+            onClickListener.OnItemLongClick(getAdapterPosition(), v, rating);
+            return true;
         }
     }
 

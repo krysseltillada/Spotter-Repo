@@ -26,7 +26,9 @@
     </style>
 
     <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:popupMenuStyle">@style/PopupMenuTheme</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -75,6 +77,12 @@
     <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="PopupMenuTheme" parent="@style/Widget.AppCompat.PopupMenu">
+        <item name="android:dropDownHorizontalOffset">-500dp</item>
+        <item name="android:dropDownVerticalOffset">5dp</item>
+        <item name="android:dropDownWidth">20dp</item>
     </style>
 
 </resources>

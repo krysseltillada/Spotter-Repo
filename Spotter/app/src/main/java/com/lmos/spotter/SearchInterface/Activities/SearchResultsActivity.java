@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.lmos.spotter.FavoritesDbHelper;
 import com.lmos.spotter.MapsLayoutFragment;
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
@@ -156,9 +157,10 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void addToFavorites(){
 
+        Place place = new Place();
         favoritesDbHelper = new FavoritesDbHelper(this, this);
         Log.d("ADD", "Triggered");
-        favoritesDbHelper.addToFavorites();
+        favoritesDbHelper.addToFavorites(place);
 
     }
 

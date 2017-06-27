@@ -1,7 +1,5 @@
 package com.lmos.spotter;
 
-import com.lmos.spotter.Utilities.PlaceType;
-
 /**
  * Created by emman on 6/21/2017.
  * This class will hold the contents of information about Places.
@@ -15,7 +13,7 @@ public class Place  {
     private String placeLocality;
     private String placeDescription;
     private String placeClass;
-    private PlaceType placeType;
+    private String placeType;
     private String placePriceRange;
     private String placeImage;
 
@@ -31,7 +29,7 @@ public class Place  {
 
     public void setplaceClass(String placeClass){this.placeClass = placeClass;}
 
-    public void setplaceType(PlaceType placeType){this.placeType = placeType;}
+    public void setplaceType(String placeType){this.placeType = placeType;}
 
     public void setplacePriceRange(String placePriceRange){this.placePriceRange = placePriceRange;}
 
@@ -63,7 +61,7 @@ public class Place  {
         return placeClass;
     }
 
-    public PlaceType getPlaceType() {
+    public String getPlaceType() {
         return placeType;
     }
 

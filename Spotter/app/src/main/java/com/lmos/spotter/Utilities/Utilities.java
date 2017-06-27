@@ -33,6 +33,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -41,6 +42,8 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -300,10 +303,12 @@ public class Utilities {
         return (bitmap);
     }
 
-    public static void OpenActivity(Context con, Class<?> cname, String callingActivity) {
+    public static void OpenActivity(Context con, Class<?> cname, Activity callingActivity) {
         Intent requestActivity = new Intent(con, cname);
         requestActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         con.startActivity(requestActivity);
+        if(callingActivity != null)
+            callingActivity.finish();
     }
 
     public static void OpenActivityWithBundle(Context con, Class<?> cname, String callingActivity, Bundle bundle) {
@@ -441,6 +446,15 @@ public class Utilities {
         spannableString.setSpan(new TextAppearanceSpan(appCompatActivity.getApplicationContext(), styleId), 0, spannableString.length(), 0);
 
         tools.setTitle(spannableString);
+
+    }
+
+    public static void inflateOptionItem(Context activity, View parent, int layout, PopupMenu.OnMenuItemClickListener onMenuItemClickListener){
+
+        PopupMenu optionMenu = new PopupMenu(activity, parent, Gravity.END);
+        optionMenu.getMenuInflater().inflate(layout, optionMenu.getMenu());
+        optionMenu.setOnMenuItemClickListener(onMenuItemClickListener);
+        optionMenu.show();
 
     }
 
