@@ -21,7 +21,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.onCreate(savedInstanceState);
+
         addPreferencesFromResource(R.xml.settings);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -55,8 +55,9 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
         if (!key.equals("notifyGPS")) {
 
-            preference.setSummary(sharedPreferences.getString(key, "")
-                                                   .replaceAll(".", "*"));
+            preference.setSummary( ((key.equals("password")) ? sharedPreferences.getString(key, "")
+                                        .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
+
 
             String message = (key.equals("username")) ? "username changed" :
                     (key.equals("email")) ? "email change" : "password changed";

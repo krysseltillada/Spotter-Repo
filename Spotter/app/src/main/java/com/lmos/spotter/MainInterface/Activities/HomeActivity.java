@@ -13,6 +13,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,6 +42,7 @@ import com.lmos.spotter.Utilities.Utilities;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
 
+    private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private DrawerLayout drawerLayout;
@@ -49,7 +51,9 @@ public class HomeActivity extends AppCompatActivity
     private SearchView searchBTN;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
-    ActionBarDrawerToggle drawerToggle;
+    private ActionBarDrawerToggle drawerToggle;
+
+    String placeType;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,101 +110,111 @@ public class HomeActivity extends AppCompatActivity
 
     private void loadPlacesByType (String type) {
 
+        if (!type.equals(placeType)) {
 
-        CoordinatorLayout mainLayout = (CoordinatorLayout)findViewById(R.id.homeLayout);
+            CoordinatorLayout mainLayout = (CoordinatorLayout) findViewById(R.id.homeLayout);
 
-        mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
-                                                             R.anim.fade_in));
+            mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
+                    R.anim.fade_in));
 
-        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
+            homeNestedScrollView.smoothScrollTo(0, 0);
+            appBarLayout.setExpanded(true);
 
-        txtHome.setText(type);
+            txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
+            txtHome.setText(type);
 
-        appBarLayout.setExpanded(true);
+            final RecyclerView tabLayoutRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
-
-        final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
-
-        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                  ActivityType.HOME_ACTIVITY,
-                                                                  PlaceType.NONE,
-                                                                  TestData.PlaceData.testDataMostViewed
-                                                                  ));
-
-
-        tabLayoutRecyclerView.setNestedScrollingEnabled(false);
-
-        tabLayoutRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
-                LinearLayoutManager.VERTICAL,
-                false));
-
-        if (tabLayout.getTabCount() > 0) {
-
-            tabLayoutRecyclerView.removeAllViews();
-            tabLayout.clearOnTabSelectedListeners();
-            tabLayout.removeAllTabs();
-        }
+            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                    ActivityType.HOME_ACTIVITY,
+                    PlaceType.NONE,
+                    TestData.PlaceData.testDataMostViewed
+            ));
 
 
-        tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
-        tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
-        tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
+            tabLayoutRecyclerView.setNestedScrollingEnabled(false);
+
+            tabLayoutRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
+                    LinearLayoutManager.VERTICAL,
+                    false));
+
+            if (tabLayout.getTabCount() > 0) {
+
+                tabLayoutRecyclerView.removeAllViews();
+                tabLayout.clearOnTabSelectedListeners();
+                tabLayout.removeAllTabs();
+            }
 
 
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
-                searchBTN.setIconified(true);
+            tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
+            tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
+            tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
 
 
-                switch (tab.getPosition()) {
-                    case 0:
+            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                                  ActivityType.HOME_ACTIVITY,
-                                                                                  PlaceType.NONE,
-                                                                                  TestData.PlaceData.testDataMostViewed));
-                        break;
-                    case 1:
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                                  ActivityType.HOME_ACTIVITY,
-                                                                                  PlaceType.NONE,
-                                                                                  TestData.PlaceData.testDataMostRated));
-                        break;
-                    case 2:
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
 
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                                  ActivityType.HOME_ACTIVITY,
-                                                                                  PlaceType.NONE,
-                                                                                  TestData.PlaceData.testDataRecommend));
-                        break;
+                    Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                    homeNestedScrollView.smoothScrollTo(0, 0);
+                    searchBTN.setIconified(true);
+
+
+                    switch (tab.getPosition()) {
+                        case 0:
+
+                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.HOME_ACTIVITY,
+                                    PlaceType.NONE,
+                                    TestData.PlaceData.testDataMostViewed));
+                            break;
+                        case 1:
+
+                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.HOME_ACTIVITY,
+                                    PlaceType.NONE,
+                                    TestData.PlaceData.testDataMostRated));
+                            break;
+                        case 2:
+
+                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.HOME_ACTIVITY,
+                                    PlaceType.NONE,
+                                    TestData.PlaceData.testDataRecommend));
+                            break;
+                    }
+
                 }
 
-            }
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                }
 
-            }
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                    Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                    homeNestedScrollView.smoothScrollTo(0, 0);
+                    searchBTN.setIconified(true);
+                }
+            });
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
-                searchBTN.setIconified(true);
-            }
-        });
+
+            placeType = type;
+
+        }
 
     }
 
     private void initComp(){
+
         setContentView(R.layout.activity_home_menu);
+
+        homeNestedScrollView = (NestedScrollView) findViewById(R.id.homeContentScrollView);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
 
