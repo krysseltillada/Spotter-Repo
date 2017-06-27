@@ -7,8 +7,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature android:name="android.hardware.location.gps" />
-    <uses-feature android:name="android.hardware.camera2"
+    <uses-feature
+        android:name="android.hardware.camera2"
         android:required="false" />
 
     <application
@@ -50,16 +52,18 @@
         <activity
             android:name=".MainInterface.Activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
-
         <activity
             android:name=".MainInterface.Activities.BookMarksActivity"
             android:label="@string/title_activity_book_marks"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".DialogActivity"
+        <activity
+            android:name=".DialogActivity"
             android:excludeFromRecents="true"
             android:theme="@style/DialogTheme" />
-
+        <activity
+            android:name=".SearchInterface.Activities.ReviewActivity"
+            android:label="@string/title_activity_review"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

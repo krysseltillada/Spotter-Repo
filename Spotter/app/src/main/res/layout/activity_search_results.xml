@@ -35,6 +35,7 @@
 
                 <Button
                     android:id="@+id/showAllSearchResults"
+                    android:onClick="showSearchResults"
                     android:background="?attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -197,6 +198,8 @@
                 android:layout_height="wrap_content">
 
                 <Button
+                    android:id="@+id/showAllReview"
+                    android:onClick="showReviewActivity"
                     android:background="?attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

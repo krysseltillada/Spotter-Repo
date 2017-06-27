@@ -80,6 +80,14 @@ public class SearchResultsActivity extends AppCompatActivity
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
     private String fragmentType;
 
+    public void showReviewActivity (View view) {
+        Utilities.OpenActivity(activity, ReviewActivity.class, null);
+    }
+
+    public void showSearchResults (View view) {
+
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -93,6 +101,16 @@ public class SearchResultsActivity extends AppCompatActivity
         Bundle fetch_intent = getIntent().getExtras();
         fragmentType = fetch_intent.getString("type");
         switchFragment(fetch_intent.getString("type"), "add", "");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        appBarLayout.setExpanded(true);
+        nsview.smoothScrollTo(0, 0);
+        recyclerView.smoothScrollToPosition(0);
 
     }
 

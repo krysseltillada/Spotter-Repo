@@ -1,6 +1,6 @@
 <resources>
 
-    <string name = "flat_map_style">
+    <string name="flat_map_style">
 
         [
     {
@@ -300,5 +300,6 @@
     <string name="title_activity_htr">HTRActivity</string>
     <string name="title_activity_book_marks">BookMarksActivity</string>
     <string name="enable_gps_network">Spotter needs to enable your gps and network state in able to find your location.</string>
+    <string name="title_activity_review">ReviewActivity</string>
 
 </resources>

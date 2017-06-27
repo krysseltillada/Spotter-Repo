@@ -530,9 +530,7 @@ public class Utilities {
         try {
             byte[] encodedByteBitmap = Base64.decode(strBitmap, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(encodedByteBitmap, 0, encodedByteBitmap.length);
-        } catch (NullPointerException e) {
-            return null;
-        } catch (OutOfMemoryError e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -543,9 +541,7 @@ public class Utilities {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byte[] byteBitmap = byteArrayOutputStream.toByteArray();
             return Base64.encodeToString(byteBitmap, Base64.DEFAULT);
-        } catch (NullPointerException e) {
-            return null;
-        } catch (OutOfMemoryError e) {
+        } catch (Exception e) {
             return null;
         }
     }
