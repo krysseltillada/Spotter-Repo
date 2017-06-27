@@ -1,8 +1,10 @@
 package com.lmos.spotter;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
+import com.lmos.spotter.Utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,27 +54,41 @@ import java.util.Map;
 public class AppScript {
 
     private String response, data;
+    private String requestURL;
 
     protected AppScript(){}
 
-    public void setData(String url, Map<String, String> params){
+    public void setRequestURL (String url) {
+        requestURL = url;
+    }
+
+
+    public void setData(String url, Map<String, Object> params){
 
         String post_data = "";
-        final String default_url = "http://192.168.254.100/projects/spotter/app_scripts/";
+        //final String default_url = "http://192.168.254.100/projects/spotter/app_scripts/";
 
         if(params != null){
 
-            Iterator<Map.Entry<String, String>> entry = params.entrySet().iterator();
+            Iterator<Map.Entry<String, Object>> entry = params.entrySet().iterator();
 
             while(entry.hasNext()){
 
-                Map.Entry<String, String> index_item = entry.next();
+                Map.Entry<String, Object> index_item = entry.next();
                 try {
+
+                    String userImageString = "";
+
+                    if (index_item.getKey().equals("userImage"))
+                        userImageString = Utilities.bitmapToString((Bitmap)index_item.getValue());
+
                     post_data += URLEncoder.encode(index_item.getKey(), "UTF-8") + "="
-                            + URLEncoder.encode(index_item.getValue(), "UTF-8");
+                              +  URLEncoder.encode((index_item.getKey().equals("userImage")) ? userImageString :
+                                                                                              (String)index_item.getValue(), "UTF-8");
 
                     if(entry.hasNext())
                         post_data += "&";
+
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -81,7 +97,7 @@ public class AppScript {
 
         }
 
-        connect(default_url + url, post_data);
+        connect(requestURL + url, post_data);
 
     }
 

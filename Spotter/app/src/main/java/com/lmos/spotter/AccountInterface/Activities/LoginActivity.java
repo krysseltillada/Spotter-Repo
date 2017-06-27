@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
+
 
     private static final String LOGIN_PREFS = "LoginSharedPreference";
 
@@ -100,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
      *  and it will be passed to AccountHandler to process request.
      *
      **/
-    public final void runAccountHandler(String transaction, Map<String, String> params){
+    public final void runAccountHandler(String transaction, Map<String, Object> params){
         new AccountHandler(this,transaction, params).execute();
     }
 
@@ -108,9 +110,9 @@ public class LoginActivity extends AppCompatActivity {
 
         ProgressDialog pd;
         String transaction;
-        Map<String, String> map_data;
+        Map<String, Object> map_data;
 
-        private AccountHandler(Context context, String transaction, Map<String, String> map_data){
+        private AccountHandler(Context context, String transaction, Map<String, Object> map_data){
             this.transaction = transaction;
             this.map_data = map_data;
             pd = new ProgressDialog(context){{
@@ -126,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
 
             final AppScript appScript = new AppScript(){{
+                setRequestURL("http://192.168.22.13/projects/spotter/app_scripts/");
                 setData(transaction, map_data);
             }};
 

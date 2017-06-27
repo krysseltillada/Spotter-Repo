@@ -37,7 +37,7 @@ public class FragmentRecover extends Fragment {
             @Override
             public void onClick(View v) {
 
-                final Map<String, String> map_data = new HashMap<String, String>() {{
+                final Map<String, Object> map_data = new HashMap<String, Object>() {{
 
                     put("username", username.getText().toString());
                     put("email", email.getText().toString());

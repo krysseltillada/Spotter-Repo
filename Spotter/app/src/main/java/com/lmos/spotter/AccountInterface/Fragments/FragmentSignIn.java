@@ -13,6 +13,7 @@ import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by linker on 01/06/2017.
@@ -44,7 +45,7 @@ public class FragmentSignIn extends Fragment {
                 if(username.getText().toString().length() > 6 ||
                         password.getText().toString().length() > 6) {
 
-                    final Map<String, String> map_data = new HashMap<String, String>() {{
+                    final Map<String, Object> map_data = new HashMap<String, Object>() {{
 
                         put("username", username.getText().toString());
                         put("password", password.getText().toString());

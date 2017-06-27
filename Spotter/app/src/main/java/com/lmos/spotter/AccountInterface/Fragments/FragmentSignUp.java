@@ -3,6 +3,7 @@ package com.lmos.spotter.AccountInterface.Fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -65,12 +66,13 @@ public class FragmentSignUp extends Fragment {
                 if(username.getText().toString().length() > 6 ||
                         password.getText().toString().length() > 6) {
 
-                    final Map<String, String> map_data = new HashMap<String, String>() {{
+                    final Map<String, Object> map_data = new HashMap<String, Object>() {{
 
                         put("username", username.getText().toString());
                         put("password", password.getText().toString());
                         put("name", name.getText().toString());
                         put("email", email.getText().toString());
+                        put("userImage", ((BitmapDrawable)register_img.getDrawable()).getBitmap());
 
                     }};
 
@@ -94,6 +96,7 @@ public class FragmentSignUp extends Fragment {
             }
 
         });
+
 
         return registerView;
     }

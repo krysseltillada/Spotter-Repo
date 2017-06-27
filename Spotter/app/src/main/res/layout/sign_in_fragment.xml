@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="220dp"
+        >
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/login_username_wrapper"
@@ -115,5 +122,7 @@
             android:text="@string/skip"/>
 
     </LinearLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>
