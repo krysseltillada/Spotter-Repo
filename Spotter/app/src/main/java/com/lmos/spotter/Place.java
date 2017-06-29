@@ -1,5 +1,7 @@
 package com.lmos.spotter;
 
+import android.util.Log;
+
 /**
  * Created by emman on 6/21/2017.
  * This class will hold the contents of information about Places.
@@ -71,5 +73,11 @@ public class Place  {
 
     public String getPlaceImage() {
         return placeImage;
+    }
+
+    public void print () {
+
+        Log.d("debug", getPlaceName() + "\n");
+
     }
 }

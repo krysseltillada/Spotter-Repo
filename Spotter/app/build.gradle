@@ -41,6 +41,7 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.google.android.gms:play-services-location:11.0.0'
     compile 'com.google.android.gms:play-services-maps:11.0.0'
+    compile 'com.iamtheib.infiniterecyclerview:library:1.4'
     testCompile 'org.testng:testng:6.9.6'
 }
 

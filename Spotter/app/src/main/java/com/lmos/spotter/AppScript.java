@@ -2,6 +2,7 @@ package com.lmos.spotter;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.Utilities.Utilities;
@@ -56,6 +57,8 @@ public class AppScript {
     private String response, data;
     private String requestURL;
 
+    private List<Place> placeList;
+
     protected AppScript(){}
 
     public void setRequestURL (String url) {
@@ -65,8 +68,11 @@ public class AppScript {
 
     public void setData(String url, Map<String, Object> params){
 
+
         String post_data = "";
         //final String default_url = "http://192.168.254.100/projects/spotter/app_scripts/";
+
+        Log.d("debug", requestURL + url + post_data);
 
         if(params != null){
 
@@ -80,7 +86,7 @@ public class AppScript {
                     String userImageString = "";
 
                     if (index_item.getKey().equals("userImage"))
-                        userImageString = Utilities.bitmapToString((Bitmap)index_item.getValue());
+                        userImageString = Utilities.BlurImg.bitmapToString((Bitmap)index_item.getValue());
 
                     post_data += URLEncoder.encode(index_item.getKey(), "UTF-8") + "="
                               +  URLEncoder.encode((index_item.getKey().equals("userImage")) ? userImageString :
@@ -96,6 +102,7 @@ public class AppScript {
             }
 
         }
+
 
         connect(requestURL + url, post_data);
 
@@ -167,6 +174,8 @@ public class AppScript {
 
     private void parseResult(String processResult){
 
+        Log.d("debug", processResult);
+
         try {
 
             JSONObject jsonObject = new JSONObject(processResult);
@@ -184,12 +193,14 @@ public class AppScript {
             else if(response_code.equals("0x10")){
 
                 List<Place> place = new ArrayList<>();
-                Place setPlace = new Place();
 
                 JSONArray place_list = jsonObject.getJSONArray("response_data");
 
-                for(int index = 0; index < place_list.length(); index ++){
+                for(int index = 0; index < place_list.length(); index++){
 
+                    // dont refer to the same object reference
+
+                    Place setPlace = new Place();
                     JSONObject place_item = place_list.getJSONObject(index);
                     setPlace.setPlaceID(place_item.getString("placeID"));
                     setPlace.setplaceName(place_item.getString("Name"));
@@ -200,11 +211,16 @@ public class AppScript {
                     setPlace.setplaceType(place_item.getString("Type"));
                     setPlace.setplacePriceRange(place_item.getString("PriceRange"));
 
+                    setPlace.print();
+
                     place.add(setPlace);
 
                 }
 
+
+                placeList = place;
                 response = jsonObject.getString("response_msg");
+                Log.d("debug", "response: " + response);
 
             }
             else if(response_code.equals("1x01") || response_code.equals("1x02")){
@@ -219,6 +235,10 @@ public class AppScript {
             response = e.getMessage();
         }
 
+    }
+
+    public List<Place> getPlaces () {
+        return placeList;
     }
 
     public String getResult(){ return response; }

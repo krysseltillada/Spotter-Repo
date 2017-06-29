@@ -46,7 +46,7 @@ public class BookMarksActivity extends AppCompatActivity {
             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                     ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                     MainInterfaceAdapter.currentSelectedTab,
-                    TestData.PlaceData.testDataMostViewed
+                    null
                    ));
 
             tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -62,7 +62,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                                     PlaceType.HOTEL,
-                                    TestData.PlaceData.testDataMostViewed));
+                                    null));
 
                             break;
 
@@ -73,7 +73,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                                     PlaceType.RESTAURANT,
-                                    TestData.PlaceData.testDataMostViewed));
+                                    null));
                             break;
 
                         case 2:
@@ -83,7 +83,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                                     PlaceType.TOURIST_SPOTS,
-                                    TestData.PlaceData.testDataMostViewed));
+                                    null));
 
                             break;
 
@@ -114,7 +114,7 @@ public class BookMarksActivity extends AppCompatActivity {
             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                     ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
                     MainInterfaceAdapter.currentSelectedTab,
-                    TestData.PlaceData.testDataMostRated));
+                    null));
 
 
             tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -130,7 +130,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
                                     PlaceType.HOTEL,
-                                    TestData.PlaceData.testDataMostViewed));
+                                    null));
 
                             break;
 
@@ -141,7 +141,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
                                     PlaceType.RESTAURANT,
-                                    TestData.PlaceData.testDataMostViewed));
+                                    null));
 
                             break;
 
@@ -152,7 +152,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE,
                                     PlaceType.TOURIST_SPOTS,
-                                    TestData.PlaceData.testDataMostViewed));
+                                    null));
 
                             break;
 
@@ -229,7 +229,7 @@ public class BookMarksActivity extends AppCompatActivity {
         bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                                                   ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                                                                   PlaceType.HOTEL,
-                                                                  TestData.PlaceData.testDataMostViewed));
+                                                                  null));
 
 
         bookMarksTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);

@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Debug;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
@@ -26,6 +28,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Kryssel on 6/14/2017.
@@ -33,14 +36,13 @@ import java.util.ArrayList;
 
 public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdapter.MainInterfaceViewHolder>{
 
-    private int testCount = 0;
     private int lastPosition = -1;
 
     private ActivityType activityType;
 
     private static ArrayList<ArrayList<Boolean>> checkBoxToggleList = new ArrayList<>();
 
-    private ArrayList<Object[]> testData;
+    private List<Place> places;
 
     public static PlaceType currentSelectedTab;
     public static boolean ifDoneInitialized = false;
@@ -81,11 +83,9 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
     }
 
 
-    public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, ArrayList<Object[]> td) {
+    public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, List<Place> pl) {
 
-        Log.d("Debug", "MainInterfaceAdapter constructor");
-
-        testData = td;
+        places = pl;
 
         if (acType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE ||
             acType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
@@ -100,7 +100,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
                 if (checkBoxToggleList.get(toggleIndex).size() <= 0) {
 
-                    for (int i = 0; i != testData.size(); ++i)
+                    for (int i = 0; i != places.size(); ++i)
                         checkBoxToggleList.get(toggleIndex).add(false);
 
                 }
@@ -139,7 +139,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
     @Override
     public MainInterfaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        Log.d("Debug", "OnCreateViewHolder");
 
         return new MainInterfaceViewHolder(LayoutInflater.from(parent.getContext())
                                                                      .inflate(getLayoutIdByType(activityType), parent, false));
@@ -164,28 +163,33 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
         holder.placeCompanyImage.setScaleType(ImageView.ScaleType.CENTER_CROP); */
 
+        /*
+
         Picasso.with(context)
                 .load((int)testData.get(position)[0])
                 .placeholder(R.drawable.loadingplace)
-                .into(holder.placeCompanyImage);
+                .into(holder.placeCompanyImage); */
 
-        holder.txtPlaceName.setText((String)testData.get(position)[1]);
-        holder.txtLocation.setText((String)testData.get(position)[2]);
+        holder.txtPlaceName.setText(places.get(position).getPlaceName());
+        holder.txtLocation.setText(places.get(position).getPlaceLocality());
 
-        double userRating = (double)testData.get(position)[3];
-        double userPriceMin = (double)testData.get(position)[5];
-        double userPriceMax = (double)testData.get(position)[6];
+        /*
 
+        double userRating = (double)places.get(position)[3];
+        double userPriceMin = (double)places.get(position)[5];
+        double userPriceMax = (double)places.get(position)[6]; */
 
+        /*
 
-        int userReviews = (int)testData.get(position)[4];
+        int userReviews = (int)places.get(position)[4];
 
         String reviewInfo = "Good(" + userReviews + " reviews)";
         String priceRangeInfo = "₱" + userPriceMin + " - " + userPriceMax;
 
         holder.txtReview.setText(reviewInfo);
-        holder.txtGeneralRatingDigit.setText(String.valueOf(userRating));
-        holder.txtPrice.setText(priceRangeInfo);
+        holder.txtGeneralRatingDigit.setText(String.valueOf(userRating)); */
+
+        holder.txtPrice.setText(places.get(position).getPlacePriceRange());
 
         if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
 
@@ -224,7 +228,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
     @Override
     public int getItemCount() {
-        return testData.size();
+        return places.size();
     }
 
     public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {

@@ -526,25 +526,6 @@ public class Utilities {
 
     }
 
-    public static Bitmap stringToBitmap (String strBitmap) {
-        try {
-            byte[] encodedByteBitmap = Base64.decode(strBitmap, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(encodedByteBitmap, 0, encodedByteBitmap.length);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static String bitmapToString (Bitmap bitmap) {
-        try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-            byte[] byteBitmap = byteArrayOutputStream.toByteArray();
-            return Base64.encodeToString(byteBitmap, Base64.DEFAULT);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     public static boolean checkPlayServices(Activity activity, DialogInterface.OnDismissListener onDismissListener) {
 
@@ -614,16 +595,24 @@ public class Utilities {
             return output_bitmap;
         }
 
-        public static String toString(Bitmap bitmap) {
-            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
-            byte[] b = byteOutputStream.toByteArray();
-            return Base64.encodeToString(b, Base64.DEFAULT);
+        public static Bitmap stringToBitmap (String strBitmap) {
+            try {
+                byte[] encodedByteBitmap = Base64.decode(strBitmap, Base64.DEFAULT);
+                return BitmapFactory.decodeByteArray(encodedByteBitmap, 0, encodedByteBitmap.length);
+            } catch (Exception e) {
+                return null;
+            }
         }
 
-        public static Bitmap getBitmap(String encodedBitmap) {
-            byte[] decodeBitmap = Base64.decode(encodedBitmap, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(decodeBitmap, 0, decodeBitmap.length);
+        public static String bitmapToString (Bitmap bitmap) {
+            try {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                byte[] byteBitmap = byteArrayOutputStream.toByteArray();
+                return Base64.encodeToString(byteBitmap, Base64.DEFAULT);
+            } catch (Exception e) {
+                return null;
+            }
         }
 
     }

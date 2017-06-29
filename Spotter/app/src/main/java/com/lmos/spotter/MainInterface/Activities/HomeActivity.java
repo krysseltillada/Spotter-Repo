@@ -3,7 +3,9 @@ package com.lmos.spotter.MainInterface.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -25,20 +27,30 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
+import com.lmos.spotter.AppScript;
+import com.lmos.spotter.MainInterface.Adapters.EndlessRecyclerOnScrollListener;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
+import com.lmos.spotter.MainInterface.Adapters.SampleEndlessRecyclerView;
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.TestData;
 import com.lmos.spotter.Utilities.Utilities;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
@@ -52,7 +64,10 @@ public class HomeActivity extends AppCompatActivity
     private SearchView searchBTN;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
-    
+    private MainInterfaceAdapter mainInterfaceAdapter;
+    RecyclerView tabLayoutRecyclerView;
+    private int currentIndex;
+
     String placeType;
     Activity activity = this;
     ActionBarDrawerToggle drawerToggle;
@@ -125,21 +140,43 @@ public class HomeActivity extends AppCompatActivity
             txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
             txtHome.setText(type);
 
-            final RecyclerView tabLayoutRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            tabLayoutRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
             TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
-            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                    ActivityType.HOME_ACTIVITY,
-                    PlaceType.NONE,
-                    TestData.PlaceData.testDataMostViewed
-            ));
+            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
+            final ProgressBar progressBar = (ProgressBar)findViewById(R.id.item_progress_bar);
+
+            new PlaceLoader().execute();
+
+            homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener () {
+
+                @Override
+                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    if(v.getChildAt(v.getChildCount() - 1) != null) {
+                        if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
+                                scrollY > oldScrollY) {
+
+                            progressBar.setVisibility(View.VISIBLE);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
 
 
-            tabLayoutRecyclerView.setNestedScrollingEnabled(false);
+                                    mainInterfaceAdapter.notifyDataSetChanged();
+                                    progressBar.setVisibility(View.GONE);
+                                }
+                            }, 1500);
 
-            tabLayoutRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
-                    LinearLayoutManager.VERTICAL,
-                    false));
+
+                        }
+                    }
+                }
+            });
+
+
+
+            tabLayoutRecyclerView.setLayoutManager(linearLayoutManager);
 
             if (tabLayout.getTabCount() > 0) {
 
@@ -165,6 +202,7 @@ public class HomeActivity extends AppCompatActivity
                     homeNestedScrollView.smoothScrollTo(0, 0);
                     searchBTN.setIconified(true);
 
+                    /*
 
                     switch (tab.getPosition()) {
                         case 0:
@@ -188,7 +226,7 @@ public class HomeActivity extends AppCompatActivity
                                     PlaceType.NONE,
                                     TestData.PlaceData.testDataRecommend));
                             break;
-                    }
+                    } */
 
                 }
 
@@ -385,6 +423,37 @@ public class HomeActivity extends AppCompatActivity
                 searchBTN.setIconified(true);
             else
                 super.onBackPressed();
+
+        }
+    }
+
+    class PlaceLoader extends AsyncTask<String, Void, AppScript> {
+
+
+        @Override
+        protected AppScript doInBackground(String ...params) {
+
+            final AppScript loadPlaces = new AppScript(){{
+                setRequestURL("http://192.168.2.112/projects/spotter/app_scripts/");
+                setData("loadPlaces.php", new HashMap<String, Object>() {{
+                    put("currentRow", "0");
+                    put("rowOffset", "5");
+                }});
+            }};
+
+            return loadPlaces;
+        }
+
+        @Override
+        protected void onPostExecute(AppScript placeData) {
+            super.onPostExecute(placeData);
+
+            mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
+                                                            ActivityType.HOME_ACTIVITY,
+                                                            PlaceType.NONE,
+                                                            placeData.getPlaces());
+
+            tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
 
         }
     }
