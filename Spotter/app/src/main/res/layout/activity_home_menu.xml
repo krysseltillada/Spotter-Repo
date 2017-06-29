@@ -132,6 +132,14 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <ProgressBar
+            android:id="@+id/recycleViewProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="330dp"
+            android:layout_marginLeft="150dp"
+            android:visibility="visible" />
+
 
         <android.support.v4.widget.NestedScrollView
             android:id = "@+id/homeContentScrollView"

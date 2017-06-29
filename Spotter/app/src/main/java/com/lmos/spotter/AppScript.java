@@ -56,6 +56,7 @@ public class AppScript {
 
     private String response, data;
     private String requestURL;
+    private String tableCount;
 
     private List<Place> placeList;
 
@@ -218,9 +219,13 @@ public class AppScript {
                 }
 
 
+                JSONObject responseData = new JSONObject(jsonObject.getString("response_msg"));
+
                 placeList = place;
-                response = jsonObject.getString("response_msg");
-                Log.d("debug", "response: " + response);
+                response = responseData.getString("endOffset");
+                tableCount = responseData.getString("tableCount");
+
+                Log.d("debug", "response: " + responseData.getString("tableCount"));
 
             }
             else if(response_code.equals("1x01") || response_code.equals("1x02")){
@@ -240,6 +245,8 @@ public class AppScript {
     public List<Place> getPlaces () {
         return placeList;
     }
+
+    public String getTableCount () { return tableCount; }
 
     public String getResult(){ return response; }
 

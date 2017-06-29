@@ -24,7 +24,6 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,22 +34,17 @@ import android.widget.ViewFlipper;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
-import com.lmos.spotter.MainInterface.Adapters.EndlessRecyclerOnScrollListener;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
-import com.lmos.spotter.MainInterface.Adapters.SampleEndlessRecyclerView;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
-import com.lmos.spotter.Utilities.TestData;
 import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
@@ -65,12 +59,20 @@ public class HomeActivity extends AppCompatActivity
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
     private MainInterfaceAdapter mainInterfaceAdapter;
-    RecyclerView tabLayoutRecyclerView;
-    private int currentIndex;
+    private RecyclerView tabLayoutRecyclerView;
+    private ProgressBar itemListProgressBar;
+    private ProgressBar recycleViewProgressBar;
+    private CoordinatorLayout mainLayout;
+    private TabLayout tabLayout;
 
-    String placeType;
-    Activity activity = this;
-    ActionBarDrawerToggle drawerToggle;
+    private int startingIndex;
+    private int tableCount;
+
+    private String placeType;
+    private Activity activity = this;
+    private ActionBarDrawerToggle drawerToggle;
+
+    private List <Place> placeDataList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,52 +131,57 @@ public class HomeActivity extends AppCompatActivity
 
         if (!type.equals(placeType)) {
 
-            CoordinatorLayout mainLayout = (CoordinatorLayout) findViewById(R.id.homeLayout);
-
             mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
                     R.anim.fade_in));
 
             homeNestedScrollView.smoothScrollTo(0, 0);
             appBarLayout.setExpanded(true);
 
-            txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
             txtHome.setText(type);
-
-            tabLayoutRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-            TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
             final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
-            final ProgressBar progressBar = (ProgressBar)findViewById(R.id.item_progress_bar);
+            placeDataList = new ArrayList<>();
 
-            new PlaceLoader().execute();
+            mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
+                    ActivityType.HOME_ACTIVITY,
+                    PlaceType.NONE,
+                    placeDataList);
+
+            tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
+
+            itemListProgressBar.setVisibility(View.VISIBLE);
+
+            new PlaceLoader().execute("0", "10");
 
             homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener () {
 
                 @Override
                 public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    if(v.getChildAt(v.getChildCount() - 1) != null) {
-                        if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
-                                scrollY > oldScrollY) {
+                    if(Utilities.checkIfLastScrolledItem(v, scrollX, scrollY, oldScrollX, oldScrollY)) {
 
-                            progressBar.setVisibility(View.VISIBLE);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
+                            if (startingIndex < tableCount) {
+
+                                itemListProgressBar.setVisibility(View.VISIBLE);
 
 
-                                    mainInterfaceAdapter.notifyDataSetChanged();
-                                    progressBar.setVisibility(View.GONE);
-                                }
-                            }, 1500);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
 
+                                        new PlaceLoader().execute(String.valueOf(startingIndex), "10");
+
+                                        itemListProgressBar.setVisibility(View.GONE);
+
+                                    }
+                                }, 1500);
+
+                            }
 
                         }
                     }
                 }
-            });
-
-
+            );
 
             tabLayoutRecyclerView.setLayoutManager(linearLayoutManager);
 
@@ -254,6 +261,15 @@ public class HomeActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_home_menu);
 
+        tabLayoutRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
+
+        mainLayout = (CoordinatorLayout) findViewById(R.id.homeLayout);
+
+        recycleViewProgressBar = (ProgressBar)findViewById(R.id.recycleViewProgressBar);
+        itemListProgressBar = (ProgressBar)findViewById(R.id.item_progress_bar);
+
         homeNestedScrollView = (NestedScrollView) findViewById(R.id.homeContentScrollView);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
@@ -269,6 +285,8 @@ public class HomeActivity extends AppCompatActivity
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         actionBarView = layoutInflater.inflate(R.layout.searchbar, null);
         Utilities.setSearchBar(this, actionBarView);
+
+        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
 
         final SearchView searchButton = (SearchView) actionBarView.findViewById(R.id.search_view);
         searchBTN = searchButton;
@@ -429,31 +447,45 @@ public class HomeActivity extends AppCompatActivity
 
     class PlaceLoader extends AsyncTask<String, Void, AppScript> {
 
+        private String responseOffset;
+
+        public String getResponseOffset () {
+            return responseOffset;
+        }
 
         @Override
-        protected AppScript doInBackground(String ...params) {
+        protected AppScript doInBackground(final String ...params) {
 
             final AppScript loadPlaces = new AppScript(){{
-                setRequestURL("http://192.168.2.112/projects/spotter/app_scripts/");
+                setRequestURL("http://192.168.22.12/projects/spotter/app_scripts/");
                 setData("loadPlaces.php", new HashMap<String, Object>() {{
-                    put("currentRow", "0");
-                    put("rowOffset", "5");
+                    put("currentRow", params[0]);
+                    put("rowOffset", params[1]);
                 }});
             }};
+
+            responseOffset = loadPlaces.getResult();
+            tableCount = Integer.parseInt(loadPlaces.getTableCount());
 
             return loadPlaces;
         }
 
+
         @Override
-        protected void onPostExecute(AppScript placeData) {
-            super.onPostExecute(placeData);
+        protected void onPostExecute(AppScript loadPlaces) {
+            super.onPostExecute(loadPlaces);
 
-            mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
-                                                            ActivityType.HOME_ACTIVITY,
-                                                            PlaceType.NONE,
-                                                            placeData.getPlaces());
+            startingIndex = Integer.parseInt(getResponseOffset()) + 1;
 
-            tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
+            List <Place> placeD = loadPlaces.getPlaces();
+
+            for (Place place : placeD)
+                placeDataList.add(place);
+
+            mainInterfaceAdapter.notifyDataSetChanged();
+
+            recycleViewProgressBar.setVisibility(View.GONE);
+
 
         }
     }

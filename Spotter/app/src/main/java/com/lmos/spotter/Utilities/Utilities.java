@@ -32,6 +32,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -88,10 +89,23 @@ import java.util.Locale;
  *    BlurImg - (public methods: blurImg, toString, getBitmap)
  *    LocationHandler
  *     (public methods: changeApiState, findLocation, buildApi)
+ *
+ *
  */
 
 
 public class Utilities {
+
+    public static boolean checkIfLastScrolledItem (NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+        if(v.getChildAt(v.getChildCount() - 1) != null) {
+            if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
+                    scrollY > oldScrollY)
+                return true;
+        }
+
+        return false;
+    }
 
     public static void hideSoftKeyboard(View currentView, AppCompatActivity appCompatActivity) {
         if (currentView != null) {

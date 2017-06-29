@@ -31,9 +31,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.lmos.spotter.FavoritesDbHelper;
+import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.MapsLayoutFragment;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
@@ -80,6 +82,19 @@ public class SearchResultsActivity extends AppCompatActivity
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
     private String fragmentType;
 
+    private void startBackgroundHeaderFadeIn(){
+
+        ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
+
+
+        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
+        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
+        viewFlipperManager.setFlipInterval(3000);
+
+        viewFlipperManager.startFlipping();
+
+    }
+
     public void showReviewActivity (View view) {
         Utilities.OpenActivity(activity, ReviewActivity.class, null);
     }
@@ -94,8 +109,13 @@ public class SearchResultsActivity extends AppCompatActivity
         setContentView(R.layout.activity_search_results);
 
         initComp();
+
+        startBackgroundHeaderFadeIn();
+
         Utilities.setSearchBar(this, actionBarView);
+
         locationHandler.buildGoogleClient();
+
         headerSettings("default");
 
         Bundle fetch_intent = getIntent().getExtras();

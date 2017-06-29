@@ -6,37 +6,186 @@
     android:layout_height="match_parent"
     tools:context="com.lmos.spotter.SearchInterface.Activities.ReviewActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <include layout = "@layout/recycler_view_layout" />
-
-</LinearLayout>
-
-
-<android.support.design.widget.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/reviewFab"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_mode_comment_white_48dp" />
+
+    <ScrollView
+        android:id = "@+id/activityReviewScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarOverlay">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            </android.support.design.widget.AppBarLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:background="@drawable/layout_white_bg">
+
+                <RatingBar
+                    android:id="@+id/userRatingBar"
+                    style="?android:attr/ratingBarStyleIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginTop="10dp"
+                    android:rating="5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/userRatingBar"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@id/userRatingBar"
+                    android:text="4.5 stars"
+                    android:textSize="30sp" />
+
+                <ImageView
+                    android:layout_below="@id/userRatingBar"
+                    android:layout_alignLeft="@id/userRatingBar"
+                    android:id = "@+id/userImageIcon"
+                    android:backgroundTint="#757575"
+                    android:background="@drawable/ic_person_black_48dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" />
+
+                <TextView
+                    android:id = "@+id/reviewTxtUserReview"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1,000,000 user reviews"
+                    android:layout_alignBottom="@+id/userImageIcon"
+                    android:layout_toEndOf="@+id/userImageIcon" />
+
+                <ImageView
+                    android:layout_below="@id/userImageIcon"
+                    android:layout_alignLeft="@id/userRatingBar"
+                    android:id = "@+id/bookmarkImageIcon"
+                    android:backgroundTint="#757575"
+                    android:background="@drawable/ic_bookmark_black_48dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" />
+
+                <TextView
+                    android:id = "@+id/reviewTxtBookmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_below="@id/reviewTxtUserReview"
+                    android:layout_toRightOf="@id/bookmarkImageIcon"
+                    android:text="100,00 bookmarked this"/>
+
+                <ImageView
+                    android:backgroundTint="#757575"
+                    android:background="@drawable/ic_thumb_up_black_48dp"
+                    android:layout_below="@id/bookmarkImageIcon"
+                    android:layout_alignLeft="@id/userRatingBar"
+                    android:layout_marginTop="4dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_below="@id/reviewTxtBookmark"
+                    android:layout_toRightOf="@id/bookmarkImageIcon"
+                    android:text="100 recommend this"/>
+
+                <!--
+
+
+            <RatingBar
+                style="?android:attr/ratingBarStyleSmall"
+                android:id = "@+id/fiveStar"
+                android:layout_below="@id/userRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:rating="5" />
+
+
+            <RatingBar
+                style="?android:attr/ratingBarStyleSmall"
+                android:id = "@+id/fourStar"
+                android:layout_below="@id/fiveStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="1dp"
+                android:rating="4" />
+
+            <RatingBar
+                style="?android:attr/ratingBarStyleSmall"
+                android:id = "@+id/threeStar"
+                android:layout_below="@id/fourStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="1dp"
+                android:rating="3" />
+
+            <RatingBar
+                style="?android:attr/ratingBarStyleSmall"
+                android:id = "@+id/twoStar"
+                android:layout_below="@id/threeStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="1dp"
+                android:rating="2" />
+
+            <RatingBar
+                style="?android:attr/ratingBarStyleSmall"
+                android:id = "@+id/oneStar"
+                android:layout_below="@id/twoStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="1dp"
+                android:rating="1" />
+
+                -->
+
+
+
+
+            </RelativeLayout>
+
+            <include layout="@layout/recycler_view_layout" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 
 </android.support.design.widget.CoordinatorLayout>
