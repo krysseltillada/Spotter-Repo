@@ -20,7 +20,7 @@ public class ReviewDialogFragment extends DialogFragment {
 
         View reviewLayout = inflater.inflate(R.layout.review_dialog, container, false);
 
-        getDialog().setTitle("review");
+        getDialog().setTitle("post a review");
 
         return reviewLayout;
     }
