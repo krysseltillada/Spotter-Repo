@@ -3,6 +3,7 @@ package com.lmos.spotter.SearchInterface.Activities;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.ScrollView;
 
 import com.lmos.spotter.R;
+import com.lmos.spotter.SearchInterface.Adapters.ReviewDialogFragment;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 
 public class ReviewActivity extends AppCompatActivity {
@@ -44,12 +46,21 @@ public class ReviewActivity extends AppCompatActivity {
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.reviewFab);
         fab.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+               ReviewDialogFragment reviewDialogFragment = new ReviewDialogFragment();
+
+               reviewDialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
+               reviewDialogFragment.show(getSupportFragmentManager(), "reviewDialogFragment");
+
             }
         });
+
+
+
+
     }
 
     @Override
