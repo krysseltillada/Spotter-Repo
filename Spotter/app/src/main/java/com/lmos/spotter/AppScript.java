@@ -175,16 +175,17 @@ public class AppScript {
 
     private void parseResult(String processResult){
 
-        Log.d("debug", processResult);
-
         try {
 
             JSONObject jsonObject = new JSONObject(processResult);
             String response_code = jsonObject.getString("response_code");
 
+
             if(response_code.equals("0x01") || response_code.equals("0x02") || response_code.equals("0x03")){
 
+
                 response = jsonObject.getString("response_msg");
+
                 if(!response_code.equals("0x03")){
                     LoginActivity.set_login_prefs.putString("accountID", jsonObject.getString("response_data"));
                     LoginActivity.set_login_prefs.apply();

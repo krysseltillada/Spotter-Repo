@@ -27,6 +27,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -74,6 +76,7 @@ public class SearchResultsActivity extends AppCompatActivity
     TabLayout searchResultsTab;
     Menu toolbarMenu;
     CoordinatorLayout coordinatorLayout;
+    Button showAllSearchResults;
     /** End of initializing views **/
 
     boolean isLocationFragment = false;
@@ -193,10 +196,14 @@ public class SearchResultsActivity extends AppCompatActivity
                 break;
 
             case "place":
+
+                showAllSearchResults.setVisibility(View.GONE);
+                ((FrameLayout)showAllSearchResults.getParent()).setVisibility(View.GONE);
                 searchResultsTab.setVisibility(View.GONE);
                 setHeaderText("City of Dreams", "Nightmares it is");
                 fragment = FragmentSearchResult.newInstance(params);
                 loading_screen.setVisibility(View.GONE);
+
                 break;
 
             case "Map":
@@ -209,6 +216,8 @@ public class SearchResultsActivity extends AppCompatActivity
                 type = "General";
                 fragmentType = type;
                 headerSettings("show");
+                showAllSearchResults.setVisibility(View.VISIBLE);
+                ((FrameLayout)showAllSearchResults.getParent()).setVisibility(View.VISIBLE);
                 actionBarView.setVisibility(View.VISIBLE);
                 searchResultsTab.setVisibility(View.VISIBLE);
                 setHeaderText("Batangas", "Bayan ng magigiting");
@@ -306,6 +315,7 @@ public class SearchResultsActivity extends AppCompatActivity
         desc_tab_holder = (RelativeLayout) findViewById(R.id.description_tab_holder);
         nsview = (NestedScrollView) findViewById(R.id.search_nsview);
 
+        showAllSearchResults = (Button)findViewById(R.id.showAllSearchResults);
 
         loading_img = (ImageView) findViewById(R.id.loading_img_holder);
         loading_msg = (TextView) findViewById(R.id.loading_msg);
@@ -449,6 +459,8 @@ public class SearchResultsActivity extends AppCompatActivity
             appBarLayout.setExpanded(true);
             nsview.smoothScrollTo(0, 0);
             recyclerView.smoothScrollToPosition(0);
+            showAllSearchResults.setVisibility(View.VISIBLE);
+            ((FrameLayout)showAllSearchResults.getParent()).setVisibility(View.VISIBLE);
 
             fadeInView();
 

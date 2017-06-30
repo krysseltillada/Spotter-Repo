@@ -24,8 +24,10 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
@@ -73,6 +75,8 @@ public class HomeActivity extends AppCompatActivity
     private ActionBarDrawerToggle drawerToggle;
 
     private List <Place> placeDataList;
+
+    boolean isFloatingButtonFadeIn = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -154,10 +158,30 @@ public class HomeActivity extends AppCompatActivity
 
             new PlaceLoader().execute("0", "10");
 
+            tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    switch (newState) {
+                        case RecyclerView.SCROLL_STATE_DRAGGING:
+
+                                floatingActionButton.setVisibility(View.GONE);
+
+                            break;
+                        case RecyclerView.SCROLL_STATE_IDLE:
+
+                                floatingActionButton.setVisibility(View.VISIBLE);
+
+                            break;
+                    }
+                }
+            });
+
             homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener () {
 
                 @Override
                 public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+
                     if(Utilities.checkIfLastScrolledItem(v, scrollX, scrollY, oldScrollX, oldScrollY)) {
 
                             if (startingIndex < tableCount) {
