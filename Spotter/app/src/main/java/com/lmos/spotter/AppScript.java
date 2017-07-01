@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -26,6 +27,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +56,8 @@ import java.util.Map;
 
 public class AppScript {
 
-    private String response, data;
+    private String response;
+    private String data;
     private String requestURL;
     private String tableCount;
 
@@ -66,9 +69,7 @@ public class AppScript {
         requestURL = url;
     }
 
-
     public void setData(String url, Map<String, Object> params){
-
 
         String post_data = "";
         //final String default_url = "http://192.168.254.100/projects/spotter/app_scripts/";
@@ -103,7 +104,6 @@ public class AppScript {
             }
 
         }
-
 
         connect(requestURL + url, post_data);
 
@@ -155,6 +155,7 @@ public class AppScript {
             // Close connection to server.
             httpURLConnection.disconnect();
 
+
             parseResult(result);
 
         } catch (MalformedURLException e) {
@@ -178,18 +179,18 @@ public class AppScript {
 
         try {
 
-            JSONObject jsonObject = new JSONObject(processResult);
+            final JSONObject jsonObject = new JSONObject(processResult);
             String response_code = jsonObject.getString("response_code");
 
-
             if(response_code.equals("0x01") || response_code.equals("0x02") || response_code.equals("0x03")){
-
 
                 response = jsonObject.getString("response_msg");
 
                 if(!response_code.equals("0x03")){
+
                     LoginActivity.set_login_prefs.putString("accountID", jsonObject.getString("response_data"));
                     LoginActivity.set_login_prefs.apply();
+
                 }
 
             }

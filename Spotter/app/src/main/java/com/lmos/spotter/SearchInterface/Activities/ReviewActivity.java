@@ -42,6 +42,7 @@ public class ReviewActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(new SearchReviewsAdapter());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.reviewFab);

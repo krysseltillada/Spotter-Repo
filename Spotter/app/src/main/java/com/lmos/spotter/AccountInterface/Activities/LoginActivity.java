@@ -30,7 +30,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
 
-    private static final String LOGIN_PREFS = "LoginSharedPreference";
+    public static final String LOGIN_PREFS = "LoginSharedPreference";
 
     ImageView imgHolder;
     SharedPreferences login_prefs;
@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
 
             final AppScript appScript = new AppScript(){{
-                setRequestURL("http://192.168.4.173/projects/spotter/app_scripts/");
+                setRequestURL("http://192.168.1.39/projects/spotter/app_scripts/");
                 setData(transaction, map_data);
             }};
 

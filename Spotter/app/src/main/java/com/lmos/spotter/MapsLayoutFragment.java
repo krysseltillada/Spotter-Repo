@@ -101,7 +101,6 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
                         String directionMessage = "time: " +  duration +
                                 " distance: " + distance;
 
-                        Snackbar.make(getView(), directionMessage, Snackbar.LENGTH_INDEFINITE).show();
 
                     }
                 });
@@ -142,7 +141,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
-
+f
         final LatLng sourcePosition =  new LatLng(srcPosition.latitude, srcPosition.longitude);
         final LatLng destPosition = new LatLng(13.7565, 121.0583);
 

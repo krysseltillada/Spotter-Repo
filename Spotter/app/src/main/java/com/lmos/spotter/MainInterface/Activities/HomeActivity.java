@@ -3,6 +3,7 @@ package com.lmos.spotter.MainInterface.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
@@ -50,6 +52,10 @@ import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
+
+    public interface OnRespondError {
+        void onRespondError (String error);
+    }
 
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
@@ -76,7 +82,6 @@ public class HomeActivity extends AppCompatActivity
 
     private List <Place> placeDataList;
 
-    boolean isFloatingButtonFadeIn = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -157,7 +162,19 @@ public class HomeActivity extends AppCompatActivity
 
             itemListProgressBar.setVisibility(View.VISIBLE);
 
-            new PlaceLoader().execute("0", "10");
+
+            new PlaceLoader().setOnRespondError(new OnRespondError() {
+
+                @Override
+                public void onRespondError(String error) {
+
+                    Toast.makeText(getApplicationContext(), "error getting data from the server", Toast.LENGTH_LONG).show();
+                    HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
+                    HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+
+                }
+
+            }).execute("0", "10");
 
             tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -284,6 +301,14 @@ public class HomeActivity extends AppCompatActivity
 
     private void initComp(){
 
+        SharedPreferences userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
+
+        Log.d("debug", userData.getString("username", ""));
+        Log.d("debug", userData.getString("email", ""));
+        Log.d("debug", userData.getString("password", ""));
+        Log.d("debug", userData.getString("accountID", ""));
+        Log.d("debug", userData.getString("name", ""));
+
         setContentView(R.layout.activity_home_menu);
 
         tabLayoutRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -388,6 +413,8 @@ public class HomeActivity extends AppCompatActivity
                 Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
                 searchBTN.setIconified(true);
 
+                Log.d("debug", "onclick floatingactionbutton");
+
                 startActivity(
                         new Intent(getApplicationContext(), SearchResultsActivity.class)
                                 .putExtra("type", "Location"));
@@ -472,7 +499,14 @@ public class HomeActivity extends AppCompatActivity
 
     class PlaceLoader extends AsyncTask<String, Void, AppScript> {
 
+        OnRespondError onRespondError;
+
         private String responseOffset;
+
+        public PlaceLoader setOnRespondError (OnRespondError onRespondError) {
+            this.onRespondError = onRespondError;
+            return this;
+        }
 
         public String getResponseOffset () {
             return responseOffset;
@@ -481,16 +515,14 @@ public class HomeActivity extends AppCompatActivity
         @Override
         protected AppScript doInBackground(final String ...params) {
 
-            final AppScript loadPlaces = new AppScript(){{
-                setRequestURL("http://192.168.4.173/projects/spotter/app_scripts/");
-                setData("loadPlaces.php", new HashMap<String, Object>() {{
-                    put("currentRow", params[0]);
-                    put("rowOffset", params[1]);
-                }});
-            }};
+                final AppScript loadPlaces = new AppScript() {{
+                    setRequestURL("http://192.168.1.39/projects/spotter/app_scripts/");
+                    setData("loadPlaces.php", new HashMap<String, Object>() {{
+                        put("currentRow", params[0]);
+                        put("rowOffset", params[1]);
+                    }});
+                }};
 
-            responseOffset = loadPlaces.getResult();
-            tableCount = Integer.parseInt(loadPlaces.getTableCount());
 
             return loadPlaces;
         }
@@ -500,16 +532,24 @@ public class HomeActivity extends AppCompatActivity
         protected void onPostExecute(AppScript loadPlaces) {
             super.onPostExecute(loadPlaces);
 
-            startingIndex = Integer.parseInt(getResponseOffset()) + 1;
+            try {
 
-            List <Place> placeD = loadPlaces.getPlaces();
+                tableCount = Integer.parseInt(loadPlaces.getTableCount());
+                startingIndex = Integer.parseInt(loadPlaces.getResult()) + 1;
 
-            for (Place place : placeD)
-                placeDataList.add(place);
+                List<Place> placeD = loadPlaces.getPlaces();
 
-            mainInterfaceAdapter.notifyDataSetChanged();
+                for (Place place : placeD)
+                    placeDataList.add(place);
 
-            recycleViewProgressBar.setVisibility(View.GONE);
+                for (int i = 0; i != placeDataList.size(); ++i)
+                    mainInterfaceAdapter.notifyItemChanged(i);
+
+                recycleViewProgressBar.setVisibility(View.GONE);
+
+            } catch (Exception e) {
+                onRespondError.onRespondError(e.getMessage());
+            }
 
 
         }

@@ -1,10 +1,12 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.design.widget.AppBarLayout;
@@ -60,6 +62,7 @@ public class SearchResultsActivity extends AppCompatActivity
     Utilities.OnDbResponseListener{
 
     /** Initialize views **/
+    ViewFlipper viewFlipperManager;
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
     TextView place_name, place_content_desc;
@@ -77,6 +80,7 @@ public class SearchResultsActivity extends AppCompatActivity
     Menu toolbarMenu;
     CoordinatorLayout coordinatorLayout;
     Button showAllSearchResults;
+    Button navigate;
     /** End of initializing views **/
 
     boolean isLocationFragment = false;
@@ -87,7 +91,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void startBackgroundHeaderFadeIn(){
 
-        ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
+        viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
 
 
         viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
@@ -104,6 +108,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d("debug", "onCreate SearchResults");
 
         setContentView(R.layout.activity_search_results);
 
@@ -144,14 +150,10 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(!fragmentType.equals("Location")) {
-            Log.d("debug", "hittttttttttttttttttttt");
+        if(!fragmentType.equals("Location"))
             getMenuInflater().inflate(R.menu.bookmark_info, menu);
-        }
-
 
         toolbarMenu = menu;
-
 
         return super.onCreateOptionsMenu(menu);
 
@@ -169,6 +171,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
     public void switchFragment(String type, String cmd, String... params){
 
+        Log.d("debug", "switchFragment");
+
         final Fragment fragment;
         int view_id = R.id.search_content_holder;
 
@@ -185,16 +189,19 @@ public class SearchResultsActivity extends AppCompatActivity
 
                 isLocationFragment = true;
 
+                Log.d("debug", "Location");
 
                 headerSettings("hide");
-                searchResultsTab.setVisibility(View.GONE);
+
                 loading_screen.setVisibility(View.VISIBLE);
                 fragment = FragmentSearchResultGeneral.newInstance();
-                actionBarView.setVisibility(View.VISIBLE);
 
                 break;
 
             case "place":
+
+
+                Log.d("debug", "place");
 
                 showAllSearchResults.setVisibility(View.GONE);
                 ((FrameLayout)showAllSearchResults.getParent()).setVisibility(View.GONE);
@@ -214,6 +221,10 @@ public class SearchResultsActivity extends AppCompatActivity
                 break;
 
             default:
+
+
+                Log.d("debug", "general");
+
                 type = "General";
                 fragmentType = type;
                 headerSettings("show");
@@ -273,11 +284,16 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void headerSettings(String toggle){
 
+        Log.d("debug", "headerSettings");
+
         CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
 
         switch (toggle){
 
             case "hide":
+
+                Log.d("debug", "hide");
+
                 desc_tab_holder.setVisibility(View.GONE);
                 params.bottomMargin = 0;
                 collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimary));
@@ -286,12 +302,14 @@ public class SearchResultsActivity extends AppCompatActivity
                 nsview.setVisibility(View.GONE);
                 break;
             case "show":
+                Log.d("debug", "show");
                 desc_tab_holder.setVisibility(View.VISIBLE);
+                appBarLayout.setExpanded(true, true);
+                appBarLayout.setActivated(true);
                 params.bottomMargin = 200;
                 nsview.setVisibility(View.VISIBLE);
                 collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.blackTransparent));
-                appBarLayout.setExpanded(true, true);
-                appBarLayout.setActivated(true);
+
                 loading_screen.setVisibility(View.GONE);
                 loading_screen.startAnimation(AnimationUtils.loadAnimation(
                         this,
@@ -310,6 +328,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void initComp(){
 
+        Log.d("debug", "initComp");
+
         coordinatorLayout = (CoordinatorLayout)findViewById(R.id.search_view_wrapper);
         searchResultsTab = (TabLayout)findViewById(R.id.search_tab_layout);
         loading_screen = (RelativeLayout) findViewById(R.id.loading_screen);
@@ -322,6 +342,27 @@ public class SearchResultsActivity extends AppCompatActivity
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
 
+        navigate = (Button)findViewById(R.id.btnNavigate);
+
+        navigate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                try
+                {
+                    String url = "waze://?ll=13.7565,121.0583&navigate=yes";
+                    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
+                    startActivity( intent );
+                }
+                catch ( ActivityNotFoundException ex  )
+                {
+                    Intent intent =
+                            new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
+                    startActivity(intent);
+                }
+            }
+
+        });
 
         boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
 
@@ -338,6 +379,7 @@ public class SearchResultsActivity extends AppCompatActivity
             loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
 
         }
+
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
 
@@ -485,16 +527,13 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public void onLocationFoundLatLng(double lat, double lng) {
 
-        /*
-
         if (isLocationFragment)
             switchFragment("", "add", "");
-
 
         MapsLayoutFragment mapsLayoutFragment = (MapsLayoutFragment)getSupportFragmentManager().findFragmentByTag("Map");
 
         if (mapsLayoutFragment != null)
-            mapsLayoutFragment.setUserPosition(new LatLng(lat, lng)); */
+            mapsLayoutFragment.setUserPosition(new LatLng(lat, lng));
 
     }
 

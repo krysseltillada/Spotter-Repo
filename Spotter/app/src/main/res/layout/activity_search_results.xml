@@ -28,7 +28,6 @@
                 android:fillViewport="true" />
 
             <FrameLayout
-                android:backgroundTint="@color/colorPrimary"
                 android:background="@drawable/layout_white_bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -54,7 +53,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimary"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -84,6 +83,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:fillViewport="true"/>
+
+                <Button
+                    android:id = "@+id/btnNavigate"
+                    android:text="navigate"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
@@ -207,7 +213,6 @@
                 android:layout_height="375dp" />
 
             <FrameLayout
-                android:backgroundTint="@color/colorPrimary"
                 android:background="@drawable/layout_white_bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -218,7 +223,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimary"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold"
