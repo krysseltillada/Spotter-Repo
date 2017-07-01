@@ -102,10 +102,6 @@ public class SearchResultsActivity extends AppCompatActivity
         Utilities.OpenActivity(activity, ReviewActivity.class, null);
     }
 
-    public void showSearchResults (View view) {
-
-    }
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -142,6 +138,8 @@ public class SearchResultsActivity extends AppCompatActivity
         super.onStart();
         locationHandler.changeApiState("connect");
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -187,11 +185,12 @@ public class SearchResultsActivity extends AppCompatActivity
 
                 isLocationFragment = true;
 
+
                 headerSettings("hide");
                 searchResultsTab.setVisibility(View.GONE);
                 loading_screen.setVisibility(View.VISIBLE);
                 fragment = FragmentSearchResultGeneral.newInstance();
-                actionBarView.setVisibility(View.GONE);
+                actionBarView.setVisibility(View.VISIBLE);
 
                 break;
 
@@ -207,9 +206,11 @@ public class SearchResultsActivity extends AppCompatActivity
                 break;
 
             case "Map":
+
                 Log.d("debug", "Map");
-                fragment = MapsLayoutFragment.newInstance(12.8797, 121.7740);
+                fragment = MapsLayoutFragment.newInstance();
                 view_id = R.id.map_content_holder;
+
                 break;
 
             default:
@@ -321,7 +322,6 @@ public class SearchResultsActivity extends AppCompatActivity
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
 
-        /*
 
         boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
 
@@ -337,7 +337,7 @@ public class SearchResultsActivity extends AppCompatActivity
             Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
             loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
 
-        } */
+        }
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
 
@@ -425,6 +425,9 @@ public class SearchResultsActivity extends AppCompatActivity
                 switch (resultCode){
 
                     case RESULT_OK:
+
+
+
                         Log.d("LocationHandler", "Permission granted");
                         /*if(!Utilities.checkNetworkState(activity))
                         {
@@ -482,6 +485,8 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public void onLocationFoundLatLng(double lat, double lng) {
 
+        /*
+
         if (isLocationFragment)
             switchFragment("", "add", "");
 
@@ -489,7 +494,7 @@ public class SearchResultsActivity extends AppCompatActivity
         MapsLayoutFragment mapsLayoutFragment = (MapsLayoutFragment)getSupportFragmentManager().findFragmentByTag("Map");
 
         if (mapsLayoutFragment != null)
-            mapsLayoutFragment.setUserPosition(new LatLng(lat, lng));
+            mapsLayoutFragment.setUserPosition(new LatLng(lat, lng)); */
 
     }
 

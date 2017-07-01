@@ -35,18 +35,10 @@ import com.lmos.spotter.Utilities.MapDirections;
 
 public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
-    private double Lat, Lng;
 
-    private int width, height;
-
-    public static MapsLayoutFragment newInstance(double lat, double lng){
+    public static MapsLayoutFragment newInstance(){
 
         MapsLayoutFragment mapsLayoutFragment = new MapsLayoutFragment();
-
-        Bundle args = new Bundle();
-        args.putDouble("Lat", lat);
-        args.putDouble("Lang", lng);
-        mapsLayoutFragment.setArguments(args);
 
         return mapsLayoutFragment;
     }
@@ -55,9 +47,6 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle getArgs = getArguments();
-        Lat = getArgs.getDouble("Lat");
-        Lng = getArgs.getDouble("Lng");
 
     }
 

@@ -74,6 +74,8 @@ import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -95,6 +97,11 @@ import java.util.Locale;
 
 
 public class Utilities {
+
+    public static boolean validateEmail (String email) {
+        return EmailValidator.getInstance().isValid(email);
+    }
+
 
     public static boolean checkIfLastScrolledItem (NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 

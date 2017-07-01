@@ -163,6 +163,7 @@ public class AppScript {
             data = "";
         }catch (SocketTimeoutException | ConnectException e){
             e.printStackTrace();
+            Log.d("debug", e.getMessage());
             response = "Couldn't connect to server. Make sure you have stable internet connection, then try again.";
             data = "";
         }catch (IOException e) {

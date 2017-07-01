@@ -153,6 +153,7 @@ public class HomeActivity extends AppCompatActivity
                     placeDataList);
 
             tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
+            tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
             itemListProgressBar.setVisibility(View.VISIBLE);
 
@@ -481,7 +482,7 @@ public class HomeActivity extends AppCompatActivity
         protected AppScript doInBackground(final String ...params) {
 
             final AppScript loadPlaces = new AppScript(){{
-                setRequestURL("http://192.168.22.12/projects/spotter/app_scripts/");
+                setRequestURL("http://192.168.4.173/projects/spotter/app_scripts/");
                 setData("loadPlaces.php", new HashMap<String, Object>() {{
                     put("currentRow", params[0]);
                     put("rowOffset", params[1]);
