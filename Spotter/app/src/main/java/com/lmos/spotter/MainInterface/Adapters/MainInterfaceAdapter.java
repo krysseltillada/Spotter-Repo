@@ -176,7 +176,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
         try {
 
-          
+
 
             String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
                                                                              .getPlaceImageLink())

@@ -173,7 +173,7 @@ public class HomeActivity extends AppCompatActivity
 
                 }
 
-            }).execute("0", "10");
+            }).execute("0", "4");
 
             tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -218,7 +218,7 @@ public class HomeActivity extends AppCompatActivity
                                                 HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
                                                 HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
                                             }
-                                        }).execute(String.valueOf(startingIndex), "10");
+                                        }).execute(String.valueOf(startingIndex), "4");
 
                                         itemListProgressBar.setVisibility(View.GONE);
 
