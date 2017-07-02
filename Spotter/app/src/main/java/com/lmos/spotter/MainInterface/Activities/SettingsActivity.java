@@ -12,10 +12,20 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
 
 
 public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+
+    private String prevUserName;
+    private String prevEmail;
+    private String prevPass;
+    private String prevName;
 
 
     @Override
@@ -24,15 +34,22 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
         addPreferencesFromResource(R.xml.settings);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
+        Preference userName = findPreference("username");
+        Preference email = findPreference("email");
+        Preference password = findPreference("password");
+        Preference name = findPreference("name");
         Preference clearFavoritesItem = findPreference("clearBookmarks");
 
-        Preference passEditText = findPreference("password");
+        userName.setSummary(sharedPreferences.getString("username", ""));
+        email.setSummary(sharedPreferences.getString("email", ""));
+        password.setSummary(sharedPreferences.getString("password", ""));
+        name.setSummary(sharedPreferences.getString("name", ""));
 
-        passEditText.setSummary(sharedPreferences.getString("password", "")
+        password.setSummary(sharedPreferences.getString("password", "")
                                                  .replaceAll(".", "*"));
 
         clearFavoritesItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -55,6 +72,10 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
         if (!key.equals("notifyGPS")) {
 
+            if (key.equals("email")) {
+
+            }
+
             preference.setSummary( ((key.equals("password")) ? sharedPreferences.getString(key, "")
                                         .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
 
@@ -67,4 +88,5 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         }
 
     }
+
 }

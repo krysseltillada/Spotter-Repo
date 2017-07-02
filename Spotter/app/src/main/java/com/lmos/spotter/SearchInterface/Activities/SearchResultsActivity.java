@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -204,7 +205,6 @@ public class SearchResultsActivity extends AppCompatActivity
                 Log.d("debug", "place");
 
                 showAllSearchResults.setVisibility(View.GONE);
-                ((FrameLayout)showAllSearchResults.getParent()).setVisibility(View.GONE);
                 searchResultsTab.setVisibility(View.GONE);
                 setHeaderText("City of Dreams", "Nightmares it is");
                 fragment = FragmentSearchResult.newInstance(params);
@@ -229,7 +229,6 @@ public class SearchResultsActivity extends AppCompatActivity
                 fragmentType = type;
                 headerSettings("show");
                 showAllSearchResults.setVisibility(View.VISIBLE);
-                ((FrameLayout)showAllSearchResults.getParent()).setVisibility(View.VISIBLE);
                 actionBarView.setVisibility(View.VISIBLE);
                 searchResultsTab.setVisibility(View.VISIBLE);
                 setHeaderText("Batangas", "Bayan ng magigiting");
@@ -348,18 +347,37 @@ public class SearchResultsActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
-                try
-                {
-                    String url = "waze://?ll=13.7565,121.0583&navigate=yes";
-                    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
-                    startActivity( intent );
-                }
-                catch ( ActivityNotFoundException ex  )
-                {
-                    Intent intent =
-                            new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
-                    startActivity(intent);
-                }
+
+                AlertDialog wazePromptDialog = new AlertDialog.Builder(SearchResultsActivity.this).setTitle("launch waze?")
+                                                                        .setMessage("Be sure that waze is installed if not the app will link to the play store to install it")
+                                                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                                                try
+                                                                                {
+                                                                                    String url = "waze://?ll=13.7565,121.0583&navigate=yes";
+                                                                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                                                                    startActivity(intent);
+                                                                                }
+                                                                                catch ( ActivityNotFoundException ex  )
+                                                                                {
+                                                                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
+                                                                                    startActivity(intent);
+                                                                                }
+
+
+                                                                            }
+                                                                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                                                                            @Override
+                                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                                dialog.dismiss();
+                                                                            }
+                                                                        }).create();
+
+                wazePromptDialog.show();
+
             }
 
         });

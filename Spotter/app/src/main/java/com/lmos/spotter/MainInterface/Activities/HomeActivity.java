@@ -160,8 +160,7 @@ public class HomeActivity extends AppCompatActivity
             tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
             tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
-            itemListProgressBar.setVisibility(View.VISIBLE);
-
+            recycleViewProgressBar.setVisibility(View.VISIBLE);
 
             new PlaceLoader().setOnRespondError(new OnRespondError() {
 
@@ -174,7 +173,7 @@ public class HomeActivity extends AppCompatActivity
 
                 }
 
-            }).execute("0", "10");
+            }).execute("0", "2");
 
             tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -199,8 +198,8 @@ public class HomeActivity extends AppCompatActivity
                 @Override
                 public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
-
                     if(Utilities.checkIfLastScrolledItem(v, scrollX, scrollY, oldScrollX, oldScrollY)) {
+
 
                             if (startingIndex < tableCount) {
 
@@ -211,7 +210,15 @@ public class HomeActivity extends AppCompatActivity
                                     @Override
                                     public void run() {
 
-                                        new PlaceLoader().execute(String.valueOf(startingIndex), "10");
+                                        new PlaceLoader().setOnRespondError(new OnRespondError() {
+
+                                            @Override
+                                            public void onRespondError(String error) {
+                                                Toast.makeText(getApplicationContext(), "error getting data from the server", Toast.LENGTH_LONG).show();
+                                                HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
+                                                HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+                                            }
+                                        }).execute(String.valueOf(startingIndex), "2");
 
                                         itemListProgressBar.setVisibility(View.GONE);
 
@@ -413,8 +420,6 @@ public class HomeActivity extends AppCompatActivity
                 Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
                 searchBTN.setIconified(true);
 
-                Log.d("debug", "onclick floatingactionbutton");
-
                 startActivity(
                         new Intent(getApplicationContext(), SearchResultsActivity.class)
                                 .putExtra("type", "Location"));
@@ -501,15 +506,9 @@ public class HomeActivity extends AppCompatActivity
 
         OnRespondError onRespondError;
 
-        private String responseOffset;
-
         public PlaceLoader setOnRespondError (OnRespondError onRespondError) {
             this.onRespondError = onRespondError;
             return this;
-        }
-
-        public String getResponseOffset () {
-            return responseOffset;
         }
 
         @Override

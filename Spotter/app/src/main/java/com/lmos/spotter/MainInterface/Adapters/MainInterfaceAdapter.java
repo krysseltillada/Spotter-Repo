@@ -164,11 +164,15 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         holder.placeCompanyImage.setScaleType(ImageView.ScaleType.CENTER_CROP); */
 
         /*
-
         Picasso.with(context)
                 .load((int)testData.get(position)[0])
                 .placeholder(R.drawable.loadingplace)
                 .into(holder.placeCompanyImage); */
+
+        Picasso.with(context)
+                .load("http://192.168.1.39/projects/spotter/images/cc.jpg")
+                .placeholder(R.drawable.loadingplace)
+                .into(holder.placeCompanyImage);
 
         holder.txtPlaceName.setText(places.get(position).getPlaceName());
         holder.txtLocation.setText(places.get(position).getPlaceLocality());

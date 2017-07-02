@@ -36,6 +36,7 @@ public class BookMarksActivity extends AppCompatActivity {
     TabLayout bookMarksTabLayout;
     RecyclerView recyclerView;
 
+
     private void changeBookMarkMode (ActivityType activityType, final RecyclerView recyclerViewTabLayout,
                                      TabLayout tabLayout) {
 

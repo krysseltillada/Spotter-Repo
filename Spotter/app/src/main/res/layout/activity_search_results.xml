@@ -27,12 +27,6 @@
                 android:layout_weight="1"
                 android:fillViewport="true" />
 
-            <FrameLayout
-                android:background="@drawable/layout_white_bg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
                 <!--
 
                 <TextView
@@ -59,10 +53,6 @@
                     android:textStyle="bold"
                     android:text = "Show all"/>
 
-            </FrameLayout>
-
-
-
             <LinearLayout
                 android:background="@drawable/layout_white_bg"
                 android:layout_width="match_parent"
@@ -86,9 +76,9 @@
 
                 <Button
                     android:id = "@+id/btnNavigate"
-                    android:text="navigate"
+                    android:text="navigate with waze"
                     android:layout_gravity="center"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
@@ -212,11 +202,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="375dp" />
 
-            <FrameLayout
-                android:background="@drawable/layout_white_bg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
                 <Button
                     android:id="@+id/showAllReview"
                     android:onClick="showReviewActivity"
@@ -228,9 +213,6 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:text = "Show all"/>
-
-            </FrameLayout>
-
 
         </LinearLayout>
 
