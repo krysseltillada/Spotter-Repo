@@ -17,7 +17,7 @@ public class Place  {
     private String placeClass;
     private String placeType;
     private String placePriceRange;
-    private String placeImage;
+    private String placeImageLink;
 
     public Place(){}
 
@@ -35,7 +35,7 @@ public class Place  {
 
     public void setplacePriceRange(String placePriceRange){this.placePriceRange = placePriceRange;}
 
-    public void setplaceImage(String placeImage){this.placeImage = placeImage;}
+    public void setplaceImageLink(String placeImageLink){this.placeImageLink = placeImageLink;}
 
     public String getPlaceID() {
         return placeID;
@@ -71,8 +71,8 @@ public class Place  {
         return placePriceRange;
     }
 
-    public String getPlaceImage() {
-        return placeImage;
+    public String getPlaceImageLink() {
+        return placeImageLink;
     }
 
     public void print () {

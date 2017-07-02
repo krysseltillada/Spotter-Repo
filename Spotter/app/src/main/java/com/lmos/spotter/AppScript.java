@@ -214,6 +214,7 @@ public class AppScript {
                     setPlace.setplaceClass(place_item.getString("Class"));
                     setPlace.setplaceType(place_item.getString("Type"));
                     setPlace.setplacePriceRange(place_item.getString("PriceRange"));
+                    setPlace.setplaceImageLink(place_item.getString("Image"));
 
                     setPlace.print();
 

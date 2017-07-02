@@ -26,6 +26,9 @@ import com.lmos.spotter.Utilities.Utilities;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,10 +172,31 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
                 .placeholder(R.drawable.loadingplace)
                 .into(holder.placeCompanyImage); */
 
-        Picasso.with(context)
-                .load("http://192.168.1.39/projects/spotter/images/cc.jpg")
-                .placeholder(R.drawable.loadingplace)
-                .into(holder.placeCompanyImage);
+        Log.d("debug", places.get(position).getPlaceImageLink());
+
+        try {
+
+          
+
+            String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
+                                                                             .getPlaceImageLink())
+                                                                             .getString("placeImages"))
+                                                                             .getString("frontImage");
+
+
+
+
+            Picasso.with(context)
+                    .load(frontPlaceImageLink)
+                    .resize(90, 90)
+                    .placeholder(R.drawable.loadingplace)
+                    .into(holder.placeCompanyImage);
+
+
+        } catch (JSONException e) {
+            Log.d("debug", e.getMessage());
+        }
+
 
         holder.txtPlaceName.setText(places.get(position).getPlaceName());
         holder.txtLocation.setText(places.get(position).getPlaceLocality());
