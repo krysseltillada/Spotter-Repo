@@ -78,11 +78,6 @@ public class FragmentSignUp extends Fragment {
                 if(username.getText().toString().length() > 6 ||
                         password.getText().toString().length() > 6 ) {
 
-                    if (registeredUserAccount.profileImage == null) {
-                        Toast.makeText(getContext(), "profile image required", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
                     if (!Utilities.validateEmail(registeredUserAccount.email)) {
                         Toast.makeText(getContext(), "invalid email", Toast.LENGTH_LONG).show();
                         return;

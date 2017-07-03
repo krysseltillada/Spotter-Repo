@@ -515,7 +515,7 @@ public class HomeActivity extends AppCompatActivity
         protected AppScript doInBackground(final String ...params) {
 
                 final AppScript loadPlaces = new AppScript() {{
-                    setRequestURL("http://192.168.1.39/projects/spotter/app_scripts/");
+                    setRequestURL("http://192.168.4.16/projects/spotter/app_scripts/");
                     setData("loadPlaces.php", new HashMap<String, Object>() {{
                         put("currentRow", params[0]);
                         put("rowOffset", params[1]);

@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
 
             final AppScript appScript = new AppScript(){{
-                setRequestURL("http://192.168.1.39/projects/spotter/app_scripts/");
+                setRequestURL("http://192.168.4.16/projects/spotter/app_scripts/");
                 setData(transaction, map_data);
             }};
 
