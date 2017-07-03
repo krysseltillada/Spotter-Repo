@@ -1,11 +1,13 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -15,6 +17,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,9 +28,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.DbHelper;
@@ -56,6 +62,7 @@ public class SearchResultsActivity extends AppCompatActivity
     Utilities.OnDbResponseListener{
 
     /** Initialize views **/
+    ViewFlipper viewFlipperManager;
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
     TextView place_name, place_content_desc;
@@ -72,6 +79,8 @@ public class SearchResultsActivity extends AppCompatActivity
     TabLayout searchResultsTab;
     Menu toolbarMenu;
     CoordinatorLayout coordinatorLayout;
+    Button showAllSearchResults;
+    Button navigate;
     /** End of initializing views **/
 
     boolean isLocationFragment = false;
@@ -80,13 +89,36 @@ public class SearchResultsActivity extends AppCompatActivity
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
     private String fragmentType;
 
+    private void startBackgroundHeaderFadeIn(){
+
+        viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
+
+
+        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
+        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
+        viewFlipperManager.setFlipInterval(3000);
+
+        viewFlipperManager.startFlipping();
+
+    }
+
+    public void showReviewActivity (View view) {
+        Utilities.OpenActivity(activity, ReviewActivity.class, null);
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d("debug", "onCreate SearchResults");
 
         setContentView(R.layout.activity_search_results);
 
         initComp();
+
+        startBackgroundHeaderFadeIn();
+
         Utilities.setSearchBar(this, actionBarView);
+
         locationHandler.buildGoogleClient();
 
         contentSettings(
@@ -132,17 +164,28 @@ public class SearchResultsActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        appBarLayout.setExpanded(true);
+        nsview.smoothScrollTo(0, 0);
+        recyclerView.smoothScrollToPosition(0);
+
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         locationHandler.changeApiState("connect");
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(!fragmentType.equals("Location")) {
+        if(!fragmentType.equals("Location"))
             getMenuInflater().inflate(R.menu.bookmark_info, menu);
-        }
 
         toolbarMenu = menu;
 
@@ -211,6 +254,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void contentSettings(int loading_visibility, int visibility, int value, int color, boolean prop_value){
 
+        Log.d("debug", "headerSettings");
+
         CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
         params.bottomMargin = value;
 
@@ -241,16 +286,78 @@ public class SearchResultsActivity extends AppCompatActivity
 
     private void initComp(){
 
+        Log.d("debug", "initComp");
+
         coordinatorLayout = (CoordinatorLayout)findViewById(R.id.search_view_wrapper);
         searchResultsTab = (TabLayout)findViewById(R.id.search_tab_layout);
         loading_screen = (RelativeLayout) findViewById(R.id.loading_screen);
         desc_tab_holder = (RelativeLayout) findViewById(R.id.description_tab_holder);
         nsview = (NestedScrollView) findViewById(R.id.search_nsview);
 
+        showAllSearchResults = (Button)findViewById(R.id.showAllSearchResults);
 
         loading_img = (ImageView) findViewById(R.id.loading_img_holder);
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
+
+        navigate = (Button)findViewById(R.id.btnNavigate);
+
+        navigate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog wazePromptDialog = new AlertDialog.Builder(
+                        SearchResultsActivity.this).setTitle("launch waze?")
+                        .setMessage("Be sure that waze is installed if not the app will link to the play store to install it")
+                        .setPositiveButton("Ok",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        try
+                                        {
+                                            String url = "waze://?ll=13.7565,121.0583&navigate=yes";
+                                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                            startActivity(intent);
+                                        }
+                                        catch ( ActivityNotFoundException ex  )
+                                        {
+                                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
+                                            startActivity(intent);
+                                        }
+
+
+                                    }
+                                }).setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {dialog.dismiss();
+                                    }
+                                }).create();
+
+                wazePromptDialog.show();
+
+            }
+
+        });
+
+        boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
+
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                onBackPressed();
+            }
+
+        });
+
+        if (isPlayServicesAvailable) {
+
+            Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
+            loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
+
+        }
+
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
 
@@ -326,7 +433,7 @@ public class SearchResultsActivity extends AppCompatActivity
             String result =  appScript.getResult();
             List<Place> place = null;
             if(result != null && result.equals("Data loaded."))
-                place = new ArrayList<Place>(appScript.getPlaces());
+                place = new ArrayList<Place>(appScript.getPlacesList());
 
             return place;
         }
@@ -437,6 +544,8 @@ public class SearchResultsActivity extends AppCompatActivity
             appBarLayout.setExpanded(true);
             nsview.smoothScrollTo(0, 0);
             recyclerView.smoothScrollToPosition(0);
+            showAllSearchResults.setVisibility(View.VISIBLE);
+            ((FrameLayout)showAllSearchResults.getParent()).setVisibility(View.VISIBLE);
 
             fadeInView();
 
@@ -460,7 +569,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
         /**if (isLocationFragment)
             switchFragment("", "add", null);
-
 
         MapsLayoutFragment mapsLayoutFragment = (MapsLayoutFragment)getSupportFragmentManager().findFragmentByTag("Map");
 

@@ -14,7 +14,7 @@
         android:scaleType="centerCrop"
         android:contentDescription="@string/blur_img_des"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"/>
 
     <RelativeLayout
         android:id="@+id/content_holder"
@@ -36,7 +36,8 @@
             android:id="@+id/account_fragment_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
+            android:layout_centerInParent="true"
+            />
 
     </RelativeLayout>
 

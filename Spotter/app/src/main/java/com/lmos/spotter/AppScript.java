@@ -1,8 +1,12 @@
 package com.lmos.spotter;
 
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
+import com.lmos.spotter.Utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +27,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,9 +56,11 @@ import java.util.Map;
 
 public class AppScript {
 
-    private String response, data;
-    private List<Place> places;
     private List<Place> placeNames;
+    private String response;
+    private String offSet;
+    private String tableCount;
+    private List<Place> placeList;
 
     protected AppScript(){}
 
@@ -70,11 +77,13 @@ public class AppScript {
 
                 Map.Entry<String, String> index_item = entry.next();
                 try {
+
                     post_data += URLEncoder.encode(index_item.getKey(), "UTF-8") + "="
-                            + URLEncoder.encode(index_item.getValue(), "UTF-8");
+                              +  URLEncoder.encode(index_item.getValue(), "UTF-8");
 
                     if(entry.hasNext())
                         post_data += "&";
+
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -135,20 +144,19 @@ public class AppScript {
             // Close connection to server.
             httpURLConnection.disconnect();
 
+
             parseResult(result);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
             response = e.getMessage();
-            data = "";
         }catch (SocketTimeoutException | ConnectException e){
             e.printStackTrace();
+            Log.d("debug", e.getMessage());
             response = "Couldn't connect to server. Make sure you have stable internet connection, then try again.";
-            data = "";
         }catch (IOException e) {
             e.printStackTrace();
             response = e.getMessage();
-            data ="";
         }
 
     }
@@ -157,15 +165,18 @@ public class AppScript {
 
         try {
 
-            JSONObject jsonObject = new JSONObject(processResult);
+            final JSONObject jsonObject = new JSONObject(processResult);
             String response_code = jsonObject.getString("response_code");
 
             if(response_code.equals("0x01") || response_code.equals("0x02") || response_code.equals("0x03")){
 
                 response = jsonObject.getString("response_msg");
+
                 if(!response_code.equals("0x03")){
+
                     LoginActivity.set_login_prefs.putString("accountID", jsonObject.getString("response_data"));
                     LoginActivity.set_login_prefs.apply();
+
                 }
 
             }
@@ -174,15 +185,11 @@ public class AppScript {
                 List<Place> place = new ArrayList<>();
 
                 JSONArray place_list = jsonObject.getJSONArray("response_data");
-                data = place_list.toString();
 
-                for(int index = 0; index < place_list.length(); index ++){
+                for(int index = 0; index < place_list.length(); index++){
 
                     Place setPlace = new Place();
-
                     JSONObject place_item = place_list.getJSONObject(index);
-
-                    Log.d("SplashScreen", place_item.getString("placeID"));
 
                     setPlace.setPlaceID(place_item.getString("placeID"));
                     setPlace.setplaceName(place_item.getString("Name"));
@@ -196,6 +203,10 @@ public class AppScript {
                         setPlace.setplaceClass(place_item.getString("Class"));
                         setPlace.setplacePriceRange(place_item.getString("PriceRange"));
 
+                        JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
+                        offSet = responseData.getString("endOffset");
+                        tableCount = responseData.getString("tableCount");
+
                     }
 
                     place.add(setPlace);
@@ -203,19 +214,16 @@ public class AppScript {
                 }
 
                 if(response_code.equals("0x10"))
-                    places = new ArrayList<>(place);
+                    placeList = new ArrayList<>(place);
                 else
                     placeNames = new ArrayList<>(place);
 
                 response = jsonObject.getString("response_msg");
 
             }
-            else if(response_code.equals("1x01") || response_code.equals("1x02")){
-
+            else if(response_code.equals("1x01") || response_code.equals("1x02"))
                 response = jsonObject.getString("response_msg");
-                data = "";
 
-            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -224,9 +232,12 @@ public class AppScript {
 
     }
 
-    public List<Place> getPlaces(){ return places; }
     public List<Place> getPlaceNames() { return placeNames; }
+    public List<Place> getPlacesList () {
+        return placeList;
+    }
+    public String getTableCount () { return tableCount; }
     public String getResult(){ return response; }
-    public String getData(){ return data; }
+    public String getOffSet(){ return offSet; }
 
 }

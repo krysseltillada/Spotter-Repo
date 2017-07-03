@@ -6,7 +6,6 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
     <android.support.design.widget.CoordinatorLayout
@@ -131,6 +130,14 @@
 
 
         </android.support.design.widget.AppBarLayout>
+
+        <ProgressBar
+            android:id="@+id/recycleViewProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="330dp"
+            android:layout_marginLeft="150dp"
+            android:visibility="visible" />
 
 
         <android.support.v4.widget.NestedScrollView

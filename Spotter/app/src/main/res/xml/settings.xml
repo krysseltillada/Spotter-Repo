@@ -21,6 +21,11 @@
             android:title = "password"
             android:inputType="textPassword"/>
 
+        <EditTextPreference
+            android:key = "name"
+            android:title = "name"
+            android:summary = "kryssel t de leon" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

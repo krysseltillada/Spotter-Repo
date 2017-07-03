@@ -2,6 +2,7 @@ package com.lmos.spotter;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 /**
  * Created by emman on 6/21/2017.
@@ -22,6 +23,7 @@ public class Place implements Parcelable {
     private String placePriceRange;
     private String placeImage;
     private String placeDeals;
+    private String placeImageLink;
 
     public Place(){}
 
@@ -37,6 +39,7 @@ public class Place implements Parcelable {
     public void setPlaceDeals(String placeDeals){ this.placeDeals = placeDeals; }
     public void setPlaceLat(String placeLat){ this.placeLat = placeLat; }
     public void setPlaceLng(String placeLng){ this.placeLng = placeLng; }
+    public void setplaceImageLink(String placeImageLink){this.placeImageLink = placeImageLink;}
 
     public String getPlaceID() {
         return placeID;
@@ -63,8 +66,11 @@ public class Place implements Parcelable {
         return placePriceRange;
     }
     public String getPlaceImage() {
-        return placeImage;
+        return placeImage; }
+    public String getPlaceImageLink() {
+        return placeImageLink;
     }
+
     public String getPlaceDeals(){ return placeDeals; }
     public String getPlaceLat(){ return placeLat; }
     public String getPlaceLng(){ return placeLng; }

@@ -27,26 +27,31 @@
                 android:layout_weight="1"
                 android:fillViewport="true" />
 
-            <FrameLayout
-                android:backgroundTint="@color/colorPrimary"
-                android:background="@drawable/layout_white_bg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                <!--
+
+                <TextView
+                android:id = "@+id/showAllSearchResults"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:textColor="@color/colorPrimary"
+                android:text="show all"
+                android:textSize="16sp"
+                    />
+
+                -->
 
                 <Button
                     android:id="@+id/showAllSearchResults"
                     android:background="?attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimary"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:text = "Show all"/>
-
-            </FrameLayout>
-
-
 
             <LinearLayout
                 android:background="@drawable/layout_white_bg"
@@ -66,8 +71,15 @@
                 <FrameLayout
                     android:id="@+id/map_content_holder"
                     android:layout_width="match_parent"
-                    android:layout_height="370dp"
+                    android:layout_height="300dp"
                     android:fillViewport="true"/>
+
+                <Button
+                    android:id = "@+id/btnNavigate"
+                    android:text="navigate with waze"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
@@ -109,7 +121,6 @@
                     android:orientation="horizontal">
 
                     <RatingBar
-
                         style="?android:attr/ratingBarStyleIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -191,24 +202,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="375dp" />
 
-            <FrameLayout
-                android:backgroundTint="@color/colorPrimary"
-                android:background="@drawable/layout_white_bg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
                 <Button
+                    android:id="@+id/showAllReview"
+                    android:onClick="showReviewActivity"
                     android:background="?attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimary"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:text = "Show all"/>
-
-            </FrameLayout>
-
 
         </LinearLayout>
 
@@ -230,14 +234,46 @@
             app:expandedTitleTextAppearance="@style/collapsingToolbarStyle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ImageView
-                android:id="@+id/action_bar_img"
+            <ViewFlipper
+                android:id="@+id/viewFlipManager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/place1"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax">
+
+                <ImageView
+                    android:id="@+id/popularImageView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/place1"
+                    android:contentDescription="@string/most_popular_desc"
+                    android:cropToPadding="false"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/popularImageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/place"
+                    android:contentDescription="@string/most_popular_desc"
+                    android:cropToPadding="false"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/popularImageView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="false"
+                    android:background="@drawable/place1"
+                    android:contentDescription="@string/most_popular_desc"
+                    android:cropToPadding="false"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+            </ViewFlipper>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/action_bar_toolbar"

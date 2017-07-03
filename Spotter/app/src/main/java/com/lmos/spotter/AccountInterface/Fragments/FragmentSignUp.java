@@ -3,6 +3,7 @@ package com.lmos.spotter.AccountInterface.Fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -16,6 +17,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
+import com.lmos.spotter.Utilities.UserAccount;
+import com.lmos.spotter.Utilities.Utilities;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +32,7 @@ import java.util.Map;
 public class FragmentSignUp extends Fragment {
 
     ImageButton register_img;
+    Bitmap userImage;
     TextInputEditText name, email, username, password;
     Button sign_up;
 
@@ -62,22 +67,36 @@ public class FragmentSignUp extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if(username.getText().toString().length() > 6 ||
-                        password.getText().toString().length() > 6) {
+                final UserAccount registeredUserAccount = new UserAccount();
+
+                registeredUserAccount.userName = username.getText().toString();
+                registeredUserAccount.name = name.getText().toString();
+                registeredUserAccount.email = email.getText().toString();
+                registeredUserAccount.password = password.getText().toString();
+                registeredUserAccount.profileImage = userImage;
+
+                if(username.getText().toString().length() >= 6 ||
+                        password.getText().toString().length() >= 6 ) {
+
+                    if (!Utilities.validateEmail(registeredUserAccount.email)) {
+                        Toast.makeText(getContext(), "invalid email", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
                     final Map<String, String> map_data = new HashMap<String, String>() {{
 
-                        put("username", username.getText().toString());
-                        put("password", password.getText().toString());
-                        put("name", name.getText().toString());
-                        put("email", email.getText().toString());
+                        put("username", registeredUserAccount.userName);
+                        put("password", registeredUserAccount.password);
+                        put("name", registeredUserAccount.name);
+                        put("email", registeredUserAccount.email);
+                        put("userImage", Utilities.BlurImg.bitmapToString(registeredUserAccount.profileImage));
 
                     }};
 
-                    LoginActivity.set_login_prefs.putString("username",username.getText().toString());
-                    LoginActivity.set_login_prefs.putString("password",password.getText().toString());
-                    LoginActivity.set_login_prefs.putString("name",name.getText().toString());
-                    LoginActivity.set_login_prefs.putString("email",email.getText().toString());
+                    LoginActivity.set_login_prefs.putString("username",registeredUserAccount.userName);
+                    LoginActivity.set_login_prefs.putString("password",registeredUserAccount.password);
+                    LoginActivity.set_login_prefs.putString("name",registeredUserAccount.name);
+                    LoginActivity.set_login_prefs.putString("email",registeredUserAccount.email);
                     LoginActivity.set_login_prefs.apply();
 
                     ((LoginActivity) getContext()).runAccountHandler(
@@ -95,6 +114,7 @@ public class FragmentSignUp extends Fragment {
 
         });
 
+
         return registerView;
     }
 
@@ -104,8 +124,9 @@ public class FragmentSignUp extends Fragment {
 
         if(requestCode == TAKE_PHOTO_REQUEST && resultCode == Activity.RESULT_OK){
             Bundle getPic = data.getExtras();
-            Bitmap bitmap = (Bitmap) getPic.get("data");
-            register_img.setImageBitmap(bitmap);
+
+            userImage = (Bitmap) getPic.get("data");
+            register_img.setImageBitmap(userImage);
         }
 
     }

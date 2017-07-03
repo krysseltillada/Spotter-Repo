@@ -32,6 +32,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -75,6 +76,8 @@ import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,10 +94,28 @@ import java.util.Locale;
  *    BlurImg - (public methods: blurImg, toString, getBitmap)
  *    LocationHandler
  *     (public methods: changeApiState, findLocation, buildApi)
+ *
+ *
  */
 
 
 public class Utilities {
+
+    public static boolean validateEmail (String email) {
+        return EmailValidator.getInstance().isValid(email);
+    }
+
+
+    public static boolean checkIfLastScrolledItem (NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+        if(v.getChildAt(v.getChildCount() - 1) != null) {
+            if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
+                    scrollY > oldScrollY)
+                return true;
+        }
+
+        return false;
+    }
 
     public static void hideSoftKeyboard(View currentView, AppCompatActivity appCompatActivity) {
         if (currentView != null) {
@@ -525,6 +546,7 @@ public class Utilities {
 
     }
 
+
     public static boolean checkPlayServices(Activity activity, DialogInterface.OnDismissListener onDismissListener) {
 
 
@@ -593,16 +615,24 @@ public class Utilities {
             return output_bitmap;
         }
 
-        public static String toString(Bitmap bitmap) {
-            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOutputStream);
-            byte[] b = byteOutputStream.toByteArray();
-            return Base64.encodeToString(b, Base64.DEFAULT);
+        public static Bitmap stringToBitmap (String strBitmap) {
+            try {
+                byte[] encodedByteBitmap = Base64.decode(strBitmap, Base64.DEFAULT);
+                return BitmapFactory.decodeByteArray(encodedByteBitmap, 0, encodedByteBitmap.length);
+            } catch (Exception e) {
+                return null;
+            }
         }
 
-        public static Bitmap getBitmap(String encodedBitmap) {
-            byte[] decodeBitmap = Base64.decode(encodedBitmap, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(decodeBitmap, 0, decodeBitmap.length);
+        public static String bitmapToString (Bitmap bitmap) {
+            try {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                byte[] byteBitmap = byteArrayOutputStream.toByteArray();
+                return Base64.encodeToString(byteBitmap, Base64.DEFAULT);
+            } catch (Exception e) {
+                return null;
+            }
         }
 
     }

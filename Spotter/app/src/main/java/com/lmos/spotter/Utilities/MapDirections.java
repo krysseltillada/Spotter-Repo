@@ -33,7 +33,7 @@ import java.util.List;
 public class MapDirections  {
 
     public interface OnDoneDrawDirectionListener {
-        public void onDoneDrawDirection (String duration, String distance);
+        void onDoneDrawDirection (String duration, String distance);
     }
 
     OnDoneDrawDirectionListener onDoneDrawDirectionListener;
@@ -77,8 +77,6 @@ public class MapDirections  {
 
         StringRequest requestStringDirection = new StringRequest(Request.Method.GET, requestURL
                     , new Response.Listener<String>() {
-
-                       public String response;
 
                         public void onResponse (String serverResponse) {
                             new MapDirectionDrawer(googleMap, lineColor, lineWidth).execute(serverResponse);

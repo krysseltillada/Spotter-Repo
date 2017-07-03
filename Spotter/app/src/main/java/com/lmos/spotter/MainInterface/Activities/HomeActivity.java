@@ -3,7 +3,10 @@ package com.lmos.spotter.MainInterface.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -14,6 +17,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,21 +31,33 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
+import com.lmos.spotter.AppScript;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
-import com.lmos.spotter.Utilities.TestData;
 import com.lmos.spotter.Utilities.Utilities;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
 
+    public interface OnRespondError {
+        void onRespondError (String error);
+    }
+
+    private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private DrawerLayout drawerLayout;
@@ -50,8 +66,22 @@ public class HomeActivity extends AppCompatActivity
     private SearchView searchBTN;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
-    Activity activity = this;
-    ActionBarDrawerToggle drawerToggle;
+    private MainInterfaceAdapter mainInterfaceAdapter;
+    private RecyclerView tabLayoutRecyclerView;
+    private ProgressBar itemListProgressBar;
+    private ProgressBar recycleViewProgressBar;
+    private CoordinatorLayout mainLayout;
+    private TabLayout tabLayout;
+
+    private int startingIndex;
+    private int tableCount;
+
+    private String placeType;
+    private Activity activity = this;
+    private ActionBarDrawerToggle drawerToggle;
+
+    private List <Place> placeDataList;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,101 +138,196 @@ public class HomeActivity extends AppCompatActivity
 
     private void loadPlacesByType (String type) {
 
+        if (!type.equals(placeType)) {
 
-        CoordinatorLayout mainLayout = (CoordinatorLayout)findViewById(R.id.homeLayout);
+            mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
+                    R.anim.fade_in));
 
-        mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
-                                                             R.anim.fade_in));
+            homeNestedScrollView.smoothScrollTo(0, 0);
+            appBarLayout.setExpanded(true);
 
-        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
+            txtHome.setText(type);
 
-        txtHome.setText(type);
+            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
-        appBarLayout.setExpanded(true);
+            placeDataList = new ArrayList<>();
 
+            mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
+                    ActivityType.HOME_ACTIVITY,
+                    PlaceType.NONE,
+                    placeDataList);
 
-        final RecyclerView tabLayoutRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
+            tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
+            tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
-        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                  ActivityType.HOME_ACTIVITY,
-                                                                  PlaceType.NONE,
-                                                                  TestData.PlaceData.testDataMostViewed
-                                                                  ));
+            recycleViewProgressBar.setVisibility(View.VISIBLE);
 
+            new PlaceLoader().setOnRespondError(new OnRespondError() {
 
-        tabLayoutRecyclerView.setNestedScrollingEnabled(false);
+                @Override
+                public void onRespondError(String error) {
 
-        tabLayoutRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
-                LinearLayoutManager.VERTICAL,
-                false));
+                    Toast.makeText(getApplicationContext(), "error getting data from the server", Toast.LENGTH_LONG).show();
+                    HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
+                    HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
 
-        if (tabLayout.getTabCount() > 0) {
-
-            tabLayoutRecyclerView.removeAllViews();
-            tabLayout.clearOnTabSelectedListeners();
-            tabLayout.removeAllTabs();
-        }
-
-
-        tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
-        tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
-        tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
-
-
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
-                searchBTN.setIconified(true);
-
-
-                switch (tab.getPosition()) {
-                    case 0:
-
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                                  ActivityType.HOME_ACTIVITY,
-                                                                                  PlaceType.NONE,
-                                                                                  TestData.PlaceData.testDataMostViewed));
-                        break;
-                    case 1:
-
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                                  ActivityType.HOME_ACTIVITY,
-                                                                                  PlaceType.NONE,
-                                                                                  TestData.PlaceData.testDataMostRated));
-                        break;
-                    case 2:
-
-                        tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                                  ActivityType.HOME_ACTIVITY,
-                                                                                  PlaceType.NONE,
-                                                                                  TestData.PlaceData.testDataRecommend));
-                        break;
                 }
 
+            }).execute("0", "4");
+
+            tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    switch (newState) {
+                        case RecyclerView.SCROLL_STATE_DRAGGING:
+
+                                floatingActionButton.setVisibility(View.GONE);
+
+                            break;
+                        case RecyclerView.SCROLL_STATE_IDLE:
+
+                                floatingActionButton.setVisibility(View.VISIBLE);
+
+                            break;
+                    }
+                }
+            });
+
+            homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener () {
+
+                @Override
+                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                    if(Utilities.checkIfLastScrolledItem(v, scrollX, scrollY, oldScrollX, oldScrollY)) {
+
+
+                            if (startingIndex < tableCount) {
+
+                                itemListProgressBar.setVisibility(View.VISIBLE);
+
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        new PlaceLoader().setOnRespondError(new OnRespondError() {
+
+                                            @Override
+                                            public void onRespondError(String error) {
+                                                Toast.makeText(getApplicationContext(), "error getting data from the server", Toast.LENGTH_LONG).show();
+                                                HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
+                                                HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+                                            }
+                                        }).execute(String.valueOf(startingIndex), "4");
+
+                                        itemListProgressBar.setVisibility(View.GONE);
+
+                                    }
+                                }, 1500);
+
+                            }
+
+                        }
+                    }
+                }
+            );
+
+            tabLayoutRecyclerView.setLayoutManager(linearLayoutManager);
+
+            if (tabLayout.getTabCount() > 0) {
+
+                tabLayoutRecyclerView.removeAllViews();
+                tabLayout.clearOnTabSelectedListeners();
+                tabLayout.removeAllTabs();
             }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
 
-            }
+            tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
+            tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
+            tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
-                searchBTN.setIconified(true);
-            }
-        });
+
+            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+
+                    Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                    homeNestedScrollView.smoothScrollTo(0, 0);
+                    searchBTN.setIconified(true);
+
+                    /*
+
+                    switch (tab.getPosition()) {
+                        case 0:
+
+                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.HOME_ACTIVITY,
+                                    PlaceType.NONE,
+                                    TestData.PlaceData.testDataMostViewed));
+                            break;
+                        case 1:
+
+                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.HOME_ACTIVITY,
+                                    PlaceType.NONE,
+                                    TestData.PlaceData.testDataMostRated));
+                            break;
+                        case 2:
+
+                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
+                                    ActivityType.HOME_ACTIVITY,
+                                    PlaceType.NONE,
+                                    TestData.PlaceData.testDataRecommend));
+                            break;
+                    } */
+
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                    Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                    homeNestedScrollView.smoothScrollTo(0, 0);
+                    searchBTN.setIconified(true);
+                }
+            });
+
+
+            placeType = type;
+
+        }
 
     }
 
     private void initComp(){
+
+        SharedPreferences userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
+
+        Log.d("debug", userData.getString("username", ""));
+        Log.d("debug", userData.getString("email", ""));
+        Log.d("debug", userData.getString("password", ""));
+        Log.d("debug", userData.getString("accountID", ""));
+        Log.d("debug", userData.getString("name", ""));
+
         setContentView(R.layout.activity_home_menu);
+
+        tabLayoutRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
+
+        mainLayout = (CoordinatorLayout) findViewById(R.id.homeLayout);
+
+        recycleViewProgressBar = (ProgressBar)findViewById(R.id.recycleViewProgressBar);
+        itemListProgressBar = (ProgressBar)findViewById(R.id.item_progress_bar);
+
+        homeNestedScrollView = (NestedScrollView) findViewById(R.id.homeContentScrollView);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.home_collapsing_toolbar);
 
@@ -217,6 +342,8 @@ public class HomeActivity extends AppCompatActivity
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         actionBarView = layoutInflater.inflate(R.layout.searchbar, null);
         Utilities.setSearchBar(this, actionBarView);
+
+        txtHome = (TextView) actionBarView.findViewById(R.id.txtHome);
 
         final SearchView searchButton = (SearchView) actionBarView.findViewById(R.id.search_view);
         searchBTN = searchButton;
@@ -371,6 +498,57 @@ public class HomeActivity extends AppCompatActivity
                 searchBTN.setIconified(true);
             else
                 super.onBackPressed();
+
+        }
+    }
+
+    class PlaceLoader extends AsyncTask<String, Void, AppScript> {
+
+        OnRespondError onRespondError;
+
+        public PlaceLoader setOnRespondError (OnRespondError onRespondError) {
+            this.onRespondError = onRespondError;
+            return this;
+        }
+
+        @Override
+        protected AppScript doInBackground(final String ...params) {
+
+                final AppScript loadPlaces = new AppScript() {{
+                    setData("loadPlaces.php", new HashMap<String, String>() {{
+                        put("currentRow", params[0]);
+                        put("rowOffset", params[1]);
+                    }});
+                }};
+
+
+            return loadPlaces;
+        }
+
+
+        @Override
+        protected void onPostExecute(AppScript loadPlaces) {
+            super.onPostExecute(loadPlaces);
+
+            try {
+
+                tableCount = Integer.parseInt(loadPlaces.getTableCount());
+                startingIndex = Integer.parseInt(loadPlaces.getOffSet()) + 1;
+
+                List<Place> placeD = loadPlaces.getPlacesList();
+
+                for (Place place : placeD)
+                    placeDataList.add(place);
+
+                for (int i = 0; i != placeDataList.size(); ++i)
+                    mainInterfaceAdapter.notifyItemChanged(i);
+
+                recycleViewProgressBar.setVisibility(View.GONE);
+
+            } catch (Exception e) {
+                onRespondError.onRespondError(e.getMessage());
+            }
+
 
         }
     }
