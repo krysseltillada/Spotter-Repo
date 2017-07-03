@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 
@@ -23,7 +24,7 @@ public class FragmentSearchResult extends Fragment{
 
     private RecyclerView placeImageList;
 
-    public static FragmentSearchResult newInstance(String... params){
+    public static FragmentSearchResult newInstance(Place place){
 
         FragmentSearchResult fragmentSearchResult = new FragmentSearchResult();
 

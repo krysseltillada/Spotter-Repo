@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -14,14 +14,12 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,17 +28,19 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.lmos.spotter.FavoritesDbHelper;
-import com.lmos.spotter.MapsLayoutFragment;
+import com.lmos.spotter.AppScript;
+import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
-import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
 import com.lmos.spotter.Utilities.Utilities;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by linker on 02/06/2017.
@@ -63,7 +63,7 @@ public class SearchResultsActivity extends AppCompatActivity
     RecyclerView.LayoutManager layoutManager;
     SearchReviewsAdapter mAdapter;
     View actionBarView;
-    FavoritesDbHelper favoritesDbHelper;
+    DbHelper dbHelper;
     RelativeLayout loading_screen, desc_tab_holder;
     AppBarLayout appBarLayout;
     NestedScrollView nsview;
@@ -88,11 +88,46 @@ public class SearchResultsActivity extends AppCompatActivity
         initComp();
         Utilities.setSearchBar(this, actionBarView);
         locationHandler.buildGoogleClient();
-        headerSettings("default");
+
+        contentSettings(
+                View.VISIBLE,
+                View.GONE,
+                0,
+                getResources().getColor(R.color.colorPrimary),
+                false
+        );
 
         Bundle fetch_intent = getIntent().getExtras();
-        fragmentType = fetch_intent.getString("type");
-        switchFragment(fetch_intent.getString("type"), "add", "");
+        String[] params = fetch_intent.getStringArray("data");
+
+        if (params != null) {
+            // First index of params represents the type.
+            setHeaderText(params[1], params[2]);
+            fragmentType = params[0];
+            if(fragmentType.equals("Location")){
+                boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
+
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        onBackPressed();
+                    }
+
+                });
+
+                if (isPlayServicesAvailable) {
+                    Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
+                    loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
+                }
+
+            }
+            else{
+                Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
+                loading_msg.setText("Getting some information for you.");
+            }
+
+            new LoadSearchData().execute(params);
+
+        }
 
     }
 
@@ -106,17 +141,15 @@ public class SearchResultsActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
 
         if(!fragmentType.equals("Location")) {
-            Log.d("debug", "hittttttttttttttttttttt");
             getMenuInflater().inflate(R.menu.bookmark_info, menu);
         }
 
-
         toolbarMenu = menu;
 
-
         return super.onCreateOptionsMenu(menu);
-
     }
+
+    /** Activity methods **/
 
     private void setHeaderText(String name, String description){
         place_name.setText(name);
@@ -128,9 +161,8 @@ public class SearchResultsActivity extends AppCompatActivity
                                                                     android.R.anim.fade_in));
     }
 
-    public void switchFragment(String type, String cmd, String... params){
+    public void switchFragment(String type, String cmd, Fragment fragment){
 
-        final Fragment fragment;
         int view_id = R.id.search_content_holder;
 
         appBarLayout.setExpanded(true);
@@ -139,53 +171,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
         if (!type.equals("Map"))
             fadeInView();
-
-        switch (type){
-
-            case "Location":
-
-                isLocationFragment = true;
-
-                headerSettings("hide");
-                searchResultsTab.setVisibility(View.GONE);
-                loading_screen.setVisibility(View.VISIBLE);
-                fragment = FragmentSearchResultGeneral.newInstance();
-                actionBarView.setVisibility(View.GONE);
-
-                break;
-
-            case "place":
-                searchResultsTab.setVisibility(View.GONE);
-                setHeaderText("City of Dreams", "Nightmares it is");
-                fragment = FragmentSearchResult.newInstance(params);
-                loading_screen.setVisibility(View.GONE);
-                break;
-
-            case "Map":
-                Log.d("debug", "Map");
-                fragment = MapsLayoutFragment.newInstance(12.8797, 121.7740);
-                view_id = R.id.map_content_holder;
-                break;
-
-            default:
-                type = "General";
-                fragmentType = type;
-                headerSettings("show");
-                actionBarView.setVisibility(View.VISIBLE);
-                searchResultsTab.setVisibility(View.VISIBLE);
-                setHeaderText("Batangas", "Bayan ng magigiting");
-                fragment = FragmentSearchResultGeneral.newInstance();
-                loading_screen.setVisibility(View.GONE);
-
-                if (isLocationFragment) {
-
-                    onCreateOptionsMenu(toolbarMenu);
-                    view_id = R.id.search_content_holder;
-
-                }
-
-                break;
-        }
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -213,49 +198,43 @@ public class SearchResultsActivity extends AppCompatActivity
 
     }
 
+    public void queryFavorites(String cmd, String args, Place place){
 
-    private void addToFavorites(){
-
-        Place place = new Place();
-        favoritesDbHelper = new FavoritesDbHelper(this, this);
-        Log.d("ADD", "Triggered");
-        favoritesDbHelper.addToFavorites(place);
+        dbHelper = new DbHelper(this, this);
+        dbHelper.addToFavorites(place);
+        if(cmd.equals("add"))
+            dbHelper.addToFavorites(place);
+        else
+            dbHelper.deleteBookmark(args);
 
     }
 
-    private void headerSettings(String toggle){
+    private void contentSettings(int loading_visibility, int visibility, int value, int color, boolean prop_value){
 
         CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
+        params.bottomMargin = value;
 
-        switch (toggle){
+        // visibility
+        desc_tab_holder.setVisibility(visibility);
+        nsview.setVisibility(visibility);
+        loading_screen.setVisibility(loading_visibility);
+        actionBarView.setVisibility(View.GONE);
 
-            case "hide":
-                desc_tab_holder.setVisibility(View.GONE);
-                params.bottomMargin = 0;
-                collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimary));
-                appBarLayout.setExpanded(false);
-                appBarLayout.setActivated(false);
-                nsview.setVisibility(View.GONE);
-                break;
-            case "show":
-                desc_tab_holder.setVisibility(View.VISIBLE);
-                params.bottomMargin = 200;
-                nsview.setVisibility(View.VISIBLE);
-                collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.blackTransparent));
-                appBarLayout.setExpanded(true, true);
-                appBarLayout.setActivated(true);
-                loading_screen.setVisibility(View.GONE);
-                loading_screen.startAnimation(AnimationUtils.loadAnimation(
-                        this,
-                        R.anim.fade_out
-                ));
-                break;
-            default:
-                params.bottomMargin = 200;
-                break;
+        // parameters
+        collapsingToolbarLayout.setContentScrimColor(color);
+
+        if(loading_visibility == View.GONE){
+            appBarLayout.setExpanded(prop_value, prop_value);
+            loading_screen.startAnimation(AnimationUtils.loadAnimation(
+                    this,
+                    R.anim.fade_out
+            ));
 
         }
+        else
+            appBarLayout.setExpanded(prop_value);
 
+        appBarLayout.setActivated(prop_value);
         toolbar.setLayoutParams(params);
 
     }
@@ -272,24 +251,6 @@ public class SearchResultsActivity extends AppCompatActivity
         loading_img = (ImageView) findViewById(R.id.loading_img_holder);
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
-
-        /*
-
-        boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
-
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                onBackPressed();
-            }
-
-        });
-
-        if (isPlayServicesAvailable) {
-
-            Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
-            loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
-
-        } */
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
 
@@ -322,7 +283,7 @@ public class SearchResultsActivity extends AppCompatActivity
         /** End setting RecyclerView **/
 
         // Inflate map into Framelayout
-        switchFragment("Map", "add", "");
+        //switchFragment("Map", "add", );
 
         setSupportActionBar(toolbar);
 
@@ -331,6 +292,65 @@ public class SearchResultsActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     }
+
+    /** End of activity methods **/
+
+    /** AsyncTask **/
+
+    private class LoadSearchData extends AsyncTask<String, String, List<Place>>{
+
+        @Override
+        protected List<Place> doInBackground(String... params) {
+
+            final Map<String, String> map_data = new HashMap<String, String>();
+
+            switch (params[0]){
+
+                case "General":
+                    map_data.put("field_ref", "Locality");
+                    map_data.put("field_ref_val", params[1]);
+                    break;
+                case "Location":
+                    break;
+                default:
+                    map_data.put("field_ref", "Name");
+                    map_data.put("field_ref_val", params[1]);
+                    break;
+
+            }
+
+            AppScript appScript = new AppScript(){{
+                setData("get-all-places.php", map_data);
+            }};
+
+            String result =  appScript.getResult();
+            List<Place> place = null;
+            if(result != null && result.equals("Data loaded."))
+                place = new ArrayList<Place>(appScript.getPlaces());
+
+            return place;
+        }
+
+        @Override
+        protected void onPostExecute(List<Place> places) {
+            super.onPostExecute(places);
+
+            loading_screen.setVisibility(View.GONE);
+            contentSettings(
+                    View.GONE,
+                    View.VISIBLE,
+                    200,
+                    getResources().getColor(R.color.blackTransparent),
+                    true
+            );
+            switchFragment("", "add", FragmentSearchResultGeneral.newInstance(places));
+
+        }
+    }
+
+    /** End of AsycTask **/
+
+    /** Abstract Methods **/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -342,7 +362,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 return true;
 
             case R.id.add_to_bookmark:
-                addToFavorites();
+             //   addToFavorites();
                 break;
 
 
@@ -383,7 +403,13 @@ public class SearchResultsActivity extends AppCompatActivity
                             Intent intent = new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
                             startActivity(intent);
                         }*/
-                        headerSettings("show");
+                        contentSettings(
+                                View.GONE,
+                                View.VISIBLE,
+                                200,
+                                getResources().getColor(R.color.blackTransparent),
+                                true
+                        );
                         return;
                     case RESULT_CANCELED:
                         loading_error_msg.setText("Sorry, but we cannot detect your location unless you enable your GPS and either your Mobile Data or Wi-Fi.");
@@ -425,32 +451,39 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public void onLocationFoundCity(String location) {
 
-        Toast.makeText(getApplicationContext(), location, Toast.LENGTH_LONG).show();
+
 
     }
 
     @Override
     public void onLocationFoundLatLng(double lat, double lng) {
 
-        if (isLocationFragment)
-            switchFragment("", "add", "");
+        /**if (isLocationFragment)
+            switchFragment("", "add", null);
 
 
         MapsLayoutFragment mapsLayoutFragment = (MapsLayoutFragment)getSupportFragmentManager().findFragmentByTag("Map");
 
         if (mapsLayoutFragment != null)
             mapsLayoutFragment.setUserPosition(new LatLng(lat, lng));
-
+**/
     }
 
     @Override
-    public void onDbResponse(String response) {
+    public void onDbResponse(String response, final String undo_id) {
         Utilities.showSnackBar(
                 findViewById(R.id.search_view_wrapper),
                 response,
                 Snackbar.LENGTH_SHORT,
                 "Undo",
-                null
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        queryFavorites("undo", undo_id, null);
+                    }
+                }
         );
     }
+
+    /** End of Abstract Methods **/
 }

@@ -52,6 +52,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
@@ -68,6 +69,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.DialogActivity;
 import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.R;
@@ -75,6 +77,7 @@ import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -330,25 +333,10 @@ public class Utilities {
         con.startActivity(requestActivity);
     }
 
-    public static void QuerySearchResults(String searchValue, SimpleCursorAdapter suggestion, String[] keywords) {
-
-        MatrixCursor suggestions = new MatrixCursor(new String[]{BaseColumns._ID, "judy"});
-
-        for (int i = 0; i != keywords.length; ++i) {
-            if (keywords[i].toLowerCase().startsWith(searchValue.toLowerCase())) {
-                Log.d("sample", searchValue);
-                suggestions.addRow(new Object[]{i, keywords[i]});
-            }
-        }
-
-        suggestion.changeCursor(suggestions);
-    }
-
     public static void setSearchBar(final AppCompatActivity activity, final View actionBarView){
 
-        String[] from = new String[]{"Judy"};
-        int[] to = new int[]{android.R.id.text1};
-        final String[] sampleWords = {"hello", "judy", "sample", "text", "june", "General", "Hotel", "Resto", "Tourist Spot"};
+        final int[] to = new int[]{R.id.searchview_place_name, R.id.searchview_place_address, R.id.searchview_place_type};
+        final DbHelper dbHelper = new DbHelper(activity);
 
         ActionBar homeActionBar = activity.getSupportActionBar();
         final SearchView searchView = (SearchView) actionBarView.findViewById(R.id.search_view);
@@ -356,12 +344,13 @@ public class Utilities {
 
         final SimpleCursorAdapter searchAdapter = new SimpleCursorAdapter(
                 activity,
-                android.R.layout.simple_list_item_1,
+                R.layout.search_view_list_item,
                 null,
-                from,
+                null,
                 to,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         );
+
         searchView.setSuggestionsAdapter(searchAdapter);
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
@@ -372,7 +361,7 @@ public class Utilities {
             @Override
             public boolean onSuggestionClick(int position) {
                 Intent send_data = new Intent(activity, SearchResultsActivity.class);
-                send_data.putExtra("type", getSuggestionText(position, searchAdapter));
+                send_data.putExtra("data", getSuggestionText(position, searchAdapter));
                 activity.startActivity(send_data);
                 return true;
             }
@@ -400,7 +389,11 @@ public class Utilities {
 
             @Override
             public boolean onQueryTextChange(String searchValue) {
-                Utilities.QuerySearchResults(searchValue, searchAdapter, sampleWords);
+                searchAdapter.changeCursorAndColumns(
+                        dbHelper.querySearch(new String[]{ searchValue + "*"}),
+                        new String[]{ "name", "address", "type" },
+                        to
+                );
                 return false;
             }
         });
@@ -427,14 +420,20 @@ public class Utilities {
 
     }
 
-    private static String getSuggestionText(int position, SimpleCursorAdapter searchAdapter){
+    private static String[] getSuggestionText(int position, SimpleCursorAdapter searchAdapter){
 
-        String selected_item = "";
         Cursor searchCursor = searchAdapter.getCursor();
-         if(searchCursor.moveToPosition(position)){
-         selected_item = searchCursor.getString(1);
-         }
-        return selected_item;
+        String[] selectedItem = new String[0];
+        if(searchCursor.moveToPosition(position))
+            selectedItem = new String[] {
+                searchCursor.getString(3),
+                searchCursor.getString(1),
+                searchCursor.getString(2) };
+
+
+        Log.d("PARAM", searchCursor.getString(3) + " " + searchCursor.getString(1) + " " + searchCursor.getString(2));
+
+        return selectedItem;
     }
 
     public static void changeActionBarLayout (AppCompatActivity activity, Toolbar toolbar, Menu menu,
@@ -533,7 +532,7 @@ public class Utilities {
 
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
 
-        if (resultCode != ConnectionResult.SUCCESS) {
+        if (resultCode != ConnectionResult.SUCCESS || resultCode == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) {
 
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
 
@@ -564,7 +563,7 @@ public class Utilities {
     }
 
     public interface OnDbResponseListener{
-        void onDbResponse(String response);
+        void onDbResponse(String response, String undo_id);
     }
 
     public static class BlurImg {
@@ -730,11 +729,10 @@ public class Utilities {
                         }
                     })
                     .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                            response = connectionResult.toString();
-                        }
-                    })
+                            @Override
+                            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                                response = connectionResult.toString();}
+                        })
                     .build();
 
         }

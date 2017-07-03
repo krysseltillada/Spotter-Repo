@@ -52,13 +52,15 @@ import java.util.Map;
 public class AppScript {
 
     private String response, data;
+    private List<Place> places;
+    private List<Place> placeNames;
 
     protected AppScript(){}
 
     public void setData(String url, Map<String, String> params){
 
         String post_data = "";
-        final String default_url = "http://192.168.254.100/projects/spotter/app_scripts/";
+        final String default_url = "http://192.168.3.4/projects/spotter/app_scripts/";
 
         if(params != null){
 
@@ -80,14 +82,16 @@ public class AppScript {
             }
 
         }
-
+        Log.d("PARAM", default_url + url + " " + post_data);
         connect(default_url + url, post_data);
 
     }
 
     private void connect(String setUrl, String post_data) {
 
-        final int CONNECTION_TIME_OUT = 15000;
+        Log.d("SplashScreen", "Connecting");
+
+        final int CONNECTION_TIME_OUT = 60000;
         final String REQUEST_METHOD = "POST";
 
         try {
@@ -165,28 +169,43 @@ public class AppScript {
                 }
 
             }
-            else if(response_code.equals("0x10")){
+            else if(response_code.equals("0x10") || response_code.equals("0x11")){
 
                 List<Place> place = new ArrayList<>();
-                Place setPlace = new Place();
 
                 JSONArray place_list = jsonObject.getJSONArray("response_data");
+                data = place_list.toString();
 
                 for(int index = 0; index < place_list.length(); index ++){
 
+                    Place setPlace = new Place();
+
                     JSONObject place_item = place_list.getJSONObject(index);
+
+                    Log.d("SplashScreen", place_item.getString("placeID"));
+
                     setPlace.setPlaceID(place_item.getString("placeID"));
                     setPlace.setplaceName(place_item.getString("Name"));
-                    setPlace.setplaceAddress(place_item.getString("Address"));
-                    setPlace.setplaceLocality(place_item.getString("Locality"));
-                    setPlace.setplaceDescription(place_item.getString("Description"));
-                    setPlace.setplaceClass(place_item.getString("Class"));
                     setPlace.setplaceType(place_item.getString("Type"));
-                    setPlace.setplacePriceRange(place_item.getString("PriceRange"));
+                    setPlace.setplaceAddress(place_item.getString("Address"));
+
+                    if(!response_code.equals("0x11")){
+
+                        setPlace.setplaceLocality(place_item.getString("Locality"));
+                        setPlace.setplaceDescription(place_item.getString("Description"));
+                        setPlace.setplaceClass(place_item.getString("Class"));
+                        setPlace.setplacePriceRange(place_item.getString("PriceRange"));
+
+                    }
 
                     place.add(setPlace);
 
                 }
+
+                if(response_code.equals("0x10"))
+                    places = new ArrayList<>(place);
+                else
+                    placeNames = new ArrayList<>(place);
 
                 response = jsonObject.getString("response_msg");
 
@@ -205,6 +224,9 @@ public class AppScript {
 
     }
 
+    public List<Place> getPlaces(){ return places; }
+    public List<Place> getPlaceNames() { return placeNames; }
     public String getResult(){ return response; }
+    public String getData(){ return data; }
 
 }

@@ -1,11 +1,17 @@
 package com.lmos.spotter.SearchInterface.Adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by emman on 6/9/2017.
@@ -20,24 +26,20 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
     public interface OnClickListener{
 
-        void OnItemClick(int pos, View view, String... params);
-        void OnItemLongClick(int pos, View parent, View view);
+        void OnItemClick(Place place);
+        void OnItemLongClick(View view, Place place);
 
     }
 
-    public GeneralResultsAdapter(){}
+    List<Place> places;
 
-    String[][] items = {
+    public GeneralResultsAdapter(List<Place> places){
 
-            {"HYATT Hotel", "Kanan ka sa bandang kaliwa", "2.5"},
-            {"Resorts World Manila", "Deretso lang boss", "1.5"},
-            {"Solaire Resorts and Casino", "Dun sa banda dun", "3.5"},
-            {"OKADA", "Honto ni watashi no baka", "4.5"},
-            {"Siayan Travelers Inn", "Punta ka lang sa kanto tapos deretso", "5"},
+        this.places = new ArrayList<Place>(places);
+        if(this.places == null)
+            Log.d("GeneralResult", "Null");
 
-
-    };
-
+    }
 
     @Override
     public GeneralResultsAdapter.GeneralResultsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -48,15 +50,15 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
     @Override
     public void onBindViewHolder(GeneralResultsAdapter.GeneralResultsViewHolder holder, int position) {
-        holder.name.setText(items[position][0]);
-        holder.place.setText(items[position][1]);
-        holder.rating.setText(items[position][2]);
+        holder.name.setText(places.get(position).getPlaceName());
+        holder.place.setText(places.get(position).getPlaceAddress());
+        //holder.rating.setText(places);
     }
 
 
     @Override
     public int getItemCount() {
-        return items.length;
+        return places.size();
     }
 
     public class GeneralResultsViewHolder extends RecyclerView.ViewHolder
@@ -75,14 +77,12 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         @Override
         public void onClick(View v) {
-            onClickListener.OnItemClick(getAdapterPosition(), v,
-                    name.getText().toString(), place.getText().toString(), rating.getText().toString()
-            );
+            onClickListener.OnItemClick(places.get(getAdapterPosition()));
         }
 
         @Override
         public boolean onLongClick(View v) {
-            onClickListener.OnItemLongClick(getAdapterPosition(), v, rating);
+            onClickListener.OnItemLongClick(rating, places.get(getAdapterPosition()));
             return true;
         }
     }

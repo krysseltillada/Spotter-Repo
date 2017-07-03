@@ -26,8 +26,6 @@
     </style>
 
     <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:popupMenuStyle">@style/PopupMenuTheme</item>
     </style>
 
@@ -83,6 +81,11 @@
         <item name="android:dropDownHorizontalOffset">-500dp</item>
         <item name="android:dropDownVerticalOffset">5dp</item>
         <item name="android:dropDownWidth">20dp</item>
+    </style>
+
+    <style name="loginTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
 </resources>

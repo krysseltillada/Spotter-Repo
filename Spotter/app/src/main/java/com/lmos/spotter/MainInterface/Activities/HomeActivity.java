@@ -295,7 +295,7 @@ public class HomeActivity extends AppCompatActivity
 
                 startActivity(
                         new Intent(getApplicationContext(), SearchResultsActivity.class)
-                                .putExtra("type", "Location"));
+                                .putExtra("data", new String[] { "Location" }));
             }
 
         });
