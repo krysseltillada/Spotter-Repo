@@ -172,8 +172,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
                 .placeholder(R.drawable.loadingplace)
                 .into(holder.placeCompanyImage); */
 
-        Log.d("debug", places.get(position).getPlaceImageLink());
-
         try {
 
 

@@ -67,7 +67,7 @@ public class AppScript {
     public void setData(String url, Map<String, String> params){
 
         String post_data = "";
-        final String default_url = "http://192.168.3.4/projects/spotter/app_scripts/";
+        final String default_url = "http://admin-spotter.000webhostapp.com/app_scripts/";
 
         if(params != null){
 
@@ -165,6 +165,8 @@ public class AppScript {
 
         try {
 
+            Log.d("debug", processResult);
+
             final JSONObject jsonObject = new JSONObject(processResult);
             String response_code = jsonObject.getString("response_code");
 
@@ -202,6 +204,7 @@ public class AppScript {
                         setPlace.setplaceDescription(place_item.getString("Description"));
                         setPlace.setplaceClass(place_item.getString("Class"));
                         setPlace.setplacePriceRange(place_item.getString("PriceRange"));
+                        setPlace.setplaceImageLink(place_item.getString("Image"));
 
                         JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
                         offSet = responseData.getString("endOffset");

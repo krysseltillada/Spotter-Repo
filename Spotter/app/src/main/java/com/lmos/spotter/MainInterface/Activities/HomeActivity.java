@@ -167,13 +167,12 @@ public class HomeActivity extends AppCompatActivity
                 @Override
                 public void onRespondError(String error) {
 
-                    Toast.makeText(getApplicationContext(), "error getting data from the server", Toast.LENGTH_LONG).show();
                     HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
                     HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
 
                 }
 
-            }).execute("0", "4");
+            }).execute("0", "5");
 
             tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -214,16 +213,15 @@ public class HomeActivity extends AppCompatActivity
 
                                             @Override
                                             public void onRespondError(String error) {
-                                                Toast.makeText(getApplicationContext(), "error getting data from the server", Toast.LENGTH_LONG).show();
                                                 HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
                                                 HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
                                             }
-                                        }).execute(String.valueOf(startingIndex), "4");
+                                        }).execute(String.valueOf(startingIndex), "5");
 
                                         itemListProgressBar.setVisibility(View.GONE);
 
                                     }
-                                }, 1500);
+                                }, 200);
 
                             }
 
@@ -515,7 +513,7 @@ public class HomeActivity extends AppCompatActivity
         protected AppScript doInBackground(final String ...params) {
 
                 final AppScript loadPlaces = new AppScript() {{
-                    setData("loadPlaces.php", new HashMap<String, String>() {{
+                        setData("loadPlaces.php", new HashMap<String, String>() {{
                         put("currentRow", params[0]);
                         put("rowOffset", params[1]);
                     }});
@@ -540,8 +538,8 @@ public class HomeActivity extends AppCompatActivity
                 for (Place place : placeD)
                     placeDataList.add(place);
 
-                for (int i = 0; i != placeDataList.size(); ++i)
-                    mainInterfaceAdapter.notifyItemChanged(i);
+                for (int i = 1; i <= placeD.size(); ++i)
+                    mainInterfaceAdapter.notifyItemChanged( (placeDataList.size() - 1) + i);
 
                 recycleViewProgressBar.setVisibility(View.GONE);
 

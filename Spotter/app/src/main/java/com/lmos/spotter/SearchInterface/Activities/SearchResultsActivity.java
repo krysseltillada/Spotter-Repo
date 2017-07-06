@@ -342,6 +342,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
         });
 
+        /*
+
         boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
 
             @Override
@@ -356,7 +358,7 @@ public class SearchResultsActivity extends AppCompatActivity
             Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
             loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
 
-        }
+        } */
 
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/

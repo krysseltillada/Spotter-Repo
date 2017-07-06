@@ -51,6 +51,8 @@ public class FragmentSignUp extends Fragment {
         password = (TextInputEditText) registerView.findViewById(R.id.register_password);
         sign_up = (Button) registerView.findViewById(R.id.register_sign_up);
 
+        register_img.setImageDrawable(getResources().getDrawable(R.drawable.account));
+
         register_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

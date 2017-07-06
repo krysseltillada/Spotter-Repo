@@ -1,9 +1,11 @@
 package com.lmos.spotter;
 
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -34,6 +36,17 @@ public class SplashScreen extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
+
+        /*
+
+        File getPhoneDirectory = getFilesDir();
+
+        File createAppDirectory = new File (getPhoneDirectory.getAbsoluteFile() + "/BookmarkImages");
+
+        if (!createAppDirectory.exists())
+            Log.d("debug", "created directory: " + createAppDirectory.getAbsolutePath() + " " + createAppDirectory.mkdir());
+        else
+            Log.d("debug", createAppDirectory.getAbsolutePath() + " already exists"); */
 
         splash_msg = (TextView) findViewById(R.id.splash_msg);
 
@@ -75,7 +88,7 @@ public class SplashScreen extends AppCompatActivity {
             if(!database.exists()){
                 publishProgress("We're setting things up for you, please wait a moment.");
                 AppScript appScript = new AppScript(){{
-                   setData("get-all-place-name.php", null);
+                   setData("searchPlaces.php", null);
                 }};
 
                 String result = appScript.getResult();

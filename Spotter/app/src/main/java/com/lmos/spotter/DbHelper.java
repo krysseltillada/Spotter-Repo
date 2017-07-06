@@ -162,6 +162,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery("Select * from favorites", null);
 
+
         while(cursor.moveToNext()){
 
             Place place = new Place();
