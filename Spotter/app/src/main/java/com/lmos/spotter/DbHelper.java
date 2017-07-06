@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -80,7 +79,11 @@ public class DbHelper extends SQLiteOpenHelper {
                         KEY_NAME + " TEXT," +
                         KEY_ADDRESS + " TEXT," +
                         KEY_TYPE + " TEXT," +
+                        KEY_LAT + " DOUBLE," +
+                        KEY_LNG + " DOUBLE," +
                         " notindexed=" + KEY_ADDRESS + "," +
+                        " notindexed=" + KEY_LAT + "," +
+                        " notindexed=" + KEY_LNG + "," +
                         " notindexed=" + KEY_TYPE +
                         ")"
         );
@@ -130,7 +133,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("Select rowid as _id," +
-                        KEY_NAME + "," + KEY_ADDRESS + "," + KEY_TYPE + " from " +
+                        KEY_NAME + "," + KEY_ADDRESS + "," +
+                        KEY_LAT + "," + KEY_LNG + "," +
+                        KEY_TYPE + " from " +
                         TABLE_PLACE_NAME + " where " +
                         TABLE_PLACE_NAME + "  match ? ", keyword);
 
@@ -146,6 +151,8 @@ public class DbHelper extends SQLiteOpenHelper {
             cv.put(KEY_NAME, place.getPlaceName());
             cv.put(KEY_ADDRESS, place.getPlaceAddress());
             cv.put(KEY_TYPE, place.getPlaceType());
+            cv.put(KEY_LAT, place.getPlaceLat());
+            cv.put(KEY_LNG, place.getPlaceLng());
 
             db.insert(TABLE_PLACE_NAME, null, cv);
 

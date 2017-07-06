@@ -1,21 +1,18 @@
 package com.lmos.spotter;
 
 import android.graphics.Color;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -36,18 +33,20 @@ import com.lmos.spotter.Utilities.MapDirections;
 public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
 
-    public static MapsLayoutFragment newInstance(){
+    LatLng srcPosition;
+    GoogleMap googleMap;
+
+    public static MapsLayoutFragment newInstance(double lat, double lng){
 
         MapsLayoutFragment mapsLayoutFragment = new MapsLayoutFragment();
 
+        Bundle bundle = new Bundle();
+        bundle.putDouble("Lat",lat);
+        bundle.putDouble("Lng",lng);
+
+        mapsLayoutFragment.setArguments(bundle);
+
         return mapsLayoutFragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
     }
 
     @Nullable
@@ -55,6 +54,8 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View mainLayout = inflater.inflate(R.layout.map_layout, container, false);
+
+
 
         return mainLayout;
     }
@@ -64,12 +65,10 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         super.onViewCreated(view, savedInstanceState);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_holder);
-
         mapFragment.getMapAsync(this);
-    }
+        setUserPosition(new LatLng(getArguments().getDouble("Lat"), getArguments().getDouble("Lng")));
 
-    LatLng srcPosition;
-    GoogleMap googleMap;
+    }
 
     public void setUserPosition (LatLng userPosition) {
 

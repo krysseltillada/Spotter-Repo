@@ -1,31 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/searchview_place_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/mid_padding"
         android:paddingEnd="@dimen/mid_padding"
+        android:paddingStart="@dimen/mid_padding"
         android:paddingTop="@dimen/min_padding"
-        android:textSize="@dimen/max_font_size"
-        android:textColor="@color/colorPrimary"/>
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/max_font_size"/>
 
     <TextView
         android:id="@+id/searchview_place_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/mid_padding"
-        android:paddingEnd="@dimen/mid_padding"
         android:paddingBottom="@dimen/min_padding"
+        android:paddingEnd="@dimen/mid_padding"
+        android:paddingStart="@dimen/mid_padding"
         android:textColor="@color/gray"
         android:textSize="@dimen/min_font_size"/>
 
     <TextView
         android:id="@+id/searchview_place_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mid_padding"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/searchview_place_lat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/mid_padding"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/searchview_place_lng"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/mid_padding"

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -20,7 +19,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -46,19 +44,16 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -72,17 +67,15 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.DialogActivity;
-import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
-import org.apache.commons.validator.routines.EmailValidator;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+//import org.apache.commons.validator.routines.EmailValidator;
 
 /**
  * Created by Kryssel on 6/2/2017.
@@ -101,10 +94,10 @@ import java.util.Locale;
 
 public class Utilities {
 
-    public static boolean validateEmail (String email) {
+    /**public static boolean validateEmail (String email) {
         return EmailValidator.getInstance().isValid(email);
     }
-
+    **/
 
     public static boolean checkIfLastScrolledItem (NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
@@ -356,7 +349,13 @@ public class Utilities {
 
     public static void setSearchBar(final AppCompatActivity activity, final View actionBarView){
 
-        final int[] to = new int[]{R.id.searchview_place_name, R.id.searchview_place_address, R.id.searchview_place_type};
+        final int[] to = new int[]{
+                R.id.searchview_place_name,
+                R.id.searchview_place_address,
+                R.id.searchview_place_type,
+                R.id.searchview_place_lat,
+                R.id.searchview_place_lng,
+        };
         final DbHelper dbHelper = new DbHelper(activity);
 
         ActionBar homeActionBar = activity.getSupportActionBar();
@@ -410,11 +409,22 @@ public class Utilities {
 
             @Override
             public boolean onQueryTextChange(String searchValue) {
+
+                Log.d("Query", "QueryTextChange");
+
                 searchAdapter.changeCursorAndColumns(
                         dbHelper.querySearch(new String[]{ searchValue + "*"}),
-                        new String[]{ "name", "address", "type" },
+                        new String[]{
+                                "name",
+                                "address",
+                                "type",
+                                "latitude",
+                                "longitude"},
                         to
                 );
+
+
+
                 return false;
             }
         });
@@ -447,12 +457,11 @@ public class Utilities {
         String[] selectedItem = new String[0];
         if(searchCursor.moveToPosition(position))
             selectedItem = new String[] {
-                searchCursor.getString(3),
+                searchCursor.getString(5),
                 searchCursor.getString(1),
-                searchCursor.getString(2) };
-
-
-        Log.d("PARAM", searchCursor.getString(3) + " " + searchCursor.getString(1) + " " + searchCursor.getString(2));
+                searchCursor.getString(2),
+                searchCursor.getString(3),
+                searchCursor.getString(4) };
 
         return selectedItem;
     }
@@ -750,7 +759,7 @@ public class Utilities {
                         public void onConnected(@Nullable Bundle bundle) {
                             Log.d("LocationHandler", "Connected");
                             setLocationRequest();
-                            checkLocationSettingsState();
+                        //    checkLocationSettingsState();
                         }
 
                         @Override

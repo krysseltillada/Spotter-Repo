@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -40,10 +40,10 @@ import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
+import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
 import com.lmos.spotter.Utilities.Utilities;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class SearchResultsActivity extends AppCompatActivity
     ViewFlipper viewFlipperManager;
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
-    TextView place_name, place_content_desc;
+    TextView place_name, place_address;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     SearchReviewsAdapter mAdapter;
@@ -84,6 +84,7 @@ public class SearchResultsActivity extends AppCompatActivity
     /** End of initializing views **/
 
     boolean isLocationFragment = false;
+    boolean showBookmarkInAppBar = false;
 
     Activity activity = this;
     Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
@@ -124,6 +125,7 @@ public class SearchResultsActivity extends AppCompatActivity
         contentSettings(
                 View.VISIBLE,
                 View.GONE,
+                View.VISIBLE,
                 0,
                 getResources().getColor(R.color.colorPrimary),
                 false
@@ -155,9 +157,9 @@ public class SearchResultsActivity extends AppCompatActivity
             else{
                 Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
                 loading_msg.setText("Getting some information for you.");
-            }
+                new LoadSearchData().execute(params);
 
-            new LoadSearchData().execute(params);
+            }
 
         }
 
@@ -179,24 +181,22 @@ public class SearchResultsActivity extends AppCompatActivity
         locationHandler.changeApiState("connect");
     }
 
-
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if(!fragmentType.equals("Location"))
+        if(showBookmarkInAppBar)
             getMenuInflater().inflate(R.menu.bookmark_info, menu);
 
         toolbarMenu = menu;
 
-        return super.onCreateOptionsMenu(menu);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     /** Activity methods **/
 
-    private void setHeaderText(String name, String description){
+    private void setHeaderText(String name, String address){
         place_name.setText(name);
-        place_content_desc.setText(description);
+        place_address.setText(address);
     }
 
     private void fadeInView () {
@@ -214,6 +214,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
         if (!type.equals("Map"))
             fadeInView();
+        else
+            view_id = R.id.map_content_holder;
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -252,9 +254,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
     }
 
-    private void contentSettings(int loading_visibility, int visibility, int value, int color, boolean prop_value){
-
-        Log.d("debug", "headerSettings");
+    private void contentSettings(int loading_visibility, int visibility, int tab_visibility, int value, int color, boolean prop_value){
 
         CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
         params.bottomMargin = value;
@@ -263,7 +263,8 @@ public class SearchResultsActivity extends AppCompatActivity
         desc_tab_holder.setVisibility(visibility);
         nsview.setVisibility(visibility);
         loading_screen.setVisibility(loading_visibility);
-        actionBarView.setVisibility(View.GONE);
+        actionBarView.setVisibility(visibility);
+        searchResultsTab.setVisibility(tab_visibility);
 
         // parameters
         collapsingToolbarLayout.setContentScrimColor(color);
@@ -274,6 +275,8 @@ public class SearchResultsActivity extends AppCompatActivity
                     this,
                     R.anim.fade_out
             ));
+            showBookmarkInAppBar = true;
+            invalidateOptionsMenu();
 
         }
         else
@@ -370,7 +373,7 @@ public class SearchResultsActivity extends AppCompatActivity
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
 
         place_name = (TextView) findViewById(R.id.place_name);
-        place_content_desc = (TextView) findViewById(R.id.place_content_description);
+        place_address = (TextView) findViewById(R.id.place_address);
 
         //Set collapse & expanded title color
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.colorPrimary));
@@ -392,6 +395,9 @@ public class SearchResultsActivity extends AppCompatActivity
         // Inflate map into Framelayout
         //switchFragment("Map", "add", );
 
+        FrameLayout fm = (FrameLayout) findViewById(R.id.search_content_holder);
+        fm.requestDisallowInterceptTouchEvent(true);
+
         setSupportActionBar(toolbar);
 
         //Enable back button
@@ -401,61 +407,6 @@ public class SearchResultsActivity extends AppCompatActivity
     }
 
     /** End of activity methods **/
-
-    /** AsyncTask **/
-
-    private class LoadSearchData extends AsyncTask<String, String, List<Place>>{
-
-        @Override
-        protected List<Place> doInBackground(String... params) {
-
-            final Map<String, String> map_data = new HashMap<String, String>();
-
-            switch (params[0]){
-
-                case "General":
-                    map_data.put("field_ref", "Locality");
-                    map_data.put("field_ref_val", params[1]);
-                    break;
-                case "Location":
-                    break;
-                default:
-                    map_data.put("field_ref", "Name");
-                    map_data.put("field_ref_val", params[1]);
-                    break;
-
-            }
-
-            AppScript appScript = new AppScript(){{
-                setData("get-all-places.php", map_data);
-            }};
-
-            String result =  appScript.getResult();
-            List<Place> place = null;
-            if(result != null && result.equals("Data loaded."))
-                place = new ArrayList<Place>(appScript.getPlacesList());
-
-            return place;
-        }
-
-        @Override
-        protected void onPostExecute(List<Place> places) {
-            super.onPostExecute(places);
-
-            loading_screen.setVisibility(View.GONE);
-            contentSettings(
-                    View.GONE,
-                    View.VISIBLE,
-                    200,
-                    getResources().getColor(R.color.blackTransparent),
-                    true
-            );
-            switchFragment("", "add", FragmentSearchResultGeneral.newInstance(places));
-
-        }
-    }
-
-    /** End of AsycTask **/
 
     /** Abstract Methods **/
 
@@ -477,6 +428,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
+    /** End of AsycTask **/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -512,6 +465,7 @@ public class SearchResultsActivity extends AppCompatActivity
                         }*/
                         contentSettings(
                                 View.GONE,
+                                View.VISIBLE,
                                 View.VISIBLE,
                                 200,
                                 getResources().getColor(R.color.blackTransparent),
@@ -591,6 +545,76 @@ public class SearchResultsActivity extends AppCompatActivity
                     }
                 }
         );
+    }
+
+    /** AsyncTask **/
+
+    private class LoadSearchData extends AsyncTask<String, String, AppScript>{
+
+        String type;
+        String[] data;
+
+        @Override
+        protected AppScript doInBackground(String... params) {
+
+            data = params;
+
+            final Map<String, String> map_data = new HashMap<String, String>();
+
+            type = params[0];
+
+            switch (type){
+
+                case "General":
+                    map_data.put("field_ref", "Locality");
+                    map_data.put("field_ref_val", params[1]);
+                    break;
+                case "Location":
+                    break;
+                default:
+                    map_data.put("field_ref", "Name");
+                    map_data.put("field_ref_val", params[1]);
+                    break;
+
+            }
+
+            return new AppScript(){{
+               setData("searchPlaces.php", map_data);
+            }};
+
+        }
+
+        @Override
+        protected void onPostExecute(AppScript appScript) {
+            super.onPostExecute(appScript);
+
+            switch (appScript.getResult()){
+
+                case "Data loaded.":
+                    List<Place> places = appScript.getPlacesList();
+                    int toggleTab = View.VISIBLE;
+                    if(type.equals("General"))
+                        switchFragment("", "add", FragmentSearchResultGeneral.newInstance(places));
+                    else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
+                        switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
+                        toggleTab = View.GONE;
+                    }
+
+                    loading_screen.setVisibility(View.GONE);
+                    setHeaderText(data[1], data[2]);
+                    contentSettings(
+                            View.GONE,
+                            View.VISIBLE,
+                            toggleTab,
+                            200,
+                            getResources().getColor(R.color.blackTransparent),
+                            true
+                    );
+                    break;
+
+            }
+
+        }
     }
 
     /** End of Abstract Methods **/

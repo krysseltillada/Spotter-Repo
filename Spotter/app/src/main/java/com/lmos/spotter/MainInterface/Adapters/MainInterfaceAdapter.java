@@ -1,12 +1,6 @@
 package com.lmos.spotter.MainInterface.Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Debug;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,14 +16,11 @@ import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
-import com.lmos.spotter.Utilities.Utilities;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,18 +30,45 @@ import java.util.List;
 
 public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdapter.MainInterfaceViewHolder>{
 
-    private int lastPosition = -1;
-
-    private ActivityType activityType;
-
-    private static ArrayList<ArrayList<Boolean>> checkBoxToggleList = new ArrayList<>();
-
-    private List<Place> places;
-
     public static PlaceType currentSelectedTab;
     public static boolean ifDoneInitialized = false;
-
+    private static ArrayList<ArrayList<Boolean>> checkBoxToggleList = new ArrayList<>();
+    private int lastPosition = -1;
+    private ActivityType activityType;
+    private List<Place> places;
     private Context context;
+
+    public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, List<Place> pl) {
+
+        places = pl;
+
+        if (acType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE ||
+            acType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
+
+            currentSelectedTab = placeType;
+
+            int toggleIndex = getPlaceTypeByIndex(placeType);
+
+            Log.d("Debug", "initialize three hotel restaurant and tourist spots list");
+
+            initCheckBoxToggleList();
+
+                if (checkBoxToggleList.get(toggleIndex).size() <= 0) {
+
+                    for (int i = 0; i != places.size(); ++i)
+                        checkBoxToggleList.get(toggleIndex).add(false);
+
+                }
+
+            displayCheckListValues(checkBoxToggleList);
+
+        }
+
+
+        //testCount = tc;
+        context = con;
+        activityType = acType;
+    }
 
     public static int getPlaceTypeByIndex (PlaceType type) {
         return  (PlaceType.HOTEL == type) ? 0 :
@@ -85,43 +103,28 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         }
     }
 
-
-    public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, List<Place> pl) {
-
-        places = pl;
-
-        if (acType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE ||
-            acType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
-
-            currentSelectedTab = placeType;
-
-            int toggleIndex = getPlaceTypeByIndex(placeType);
-
-            Log.d("Debug", "initialize three hotel restaurant and tourist spots list");
-
-            initCheckBoxToggleList();
-
-                if (checkBoxToggleList.get(toggleIndex).size() <= 0) {
-
-                    for (int i = 0; i != places.size(); ++i)
-                        checkBoxToggleList.get(toggleIndex).add(false);
-
-                }
-
-            displayCheckListValues(checkBoxToggleList);
-
-        }
-
-
-        //testCount = tc;
-        context = con;
-        activityType = acType;
-    }
-
     public static ArrayList<ArrayList<Boolean>> getCheckBoxToggleList () {
         return checkBoxToggleList;
     }
 
+    public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {
+
+        Log.d("Debug", "Size for hotel: " + String.valueOf(checkList.get(0).size()));
+
+        Log.d("Debug", "Size for Restaurant: " + String.valueOf(checkList.get(1).size()));
+
+        Log.d("Debug", "Size for Tourist spots: " + String.valueOf(checkList.get(2).size()));
+
+        for (int i = 0; i != checkList.size(); ++i) {
+
+            Log.d("Debug", "for index: " + String.valueOf(i));
+
+            for (int j = 0; j != checkList.get(i).size(); ++j) {
+                Log.d("Debug", "position: " + String.valueOf(checkList.get(i).get(j)));
+            }
+        }
+
+    }
 
     private int getLayoutIdByType (ActivityType type) {
 
@@ -137,7 +140,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         return 0;
 
     }
-
 
     @Override
     public MainInterfaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -172,13 +174,13 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
                 .placeholder(R.drawable.loadingplace)
                 .into(holder.placeCompanyImage); */
 
-        Log.d("debug", places.get(position).getPlaceImageLink());
+//        Log.d("debug", places.get(position).getPlaceImageLink());
 
         try {
 
 
 
-            String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
+           String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
                                                                              .getPlaceImageLink())
                                                                              .getString("placeImages"))
                                                                              .getString("frontImage");
@@ -244,7 +246,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         return super.getItemViewType(position);
     }
 
-
     private void setAnimation (View view, int position) {
 
         if (position > lastPosition) {
@@ -259,33 +260,12 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         return places.size();
     }
 
-    public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {
-
-        Log.d("Debug", "Size for hotel: " + String.valueOf(checkList.get(0).size()));
-
-        Log.d("Debug", "Size for Restaurant: " + String.valueOf(checkList.get(1).size()));
-
-        Log.d("Debug", "Size for Tourist spots: " + String.valueOf(checkList.get(2).size()));
-
-        for (int i = 0; i != checkList.size(); ++i) {
-
-            Log.d("Debug", "for index: " + String.valueOf(i));
-
-            for (int j = 0; j != checkList.get(i).size(); ++j) {
-                Log.d("Debug", "position: " + String.valueOf(checkList.get(i).get(j)));
-            }
-        }
-
-    }
-
    public class MainInterfaceViewHolder extends RecyclerView.ViewHolder {
-
-        View rowV;
 
         public ImageView placeCompanyImage, gradeIcon;
         public TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview;
-
         public CheckBox cbDelete;
+        View rowV;
 
         public MainInterfaceViewHolder (View rowView) {
 

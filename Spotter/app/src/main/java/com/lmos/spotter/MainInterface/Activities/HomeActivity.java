@@ -28,7 +28,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
@@ -42,20 +41,15 @@ import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
-import com.lmos.spotter.Utilities.ActivityType;
-import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
-
-    public interface OnRespondError {
-        void onRespondError (String error);
-    }
 
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
@@ -72,16 +66,12 @@ public class HomeActivity extends AppCompatActivity
     private ProgressBar recycleViewProgressBar;
     private CoordinatorLayout mainLayout;
     private TabLayout tabLayout;
-
-    private int startingIndex;
-    private int tableCount;
-
+    private int startingIndex = 0;
+    private int tableCount = 0;
     private String placeType;
     private Activity activity = this;
     private ActionBarDrawerToggle drawerToggle;
-
     private List <Place> placeDataList;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,7 +88,6 @@ public class HomeActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
     }
-
 
     public void userNavDropDown (View view) {
 
@@ -152,17 +141,17 @@ public class HomeActivity extends AppCompatActivity
 
             placeDataList = new ArrayList<>();
 
-            mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
+           /** mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
                     ActivityType.HOME_ACTIVITY,
                     PlaceType.NONE,
                     placeDataList);
-
-            tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
+**/
+            //tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
             tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
             recycleViewProgressBar.setVisibility(View.VISIBLE);
 
-            new PlaceLoader().setOnRespondError(new OnRespondError() {
+            /**new PlaceLoader().setOnRespondError(new OnRespondError() {
 
                 @Override
                 public void onRespondError(String error) {
@@ -173,7 +162,7 @@ public class HomeActivity extends AppCompatActivity
 
                 }
 
-            }).execute("0", "4");
+            }).execute("0", "4");**/
 
             tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -451,7 +440,6 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -502,6 +490,10 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+    public interface OnRespondError {
+        void onRespondError (String error);
+    }
+
     class PlaceLoader extends AsyncTask<String, Void, AppScript> {
 
         OnRespondError onRespondError;
@@ -514,15 +506,16 @@ public class HomeActivity extends AppCompatActivity
         @Override
         protected AppScript doInBackground(final String ...params) {
 
-                final AppScript loadPlaces = new AppScript() {{
-                    setData("loadPlaces.php", new HashMap<String, String>() {{
-                        put("currentRow", params[0]);
-                        put("rowOffset", params[1]);
-                    }});
-                }};
+            return new AppScript(){{
+               setData(
+                       "loadPlaces.php",
+                       new HashMap<String, String>(){{
+                            put("currentRow", params[0]);
+                            put("rowOffset", params[1]);
+                       }}
+               );
+            }};
 
-
-            return loadPlaces;
         }
 
 
@@ -530,25 +523,25 @@ public class HomeActivity extends AppCompatActivity
         protected void onPostExecute(AppScript loadPlaces) {
             super.onPostExecute(loadPlaces);
 
-            try {
+            if(loadPlaces.getResult().equals("Data loaded.")){
 
                 tableCount = Integer.parseInt(loadPlaces.getTableCount());
-                startingIndex = Integer.parseInt(loadPlaces.getOffSet()) + 1;
+                startingIndex = Integer.parseInt(loadPlaces.getOffSet());
 
-                List<Place> placeD = loadPlaces.getPlacesList();
+                List<Place> places = loadPlaces.getPlacesList();
+                Iterator listIterator = places.listIterator();
 
-                for (Place place : placeD)
+                for(Place place : places){
                     placeDataList.add(place);
+                }
 
-                for (int i = 0; i != placeDataList.size(); ++i)
+                Log.d("Home", "Notifying change");
+                for(int i = 0; i != placeDataList.size(); ++i)
                     mainInterfaceAdapter.notifyItemChanged(i);
 
-                recycleViewProgressBar.setVisibility(View.GONE);
-
-            } catch (Exception e) {
-                onRespondError.onRespondError(e.getMessage());
             }
-
+            else
+            recycleViewProgressBar.setVisibility(View.GONE);
 
         }
     }

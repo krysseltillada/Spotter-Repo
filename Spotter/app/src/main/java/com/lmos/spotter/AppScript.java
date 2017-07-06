@@ -1,12 +1,8 @@
 package com.lmos.spotter;
 
-import android.graphics.Bitmap;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
-import com.lmos.spotter.Utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,8 +22,8 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +52,7 @@ import java.util.Map;
 
 public class AppScript {
 
+    final String default_url = "http://admin-spotter.000webhostapp.com/app_scripts/";
     private List<Place> placeNames;
     private String response;
     private String offSet;
@@ -64,10 +61,22 @@ public class AppScript {
 
     protected AppScript(){}
 
+    public void setData(String... params){
+        String post_data = "";
+        try {
+            connect(
+                    default_url + params[0],
+                    URLEncoder.encode("startIndex", "UTF-8") + "="
+                    + URLEncoder.encode(params[1], "UTF-8")
+            );
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setData(String url, Map<String, String> params){
 
         String post_data = "";
-        final String default_url = "http://192.168.3.4/projects/spotter/app_scripts/";
 
         if(params != null){
 
@@ -91,7 +100,7 @@ public class AppScript {
             }
 
         }
-        Log.d("PARAM", default_url + url + " " + post_data);
+
         connect(default_url + url, post_data);
 
     }
@@ -150,6 +159,8 @@ public class AppScript {
         } catch (MalformedURLException e) {
             e.printStackTrace();
             response = e.getMessage();
+        }catch(UnknownHostException e){
+            e.printStackTrace();
         }catch (SocketTimeoutException | ConnectException e){
             e.printStackTrace();
             Log.d("debug", e.getMessage());
@@ -195,17 +206,21 @@ public class AppScript {
                     setPlace.setplaceName(place_item.getString("Name"));
                     setPlace.setplaceType(place_item.getString("Type"));
                     setPlace.setplaceAddress(place_item.getString("Address"));
+                    setPlace.setPlaceLat(place_item.getString("Latitude"));
+                    setPlace.setPlaceLng(place_item.getString("Longitude"));
+                    Log.d("Longitude", place_item.getString("Longitude"));
 
-                    if(!response_code.equals("0x11")){
+                    if(response_code.equals("0x10")){
 
                         setPlace.setplaceLocality(place_item.getString("Locality"));
                         setPlace.setplaceDescription(place_item.getString("Description"));
+                        //setPlace.setplaceImageLink(place_item.getString("Image"));
                         setPlace.setplaceClass(place_item.getString("Class"));
                         setPlace.setplacePriceRange(place_item.getString("PriceRange"));
 
-                        JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
-                        offSet = responseData.getString("endOffset");
-                        tableCount = responseData.getString("tableCount");
+//                        JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
+// offSet = responseData.getString("endOffset");
+   //                     tableCount = responseData.getString("tableCount");
 
                     }
 
@@ -221,7 +236,7 @@ public class AppScript {
                 response = jsonObject.getString("response_msg");
 
             }
-            else if(response_code.equals("1x01") || response_code.equals("1x02"))
+            else // Error
                 response = jsonObject.getString("response_msg");
 
 

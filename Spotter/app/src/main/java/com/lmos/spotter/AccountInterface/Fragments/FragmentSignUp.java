@@ -3,7 +3,6 @@ package com.lmos.spotter.AccountInterface.Fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -15,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.UserAccount;
@@ -31,12 +31,11 @@ import java.util.Map;
 
 public class FragmentSignUp extends Fragment {
 
+    private final int TAKE_PHOTO_REQUEST = 1800;
     ImageButton register_img;
     Bitmap userImage;
     TextInputEditText name, email, username, password;
     Button sign_up;
-
-    private final int TAKE_PHOTO_REQUEST = 1800;
 
     @Nullable
     @Override
@@ -78,10 +77,10 @@ public class FragmentSignUp extends Fragment {
                 if(username.getText().toString().length() >= 6 ||
                         password.getText().toString().length() >= 6 ) {
 
-                    if (!Utilities.validateEmail(registeredUserAccount.email)) {
+                    /**if (!Utilities.validateEmail(registeredUserAccount.email)) {
                         Toast.makeText(getContext(), "invalid email", Toast.LENGTH_LONG).show();
                         return;
-                    }
+                    }**/
 
                     final Map<String, String> map_data = new HashMap<String, String>() {{
 
