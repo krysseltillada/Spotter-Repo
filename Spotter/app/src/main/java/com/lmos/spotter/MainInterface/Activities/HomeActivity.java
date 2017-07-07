@@ -200,10 +200,10 @@ public class HomeActivity extends AppCompatActivity
                     if(Utilities.checkIfLastScrolledItem(v, scrollX, scrollY, oldScrollX, oldScrollY)) {
 
 
-                            if (startingIndex < tableCount) {
+                            if (startingIndex < tableCount &&
+                                placeDataList.size() > 0 && itemListProgressBar.getVisibility() != View.VISIBLE) {
 
                                 itemListProgressBar.setVisibility(View.VISIBLE);
-
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -218,7 +218,6 @@ public class HomeActivity extends AppCompatActivity
                                             }
                                         }).execute(String.valueOf(startingIndex), "5");
 
-                                        itemListProgressBar.setVisibility(View.GONE);
 
                                     }
                                 }, 200);
@@ -531,7 +530,7 @@ public class HomeActivity extends AppCompatActivity
             try {
 
                 tableCount = Integer.parseInt(loadPlaces.getTableCount());
-                startingIndex = Integer.parseInt(loadPlaces.getOffSet()) + 1;
+                startingIndex = Integer.parseInt(loadPlaces.getOffSet());
 
                 List<Place> placeD = loadPlaces.getPlacesList();
 
@@ -542,6 +541,7 @@ public class HomeActivity extends AppCompatActivity
                     mainInterfaceAdapter.notifyItemChanged( (placeDataList.size() - 1) + i);
 
                 recycleViewProgressBar.setVisibility(View.GONE);
+                itemListProgressBar.setVisibility(View.GONE);
 
             } catch (Exception e) {
                 onRespondError.onRespondError(e.getMessage());
