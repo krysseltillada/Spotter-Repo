@@ -67,11 +67,13 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.DialogActivity;
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -794,15 +796,20 @@ public class Utilities {
                     new LocationListener() {
                         @Override
                         public void onLocationChanged(Location location) {
-                            Log.d("LocationHandler", "Lat:" + location.getLatitude() + " Lng:" + location.getLongitude());
-                            if(checkNetworkState(activity)) {
-                                new getLocationName().execute(location.getLatitude(), location.getLongitude());
-                                LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
-                            }
+                            Log.d("FragmentResult", "Location found!");
+                            OnLocationFoundListener.onLocationFoundLatLng(
+                                    location.getLatitude(),
+                                    location.getLongitude()
+                            );
+                            LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
                         }
                     }
             );
 
+        }
+
+        public String getLocality(Double lat, Double lng){
+            return null;
         }
 
         class getLocationName extends AsyncTask<Double, Void, Void>{
@@ -874,4 +881,22 @@ public class Utilities {
     }
 
     /** End of Interfaces **/
+
+    public static class SortPlaces implements Comparator<Place>{
+
+        @Override
+        public int compare(Place o1, Place o2) {
+
+            int returnVal = 0;
+
+            if(Double.parseDouble(o1.getPlaceRating()) < Double.parseDouble(o2.getPlaceRating()))
+                returnVal = 1;
+            else if(Double.parseDouble(o1.getPlaceRating()) > Double.parseDouble(o2.getPlaceRating()))
+                returnVal = -1;
+            else if(Double.parseDouble(o1.getPlaceRating()) == Double.parseDouble(o2.getPlaceRating()))
+                returnVal = 0;
+
+            return returnVal;
+        }
+    }
 }

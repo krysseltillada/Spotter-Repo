@@ -175,7 +175,7 @@ public class AppScript {
     private void parseResult(String processResult){
 
         try {
-
+            Log.d("LOG", "parsing");
             final JSONObject jsonObject = new JSONObject(processResult);
             String response_code = jsonObject.getString("response_code");
 
@@ -201,7 +201,7 @@ public class AppScript {
 
                     Place setPlace = new Place();
                     JSONObject place_item = place_list.getJSONObject(index);
-
+                    Log.d("LOG", place_item.getString("placeID") + " " + response_code);
                     setPlace.setPlaceID(place_item.getString("placeID"));
                     setPlace.setplaceName(place_item.getString("Name"));
                     setPlace.setplaceType(place_item.getString("Type"));
@@ -214,9 +214,10 @@ public class AppScript {
 
                         setPlace.setplaceLocality(place_item.getString("Locality"));
                         setPlace.setplaceDescription(place_item.getString("Description"));
-                        //setPlace.setplaceImageLink(place_item.getString("Image"));
+                        setPlace.setplaceImageLink(place_item.getString("Image"));
                         setPlace.setplaceClass(place_item.getString("Class"));
                         setPlace.setplacePriceRange(place_item.getString("PriceRange"));
+                        setPlace.setRating(place_item.getString("Rating"));
 
 //                        JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
 // offSet = responseData.getString("endOffset");
@@ -234,6 +235,7 @@ public class AppScript {
                     placeNames = new ArrayList<>(place);
 
                 response = jsonObject.getString("response_msg");
+                Log.d("LOG", response);
 
             }
             else // Error

@@ -1,12 +1,8 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -17,10 +13,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,8 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,10 +30,12 @@ import com.lmos.spotter.AppScript;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
-import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
 import com.lmos.spotter.Utilities.Utilities;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,18 +50,13 @@ import java.util.Map;
  */
 
 public class SearchResultsActivity extends AppCompatActivity
-    implements
-    Utilities.OnLocationFoundListener,
-    Utilities.OnDbResponseListener{
+    implements Utilities.OnDbResponseListener{
 
     /** Initialize views **/
     ViewFlipper viewFlipperManager;
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
     TextView place_name, place_address;
-    RecyclerView recyclerView;
-    RecyclerView.LayoutManager layoutManager;
-    SearchReviewsAdapter mAdapter;
     View actionBarView;
     DbHelper dbHelper;
     RelativeLayout loading_screen, desc_tab_holder;
@@ -79,15 +67,12 @@ public class SearchResultsActivity extends AppCompatActivity
     TabLayout searchResultsTab;
     Menu toolbarMenu;
     CoordinatorLayout coordinatorLayout;
-    Button showAllSearchResults;
-    Button navigate;
     /** End of initializing views **/
 
-    boolean isLocationFragment = false;
     boolean showBookmarkInAppBar = false;
 
     Activity activity = this;
-    Utilities.LocationHandler locationHandler = new Utilities.LocationHandler(this, this);
+    String name;
     private String fragmentType;
 
     private void startBackgroundHeaderFadeIn(){
@@ -120,8 +105,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
         Utilities.setSearchBar(this, actionBarView);
 
-        locationHandler.buildGoogleClient();
-
         contentSettings(
                 View.VISIBLE,
                 View.GONE,
@@ -136,7 +119,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
         if (params != null) {
             // First index of params represents the type.
-            setHeaderText(params[1], params[2]);
+            name = params[1];
+            setHeaderText(params[1]);
             fragmentType = params[0];
             if(fragmentType.equals("Location")){
                 boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
@@ -171,14 +155,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
         appBarLayout.setExpanded(true);
         nsview.smoothScrollTo(0, 0);
-        recyclerView.smoothScrollToPosition(0);
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        locationHandler.changeApiState("connect");
     }
 
     @Override
@@ -194,14 +171,26 @@ public class SearchResultsActivity extends AppCompatActivity
 
     /** Activity methods **/
 
-    private void setHeaderText(String name, String address){
+    public void setHeaderText(String name){
         place_name.setText(name);
-        place_address.setText(address);
     }
 
-    private void fadeInView () {
-        coordinatorLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
-                                                                    android.R.anim.fade_in));
+    public void setHeaderImg(String imageLink){
+
+        try{
+
+            JSONObject fObj = new JSONObject(imageLink);
+            String s0bj = fObj.getString("placeImages");
+            Log.d("JSON", s0bj);
+
+            /**for(int i = 0; i < t0bj.length(); i ++){
+                Log.d("JSONARRAY", t0bj.getString(i));
+            }**/
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void switchFragment(String type, String cmd, Fragment fragment){
@@ -210,18 +199,10 @@ public class SearchResultsActivity extends AppCompatActivity
 
         appBarLayout.setExpanded(true);
         nsview.smoothScrollTo(0, 0);
-        recyclerView.smoothScrollToPosition(0);
-
-        if (!type.equals("Map"))
-            fadeInView();
-        else
-            view_id = R.id.map_content_holder;
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
         if(cmd.equals("add")){
-
-            Log.d("debug", "add");
 
             fragmentManager.beginTransaction()
                     .add(view_id, fragment, type)
@@ -230,12 +211,12 @@ public class SearchResultsActivity extends AppCompatActivity
         }
         else{
 
-            Log.d("debug", "replace");
-
             fragmentManager.beginTransaction()
                     .addToBackStack("General")
                     .replace(view_id, fragment, type)
                     .commit();
+
+            searchResultsTab.setVisibility(View.GONE);
 
         }
 
@@ -297,70 +278,30 @@ public class SearchResultsActivity extends AppCompatActivity
         desc_tab_holder = (RelativeLayout) findViewById(R.id.description_tab_holder);
         nsview = (NestedScrollView) findViewById(R.id.search_nsview);
 
-        showAllSearchResults = (Button)findViewById(R.id.showAllSearchResults);
-
         loading_img = (ImageView) findViewById(R.id.loading_img_holder);
         loading_msg = (TextView) findViewById(R.id.loading_msg);
         loading_error_msg = (TextView) findViewById(R.id.loading_error_msg);
 
-        navigate = (Button)findViewById(R.id.btnNavigate);
-
-        navigate.setOnClickListener(new View.OnClickListener() {
+        searchResultsTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Log.d("Tab", tab.getText().toString());
+                FragmentSearchResultGeneral.changeAdapter(tab.getText().toString());
+                nsview.smoothScrollTo(0,0);
+            }
 
             @Override
-            public void onClick(View v) {
-
-                AlertDialog wazePromptDialog = new AlertDialog.Builder(
-                        SearchResultsActivity.this).setTitle("launch waze?")
-                        .setMessage("Be sure that waze is installed if not the app will link to the play store to install it")
-                        .setPositiveButton("Ok",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        try
-                                        {
-                                            String url = "waze://?ll=13.7565,121.0583&navigate=yes";
-                                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                            startActivity(intent);
-                                        }
-                                        catch ( ActivityNotFoundException ex  )
-                                        {
-                                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
-                                            startActivity(intent);
-                                        }
-
-
-                                    }
-                                }).setNegativeButton("Cancel",
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {dialog.dismiss();
-                                    }
-                                }).create();
-
-                wazePromptDialog.show();
+            public void onTabUnselected(TabLayout.Tab tab) {
 
             }
 
-        });
-
-        boolean isPlayServicesAvailable = Utilities.checkPlayServices(this, new DialogInterface.OnDismissListener() {
-
             @Override
-            public void onDismiss(DialogInterface dialog) {
-                onBackPressed();
-            }
+            public void onTabReselected(TabLayout.Tab tab) {
 
+            }
         });
 
-        if (isPlayServicesAvailable) {
-
-            Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
-            loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
-
-        }
-
+        searchResultsTab.getTabAt(0).select();
 
         /** Set app bar layout, toolbar and collapsing toolbar for SearchResultHeader **/
 
@@ -383,20 +324,6 @@ public class SearchResultsActivity extends AppCompatActivity
         collapsingToolbarLayout.setTitle("");
 
         /** End of setting header **/
-
-        /** Set RecyclerView for user reviews. **/
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mAdapter = new SearchReviewsAdapter();
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter);
-        /** End setting RecyclerView **/
-
-        // Inflate map into Framelayout
-        //switchFragment("Map", "add", );
-
-        FrameLayout fm = (FrameLayout) findViewById(R.id.search_content_holder);
-        fm.requestDisallowInterceptTouchEvent(true);
 
         setSupportActionBar(toolbar);
 
@@ -429,62 +356,6 @@ public class SearchResultsActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    /** End of AsycTask **/
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode){
-
-            case Utilities.REQUEST_CODES.LOCATION_REQUEST_CODE:
-
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    locationHandler.findLocation();
-                }
-                break;
-        }
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode){
-
-            case Utilities.REQUEST_CODES.CHECK_SETTING_REQUEST_CODE:
-                switch (resultCode){
-
-                    case RESULT_OK:
-                        Log.d("LocationHandler", "Permission granted");
-                        /*if(!Utilities.checkNetworkState(activity))
-                        {
-                            Intent intent = new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
-                            startActivity(intent);
-                        }*/
-                        contentSettings(
-                                View.GONE,
-                                View.VISIBLE,
-                                View.VISIBLE,
-                                200,
-                                getResources().getColor(R.color.blackTransparent),
-                                true
-                        );
-                        return;
-                    case RESULT_CANCELED:
-                        loading_error_msg.setText("Sorry, but we cannot detect your location unless you enable your GPS and either your Mobile Data or Wi-Fi.");
-                        loading_error_msg.setVisibility(View.VISIBLE);
-                        loading_img.setVisibility(View.GONE);
-                        loading_msg.setVisibility(View.GONE);
-                        return;
-                }
-                break;
-
-        }
-
-    }
-
     @Override
     public void onBackPressed() {
 
@@ -497,11 +368,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
             appBarLayout.setExpanded(true);
             nsview.smoothScrollTo(0, 0);
-            recyclerView.smoothScrollToPosition(0);
-            showAllSearchResults.setVisibility(View.VISIBLE);
-            ((FrameLayout)showAllSearchResults.getParent()).setVisibility(View.VISIBLE);
-
-            fadeInView();
+            setHeaderText(name);
+            searchResultsTab.getTabAt(0).select();
 
             getSupportFragmentManager().popBackStack();
 
@@ -509,26 +377,6 @@ public class SearchResultsActivity extends AppCompatActivity
             finish();
         }
 
-    }
-
-    @Override
-    public void onLocationFoundCity(String location) {
-
-
-
-    }
-
-    @Override
-    public void onLocationFoundLatLng(double lat, double lng) {
-
-        /**if (isLocationFragment)
-            switchFragment("", "add", null);
-
-        MapsLayoutFragment mapsLayoutFragment = (MapsLayoutFragment)getSupportFragmentManager().findFragmentByTag("Map");
-
-        if (mapsLayoutFragment != null)
-            mapsLayoutFragment.setUserPosition(new LatLng(lat, lng));
-**/
     }
 
     @Override
@@ -546,6 +394,8 @@ public class SearchResultsActivity extends AppCompatActivity
                 }
         );
     }
+
+    /** End of Abstract Methods **/
 
     /** AsyncTask **/
 
@@ -577,7 +427,7 @@ public class SearchResultsActivity extends AppCompatActivity
                     break;
 
             }
-
+            Log.d("LOG", "connecting");
             return new AppScript(){{
                setData("searchPlaces.php", map_data);
             }};
@@ -588,34 +438,30 @@ public class SearchResultsActivity extends AppCompatActivity
         protected void onPostExecute(AppScript appScript) {
             super.onPostExecute(appScript);
 
-            switch (appScript.getResult()){
+            if(appScript.getResult() != null && appScript.getResult().equals("Data loaded.")){
+                List<Place> places = appScript.getPlacesList();
+                int toggleTab = View.VISIBLE;
+                if(type.equals("General"))
+                    switchFragment("", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
+                else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
+                    switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
+                    toggleTab = View.GONE;
+                }
 
-                case "Data loaded.":
-                    List<Place> places = appScript.getPlacesList();
-                    int toggleTab = View.VISIBLE;
-                    if(type.equals("General"))
-                        switchFragment("", "add", FragmentSearchResultGeneral.newInstance(places));
-                    else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
-                        switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
-                        toggleTab = View.GONE;
-                    }
-
-                    loading_screen.setVisibility(View.GONE);
-                    setHeaderText(data[1], data[2]);
-                    contentSettings(
-                            View.GONE,
-                            View.VISIBLE,
-                            toggleTab,
-                            200,
-                            getResources().getColor(R.color.blackTransparent),
-                            true
-                    );
-                    break;
+                loading_screen.setVisibility(View.GONE);
+                setHeaderText(data[1]);
+                contentSettings(
+                        View.GONE,
+                        View.VISIBLE,
+                        toggleTab,
+                        200,
+                        getResources().getColor(R.color.blackTransparent),
+                        true
+                );
 
             }
 
         }
     }
-
-    /** End of Abstract Methods **/
+    /** End of AsycTask **/
 }

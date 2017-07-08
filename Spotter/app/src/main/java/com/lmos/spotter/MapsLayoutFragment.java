@@ -18,7 +18,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.lmos.spotter.Utilities.MapDirections;
 
@@ -33,17 +32,15 @@ import com.lmos.spotter.Utilities.MapDirections;
 public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
 
-    LatLng srcPosition;
     GoogleMap googleMap;
+    LatLng destination;
 
-    public static MapsLayoutFragment newInstance(double lat, double lng){
+    public static MapsLayoutFragment newInstance(LatLng destination){
 
         MapsLayoutFragment mapsLayoutFragment = new MapsLayoutFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putDouble("Lat",lat);
-        bundle.putDouble("Lng",lng);
-
+        bundle.putParcelable("destination", destination);
         mapsLayoutFragment.setArguments(bundle);
 
         return mapsLayoutFragment;
@@ -54,49 +51,40 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View mainLayout = inflater.inflate(R.layout.map_layout, container, false);
-
-
-
         return mainLayout;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_holder);
         mapFragment.getMapAsync(this);
-        setUserPosition(new LatLng(getArguments().getDouble("Lat"), getArguments().getDouble("Lng")));
-
+        destination = getArguments().getParcelable("destination");
     }
 
-    public void setUserPosition (LatLng userPosition) {
-
-        srcPosition = userPosition;
+    public void setUserPosition (final LatLng userPosition) {
 
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
+        Log.d("UserPosLatDis", String.valueOf(userPosition.latitude));
 
-        final LatLng sourcePosition =  new LatLng(srcPosition.latitude, srcPosition.longitude);
-        final LatLng destPosition = new LatLng(14.4845, 120.9921);
-
-        Marker sourceMarker = googleMap.addMarker(new MarkerOptions().position(sourcePosition)
+        googleMap.addMarker(new MarkerOptions().position(userPosition)
                 .title("your here")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
-        Marker destMarker = googleMap.addMarker(new MarkerOptions().position(destPosition).title("destination"));
+        googleMap.addMarker(new MarkerOptions().position(destination).title("destination"));
 
         new MapDirections(getContext(),
                 googleMap,
-                sourcePosition,
-                destPosition,
+                userPosition,
+                destination,
                 Color.CYAN,
                 5
         ).drawDirections()
                 .setOnDoneDrawDirectionListener(new MapDirections.OnDoneDrawDirectionListener() {
                     @Override
                     public void onDoneDrawDirection(String duration, String distance) {
-
+                        Log.d("Map", "Drawing Direction");
                         String directionMessage = "time: " +  duration +
                                 " distance: " + distance;
 
@@ -106,8 +94,8 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
         LatLngBounds.Builder zoomBuilder = new LatLngBounds.Builder();
 
-        zoomBuilder.include(sourcePosition);
-        zoomBuilder.include(destPosition);
+        zoomBuilder.include(userPosition);
+        zoomBuilder.include(destination);
 
         final LatLngBounds zoomBounds = zoomBuilder.build();
 
@@ -116,9 +104,22 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds, 150));
+
+                /**cameraPosition = new CameraPosition.Builder()
+                        .target(userPosition)
+                        .zoom(150)
+                        .bearing(0)
+                        .tilt(45)
+                        .build();
+
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));**/
+
+                googleMap.animateCamera(
+                        CameraUpdateFactory.newLatLngBounds(zoomBounds, 150));
             }
         });
+
+
 
     }
 
@@ -134,57 +135,6 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         googleMap.setBuildingsEnabled(true);
 
         googleMap.getUiSettings().setMapToolbarEnabled(false);
-
-
-        /*
-
-        int screenWidth = getResources().getDisplayMetrics().widthPixels;
-        int screenHeight = getResources().getDisplayMetrics().heightPixels;
-f
-        final LatLng sourcePosition =  new LatLng(srcPosition.latitude, srcPosition.longitude);
-        final LatLng destPosition = new LatLng(13.7565, 121.0583);
-
-        Marker sourceMarker = googleMap.addMarker(new MarkerOptions().position(sourcePosition)
-                                                                     .title("your here")
-                                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-
-        Marker destMarker = googleMap.addMarker(new MarkerOptions().position(destPosition).title("destination"));
-
-        new MapDirections(getContext(),
-                          googleMap,
-                          sourcePosition,
-                          destPosition,
-                          Color.CYAN,
-                          5
-                          ).drawDirections()
-                           .setOnDoneDrawDirectionListener(new MapDirections.OnDoneDrawDirectionListener() {
-                               @Override
-                               public void onDoneDrawDirection(String duration, String distance) {
-
-                                   String directionMessage = "travel time: " +  duration +
-                                                             "travel distance: " + distance;
-
-                                   Snackbar.make(getView(), directionMessage, Snackbar.LENGTH_INDEFINITE).show();
-
-                               }
-                           });
-
-        LatLngBounds.Builder zoomBuilder = new LatLngBounds.Builder();
-
-        zoomBuilder.include(sourcePosition);
-        zoomBuilder.include(destPosition);
-
-        final LatLngBounds zoomBounds = zoomBuilder.build();
-
-        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(zoomBounds, 120));
-            }
-        });
-
-        */
-
 
     }
 }

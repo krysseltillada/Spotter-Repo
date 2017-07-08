@@ -1,21 +1,18 @@
 package com.lmos.spotter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.Utilities.Utilities;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
-import java.util.List;
 
 /**
  * Created by emman on 6/12/2017.
@@ -37,10 +34,7 @@ public class SplashScreen extends AppCompatActivity {
 
         splash_msg = (TextView) findViewById(R.id.splash_msg);
 
-        if(Utilities.checkNetworkState(this))
-            new GetPlaceNames().execute();
-        else
-            splash_msg.setText("You're not connected to the outside world.");
+        new GetPlaceNames(this).execute();
 
     }
 
@@ -59,6 +53,12 @@ public class SplashScreen extends AppCompatActivity {
 
     public class GetPlaceNames extends AsyncTask<Void, String, Void>{
 
+        Activity activity;
+
+        public GetPlaceNames(Activity activity){
+            this.activity = activity;
+        }
+
         @Override
         protected void onProgressUpdate(String... values) {
             splash_msg.setText(values[0]);
@@ -73,15 +73,20 @@ public class SplashScreen extends AppCompatActivity {
 
 
             if(!database.exists()){
-                publishProgress("We're setting things up for you, please wait a moment.");
-                AppScript appScript = new AppScript(){{
-                   setData("get-all-place-name.php", null);
-                }};
+                if(Utilities.checkNetworkState(activity)){
+                    publishProgress("We're setting things up for you, please wait a moment.");
+                    AppScript appScript = new AppScript(){{
+                        setData("get-all-place-name.php", null);
+                    }};
 
-                String result = appScript.getResult();
-                if(result != null && result.equals("Data loaded."))
-                    publishProgress("Almost done...");
+                    String result = appScript.getResult();
+                    if(result != null && result.equals("Data loaded."))
+                        publishProgress("Almost done...");
                     dbHelper.savePlaceName(appScript.getPlaceNames());
+                }
+                else{
+                    publishProgress("You are not connected. Please try again.");
+                }
 
             }
 

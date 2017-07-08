@@ -1,10 +1,7 @@
 package com.lmos.spotter.SearchInterface.Fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lmos.spotter.Place;
@@ -25,6 +21,7 @@ import com.lmos.spotter.SearchInterface.Adapters.GeneralResultsAdapter;
 import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,22 +30,45 @@ import java.util.List;
 
 public class FragmentSearchResultGeneral extends Fragment {
 
-    TabLayout tabLayout;
-    RecyclerView recyclerView;
-    GeneralResultsAdapter mAdapter;
+    private static RecyclerView recyclerView;
+    private static GeneralResultsAdapter mAdapter;
+    private static List<Place> places;
     RecyclerView.LayoutManager layoutManager;
-    List<Place> places;
 
-    public static FragmentSearchResultGeneral newInstance(List<Place> places){
+    public static FragmentSearchResultGeneral newInstance(String focusedTab, List<Place> places){
 
         FragmentSearchResultGeneral fsg = new FragmentSearchResultGeneral();
 
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("places", new ArrayList<Place>(places));
-
+        bundle.putString("type", focusedTab);
         fsg.setArguments(bundle);
 
         return fsg;
+    }
+
+    public static List<Place> setPlaceByType(String type){
+        List<Place> setPlace = new ArrayList<>();
+        for(Place p : places){
+            if(p.getPlaceType().equalsIgnoreCase(type))
+                setPlace.add(p);
+
+            Log.d("type", p.getPlaceType());
+        }
+
+        Collections.sort(setPlace, new Utilities.SortPlaces());
+
+        return setPlace;
+    }
+
+    public static void changeAdapter(String type){
+        if(mAdapter != null)
+            mAdapter = null;
+
+        mAdapter = new GeneralResultsAdapter(setPlaceByType(type));
+        mAdapter.notifyItemChanged(0);
+        recyclerView.swapAdapter(mAdapter, false);
+
     }
 
     @Nullable
@@ -57,24 +77,18 @@ public class FragmentSearchResultGeneral extends Fragment {
 
 
         View thisView = inflater.inflate(R.layout.search_result_general, container, false);
-
+        Log.d("LOG", "Creating fragment view");
         places = getArguments().getParcelableArrayList("places");
 
-        if(places == null)
-            Log.d("Results", "Null");
-
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
-        mAdapter = new GeneralResultsAdapter(places);
         layoutManager = new LinearLayoutManager(getContext());
-
+        mAdapter = new GeneralResultsAdapter(getContext(), setPlaceByType(getArguments().getString("type")));
 
         // Set RecyclerView onClickListener
         mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
             @Override
             public void OnItemClick(Place place) {
-
-                Toast.makeText(getContext(), place.getPlaceID(), Toast.LENGTH_LONG).show();
-
+                ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
             }
 
             @Override
@@ -100,8 +114,14 @@ public class FragmentSearchResultGeneral extends Fragment {
           * smoothly inside NestedScrollView
          **/
         recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.requestDisallowInterceptTouchEvent(true);
 
         return thisView;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        places = null;
+    }
 }

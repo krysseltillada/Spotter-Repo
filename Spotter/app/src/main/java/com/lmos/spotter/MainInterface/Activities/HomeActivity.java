@@ -41,6 +41,8 @@ import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
+import com.lmos.spotter.Utilities.ActivityType;
+import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.ArrayList;
@@ -141,17 +143,17 @@ public class HomeActivity extends AppCompatActivity
 
             placeDataList = new ArrayList<>();
 
-           /** mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
+           mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
                     ActivityType.HOME_ACTIVITY,
                     PlaceType.NONE,
                     placeDataList);
-**/
+
             //tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
             tabLayoutRecyclerView.setNestedScrollingEnabled(false);
 
             recycleViewProgressBar.setVisibility(View.VISIBLE);
 
-            /**new PlaceLoader().setOnRespondError(new OnRespondError() {
+            new PlaceLoader().setOnRespondError(new OnRespondError() {
 
                 @Override
                 public void onRespondError(String error) {
@@ -162,7 +164,7 @@ public class HomeActivity extends AppCompatActivity
 
                 }
 
-            }).execute("0", "4");**/
+            }).execute("0", "4");
 
             tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -298,12 +300,6 @@ public class HomeActivity extends AppCompatActivity
     private void initComp(){
 
         SharedPreferences userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
-
-        Log.d("debug", userData.getString("username", ""));
-        Log.d("debug", userData.getString("email", ""));
-        Log.d("debug", userData.getString("password", ""));
-        Log.d("debug", userData.getString("accountID", ""));
-        Log.d("debug", userData.getString("name", ""));
 
         setContentView(R.layout.activity_home_menu);
 
@@ -523,7 +519,7 @@ public class HomeActivity extends AppCompatActivity
         protected void onPostExecute(AppScript loadPlaces) {
             super.onPostExecute(loadPlaces);
 
-            if(loadPlaces.getResult().equals("Data loaded.")){
+            if(loadPlaces.getResult() != null && loadPlaces.getResult().equals("Data loaded.")){
 
                 tableCount = Integer.parseInt(loadPlaces.getTableCount());
                 startingIndex = Integer.parseInt(loadPlaces.getOffSet());
