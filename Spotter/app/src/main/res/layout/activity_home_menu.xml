@@ -1,170 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/pullUpLoadLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:openDrawer="start">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/homeLayout"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        tools:openDrawer="start">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/app_bar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="275dp"
-            android:theme="@style/AppTheme.AppBarOverlay">
-
-            <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/home_collapsing_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-                <ViewFlipper
-                    android:id="@+id/viewFlipManager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_collapseMode="parallax">
-
-                    <ImageView
-                        android:id="@+id/popularImageView1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:adjustViewBounds="false"
-                        android:background="@drawable/place1"
-                        android:contentDescription="@string/most_popular_desc"
-                        android:cropToPadding="false"
-                        android:visibility="visible" />
-
-                    <ImageView
-                        android:id="@+id/popularImageView2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:adjustViewBounds="false"
-                        android:background="@drawable/place"
-                        android:contentDescription="@string/most_popular_desc"
-                        android:cropToPadding="false"
-                        android:visibility="gone" />
-
-                    <ImageView
-                        android:id="@+id/popularImageView3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:adjustViewBounds="false"
-                        android:background="@drawable/place1"
-                        android:contentDescription="@string/most_popular_desc"
-                        android:cropToPadding="false"
-                        android:visibility="gone" />
-
-                </ViewFlipper>
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/action_bar_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_marginBottom="48dp"
-                    android:background="@color/colorPrimary"
-                    app:layout_collapseMode="pin"
-                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
-
-                <LinearLayout
-                    android:id = "@+id/mostPopularBlackBackground"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginTop="195dp"
-                    android:background="@color/blackTransparent"
-                    android:orientation="horizontal"
-                    app:layout_collapseMode="parallax">
-
-                    <TextView
-                        android:id="@+id/most_pop_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:paddingBottom="@dimen/min_padding"
-                        android:paddingEnd="@dimen/min_padding"
-                        android:paddingStart="@dimen/mid_padding"
-                        android:paddingTop="@dimen/min_padding"
-                        android:text=""
-                        android:textColor="@color/white"
-                        android:textSize="16sp"/>
-
-                    <TextView
-                        android:id="@+id/home_header_lbl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="2"
-                        android:gravity="end|center_vertical"
-                        android:paddingBottom="@dimen/min_padding"
-                        android:paddingEnd="@dimen/mid_padding"
-                        android:paddingStart="@dimen/min_padding"
-                        android:paddingTop="@dimen/min_padding"
-                        android:layout_marginTop="-120dp"
-                        android:text="Most Popular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"/>
-
-                </LinearLayout>
-
-
-                <android.support.design.widget.TabLayout
-                    android:id="@+id/home_tabLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:background="@color/colorPrimary"
-                    android:minHeight="?attr/actionBarSize"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                    app:elevation="6dp" />
-
-
-
-            </android.support.design.widget.CollapsingToolbarLayout>
-
-
-        </android.support.design.widget.AppBarLayout>
-
-
-
-        <android.support.v4.widget.NestedScrollView
-            android:id = "@+id/homeContentScrollView"
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/homeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:scrollY="0dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            >
 
-            <include layout="@layout/recycler_view_layout" />
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/app_bar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="275dp"
+                    android:theme="@style/AppTheme.AppBarOverlay">
 
-        </android.support.v4.widget.NestedScrollView>
+                        <android.support.design.widget.CollapsingToolbarLayout
+                        android:id="@+id/home_collapsing_toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+                        <ViewFlipper
+                            android:id="@+id/viewFlipManager"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layout_collapseMode="parallax">
+
+                            <ImageView
+                                android:id="@+id/popularImageView1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:adjustViewBounds="false"
+                                android:background="@drawable/place1"
+                                android:contentDescription="@string/most_popular_desc"
+                                android:cropToPadding="false"
+                                android:visibility="visible" />
+
+                            <ImageView
+                                android:id="@+id/popularImageView2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:adjustViewBounds="false"
+                                android:background="@drawable/place"
+                                android:contentDescription="@string/most_popular_desc"
+                                android:cropToPadding="false"
+                                android:visibility="gone" />
+
+                            <ImageView
+                                android:id="@+id/popularImageView3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:adjustViewBounds="false"
+                                android:background="@drawable/place1"
+                                android:contentDescription="@string/most_popular_desc"
+                                android:cropToPadding="false"
+                                android:visibility="gone" />
+
+                        </ViewFlipper>
+
+                        <android.support.v7.widget.Toolbar
+                            android:id="@+id/action_bar_toolbar"
+                            android:layout_width="match_parent"
+                            android:layout_height="?attr/actionBarSize"
+                            android:layout_marginBottom="48dp"
+                            android:background="@color/colorPrimary"
+                            app:layout_collapseMode="pin"
+                            app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+
+                        <LinearLayout
+                            android:id = "@+id/mostPopularBlackBackground"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="195dp"
+                            android:background="@color/blackTransparent"
+                            android:orientation="horizontal"
+                            app:layout_collapseMode="parallax">
+
+                            <TextView
+                                android:id="@+id/most_pop_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:paddingBottom="@dimen/min_padding"
+                                android:paddingEnd="@dimen/min_padding"
+                                android:paddingStart="@dimen/mid_padding"
+                                android:paddingTop="@dimen/min_padding"
+                                android:text=""
+                                android:textColor="@color/white"
+                                android:textSize="16sp"/>
+
+                            <TextView
+                                android:id="@+id/home_header_lbl"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:gravity="end|center_vertical"
+                                android:paddingBottom="@dimen/min_padding"
+                                android:paddingEnd="@dimen/mid_padding"
+                                android:paddingStart="@dimen/min_padding"
+                                android:paddingTop="@dimen/min_padding"
+                                android:layout_marginTop="-120dp"
+                                android:text="Most Popular"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"/>
+
+                        </LinearLayout>
+
+
+                        <android.support.design.widget.TabLayout
+                            android:id="@+id/home_tabLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:background="@color/colorPrimary"
+                            android:minHeight="?attr/actionBarSize"
+                            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                            app:elevation="6dp" />
+
+
+
+                    </android.support.design.widget.CollapsingToolbarLayout>
+
+                </android.support.design.widget.AppBarLayout>
+
+                <android.support.v4.widget.NestedScrollView
+                    android:id = "@+id/homeContentScrollView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fillViewport="true"
+                    android:scrollY="0dp"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                 >
+
+                    <include layout="@layout/recycler_view_layout" />
+
+                </android.support.v4.widget.NestedScrollView>
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                app:fabSize="auto"
+                app:srcCompat="@drawable/ic_location_searching_white_24dp" />
+
+        </android.support.design.widget.CoordinatorLayout>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:fabSize="auto"
-            app:srcCompat="@drawable/ic_location_searching_white_24dp" />
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/colorPrimary"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/nav_header_main"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/main_drawer" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </android.support.v4.widget.DrawerLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/colorPrimary"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:menu="@menu/main_drawer" />
+</android.support.v4.widget.SwipeRefreshLayout>
 
-</android.support.v4.widget.DrawerLayout>

@@ -20,6 +20,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -105,7 +106,10 @@ public class HomeActivity extends AppCompatActivity
     private ImageView[] mostPopularImages;
     private String[] mostPopularNames;
 
-    private int indexPopular = 0;
+    private SwipeRefreshLayout pullUpLoadLayout;
+
+    private boolean isLoadingItem = false;
+    private boolean isLoadingPlace = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -171,10 +175,13 @@ public class HomeActivity extends AppCompatActivity
 
     private void loadPlacesFromServer(final String pType, final String sType) {
 
+
         if (placeLoader != null) {
             placeLoader.cancel(true);
             placeLoader = null;
         }
+
+        isLoadingPlace = true;
 
         placeDataList.clear();
 
@@ -194,6 +201,7 @@ public class HomeActivity extends AppCompatActivity
 
         });
 
+
         placeLoader.execute("0", "5", pType, sType);
 
         homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener () {
@@ -201,13 +209,17 @@ public class HomeActivity extends AppCompatActivity
                                                            @Override
                                                            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
+
                                                                if(Utilities.checkIfLastScrolledItem(v, scrollX, scrollY, oldScrollX, oldScrollY)) {
 
 
                                                                    if (startingIndex < tableCount &&
-                                                                           placeDataList.size() > 0 && itemListProgressBar.getVisibility() != View.VISIBLE) {
+                                                                           placeDataList.size() > 0 && !isLoadingItem) {
 
-                                                                       itemListProgressBar.setVisibility(View.VISIBLE);
+                                                                       placeDataList.add(null);
+                                                                       mainInterfaceAdapter.notifyItemInserted(placeDataList.size() - 1);
+
+                                                                       isLoadingItem = true;
 
                                                                        new Handler().postDelayed(new Runnable() {
                                                                            @Override
@@ -351,6 +363,35 @@ public class HomeActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_home_menu);
 
+        pullUpLoadLayout = (SwipeRefreshLayout)findViewById(R.id.pullUpLoadLayout);
+
+        pullUpLoadLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                Log.d("debug", "pulled up");
+
+                pullUpLoadLayout.setRefreshing(false);
+
+                placeDataList.clear();
+                mainInterfaceAdapter.notifyDataSetChanged();
+
+                recycleViewProgressBar.setVisibility(View.VISIBLE);
+                appBarLayout.setExpanded(false);
+
+                String selectedSortType = tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getText().toString();
+
+                getMostPopular(placeType);
+                loadPlacesFromServer(placeType, (selectedSortType.equals("Most Viewed") ? "Views" :
+                                                (selectedSortType.equals("Most Popular")) ? "Rating" : "Recommended"));
+
+               // pullUpLoadLayout.setRefreshing(false);
+            }
+        });
+
+        pullUpLoadLayout.setProgressViewOffset(false, 0, 180);
+        pullUpLoadLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent);
+
         backgroundMostPopular = (LinearLayout) findViewById(R.id.mostPopularBlackBackground);
 
         viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
@@ -378,6 +419,23 @@ public class HomeActivity extends AppCompatActivity
         collapsingToolbarLayout.setTitleEnabled(false);
 
         appBarLayout = (AppBarLayout)findViewById(R.id.app_bar_layout);
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                Log.d("debug", "offset: " + verticalOffset);
+
+                if (!isLoadingPlace) {
+                    appBarLayout.setExpanded(false);
+                    homeNestedScrollView.smoothScrollTo(0, 0);
+                }
+
+                if (!pullUpLoadLayout.isRefreshing())
+                    pullUpLoadLayout.setEnabled(verticalOffset == 0 );
+            }
+        });
 
         toolbar = (Toolbar) findViewById(R.id.action_bar_toolbar);
 
@@ -420,7 +478,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onDrawerOpened(View drawerView) {
 
-
+                pullUpLoadLayout.setEnabled(false);
                 Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
                 searchButton.setIconified(true);
 
@@ -428,6 +486,8 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onDrawerClosed(View drawerView) {
+
+                pullUpLoadLayout.setEnabled(true);
 
             }
 
@@ -701,6 +761,15 @@ public class HomeActivity extends AppCompatActivity
                 tableCount = Integer.parseInt(loadPlaces.getTableCount());
                 startingIndex = Integer.parseInt(loadPlaces.getOffSet());
 
+                if (isLoadingItem) {
+
+                    placeDataList.remove(placeDataList.size() - 1);
+                    mainInterfaceAdapter.notifyItemRemoved(placeDataList.size());
+
+                    isLoadingItem = false;
+
+                }
+
                 List<Place> placeD = loadPlaces.getPlacesList();
 
                 for (Place place : placeD)
@@ -709,8 +778,10 @@ public class HomeActivity extends AppCompatActivity
                 mainInterfaceAdapter.notifyDataSetChanged();
 
                 recycleViewProgressBar.setVisibility(View.GONE);
-                itemListProgressBar.setVisibility(View.GONE);
 
+                Log.d("debug", "place data size: " + placeDataList.size());
+
+                isLoadingPlace = true;
                 placeLoader = null;
 
             } catch (Exception e) {

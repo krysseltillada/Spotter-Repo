@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +39,10 @@ import java.util.List;
  * Created by Kryssel on 6/14/2017.
  */
 
-public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdapter.MainInterfaceViewHolder>{
+public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder> {
+
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
 
     private int lastPosition = -1;
 
@@ -141,16 +145,24 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
 
     @Override
-    public MainInterfaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+        Log.d("debug", "viewtype: " + viewType);
 
-        return new MainInterfaceViewHolder(LayoutInflater.from(parent.getContext())
-                                                                     .inflate(getLayoutIdByType(activityType), parent, false));
+        if (viewType == VIEW_TYPE_ITEM) {
 
+            return new MainInterfaceViewHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(getLayoutIdByType(activityType), parent, false));
+
+        } else {
+
+            return new LoadingItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.progress_item, parent, false));
+
+        }
     }
 
     @Override
-    public void onBindViewHolder(MainInterfaceViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
         /*
 
@@ -173,35 +185,38 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
                 .placeholder(R.drawable.loadingplace)
                 .into(holder.placeCompanyImage); */
 
-        try {
+        if (viewHolder instanceof  MainInterfaceViewHolder) {
+
+            MainInterfaceViewHolder mainInterfaceViewHolder = (MainInterfaceViewHolder)viewHolder;
+
+            try {
 
 
-
-            String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
-                                                                             .getPlaceImageLink())
-                                                                             .getString("placeImages"))
-                                                                             .getString("frontImage");
-
-
-            Picasso.with(context)
-                    .load(frontPlaceImageLink)
-                    .resize(90, 90)
-                    .placeholder(R.drawable.loadingplace)
-                    .into(holder.placeCompanyImage);
+                String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
+                        .getPlaceImageLink())
+                        .getString("placeImages"))
+                        .getString("frontImage");
 
 
-        } catch (JSONException e) {
-            Log.d("debug", e.getMessage());
-        }
+                Picasso.with(context)
+                        .load(frontPlaceImageLink)
+                        .resize(90, 90)
+                        .placeholder(R.drawable.loadingplace)
+                        .into(mainInterfaceViewHolder.placeCompanyImage);
 
 
-        holder.txtPlaceName.setText(places.get(position).getPlaceName());
-        holder.txtLocation.setText(places.get(position).getPlaceLocality());
+            } catch (JSONException e) {
+                Log.d("debug", e.getMessage());
+            }
 
-        String recommend = places.get(position).getRecommended();
 
-        holder.txtRecommend.setText(recommend + " people recommend this");
-        holder.txtGeneralRatingDigit.setText(places.get(position).getRating());
+            mainInterfaceViewHolder.txtPlaceName.setText(places.get(position).getPlaceName());
+            mainInterfaceViewHolder.txtLocation.setText(places.get(position).getPlaceLocality());
+
+            String recommend = places.get(position).getRecommended();
+
+            mainInterfaceViewHolder.txtRecommend.setText(recommend + " people recommend this");
+            mainInterfaceViewHolder.txtGeneralRatingDigit.setText(places.get(position).getRating());
 
         /*
 
@@ -219,23 +234,32 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         holder.txtReview.setText(reviewInfo);
         holder.txtGeneralRatingDigit.setText(String.valueOf(userRating)); */
 
-        holder.txtPrice.setText(places.get(position).getPlacePriceRange());
+            mainInterfaceViewHolder.txtPrice.setText(places.get(position).getPlacePriceRange());
 
-        if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
+            if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
 
-            if (holder.isRecyclable())
-                holder.setIsRecyclable(false);
+                if (mainInterfaceViewHolder.isRecyclable())
+                    mainInterfaceViewHolder.setIsRecyclable(false);
 
 
-            int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
+                int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
 
-            if (holder.cbDelete != null)
-                holder.cbDelete.setChecked(checkBoxToggleList.get(toggleIndex).get(position));
+                if (mainInterfaceViewHolder.cbDelete != null)
+                    mainInterfaceViewHolder.cbDelete.setChecked(checkBoxToggleList.get(toggleIndex).get(position));
 
+
+            }
+
+
+            setAnimation(mainInterfaceViewHolder.rowV.findViewById(R.id.placeItemRow), position);
+
+        } else if (viewHolder instanceof LoadingItemViewHolder) {
+
+            LoadingItemViewHolder loadingItemViewHolder = (LoadingItemViewHolder) viewHolder;
+
+            loadingItemViewHolder.itemProgressBar.setIndeterminate(true);
 
         }
-
-        setAnimation(holder.rowV.findViewById(R.id.placeItemRow), position);
 
 
 
@@ -243,7 +267,10 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+
+        return places.get(position) == null ? VIEW_TYPE_LOADING :
+                                              VIEW_TYPE_ITEM;
+
     }
 
 
@@ -278,6 +305,15 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
             }
         }
 
+    }
+
+    public class LoadingItemViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar itemProgressBar;
+
+        public LoadingItemViewHolder(View view) {
+            super (view);
+            itemProgressBar = (ProgressBar) view.findViewById(R.id.progressItem);
+        }
     }
 
    public class MainInterfaceViewHolder extends RecyclerView.ViewHolder {
