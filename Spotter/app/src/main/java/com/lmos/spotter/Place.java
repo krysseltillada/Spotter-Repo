@@ -24,6 +24,8 @@ public class Place implements Parcelable {
     private String placeImage;
     private String placeDeals;
     private String placeImageLink;
+    private String recommended;
+    private String rating;
 
     public Place(){}
 
@@ -40,6 +42,8 @@ public class Place implements Parcelable {
     public void setPlaceLat(String placeLat){ this.placeLat = placeLat; }
     public void setPlaceLng(String placeLng){ this.placeLng = placeLng; }
     public void setplaceImageLink(String placeImageLink){this.placeImageLink = placeImageLink;}
+    public void setRecommended(String recom) {this.recommended = recom;}
+    public void setRating(String rt) {this.rating = rt;}
 
     public String getPlaceID() {
         return placeID;
@@ -74,6 +78,8 @@ public class Place implements Parcelable {
     public String getPlaceDeals(){ return placeDeals; }
     public String getPlaceLat(){ return placeLat; }
     public String getPlaceLng(){ return placeLng; }
+    public String getRecommended () { return recommended; }
+    public String getRating () { return rating; }
 
     public Place(Parcel in){
 
@@ -89,6 +95,8 @@ public class Place implements Parcelable {
         placePriceRange = in.readString();
         placeImage = in.readString();
         placeDeals = in.readString();
+        recommended = in.readString();
+        rating = in.readString();
     }
 
     @Override
@@ -111,6 +119,8 @@ public class Place implements Parcelable {
         dest.writeString(placePriceRange);
         dest.writeString(placeImage);
         dest.writeString(placeDeals);
+        dest.writeString(recommended);
+        dest.writeString(rating);
 
     }
 

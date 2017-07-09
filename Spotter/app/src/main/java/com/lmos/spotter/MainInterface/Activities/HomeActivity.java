@@ -1,9 +1,11 @@
 package com.lmos.spotter.MainInterface.Activities;
 
 import android.app.Activity;
+import android.app.VoiceInteractor;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,12 +32,21 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
@@ -45,10 +56,16 @@ import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.Utilities;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
@@ -72,6 +89,7 @@ public class HomeActivity extends AppCompatActivity
     private ProgressBar recycleViewProgressBar;
     private CoordinatorLayout mainLayout;
     private TabLayout tabLayout;
+    private TextView mostPopularName;
 
     private int startingIndex;
     private int tableCount;
@@ -82,15 +100,28 @@ public class HomeActivity extends AppCompatActivity
 
     private List <Place> placeDataList;
 
+    private ViewFlipper viewFlipperManager;
+    private LinearLayout backgroundMostPopular;
+    private ImageView[] mostPopularImages;
+    private String[] mostPopularNames;
+
+    private int indexPopular = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        placeDataList = new ArrayList<>();
+
+        mostPopularImages = new ImageView[3];
+        mostPopularNames = new String[3];
 
         initComp();
-        startMostPopularFlipping();
-        loadPlacesByType("Home");
+
+
+        getMostPopular("General");
+
+        loadPlacesByType("General");
 
     }
 
@@ -136,21 +167,90 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    private void loadPlacesByType (String type) {
+    PlaceLoader placeLoader;
+
+    private void loadPlacesFromServer(final String pType, final String sType) {
+
+        if (placeLoader != null) {
+            placeLoader.cancel(true);
+            placeLoader = null;
+        }
+
+        placeDataList.clear();
+
+        mainInterfaceAdapter.notifyDataSetChanged();
+
+        recycleViewProgressBar.setVisibility(View.VISIBLE);
+
+        placeLoader = new PlaceLoader().setOnRespondError(new OnRespondError() {
+
+            @Override
+            public void onRespondError(String error) {
+
+                HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
+                HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+
+            }
+
+        });
+
+        placeLoader.execute("0", "5", pType, sType);
+
+        homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener () {
+
+                                                           @Override
+                                                           public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                                                               if(Utilities.checkIfLastScrolledItem(v, scrollX, scrollY, oldScrollX, oldScrollY)) {
+
+
+                                                                   if (startingIndex < tableCount &&
+                                                                           placeDataList.size() > 0 && itemListProgressBar.getVisibility() != View.VISIBLE) {
+
+                                                                       itemListProgressBar.setVisibility(View.VISIBLE);
+
+                                                                       new Handler().postDelayed(new Runnable() {
+                                                                           @Override
+                                                                           public void run() {
+
+                                                                               new PlaceLoader().setOnRespondError(new OnRespondError() {
+
+                                                                                   @Override
+                                                                                   public void onRespondError(String error) {
+                                                                                       HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
+                                                                                       HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+                                                                                   }
+                                                                               }).execute(String.valueOf(startingIndex), "5", placeType, sType);
+
+
+                                                                           }
+                                                                       }, 200);
+
+                                                                   }
+
+                                                               }
+                                                           }
+                                                       }
+        );
+
+
+    }
+
+
+    private void loadPlacesByType (final String type) {
 
         if (!type.equals(placeType)) {
+
 
             mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
                     R.anim.fade_in));
 
+            appBarLayout.setExpanded(false);
             homeNestedScrollView.smoothScrollTo(0, 0);
-            appBarLayout.setExpanded(true);
 
-            txtHome.setText(type);
+            txtHome.setText((type.equals("General") ? "Home" : type) );
 
             final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-
-            placeDataList = new ArrayList<>();
 
             mainInterfaceAdapter = new MainInterfaceAdapter(getApplicationContext(),
                     ActivityType.HOME_ACTIVITY,
@@ -158,21 +258,11 @@ public class HomeActivity extends AppCompatActivity
                     placeDataList);
 
             tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
+
+            getMostPopular(type);
+            loadPlacesFromServer(type, "Views");
+
             tabLayoutRecyclerView.setNestedScrollingEnabled(false);
-
-            recycleViewProgressBar.setVisibility(View.VISIBLE);
-
-            new PlaceLoader().setOnRespondError(new OnRespondError() {
-
-                @Override
-                public void onRespondError(String error) {
-
-                    HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
-                    HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
-
-                }
-
-            }).execute("0", "5");
 
             tabLayoutRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -192,42 +282,8 @@ public class HomeActivity extends AppCompatActivity
                 }
             });
 
-            homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener () {
-
-                @Override
-                public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
-                    if(Utilities.checkIfLastScrolledItem(v, scrollX, scrollY, oldScrollX, oldScrollY)) {
 
 
-                            if (startingIndex < tableCount &&
-                                placeDataList.size() > 0 && itemListProgressBar.getVisibility() != View.VISIBLE) {
-
-                                itemListProgressBar.setVisibility(View.VISIBLE);
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        new PlaceLoader().setOnRespondError(new OnRespondError() {
-
-                                            @Override
-                                            public void onRespondError(String error) {
-                                                HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
-                                                HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
-                                            }
-                                        }).execute(String.valueOf(startingIndex), "5");
-
-
-                                    }
-                                }, 200);
-
-                            }
-
-                        }
-                    }
-                }
-            );
 
             tabLayoutRecyclerView.setLayoutManager(linearLayoutManager);
 
@@ -240,7 +296,7 @@ public class HomeActivity extends AppCompatActivity
 
 
             tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
-            tabLayout.addTab(tabLayout.newTab().setText("Most Rated"));
+            tabLayout.addTab(tabLayout.newTab().setText("Most Popular"));
             tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
 
 
@@ -255,31 +311,17 @@ public class HomeActivity extends AppCompatActivity
                     homeNestedScrollView.smoothScrollTo(0, 0);
                     searchBTN.setIconified(true);
 
-                    /*
-
                     switch (tab.getPosition()) {
                         case 0:
-
-                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                    ActivityType.HOME_ACTIVITY,
-                                    PlaceType.NONE,
-                                    TestData.PlaceData.testDataMostViewed));
+                            loadPlacesFromServer(placeType, "Views");
                             break;
                         case 1:
-
-                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                    ActivityType.HOME_ACTIVITY,
-                                    PlaceType.NONE,
-                                    TestData.PlaceData.testDataMostRated));
+                            loadPlacesFromServer(placeType, "Rating");
                             break;
                         case 2:
-
-                            tabLayoutRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                    ActivityType.HOME_ACTIVITY,
-                                    PlaceType.NONE,
-                                    TestData.PlaceData.testDataRecommend));
+                            loadPlacesFromServer(placeType, "Recommended");
                             break;
-                    } */
+                    }
 
                 }
 
@@ -307,13 +349,18 @@ public class HomeActivity extends AppCompatActivity
 
         SharedPreferences userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
-        Log.d("debug", userData.getString("username", ""));
-        Log.d("debug", userData.getString("email", ""));
-        Log.d("debug", userData.getString("password", ""));
-        Log.d("debug", userData.getString("accountID", ""));
-        Log.d("debug", userData.getString("name", ""));
-
         setContentView(R.layout.activity_home_menu);
+
+        backgroundMostPopular = (LinearLayout) findViewById(R.id.mostPopularBlackBackground);
+
+        viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
+
+        mostPopularImages[0] = (ImageView) findViewById(R.id.popularImageView1);
+        mostPopularImages[1] = (ImageView) findViewById(R.id.popularImageView2);
+        mostPopularImages[2] = (ImageView) findViewById(R.id.popularImageView3);
+
+
+        mostPopularName = (TextView) findViewById(R.id.most_pop_name);
 
         tabLayoutRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -426,9 +473,104 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    private void getMostPopular (String type) {
+
+        viewFlipperManager.stopFlipping();
+
+        viewFlipperManager.setVisibility(View.INVISIBLE);
+        backgroundMostPopular.setVisibility(View.INVISIBLE);
+
+        RequestQueue request = Volley.newRequestQueue(getApplicationContext());
+
+        final String ptype = type;
+
+        String requestURL = "http://admin-spotter.000webhostapp.com/app_scripts/mostPopular.php";
+
+        StringRequest mostPopularRequest = new StringRequest(Request.Method.POST, requestURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Log.d("debug", response);
+
+                        try {
+                            JSONObject jsonPopularData = new JSONObject(response);
+
+                            JSONArray mostPopularDataArr = jsonPopularData.getJSONArray("mostPopularPlaces");
+
+                            for (int i = 0; i != mostPopularDataArr.length(); ++i) {
+
+                                JSONObject mostPopularData = new JSONObject(mostPopularDataArr.getString(i));
+
+                                Log.d("debug", mostPopularData.getString("Name"));
+
+                                String imageLink = mostPopularData.getString("ImageLink");
+
+                                if (imageLink.length() > 0) {
+
+                                    JSONObject placeImage = new JSONObject(imageLink);
+
+                                    JSONObject placeImages = new JSONObject(placeImage.getString("placeImages"));
+
+                                    JSONArray imageLinks = placeImages.getJSONArray("previewImages");
+
+                                    Log.d("debug", imageLinks.getString(0));
+
+                                    Picasso.with(getApplicationContext())
+                                            .load(imageLinks.getString(0))
+                                            .placeholder(R.drawable.loadingplace)
+                                            .fit()
+                                            .into(mostPopularImages[i]);
+
+
+                                } else {
+
+                                    Picasso.with(getApplicationContext())
+                                            .load("http://vignette2.wikia.nocookie.net/date-a-live/images/5/57/Yoshino.%28Date.A.Live%29.full.1536435.jpg/revision/latest?cb=20140225221532")
+                                            .placeholder(R.drawable.loadingplace)
+                                            .fit()
+                                            .into(mostPopularImages[i]);
+
+                                }
+
+                                mostPopularNames[i] = mostPopularData.getString("Name");
+
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        startMostPopularFlipping();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                return new HashMap<String, String>() {{
+                    put("placeType", ptype);
+                }};
+            }
+        };
+
+        request.add(mostPopularRequest);
+
+    }
+
     private void startMostPopularFlipping(){
 
-        ViewFlipper viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
+        viewFlipperManager.setDisplayedChild(0);
+        mostPopularName.setText(mostPopularNames[0]);
+
+        viewFlipperManager.setVisibility(View.VISIBLE);
+        backgroundMostPopular.setVisibility(View.VISIBLE);
+
+        appBarLayout.setExpanded(true);
 
         viewFlipperManager.setOnClickListener(new View.OnClickListener() {
 
@@ -436,15 +578,40 @@ public class HomeActivity extends AppCompatActivity
             public void onClick(View v) {
                 searchBTN.setIconified(true);
                 Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                Toast.makeText(getApplicationContext(), mostPopularName.getText(), Toast.LENGTH_LONG).show();
             }
 
         });
+
+        viewFlipperManager.startFlipping();
 
         viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
         viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
         viewFlipperManager.setFlipInterval(3000);
 
-        viewFlipperManager.startFlipping();
+
+        viewFlipperManager.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mostPopularName.setText(mostPopularNames[viewFlipperManager.getDisplayedChild()]);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+
+
 
     }
 
@@ -458,16 +625,16 @@ public class HomeActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.Home:
-                loadPlacesByType("Home");
+                loadPlacesByType("General");
                 break;
             case R.id.Hotels:
                 loadPlacesByType("Hotel");
                 break;
             case R.id.Restaurants:
-                loadPlacesByType("Restaurants");
+                loadPlacesByType("Restaurant");
                 break;
             case R.id.TouristSpots:
-                loadPlacesByType("Tourist Spots");
+                loadPlacesByType("Tourist Spot");
                 break;
             case R.id.Favorites:
                 Utilities.OpenActivity(getApplicationContext(),
@@ -499,7 +666,7 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    class PlaceLoader extends AsyncTask<String, Void, AppScript> {
+    private class PlaceLoader extends AsyncTask<String, Void, AppScript> {
 
         OnRespondError onRespondError;
 
@@ -515,6 +682,8 @@ public class HomeActivity extends AppCompatActivity
                         setData("loadPlaces.php", new HashMap<String, String>() {{
                         put("currentRow", params[0]);
                         put("rowOffset", params[1]);
+                        put("placeType", params[2]);
+                        put("sortType", params[3]);
                     }});
                 }};
 
@@ -537,11 +706,12 @@ public class HomeActivity extends AppCompatActivity
                 for (Place place : placeD)
                     placeDataList.add(place);
 
-                for (int i = 1; i <= placeD.size(); ++i)
-                    mainInterfaceAdapter.notifyItemChanged( (placeDataList.size() - 1) + i);
+                mainInterfaceAdapter.notifyDataSetChanged();
 
                 recycleViewProgressBar.setVisibility(View.GONE);
                 itemListProgressBar.setVisibility(View.GONE);
+
+                placeLoader = null;
 
             } catch (Exception e) {
                 onRespondError.onRespondError(e.getMessage());

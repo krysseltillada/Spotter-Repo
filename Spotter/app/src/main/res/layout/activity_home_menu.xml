@@ -40,7 +40,6 @@
                         android:background="@drawable/place1"
                         android:contentDescription="@string/most_popular_desc"
                         android:cropToPadding="false"
-                        android:scaleType="centerCrop"
                         android:visibility="visible" />
 
                     <ImageView
@@ -51,7 +50,6 @@
                         android:background="@drawable/place"
                         android:contentDescription="@string/most_popular_desc"
                         android:cropToPadding="false"
-                        android:scaleType="centerCrop"
                         android:visibility="gone" />
 
                     <ImageView
@@ -62,7 +60,6 @@
                         android:background="@drawable/place1"
                         android:contentDescription="@string/most_popular_desc"
                         android:cropToPadding="false"
-                        android:scaleType="centerCrop"
                         android:visibility="gone" />
 
                 </ViewFlipper>
@@ -77,39 +74,41 @@
                     app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
 
                 <LinearLayout
+                    android:id = "@+id/mostPopularBlackBackground"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="190dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="195dp"
                     android:background="@color/blackTransparent"
                     android:orientation="horizontal"
                     app:layout_collapseMode="parallax">
 
                     <TextView
                         android:id="@+id/most_pop_name"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:paddingBottom="@dimen/min_padding"
                         android:paddingEnd="@dimen/min_padding"
                         android:paddingStart="@dimen/mid_padding"
                         android:paddingTop="@dimen/min_padding"
-                        android:text="Solaire"
+                        android:text=""
                         android:textColor="@color/white"
-                        android:textSize="20sp"/>
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/home_header_lbl"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:gravity="end|center_vertical"
                         android:paddingBottom="@dimen/min_padding"
                         android:paddingEnd="@dimen/mid_padding"
                         android:paddingStart="@dimen/min_padding"
                         android:paddingTop="@dimen/min_padding"
+                        android:layout_marginTop="-120dp"
                         android:text="Most Popular"
                         android:textColor="@color/white"
-                        android:textSize="20sp"/>
+                        android:textSize="16sp"/>
 
                 </LinearLayout>
 

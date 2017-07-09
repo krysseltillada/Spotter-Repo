@@ -8,11 +8,6 @@
     android:clickable="true"
     android:background="@drawable/layout_white_bg">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground">
-
 
                 <ImageView
                     android:id="@+id/itemRowBackground"
@@ -113,8 +108,6 @@
                     android:layout_marginTop="82dp"
                     android:text="Good (304 reviews)"
                     android:textSize="12sp" />
-
-        </FrameLayout>
 
 
 </FrameLayout>

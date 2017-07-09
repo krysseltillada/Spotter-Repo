@@ -26,6 +26,7 @@ import com.lmos.spotter.Utilities.Utilities;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -182,8 +183,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
                                                                              .getString("frontImage");
 
 
-
-
             Picasso.with(context)
                     .load(frontPlaceImageLink)
                     .resize(90, 90)
@@ -198,6 +197,11 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
         holder.txtPlaceName.setText(places.get(position).getPlaceName());
         holder.txtLocation.setText(places.get(position).getPlaceLocality());
+
+        String recommend = places.get(position).getRecommended();
+
+        holder.txtRecommend.setText(recommend + " people recommend this");
+        holder.txtGeneralRatingDigit.setText(places.get(position).getRating());
 
         /*
 
@@ -281,7 +285,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         View rowV;
 
         public ImageView placeCompanyImage, gradeIcon;
-        public TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview;
+        public TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview, txtRecommend;
 
         public CheckBox cbDelete;
 
@@ -297,6 +301,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
             txtPrice = (TextView) rowView.findViewById(R.id.txtPrice);
             txtGeneralRatingDigit = (TextView) rowView.findViewById(R.id.txtGeneralRatingDigit);
             txtReview = (TextView) rowView.findViewById(R.id.txtReview);
+            txtRecommend = (TextView) rowView.findViewById(R.id.txtRecommend);
 
             rowV = rowView;
 

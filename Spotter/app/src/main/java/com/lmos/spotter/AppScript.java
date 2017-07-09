@@ -100,6 +100,8 @@ public class AppScript {
 
         Log.d("SplashScreen", "Connecting");
 
+        Log.d("debug", setUrl + post_data);
+
         final int CONNECTION_TIME_OUT = 60000;
         final String REQUEST_METHOD = "POST";
 
@@ -197,6 +199,8 @@ public class AppScript {
                     setPlace.setplaceName(place_item.getString("Name"));
                     setPlace.setplaceType(place_item.getString("Type"));
                     setPlace.setplaceAddress(place_item.getString("Address"));
+                    setPlace.setRecommended(place_item.getString("Recommended"));
+                    setPlace.setRating(place_item.getString("Rating"));
 
                     if(!response_code.equals("0x11")){
 
