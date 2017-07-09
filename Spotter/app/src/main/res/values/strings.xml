@@ -301,5 +301,7 @@
     <string name="title_activity_book_marks">BookMarksActivity</string>
     <string name="enable_gps_network">Spotter needs to enable your gps and network state in able to find your location.</string>
     <string name="title_activity_review">ReviewActivity</string>
+    <string name="loading_msg_1">Hi! We\'re getting your location. Make sure you have a stable internet connection.</string>
+    <string name="loading_msg_2">Getting some information for you.</string>
 
 </resources>

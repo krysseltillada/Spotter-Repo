@@ -8,13 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by linker on 01/06/2017.
@@ -52,11 +52,6 @@ public class FragmentSignIn extends Fragment {
                         put("password", password.getText().toString());
 
                     }};
-
-                    LoginActivity.set_login_prefs.putString("username",username.getText().toString());
-                    LoginActivity.set_login_prefs.putString("password",password.getText().toString());
-                    LoginActivity.set_login_prefs.apply();
-
 
                     ((LoginActivity) getContext()).runAccountHandler(
                             "login.php",

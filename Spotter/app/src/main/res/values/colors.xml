@@ -11,5 +11,5 @@
     <color name="sprayBlue"> #81CFE0 </color>
     <color name="pink"> #F06292 </color>
     <color name="A200"> #00E676 </color>
-    <color name="mid_gray">#DCDCDC</color>
+    <color name="fontPrimary">#212121</color>
 </resources>

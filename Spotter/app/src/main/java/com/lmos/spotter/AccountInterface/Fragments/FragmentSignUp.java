@@ -92,12 +92,6 @@ public class FragmentSignUp extends Fragment {
 
                     }};
 
-                    LoginActivity.set_login_prefs.putString("username",registeredUserAccount.userName);
-                    LoginActivity.set_login_prefs.putString("password",registeredUserAccount.password);
-                    LoginActivity.set_login_prefs.putString("name",registeredUserAccount.name);
-                    LoginActivity.set_login_prefs.putString("email",registeredUserAccount.email);
-                    LoginActivity.set_login_prefs.apply();
-
                     ((LoginActivity) getContext()).runAccountHandler(
                             "register.php",
                             map_data

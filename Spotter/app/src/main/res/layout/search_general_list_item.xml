@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_general_viewContainer"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="310dp"
     android:layout_margin="@dimen/acc_layout_min_margin"
     android:clickable="true"
-    app:cardElevation="3dp">
+    app:cardElevation="2dp">
 
     <ImageView
         android:id="@+id/general_list_image"
@@ -26,7 +26,7 @@
             android:background="@color/blackTransparent"
             android:padding="@dimen/min_padding"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/max_font_size" />
+            android:textSize="22sp" />
 
         <LinearLayout
             android:id="@+id/holder"
@@ -41,7 +41,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ellipsize="end"
-                android:maxLines="3"
+                android:maxLines="4"
                 android:padding="@dimen/min_padding"
                 android:textSize="@dimen/min_font_size" />
 
@@ -50,7 +50,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginBottom="@dimen/min_padding"
                 android:layout_marginTop="@dimen/min_padding"
-                android:background="@color/colorPrimary"/>
+                android:background="@color/colorPrimaryDark"/>
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -58,19 +58,11 @@
                 android:layout_weight="0.5">
 
                 <TextView
-                    android:id="@+id/price_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/min_padding"
-                    android:text="Price Start at"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/min_font_size"/>
-
-                <TextView
                     android:id="@+id/general_list_price_range"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/price_label"
+                    android:layout_height="50dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:padding="@dimen/min_padding"
                     android:textAlignment="center"
                     android:textSize="@dimen/min_font_size" />
@@ -116,7 +108,7 @@
             android:layout_below="@id/holder"
             android:background="@color/transparent"
             android:padding="@dimen/min_padding"
-            android:src="@drawable/ic_description_black_24dp"
+            android:src="@drawable/ic_bookmark_black_36dp"
             android:tint="@color/colorPrimary"/>
 
         <ImageButton
@@ -124,11 +116,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/holder"
-            android:layout_marginEnd="@dimen/acc_layout_min_margin"
             android:layout_toStartOf="@id/general_list_view_details"
             android:background="@color/transparent"
             android:padding="@dimen/min_padding"
-            android:src="@drawable/ic_explore_black_24dp"
+            android:src="@drawable/ic_near_me_black_36dp"
             android:tint="@color/colorPrimary"/>
 
         <ImageButton
@@ -136,11 +127,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/holder"
-            android:layout_marginEnd="@dimen/acc_layout_min_margin"
             android:layout_toStartOf="@id/general_list_explore"
             android:background="@color/transparent"
             android:padding="@dimen/min_padding"
-            android:src="@drawable/ic_call_black_24dp"
+            android:src="@drawable/ic_insert_invitation_black_36dp"
             android:tint="@color/colorPrimary"/>
 
     </RelativeLayout>

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,13 +64,13 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
                             .getString("placeImages")
                     ).getString("frontImage");
 
-            /**Picasso.with(context)
+            Picasso.with(context)
                     .load(placeImageLink)
                     .placeholder(R.drawable.loadingplace)
-                    .into(holder.placeImage);**/
+                    .into(holder.placeImage);
 
         }catch (JSONException e){
-
+            e.printStackTrace();
         }
 
     }

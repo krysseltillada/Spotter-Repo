@@ -650,7 +650,7 @@ public class Utilities {
 
     public static class LocationHandler {
 
-        private final int INTERVAL = 2000, FAST_INTERVAL = 500;
+        private final int INTERVAL = 5000, FAST_INTERVAL = 2000;
         OnLocationFoundListener OnLocationFoundListener;
         private GoogleApiClient apiClient;
         private LocationRequest locationRequest;
@@ -761,7 +761,6 @@ public class Utilities {
                         public void onConnected(@Nullable Bundle bundle) {
                             Log.d("LocationHandler", "Connected");
                             setLocationRequest();
-                        //    checkLocationSettingsState();
                         }
 
                         @Override
@@ -808,8 +807,8 @@ public class Utilities {
 
         }
 
-        public String getLocality(Double lat, Double lng){
-            return null;
+        public void getLocality(Double lat, Double lng){
+            new getLocationName().execute(lat, lng);
         }
 
         class getLocationName extends AsyncTask<Double, Void, Void>{
@@ -819,9 +818,6 @@ public class Utilities {
 
             @Override
             protected Void doInBackground(Double... params) {
-
-                Log.d("LocationHandler", "Parsing latitude and longitude");
-                // params[0] = latitude, params[1] = longitude
 
                 while (true) {
 
@@ -834,23 +830,7 @@ public class Utilities {
                     try {
 
                         addresses = getLocationName.getFromLocation(latitude, longtitude, 1);
-
-                        /*
-
-                        for (int i = 0; i != addresses.get(0).getMaxAddressLineIndex(); ++i)
-                            response += "[" + i + "]" + addresses.get(0).getAddressLine(i) + "\n";
-
-
-                        response += addresses.get(0).getLocality();
-                        response += addresses.get(0).getAdminArea();
-                        response += addresses.get(0).getCountryName();
-                        response += addresses.get(0).getPostalCode();
-                        response += addresses.get(0).getFeatureName();
-
-                        Log.d("debug", response); */
-
                         response = addresses.get(0).getLocality();
-                        Log.d("debug", response);
 
                         break;
 
@@ -867,7 +847,6 @@ public class Utilities {
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
                 OnLocationFoundListener.onLocationFoundCity(response);
-                OnLocationFoundListener.onLocationFoundLatLng(latitude, longtitude);
             }
         }
 

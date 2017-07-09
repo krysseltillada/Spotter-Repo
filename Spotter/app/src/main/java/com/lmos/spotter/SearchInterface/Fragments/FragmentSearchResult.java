@@ -25,7 +25,7 @@ import com.lmos.spotter.Utilities.Utilities;
 public class FragmentSearchResult extends Fragment
     implements Utilities.OnLocationFoundListener{
 
-    TextView description, review_count, place_address;
+    TextView description, review_count, place_address, place_rate_label;
     RatingBar place_rate;
     Place place;
     Utilities.LocationHandler locationHandler;
@@ -71,12 +71,17 @@ public class FragmentSearchResult extends Fragment
         deals = (RecyclerView) thisView.findViewById(R.id.reviews_recycler);
         description = (TextView) thisView.findViewById(R.id.place_about);
         review_count = (TextView) thisView.findViewById(R.id.review_count);
+        place_rate_label = (TextView) thisView.findViewById(R.id.place_rating_label);
         place_rate = (RatingBar) thisView.findViewById(R.id.place_rate);
         place_address = (TextView)thisView.findViewById(R.id.place_address);
 
         description.setText(place.getPlaceDescription());
         place_address.setText(place.getPlaceAddress());
         place_rate.setRating(Float.parseFloat(place.getPlaceRating()));
+        String rating_place_holder = place.getPlaceRating() + " Stars";
+        place_rate_label.setText(rating_place_holder);
+
+        Log.d("JSON-imageLink", place.getPlaceImageLink());
 
         ((SearchResultsActivity) getContext()).setHeaderImg(place.getPlaceImageLink());
 

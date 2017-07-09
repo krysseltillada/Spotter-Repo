@@ -181,14 +181,20 @@ public class AppScript {
 
             if(response_code.equals("0x01") || response_code.equals("0x02") || response_code.equals("0x03")){
 
-                response = jsonObject.getString("response_msg");
-
                 if(!response_code.equals("0x03")){
 
-                    LoginActivity.set_login_prefs.putString("accountID", jsonObject.getString("response_data"));
+                    JSONArray accountProfile = jsonObject.getJSONArray("response_data");
+
+                    LoginActivity.set_login_prefs.putString("accountID", accountProfile.get(0).toString());
+                    LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
+                    LoginActivity.set_login_prefs.putString("accountUsername", accountProfile.get(2).toString());
+                    LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
                     LoginActivity.set_login_prefs.apply();
 
                 }
+
+
+                response = jsonObject.getString("response_msg");
 
             }
             else if(response_code.equals("0x10") || response_code.equals("0x11")){

@@ -33,7 +33,9 @@ import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
 import com.lmos.spotter.Utilities.Utilities;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,7 +52,7 @@ import java.util.Map;
  */
 
 public class SearchResultsActivity extends AppCompatActivity
-    implements Utilities.OnDbResponseListener{
+    implements Utilities.OnDbResponseListener, Utilities.OnLocationFoundListener{
 
     /** Initialize views **/
     ViewFlipper viewFlipperManager;
@@ -70,6 +72,8 @@ public class SearchResultsActivity extends AppCompatActivity
     /** End of initializing views **/
 
     boolean showBookmarkInAppBar = false;
+
+    Utilities.LocationHandler locationHandler;
 
     Activity activity = this;
     String name;
@@ -133,14 +137,15 @@ public class SearchResultsActivity extends AppCompatActivity
                 });
 
                 if (isPlayServicesAvailable) {
+                    locationHandler.buildGoogleClient();
                     Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
-                    loading_msg.setText("Hi! We're getting your location. Make sure you have a stable internet connection.");
+                    loading_msg.setText(R.string.loading_msg_1);
                 }
 
             }
             else{
                 Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
-                loading_msg.setText("Getting some information for you.");
+                loading_msg.setText(R.string.loading_msg_2);
                 new LoadSearchData().execute(params);
 
             }
@@ -150,12 +155,24 @@ public class SearchResultsActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if(fragmentType.equals("Location"))
+            locationHandler.changeApiState("connect");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-
         appBarLayout.setExpanded(true);
         nsview.smoothScrollTo(0, 0);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(fragmentType.equals("Location") && locationHandler != null)
+            locationHandler.changeApiState("disconnect");
     }
 
     @Override
@@ -179,13 +196,25 @@ public class SearchResultsActivity extends AppCompatActivity
 
         try{
 
-            JSONObject fObj = new JSONObject(imageLink);
-            String s0bj = fObj.getString("placeImages");
-            Log.d("JSON", s0bj);
+            JSONObject json_imgLnk = new JSONObject(imageLink);
+            JSONObject json_placeImg = json_imgLnk.getJSONObject("placeImages");
+            JSONArray json_prevImg = json_placeImg.getJSONArray("previewImages");
 
-            /**for(int i = 0; i < t0bj.length(); i ++){
-                Log.d("JSONARRAY", t0bj.getString(i));
-            }**/
+            ImageView[] prevImages = {
+                    (ImageView) findViewById(R.id.placePreviewImage1),
+                    (ImageView) findViewById(R.id.placePreviewImage2),
+                    (ImageView) findViewById(R.id.placePreviewImage3)
+            };
+
+            for(int i = 0; i < json_prevImg.length(); i ++){
+
+                Picasso.with(this)
+                        .load(json_prevImg.get(i).toString())
+                        .resize(0, prevImages[i].getHeight())
+                        .placeholder(R.drawable.loadingplace)
+                        .into(prevImages[i]);
+
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -238,7 +267,6 @@ public class SearchResultsActivity extends AppCompatActivity
     private void contentSettings(int loading_visibility, int visibility, int tab_visibility, int value, int color, boolean prop_value){
 
         CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
-        params.bottomMargin = value;
 
         // visibility
         desc_tab_holder.setVisibility(visibility);
@@ -246,6 +274,9 @@ public class SearchResultsActivity extends AppCompatActivity
         loading_screen.setVisibility(loading_visibility);
         actionBarView.setVisibility(visibility);
         searchResultsTab.setVisibility(tab_visibility);
+
+        if(searchResultsTab.getVisibility() == View.GONE)
+            value -= 50;
 
         // parameters
         collapsingToolbarLayout.setContentScrimColor(color);
@@ -263,6 +294,7 @@ public class SearchResultsActivity extends AppCompatActivity
         else
             appBarLayout.setExpanded(prop_value);
 
+        params.bottomMargin = value;
         appBarLayout.setActivated(prop_value);
         toolbar.setLayoutParams(params);
 
@@ -395,6 +427,16 @@ public class SearchResultsActivity extends AppCompatActivity
         );
     }
 
+    @Override
+    public void onLocationFoundCity(String city) {
+        new LoadSearchData().execute("General", city);
+    }
+
+    @Override
+    public void onLocationFoundLatLng(double lat, double lng) {
+        locationHandler.getLocality(lat, lng);
+    }
+
     /** End of Abstract Methods **/
 
     /** AsyncTask **/
@@ -440,24 +482,31 @@ public class SearchResultsActivity extends AppCompatActivity
 
             if(appScript.getResult() != null && appScript.getResult().equals("Data loaded.")){
                 List<Place> places = appScript.getPlacesList();
-                int toggleTab = View.VISIBLE;
-                if(type.equals("General"))
-                    switchFragment("", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
-                else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
-                    switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
-                    toggleTab = View.GONE;
-                }
 
-                loading_screen.setVisibility(View.GONE);
-                setHeaderText(data[1]);
-                contentSettings(
-                        View.GONE,
-                        View.VISIBLE,
-                        toggleTab,
-                        200,
-                        getResources().getColor(R.color.blackTransparent),
-                        true
-                );
+                if(!places.isEmpty()){
+                    int toggleTab = View.VISIBLE;
+                    if(type.equals("General"))
+                        switchFragment("", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
+                    else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
+                        switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
+                        toggleTab = View.GONE;
+                    }
+
+                    loading_screen.setVisibility(View.GONE);
+                    setHeaderText(data[1]);
+                    contentSettings(
+                            View.GONE,
+                            View.VISIBLE,
+                            toggleTab,
+                            200,
+                            getResources().getColor(R.color.blackTransparent),
+                            true
+                    );
+                }
+                else {
+                    loading_img.setImageResource(android.R.drawable.alert_dark_frame);
+                    loading_msg.setText("No results found.");
+                }
 
             }
 
