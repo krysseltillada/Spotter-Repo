@@ -99,20 +99,18 @@ public class FragmentSearchResultGeneral extends Fragment {
         // Set RecyclerView onClickListener
         mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
             @Override
-            public void OnItemClick(Place place) {
-                ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
-            }
+            public void OnItemClick(View v, Place place) {
 
-            @Override
-            public void OnItemLongClick(View parent, final Place place) {
-                Utilities.inflateOptionItem(getContext(), parent, R.menu.bookmark_option, new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(getContext(), "Aw I was clicked", Toast.LENGTH_SHORT).show();
+                switch (v.getId()){
+
+                    case R.id.general_list_view_bookmark:
                         ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
-                        return false;
-                    }
-                });
+                        break;
+                    default:
+                        ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
+                        break;
+                }
+
             }
 
         });

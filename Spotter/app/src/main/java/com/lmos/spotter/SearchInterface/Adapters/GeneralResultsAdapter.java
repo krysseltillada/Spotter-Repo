@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,11 +30,12 @@ import java.util.List;
 public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAdapter.GeneralResultsViewHolder>{
 
     private static OnClickListener onClickListener;
-    private static Context context;
+    private Context context;
     private List<Place> places;
+
     public GeneralResultsAdapter(Context context,List<Place> places){
         this.places = new ArrayList<Place>(places);
-        GeneralResultsAdapter.context = context;
+        this.context = context;
     }
 
     public GeneralResultsAdapter(List<Place> places){
@@ -86,16 +88,16 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
     public interface OnClickListener{
 
-        void OnItemClick(Place place);
-        void OnItemLongClick(View view, Place place);
+        void OnItemClick(View view, Place place);
 
     }
 
     public class GeneralResultsViewHolder extends RecyclerView.ViewHolder
-        implements View.OnClickListener, View.OnLongClickListener{
+        implements View.OnClickListener{
 
         TextView name, desc, rating, priceRange;
         ImageView placeImage;
+        ImageButton bookmark;
 
         public GeneralResultsViewHolder(View itemView) {
             super(itemView);
@@ -104,21 +106,16 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
                 rating = (TextView) itemView.findViewById(R.id.general_list_rating);
                 priceRange = (TextView) itemView.findViewById(R.id.general_list_price_range);
                 placeImage = (ImageView) itemView.findViewById(R.id.general_list_image);
+                bookmark = (ImageButton) itemView.findViewById(R.id.general_list_view_bookmark);
                 itemView.findViewById(R.id.search_general_viewContainer).setOnClickListener(this);
-                itemView.findViewById(R.id.search_general_viewContainer).setOnLongClickListener(this);
 
         }
 
         @Override
         public void onClick(View v) {
-            onClickListener.OnItemClick(places.get(getAdapterPosition()));
+            onClickListener.OnItemClick(v, places.get(getAdapterPosition()));
         }
 
-        @Override
-        public boolean onLongClick(View v) {
-            onClickListener.OnItemLongClick(rating, places.get(getAdapterPosition()));
-            return true;
-        }
     }
 
 }
