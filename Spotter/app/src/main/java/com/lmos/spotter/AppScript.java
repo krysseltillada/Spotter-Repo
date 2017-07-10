@@ -156,7 +156,6 @@ public class AppScript {
             // Close connection to server.
             httpURLConnection.disconnect();
 
-
             parseResult(result);
 
         } catch (MalformedURLException e) {
@@ -200,7 +199,7 @@ public class AppScript {
                 response = jsonObject.getString("response_msg");
 
             }
-            else if(response_code.equals("0x10") || response_code.equals("0x11")){
+            else if(response_code.equals("0x10") || response_code.equals("0x11") || response_code.equals("0x12")){
 
                 List<Place> place = new ArrayList<>();
 
@@ -218,7 +217,7 @@ public class AppScript {
                     setPlace.setPlaceLat(place_item.getString("Latitude"));
                     setPlace.setPlaceLng(place_item.getString("Longitude"));
 
-                    if(response_code.equals("0x10")){
+                    if(response_code.equals("0x10") || response_code.equals("0x12")){
 
                         setPlace.setplaceLocality(place_item.getString("Locality"));
                         setPlace.setplaceDescription(place_item.getString("Description"));
@@ -229,9 +228,11 @@ public class AppScript {
                         setPlace.setRating(place_item.getString("Rating"));
                         setPlace.setplaceImageLink(place_item.getString("Image"));
 
-                        JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
-                        offSet = responseData.getString("endOffset");
-                        tableCount = responseData.getString("tableCount");
+                        if(response_code.equals("0x10")){
+                            JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
+                            offSet = responseData.getString("endOffset");
+                            tableCount = responseData.getString("tableCount");
+                        }
 
                     }
 
@@ -239,7 +240,7 @@ public class AppScript {
 
                 }
 
-                if(response_code.equals("0x10"))
+                if(response_code.equals("0x10") || response_code.equals("0x12"))
                     placeList = new ArrayList<>(place);
                 else
                     placeNames = new ArrayList<>(place);

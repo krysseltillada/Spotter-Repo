@@ -260,7 +260,7 @@ public class SearchResultsActivity extends AppCompatActivity
         if(cmd.equals("add"))
             dbHelper.addToFavorites(place);
         else
-            dbHelper.deleteBookmark(args);
+            dbHelper.deleteBookmark(new String[] { args });
 
     }
 
@@ -318,7 +318,12 @@ public class SearchResultsActivity extends AppCompatActivity
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d("Tab", tab.getText().toString());
-                FragmentSearchResultGeneral.changeAdapter(tab.getText().toString());
+
+                Fragment generalFragment = getSupportFragmentManager().findFragmentByTag("Genera");
+
+                if(generalFragment != null && generalFragment instanceof FragmentSearchResultGeneral)
+                    ((FragmentSearchResultGeneral) generalFragment).changeAdapter(tab.getText().toString());
+
                 nsview.smoothScrollTo(0,0);
             }
 
@@ -415,7 +420,7 @@ public class SearchResultsActivity extends AppCompatActivity
         Utilities.showSnackBar(
                 findViewById(R.id.search_view_wrapper),
                 response,
-                Snackbar.LENGTH_SHORT,
+                Snackbar.LENGTH_LONG,
                 "Undo",
                 new View.OnClickListener() {
                     @Override

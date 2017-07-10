@@ -38,6 +38,8 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String KEY_CLASS = "class";
     private static final String KEY_PRICE_RANGE = "price_range";
     private static final String KEY_IMAGE = "image";
+    private static final String KEY_RECOMMENDED = "recommended";
+    private static final String KEY_RATING = "rating";
 
     Context context;
     Utilities.OnDbResponseListener onDbResponseListener;
@@ -70,6 +72,8 @@ public class DbHelper extends SQLiteOpenHelper {
                         KEY_DEALS + " TEXT," +
                         KEY_CLASS + " INTEGER," +
                         KEY_PRICE_RANGE + " TEXT," +
+                        KEY_IMAGE + " TEXT," +
+                        KEY_IMAGE + " TEXT," +
                         KEY_IMAGE + " TEXT)"
 
         );
@@ -119,11 +123,13 @@ public class DbHelper extends SQLiteOpenHelper {
 
     }
 
-    public void deleteBookmark(String placeID){
+    public void deleteBookmark(String[] placeID){
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(TABLE_FAVORITES, KEY_PLACEID, new String[] { placeID });
+        if(placeID != null)
+            for(String id : placeID)
+                db.delete(TABLE_FAVORITES, KEY_PLACEID, new String[] { id });
 
         db.close();
 
@@ -185,6 +191,8 @@ public class DbHelper extends SQLiteOpenHelper {
             place.setPlaceDeals(cursor.getString(cursor.getColumnIndex(KEY_DEALS)));
             place.setplacePriceRange(cursor.getString(cursor.getColumnIndex(KEY_PRICE_RANGE)));
             place.setplaceImage(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
+            place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
+            place.setRating(cursor.getString(cursor.getColumnIndex(KEY_RATING)));
 
             bookmarks.add(place);
 

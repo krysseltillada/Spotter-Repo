@@ -19,7 +19,6 @@ import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,12 +31,11 @@ import java.util.List;
 
 public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder> {
 
-    private final int VIEW_TYPE_ITEM = 0;
-    private final int VIEW_TYPE_LOADING = 1;
-
     public static PlaceType currentSelectedTab;
     public static boolean ifDoneInitialized = false;
     private static ArrayList<ArrayList<Boolean>> checkBoxToggleList = new ArrayList<>();
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
     private int lastPosition = -1;
     private ActivityType activityType;
     private List<Place> places;
@@ -112,6 +110,24 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
         return checkBoxToggleList;
     }
 
+    public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {
+
+        Log.d("Debug", "Size for hotel: " + String.valueOf(checkList.get(0).size()));
+
+        Log.d("Debug", "Size for Restaurant: " + String.valueOf(checkList.get(1).size()));
+
+        Log.d("Debug", "Size for Tourist spots: " + String.valueOf(checkList.get(2).size()));
+
+        for (int i = 0; i != checkList.size(); ++i) {
+
+            Log.d("Debug", "for index: " + String.valueOf(i));
+
+            for (int j = 0; j != checkList.get(i).size(); ++j) {
+                Log.d("Debug", "position: " + String.valueOf(checkList.get(i).get(j)));
+            }
+        }
+
+    }
 
     private int getLayoutIdByType (ActivityType type) {
 
@@ -161,8 +177,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
                 Picasso.with(context)
                         .load(frontPlaceImageLink)
-                        .resize(0, mainInterfaceViewHolder.placeCompanyImage.getHeight())
-                        .centerCrop()
+                        .resize(90,90)
                         .placeholder(R.drawable.loadingplace)
                         .into(mainInterfaceViewHolder.placeCompanyImage);
 
@@ -247,25 +262,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
     @Override
     public int getItemCount() {
         return places.size();
-    }
-
-    public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {
-
-        Log.d("Debug", "Size for hotel: " + String.valueOf(checkList.get(0).size()));
-
-        Log.d("Debug", "Size for Restaurant: " + String.valueOf(checkList.get(1).size()));
-
-        Log.d("Debug", "Size for Tourist spots: " + String.valueOf(checkList.get(2).size()));
-
-        for (int i = 0; i != checkList.size(); ++i) {
-
-            Log.d("Debug", "for index: " + String.valueOf(i));
-
-            for (int j = 0; j != checkList.get(i).size(); ++j) {
-                Log.d("Debug", "position: " + String.valueOf(checkList.get(i).get(j)));
-            }
-        }
-
     }
 
     public class LoadingItemViewHolder extends RecyclerView.ViewHolder {

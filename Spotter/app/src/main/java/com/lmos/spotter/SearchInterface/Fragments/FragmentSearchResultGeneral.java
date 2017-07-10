@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lmos.spotter.Place;
@@ -30,10 +31,11 @@ import java.util.List;
 
 public class FragmentSearchResultGeneral extends Fragment {
 
-    private static RecyclerView recyclerView;
-    private static GeneralResultsAdapter mAdapter;
     private static List<Place> places;
+    TextView no_result;
     RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+    private GeneralResultsAdapter mAdapter;
 
     public static FragmentSearchResultGeneral newInstance(String focusedTab, List<Place> places){
 
@@ -61,13 +63,19 @@ public class FragmentSearchResultGeneral extends Fragment {
         return setPlace;
     }
 
-    public static void changeAdapter(String type){
+    public void changeAdapter(String type){
         if(mAdapter != null)
             mAdapter = null;
 
-        mAdapter = new GeneralResultsAdapter(setPlaceByType(type));
-        mAdapter.notifyItemChanged(0);
-        recyclerView.swapAdapter(mAdapter, false);
+        if(!setPlaceByType(type).isEmpty()){
+            mAdapter = new GeneralResultsAdapter(setPlaceByType(type));
+            mAdapter.notifyItemChanged(0);
+            recyclerView.swapAdapter(mAdapter, false);
+            no_result.setVisibility(View.GONE);
+        }
+        else{
+            no_result.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -79,6 +87,10 @@ public class FragmentSearchResultGeneral extends Fragment {
         View thisView = inflater.inflate(R.layout.search_result_general, container, false);
         Log.d("LOG", "Creating fragment view");
         places = getArguments().getParcelableArrayList("places");
+
+        thisView.findViewById(R.id.recycleViewProgressBar).setVisibility(View.GONE);
+
+        no_result = (TextView) thisView.findViewById(R.id.no_result);
 
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getContext());
