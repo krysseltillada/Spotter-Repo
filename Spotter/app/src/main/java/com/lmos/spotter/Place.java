@@ -36,7 +36,8 @@ public class Place implements Parcelable {
     private String placeImage;
     private String placeDeals;
     private String placeImageLink;
-    private String placeRating;
+    private String recommended;
+    private String rating;
 
     public Place(){}
     public Place(Parcel in){
@@ -53,7 +54,9 @@ public class Place implements Parcelable {
         placePriceRange = in.readString();
         placeImage = in.readString();
         placeDeals = in.readString();
-        placeRating = in.readString();
+        recommended = in.readString();
+        rating = in.readString();
+
     }
 
     public void setplaceName(String placeName){this.placeName = placeName;}
@@ -73,8 +76,8 @@ public class Place implements Parcelable {
     public void setplaceImage(String placeImage){this.placeImage = placeImage;}
 
     public void setplaceImageLink(String placeImageLink){this.placeImageLink = placeImageLink;}
-
-    public void setRating(String rating){ this.placeRating = rating; }
+    public void setRecommended(String recom) {this.recommended = recom;}
+    public void setRating(String rt) {this.rating = rt;}
 
     public String getPlaceID() {
         return placeID;
@@ -126,10 +129,12 @@ public class Place implements Parcelable {
     public void setPlaceLat(String placeLat){ this.placeLat = placeLat; }
 
     public String getPlaceLng(){ return placeLng; }
+    public String getRecommended () { return recommended; }
+    public String getRating () { return rating; }
 
     public void setPlaceLng(String placeLng){ this.placeLng = placeLng; }
 
-    public String getPlaceRating(){ return placeRating; }
+    public String getPlaceRating(){ return rating; }
 
     @Override
     public int describeContents() {
@@ -151,7 +156,8 @@ public class Place implements Parcelable {
         dest.writeString(placePriceRange);
         dest.writeString(placeImage);
         dest.writeString(placeDeals);
-        dest.writeString(placeRating);
+        dest.writeString(recommended);
+        dest.writeString(rating);
 
     }
 

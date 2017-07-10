@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +30,10 @@ import java.util.List;
  * Created by Kryssel on 6/14/2017.
  */
 
-public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdapter.MainInterfaceViewHolder>{
+public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder> {
+
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
 
     public static PlaceType currentSelectedTab;
     public static boolean ifDoneInitialized = false;
@@ -107,6 +112,143 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
         return checkBoxToggleList;
     }
 
+
+    private int getLayoutIdByType (ActivityType type) {
+
+        switch (type) {
+            case HOME_ACTIVITY:
+                return R.layout.place_item_list;
+            case BOOKMARKS_ACTIVITY_NORMAL_MODE:
+                return R.layout.bookmarks_item_list;
+            case BOOKMARKS_ACTIVITY_DELETE_MODE:
+                return R.layout.bookmarks_item_list_delete_mode;
+        }
+
+        return 0;
+
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        Log.d("debug", "viewtype: " + viewType);
+
+        if (viewType == VIEW_TYPE_ITEM) {
+
+            return new MainInterfaceViewHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(getLayoutIdByType(activityType), parent, false));
+
+        } else {
+
+            return new LoadingItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.progress_item, parent, false));
+
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+
+        if (viewHolder instanceof  MainInterfaceViewHolder) {
+
+            MainInterfaceViewHolder mainInterfaceViewHolder = (MainInterfaceViewHolder)viewHolder;
+
+            try {
+
+                String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
+                                                                             .getPlaceImageLink())
+                                                                             .getString("placeImages"))
+                                                                             .getString("frontImage");
+
+                Picasso.with(context)
+                        .load(frontPlaceImageLink)
+                        .resize(0, mainInterfaceViewHolder.placeCompanyImage.getHeight())
+                        .centerCrop()
+                        .placeholder(R.drawable.loadingplace)
+                        .into(mainInterfaceViewHolder.placeCompanyImage);
+
+
+            } catch (JSONException e) {
+                Log.d("debug", e.getMessage());
+            }
+
+
+            mainInterfaceViewHolder.txtPlaceName.setText(places.get(position).getPlaceName());
+            mainInterfaceViewHolder.txtLocation.setText(places.get(position).getPlaceLocality());
+
+            String recommend = places.get(position).getRecommended();
+
+            mainInterfaceViewHolder.txtRecommend.setText(recommend + " people recommend this");
+            mainInterfaceViewHolder.txtGeneralRatingDigit.setText(places.get(position).getRating());
+
+        /*
+
+        double userRating = (double)places.get(position)[3];
+        double userPriceMin = (double)places.get(position)[5];
+        double userPriceMax = (double)places.get(position)[6]; */
+
+        /*
+
+        int userReviews = (int)places.get(position)[4];
+
+        String reviewInfo = "Good(" + userReviews + " reviews)";
+        String priceRangeInfo = "₱" + userPriceMin + " - " + userPriceMax;
+
+        holder.txtReview.setText(reviewInfo);
+        holder.txtGeneralRatingDigit.setText(String.valueOf(userRating)); */
+
+            mainInterfaceViewHolder.txtPrice.setText(places.get(position).getPlacePriceRange());
+
+            if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
+
+                if (mainInterfaceViewHolder.isRecyclable())
+                    mainInterfaceViewHolder.setIsRecyclable(false);
+
+
+                int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
+
+                if (mainInterfaceViewHolder.cbDelete != null)
+                    mainInterfaceViewHolder.cbDelete.setChecked(checkBoxToggleList.get(toggleIndex).get(position));
+
+
+            }
+
+
+            setAnimation(mainInterfaceViewHolder.rowV.findViewById(R.id.placeItemRow), position);
+
+        } else if (viewHolder instanceof LoadingItemViewHolder) {
+
+            LoadingItemViewHolder loadingItemViewHolder = (LoadingItemViewHolder) viewHolder;
+
+            loadingItemViewHolder.itemProgressBar.setIndeterminate(true);
+
+        }
+
+
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        return places.get(position) == null ? VIEW_TYPE_LOADING :
+                                              VIEW_TYPE_ITEM;
+
+    }
+
+    private void setAnimation (View view, int position) {
+
+        if (position > lastPosition) {
+            view.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
+            lastPosition = position;
+        }
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return places.size();
+    }
+
     public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {
 
         Log.d("Debug", "Size for hotel: " + String.valueOf(checkList.get(0).size()));
@@ -126,144 +268,20 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
 
     }
 
-    private int getLayoutIdByType (ActivityType type) {
+    public class LoadingItemViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar itemProgressBar;
 
-        switch (type) {
-            case HOME_ACTIVITY:
-                return R.layout.place_item_list;
-            case BOOKMARKS_ACTIVITY_NORMAL_MODE:
-                return R.layout.bookmarks_item_list;
-            case BOOKMARKS_ACTIVITY_DELETE_MODE:
-                return R.layout.bookmarks_item_list_delete_mode;
+        public LoadingItemViewHolder(View view) {
+            super (view);
+            itemProgressBar = (ProgressBar) view.findViewById(R.id.progressItem);
         }
-
-        return 0;
-
-    }
-
-    @Override
-    public MainInterfaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-
-        return new MainInterfaceViewHolder(LayoutInflater.from(parent.getContext())
-                                                                     .inflate(getLayoutIdByType(activityType), parent, false));
-
-    }
-
-    @Override
-    public void onBindViewHolder(MainInterfaceViewHolder holder, int position) {
-
-        /*
-
-        holder.placeCompanyImage.setImageDrawable(null);
-
-        Drawable drawable = context.getResources()
-                                   .getDrawable((int) testData.get(position)[0]);
-
-        Bitmap bitmap = Utilities.getResizedBitmap(((BitmapDrawable)drawable).getBitmap(),
-                                                    60,
-                                                    60);
-
-        holder.placeCompanyImage.setImageDrawable(new BitmapDrawable(context.getResources(), bitmap));
-
-        holder.placeCompanyImage.setScaleType(ImageView.ScaleType.CENTER_CROP); */
-
-        /*
-        Picasso.with(context)
-                .load((int)testData.get(position)[0])
-                .placeholder(R.drawable.loadingplace)
-                .into(holder.placeCompanyImage); */
-
-//        Log.d("debug", places.get(position).getPlaceImageLink());
-
-        try {
-
-
-
-           String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
-                                                                             .getPlaceImageLink())
-                                                                             .getString("placeImages"))
-                                                                             .getString("frontImage");
-
-
-
-
-            Picasso.with(context)
-                    .load(frontPlaceImageLink)
-                    .resize(90, 90)
-                    .placeholder(R.drawable.loadingplace)
-                    .into(holder.placeCompanyImage);
-
-
-        } catch (JSONException e) {
-            Log.d("debug", e.getMessage());
-        }
-
-
-        holder.txtPlaceName.setText(places.get(position).getPlaceName());
-        holder.txtLocation.setText(places.get(position).getPlaceLocality());
-
-        /*
-
-        double userRating = (double)places.get(position)[3];
-        double userPriceMin = (double)places.get(position)[5];
-        double userPriceMax = (double)places.get(position)[6]; */
-
-        /*
-
-        int userReviews = (int)places.get(position)[4];
-
-        String reviewInfo = "Good(" + userReviews + " reviews)";
-        String priceRangeInfo = "₱" + userPriceMin + " - " + userPriceMax;
-
-        holder.txtReview.setText(reviewInfo);
-        holder.txtGeneralRatingDigit.setText(String.valueOf(userRating)); */
-
-        holder.txtPrice.setText(places.get(position).getPlacePriceRange());
-
-        if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
-
-            if (holder.isRecyclable())
-                holder.setIsRecyclable(false);
-
-
-            int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
-
-            if (holder.cbDelete != null)
-                holder.cbDelete.setChecked(checkBoxToggleList.get(toggleIndex).get(position));
-
-
-        }
-
-        setAnimation(holder.rowV.findViewById(R.id.placeItemRow), position);
-
-
-
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return super.getItemViewType(position);
-    }
-
-    private void setAnimation (View view, int position) {
-
-        if (position > lastPosition) {
-            view.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_in));
-            lastPosition = position;
-        }
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return places.size();
     }
 
    public class MainInterfaceViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView placeCompanyImage, gradeIcon;
-        public TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview;
+        public TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview, txtRecommend;
+
         public CheckBox cbDelete;
         View rowV;
 
@@ -279,6 +297,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter<MainInterfaceAdap
             txtPrice = (TextView) rowView.findViewById(R.id.txtPrice);
             txtGeneralRatingDigit = (TextView) rowView.findViewById(R.id.txtGeneralRatingDigit);
             txtReview = (TextView) rowView.findViewById(R.id.txtReview);
+            txtRecommend = (TextView) rowView.findViewById(R.id.txtRecommend);
 
             rowV = rowView;
 

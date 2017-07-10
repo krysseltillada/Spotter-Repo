@@ -66,6 +66,8 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
             Picasso.with(context)
                     .load(placeImageLink)
+                    .resize(0, holder.placeImage.getHeight())
+                    .centerCrop()
                     .placeholder(R.drawable.loadingplace)
                     .into(holder.placeImage);
 

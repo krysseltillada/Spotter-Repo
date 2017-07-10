@@ -50,6 +50,8 @@ public class FragmentSignUp extends Fragment {
         password = (TextInputEditText) registerView.findViewById(R.id.register_password);
         sign_up = (Button) registerView.findViewById(R.id.register_sign_up);
 
+        register_img.setImageDrawable(getResources().getDrawable(R.drawable.account));
+
         register_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,10 +79,10 @@ public class FragmentSignUp extends Fragment {
                 if(username.getText().toString().length() >= 6 ||
                         password.getText().toString().length() >= 6 ) {
 
-                    /**if (!Utilities.validateEmail(registeredUserAccount.email)) {
+                    if (!Utilities.validateEmail(registeredUserAccount.email)) {
                         Toast.makeText(getContext(), "invalid email", Toast.LENGTH_LONG).show();
                         return;
-                    }**/
+                    }
 
                     final Map<String, String> map_data = new HashMap<String, String>() {{
 

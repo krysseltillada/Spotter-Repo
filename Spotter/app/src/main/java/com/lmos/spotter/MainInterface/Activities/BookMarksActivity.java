@@ -19,7 +19,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
@@ -27,6 +29,7 @@ import com.lmos.spotter.Utilities.TestData;
 import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BookMarksActivity extends AppCompatActivity {
 
@@ -36,6 +39,11 @@ public class BookMarksActivity extends AppCompatActivity {
     TabLayout bookMarksTabLayout;
     RecyclerView recyclerView;
 
+    List<Place> data = new ArrayList<>();
+
+    DbHelper bookmarksDB;
+
+
 
     private void changeBookMarkMode (ActivityType activityType, final RecyclerView recyclerViewTabLayout,
                                      TabLayout tabLayout) {
@@ -44,10 +52,12 @@ public class BookMarksActivity extends AppCompatActivity {
 
         if (activityType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE) {
 
+            data = bookmarksDB.getBookmarks();
+
             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                     ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                     MainInterfaceAdapter.currentSelectedTab,
-                    null
+                    data
                    ));
 
             tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -63,7 +73,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                                     PlaceType.HOTEL,
-                                    null));
+                                    data));
 
                             break;
 
@@ -74,7 +84,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                                     PlaceType.RESTAURANT,
-                                    null));
+                                    data));
                             break;
 
                         case 2:
@@ -84,7 +94,7 @@ public class BookMarksActivity extends AppCompatActivity {
                             recyclerViewTabLayout.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
                                     ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
                                     PlaceType.TOURIST_SPOTS,
-                                    null));
+                                    data));
 
                             break;
 
@@ -212,7 +222,12 @@ public class BookMarksActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-         bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
+        bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
+
+        bookmarksDB = new DbHelper(getApplicationContext());
+
+
+
 
         final RecyclerView bookMarksRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         recyclerView = bookMarksRecyclerView;
@@ -226,12 +241,6 @@ public class BookMarksActivity extends AppCompatActivity {
                                                                        false));
 
         bookMarksRecyclerView.setNestedScrollingEnabled(false);
-
-        bookMarksRecyclerView.setAdapter(new MainInterfaceAdapter(getApplicationContext(),
-                                                                  ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
-                                                                  PlaceType.HOTEL,
-                                                                  null));
-
 
         bookMarksTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 

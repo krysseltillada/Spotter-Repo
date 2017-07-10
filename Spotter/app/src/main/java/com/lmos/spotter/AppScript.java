@@ -77,6 +77,7 @@ public class AppScript {
     public void setData(String url, Map<String, String> params){
 
         String post_data = "";
+        final String default_url = "http://admin-spotter.000webhostapp.com/app_scripts/";
 
         if(params != null){
 
@@ -108,6 +109,8 @@ public class AppScript {
     private void connect(String setUrl, String post_data) {
 
         Log.d("SplashScreen", "Connecting");
+
+        Log.d("debug", setUrl + post_data);
 
         final int CONNECTION_TIME_OUT = 60000;
         final String REQUEST_METHOD = "POST";
@@ -175,7 +178,7 @@ public class AppScript {
     private void parseResult(String processResult){
 
         try {
-            Log.d("LOG", "parsing");
+
             final JSONObject jsonObject = new JSONObject(processResult);
             String response_code = jsonObject.getString("response_code");
 
@@ -214,7 +217,6 @@ public class AppScript {
                     setPlace.setplaceAddress(place_item.getString("Address"));
                     setPlace.setPlaceLat(place_item.getString("Latitude"));
                     setPlace.setPlaceLng(place_item.getString("Longitude"));
-                    Log.d("Longitude", place_item.getString("Longitude"));
 
                     if(response_code.equals("0x10")){
 
@@ -223,11 +225,13 @@ public class AppScript {
                         setPlace.setplaceImageLink(place_item.getString("Image"));
                         setPlace.setplaceClass(place_item.getString("Class"));
                         setPlace.setplacePriceRange(place_item.getString("PriceRange"));
+                        setPlace.setRecommended(place_item.getString("Recommended"));
                         setPlace.setRating(place_item.getString("Rating"));
+                        setPlace.setplaceImageLink(place_item.getString("Image"));
 
-//                        JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
-// offSet = responseData.getString("endOffset");
-   //                     tableCount = responseData.getString("tableCount");
+                        JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
+                        offSet = responseData.getString("endOffset");
+                        tableCount = responseData.getString("tableCount");
 
                     }
 
