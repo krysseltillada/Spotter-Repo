@@ -59,7 +59,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_holder);
         mapFragment.getMapAsync(this);
-        destination = getArguments().getParcelable("destination");
+      //  destination = getArguments().getParcelable("destination");
     }
 
     public void setUserPosition (final LatLng userPosition) {
