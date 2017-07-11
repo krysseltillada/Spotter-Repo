@@ -173,6 +173,7 @@ public class BookMarksActivity extends AppCompatActivity {
             bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText(placeType));
             bookmarkedPlaceList.put(placeType, bookmarksDB.getBookmarks(placeType));
 
+
             List <Place> test = bookmarksDB.getBookmarks(placeType);
 
             Log.d("debug", "for " + placeType);
