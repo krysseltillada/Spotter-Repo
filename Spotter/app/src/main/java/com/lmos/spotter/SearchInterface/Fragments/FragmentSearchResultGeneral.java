@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lmos.spotter.Place;
@@ -30,10 +31,11 @@ import java.util.List;
 
 public class FragmentSearchResultGeneral extends Fragment {
 
-    private static RecyclerView recyclerView;
-    private static GeneralResultsAdapter mAdapter;
     private static List<Place> places;
+    TextView no_result;
     RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+    private GeneralResultsAdapter mAdapter;
 
     public static FragmentSearchResultGeneral newInstance(String focusedTab, List<Place> places){
 
@@ -56,19 +58,26 @@ public class FragmentSearchResultGeneral extends Fragment {
 
             Log.d("type", p.getPlaceType());
         }
-
+        Log.d("SetPlace", String.valueOf(setPlace.size()));
         Collections.sort(setPlace, new Utilities.SortPlaces());
 
         return setPlace;
     }
 
-    public static void changeAdapter(String type){
+    public void changeAdapter(String type){
         if(mAdapter != null)
             mAdapter = null;
 
-        mAdapter = new GeneralResultsAdapter(setPlaceByType(type));
-        mAdapter.notifyItemChanged(0);
-        recyclerView.swapAdapter(mAdapter, false);
+        if(!setPlaceByType(type).isEmpty()){
+            Log.d("List", "Not empty");
+            mAdapter = new GeneralResultsAdapter(setPlaceByType(type));
+            mAdapter.notifyItemChanged(0);
+            recyclerView.swapAdapter(mAdapter, false);
+            no_result.setVisibility(View.GONE);
+        }
+        else{
+            no_result.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -81,35 +90,31 @@ public class FragmentSearchResultGeneral extends Fragment {
         Log.d("LOG", "Creating fragment view");
         places = getArguments().getParcelableArrayList("places");
 
+        thisView.findViewById(R.id.recycleViewProgressBar).setVisibility(View.GONE);
+
+        no_result = (TextView) thisView.findViewById(R.id.no_result);
+
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getContext());
         mAdapter = new GeneralResultsAdapter(getContext(), setPlaceByType(getArguments().getString("type")));
+
 
         // Set RecyclerView onClickListener
         mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
             @Override
             public void OnItemClick(View v, Place place) {
-                switch (v.getId())
-                {
-                    case R.id.general_list_view_bookark:
+
+                switch (v.getId()){
+
+                    case R.id.general_list_view_bookmark:
+                        Log.d("BK", "aw, you add me");
                         ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
                         break;
                     default:
                         ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
                         break;
                 }
-            }
 
-            @Override
-            public void OnItemLongClick(View parent, final Place place) {
-                Utilities.inflateOptionItem(getContext(), parent, R.menu.bookmark_option, new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(getContext(), "Aw I was clicked", Toast.LENGTH_SHORT).show();
-                        ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
-                        return false;
-                    }
-                });
             }
 
         });

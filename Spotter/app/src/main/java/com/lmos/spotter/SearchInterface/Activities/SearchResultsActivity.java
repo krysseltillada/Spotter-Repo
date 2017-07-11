@@ -257,13 +257,13 @@ public class SearchResultsActivity extends AppCompatActivity
 
         dbHelper = new DbHelper(this, this);
 
-
         if(cmd.equals("add")) {
             Log.d("debug", "bookmarked");
+
             dbHelper.addToFavorites(place);
         }
         else
-            dbHelper.deleteBookmark(args);
+            dbHelper.deleteBookmark(new String[] { args });
 
     }
 
@@ -321,7 +321,14 @@ public class SearchResultsActivity extends AppCompatActivity
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d("Tab", tab.getText().toString());
-                FragmentSearchResultGeneral.changeAdapter(tab.getText().toString());
+
+                //FragmentSearchResultGeneral.changeAdapter(tab.getText().toString());
+
+                Fragment generalFragment = getSupportFragmentManager().findFragmentByTag("General");
+
+                if(generalFragment != null && generalFragment instanceof FragmentSearchResultGeneral)
+                    ((FragmentSearchResultGeneral) generalFragment).changeAdapter(tab.getText().toString());
+
                 nsview.smoothScrollTo(0,0);
             }
 
@@ -418,7 +425,7 @@ public class SearchResultsActivity extends AppCompatActivity
         Utilities.showSnackBar(
                 findViewById(R.id.search_view_wrapper),
                 response,
-                Snackbar.LENGTH_SHORT,
+                Snackbar.LENGTH_LONG,
                 "Undo",
                 new View.OnClickListener() {
                     @Override
@@ -472,7 +479,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
             }
             Log.d("LOG", "connecting");
-            return new AppScript(){{
+            return new AppScript(activity){{
                setData("searchPlaces.php", map_data);
             }};
 
@@ -489,7 +496,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
                     int toggleTab = View.VISIBLE;
                     if(type.equals("General"))
-                        switchFragment("", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
+                        switchFragment("General", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
                     else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
                         switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
                         toggleTab = View.GONE;

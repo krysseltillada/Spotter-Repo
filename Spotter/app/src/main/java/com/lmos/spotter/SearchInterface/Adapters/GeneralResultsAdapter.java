@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
+import com.lmos.spotter.Utilities.Utilities;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -30,11 +31,12 @@ import java.util.List;
 public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAdapter.GeneralResultsViewHolder>{
 
     private static OnClickListener onClickListener;
-    private static Context context;
+    private Context context;
     private List<Place> places;
+
     public GeneralResultsAdapter(Context context,List<Place> places){
         this.places = new ArrayList<Place>(places);
-        GeneralResultsAdapter.context = context;
+        this.context = context;
     }
 
     public GeneralResultsAdapter(List<Place> places){
@@ -59,6 +61,8 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         try{
 
+            Log.d("JSON-IMAGE", places.get(position).getPlaceImageLink());
+
             String placeImageLink =
                     new JSONObject(
                             new JSONObject(places.get(position).getPlaceImageLink())
@@ -72,6 +76,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         }catch (JSONException e){
             e.printStackTrace();
+            Utilities.logError(context, e.getMessage());
         }
 
     }
@@ -88,12 +93,11 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
     public interface OnClickListener{
 
         void OnItemClick(View v, Place place);
-        void OnItemLongClick(View view, Place place);
 
     }
 
     public class GeneralResultsViewHolder extends RecyclerView.ViewHolder
-        implements View.OnClickListener, View.OnLongClickListener{
+        implements View.OnClickListener{
 
         TextView name, desc, rating, priceRange;
         ImageView placeImage;
@@ -101,15 +105,16 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         public GeneralResultsViewHolder(View itemView) {
             super(itemView);
-                name = (TextView) itemView.findViewById(R.id.general_list_name);
-                desc = (TextView) itemView.findViewById(R.id.general_list_description);
-                rating = (TextView) itemView.findViewById(R.id.general_list_rating);
-                priceRange = (TextView) itemView.findViewById(R.id.general_list_price_range);
-                placeImage = (ImageView) itemView.findViewById(R.id.general_list_image);
-                bookmark = (ImageButton) itemView.findViewById(R.id.general_list_view_bookark);
-                bookmark.setOnClickListener(this);
-                itemView.findViewById(R.id.search_general_viewContainer).setOnClickListener(this);
-                itemView.findViewById(R.id.search_general_viewContainer).setOnLongClickListener(this);
+
+            name = (TextView) itemView.findViewById(R.id.general_list_name);
+            desc = (TextView) itemView.findViewById(R.id.general_list_description);
+            rating = (TextView) itemView.findViewById(R.id.general_list_rating);
+            priceRange = (TextView) itemView.findViewById(R.id.general_list_price_range);
+            placeImage = (ImageView) itemView.findViewById(R.id.general_list_image);
+            bookmark = (ImageButton) itemView.findViewById(R.id.general_list_view_bookmark);
+            bookmark.setOnClickListener(this);
+
+            itemView.findViewById(R.id.search_general_viewContainer).setOnClickListener(this);
 
         }
 
@@ -118,11 +123,6 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
             onClickListener.OnItemClick(v, places.get(getAdapterPosition()));
         }
 
-        @Override
-        public boolean onLongClick(View v) {
-            onClickListener.OnItemLongClick(rating, places.get(getAdapterPosition()));
-            return true;
-        }
     }
 
 }

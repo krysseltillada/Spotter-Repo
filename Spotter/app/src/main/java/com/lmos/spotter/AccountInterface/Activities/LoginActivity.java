@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
 
-            final AppScript appScript = new AppScript(){{
+            final AppScript appScript = new AppScript(activity){{
                 setData(transaction, map_data);
             }};
 

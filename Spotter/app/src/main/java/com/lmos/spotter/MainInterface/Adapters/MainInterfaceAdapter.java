@@ -20,7 +20,6 @@ import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -105,6 +104,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
     public static HashMap<String, ArrayList<Boolean>> getCheckToggleStates () {
         return checkBoxToggleStates;
     }
+
     public static HashMap<String, ArrayList<String>> getCheckToggleMap () {
         return checkBoxToggleMap;
     }

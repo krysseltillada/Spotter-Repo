@@ -88,7 +88,7 @@ public class SplashScreen extends AppCompatActivity {
             if(!database.exists()){
                 if(Utilities.checkNetworkState(activity)){
                     publishProgress("We're setting things up for you, please wait a moment.");
-                    AppScript appScript = new AppScript(){{
+                    AppScript appScript = new AppScript(activity){{
                         setData("get-all-place-name.php", null);
                     }};
 

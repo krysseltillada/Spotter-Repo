@@ -722,7 +722,7 @@ public class HomeActivity extends AppCompatActivity
         @Override
         protected AppScript doInBackground(final String... params) {
 
-            final AppScript loadPlaces = new AppScript() {{
+            final AppScript loadPlaces = new AppScript(activity) {{
                 setData("loadPlaces.php", new HashMap<String, String>() {{
                     put("currentRow", params[0]);
                     put("rowOffset", params[1]);
