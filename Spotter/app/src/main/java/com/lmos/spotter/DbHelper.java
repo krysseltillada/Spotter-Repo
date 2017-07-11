@@ -130,10 +130,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        if(placeID != null)
-            for(String id : placeID)
-                db.delete(TABLE_FAVORITES, KEY_PLACEID, new String[] { id });
-
+        if(placeID != null) {
+            for (String id : placeID)
+                db.delete(TABLE_FAVORITES, KEY_PLACEID, new String[]{id});
+        }
         db.close();
 
     }
