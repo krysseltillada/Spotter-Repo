@@ -28,6 +28,9 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     private String prevName;
 
 
+
+
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

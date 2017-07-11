@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
         android:layout_centerHorizontal="true"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/item_progress_bar"

@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lmos.spotter.MainInterface.Activities.BookMarksActivity;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.ActivityType;
@@ -24,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -32,16 +34,17 @@ import java.util.List;
 
 public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder> {
 
-    private final int VIEW_TYPE_ITEM = 0;
-    private final int VIEW_TYPE_LOADING = 1;
+    public static final int VIEW_TYPE_ITEM = 0;
+    public static final int VIEW_TYPE_LOADING = 1;
 
     public static PlaceType currentSelectedTab;
-    public static boolean ifDoneInitialized = false;
-    private static ArrayList<ArrayList<Boolean>> checkBoxToggleList = new ArrayList<>();
     private int lastPosition = -1;
     private ActivityType activityType;
     private List<Place> places;
     private Context context;
+
+    private static HashMap<String, ArrayList<Boolean>> checkBoxToggleStates = new HashMap<>();
+    private static HashMap<String, ArrayList<String>> checkBoxToggleMap = new HashMap<>();
 
     public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, List<Place> pl) {
 
@@ -52,66 +55,59 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             currentSelectedTab = placeType;
 
-            int toggleIndex = getPlaceTypeByIndex(placeType);
+            Log.d("debug", "currently tab: " + currentSelectedTab);
 
-            Log.d("Debug", "initialize three hotel restaurant and tourist spots list");
+            checkCreateToggleList(BookMarksActivity.getPlaceTypeStr(currentSelectedTab));
 
-            initCheckBoxToggleList();
-
-                if (checkBoxToggleList.get(toggleIndex).size() <= 0) {
-
-                    for (int i = 0; i != places.size(); ++i)
-                        checkBoxToggleList.get(toggleIndex).add(false);
-
-                }
-
-            displayCheckListValues(checkBoxToggleList);
+            displayCheckListKeyValues(checkBoxToggleMap);
+            displayCheckListStates(checkBoxToggleStates);
 
         }
 
-
-        //testCount = tc;
         context = con;
         activityType = acType;
     }
 
-    public static int getPlaceTypeByIndex (PlaceType type) {
-        return  (PlaceType.HOTEL == type) ? 0 :
-                (PlaceType.RESTAURANT == type) ? 1 :
-                                                 2;
-    }
-
-    public static void initCheckBoxToggleList () {
-
-        if (!ifDoneInitialized) {
-
-            checkBoxToggleList.add(new ArrayList<Boolean>());
-            checkBoxToggleList.add(new ArrayList<Boolean>());
-            checkBoxToggleList.add(new ArrayList<Boolean>());
-
-            ifDoneInitialized = true;
-
+    public static void setAllCheckToggleStates (boolean isChecked) {
+        for (String placeKey : checkBoxToggleStates.keySet()) {
+            for (int i = 0; i != checkBoxToggleStates.get(placeKey).size(); ++i)
+                checkBoxToggleStates.get(placeKey).set(i, isChecked);
         }
+
+        displayCheckListStates(checkBoxToggleStates);
     }
 
-    public static void clearCheckBoxToggleList () {
+    public  void checkCreateToggleList (String keyPlace) {
 
-        if (checkBoxToggleList.size() > 0) {
+        if (!checkBoxToggleMap.containsKey(keyPlace)) {
+            checkBoxToggleMap.put(keyPlace, new ArrayList<String>());
 
-            for (int i = 0; i != checkBoxToggleList.size(); ++i) {
+            ArrayList<Boolean> checkStates = new ArrayList<>();
 
-                for (int j = 0; j != checkBoxToggleList.get(i).size(); ++j)
-                    checkBoxToggleList.get(i).set(j, false);
+            for (int i = 0; i != places.size(); ++i)
+                checkStates.add(false);
 
-            }
-
+            checkBoxToggleStates.put(keyPlace, checkStates);
         }
+
     }
 
-    public static ArrayList<ArrayList<Boolean>> getCheckBoxToggleList () {
-        return checkBoxToggleList;
+    public static boolean checkToggleState() {
+
+        for (String placeKey : checkBoxToggleStates.keySet()) {
+           if (checkBoxToggleStates.get(placeKey).contains(true))
+               return true;
+        }
+
+        return false;
     }
 
+    public static HashMap<String, ArrayList<Boolean>> getCheckToggleStates () {
+        return checkBoxToggleStates;
+    }
+    public static HashMap<String, ArrayList<String>> getCheckToggleMap () {
+        return checkBoxToggleMap;
+    }
 
     private int getLayoutIdByType (ActivityType type) {
 
@@ -130,8 +126,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        Log.d("debug", "viewtype: " + viewType);
 
         if (viewType == VIEW_TYPE_ITEM) {
 
@@ -152,32 +146,35 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             MainInterfaceViewHolder mainInterfaceViewHolder = (MainInterfaceViewHolder)viewHolder;
 
-            try {
+            if (activityType == ActivityType.HOME_ACTIVITY) {
 
-                String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
-                                                                             .getPlaceImageLink())
-                                                                             .getString("placeImages"))
-                                                                             .getString("frontImage");
+                try {
 
-                Picasso.with(context)
-                        .load(frontPlaceImageLink)
-                        .resize(0, mainInterfaceViewHolder.placeCompanyImage.getHeight())
-                        .centerCrop()
-                        .placeholder(R.drawable.loadingplace)
-                        .into(mainInterfaceViewHolder.placeCompanyImage);
+                    String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
+                            .getPlaceImageLink())
+                            .getString("placeImages"))
+                            .getString("frontImage");
+
+                    Picasso.with(context)
+                            .load(frontPlaceImageLink)
+                            .resize(90, 90)
+                            .placeholder(R.drawable.loadingplace)
+                            .into(mainInterfaceViewHolder.placeCompanyImage);
 
 
-            } catch (JSONException e) {
-                Log.d("debug", e.getMessage());
+                } catch (JSONException e) {
+                    Log.d("debug", e.getMessage());
+                }
+
+                String recommend = places.get(position).getRecommended();
+
+                mainInterfaceViewHolder.txtRecommend.setText(recommend + " people recommend this");
+
             }
-
 
             mainInterfaceViewHolder.txtPlaceName.setText(places.get(position).getPlaceName());
             mainInterfaceViewHolder.txtLocation.setText(places.get(position).getPlaceLocality());
 
-            String recommend = places.get(position).getRecommended();
-
-            mainInterfaceViewHolder.txtRecommend.setText(recommend + " people recommend this");
             mainInterfaceViewHolder.txtGeneralRatingDigit.setText(places.get(position).getRating());
 
         /*
@@ -198,16 +195,17 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             mainInterfaceViewHolder.txtPrice.setText(places.get(position).getPlacePriceRange());
 
+
+
             if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
 
                 if (mainInterfaceViewHolder.isRecyclable())
                     mainInterfaceViewHolder.setIsRecyclable(false);
 
-
-                int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
+                String toggleKey = BookMarksActivity.getPlaceTypeStr(currentSelectedTab);
 
                 if (mainInterfaceViewHolder.cbDelete != null)
-                    mainInterfaceViewHolder.cbDelete.setChecked(checkBoxToggleList.get(toggleIndex).get(position));
+                    mainInterfaceViewHolder.cbDelete.setChecked(checkBoxToggleStates.get(toggleKey).get(position));
 
 
             }
@@ -222,8 +220,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
             loadingItemViewHolder.itemProgressBar.setIndeterminate(true);
 
         }
-
-
 
     }
 
@@ -249,23 +245,26 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
         return places.size();
     }
 
-    public static void displayCheckListValues (ArrayList<ArrayList <Boolean>> checkList) {
+    public static void displayCheckListKeyValues (HashMap<String, ArrayList<String>> cbtm) {
+        for (String placeKey : cbtm.keySet()) {
 
-        Log.d("Debug", "Size for hotel: " + String.valueOf(checkList.get(0).size()));
+            Log.d("debug,", "for place: " + placeKey);
 
-        Log.d("Debug", "Size for Restaurant: " + String.valueOf(checkList.get(1).size()));
+            for (String checkPlaces : cbtm.get(placeKey))
+                Log.d("debug", checkPlaces);
 
-        Log.d("Debug", "Size for Tourist spots: " + String.valueOf(checkList.get(2).size()));
-
-        for (int i = 0; i != checkList.size(); ++i) {
-
-            Log.d("Debug", "for index: " + String.valueOf(i));
-
-            for (int j = 0; j != checkList.get(i).size(); ++j) {
-                Log.d("Debug", "position: " + String.valueOf(checkList.get(i).get(j)));
-            }
         }
+    }
 
+    public static void displayCheckListStates (HashMap<String, ArrayList<Boolean>> chls) {
+        for (String placeKey : chls.keySet()) {
+
+            Log.d("debug,", "for place: " + placeKey);
+
+            for (int i = 0; i != chls.get(placeKey).size(); ++i)
+                Log.d("debug", "index: " + i + " value: " + chls.get(placeKey).get(i));
+
+        }
     }
 
     public class LoadingItemViewHolder extends RecyclerView.ViewHolder {
@@ -301,8 +300,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             rowV = rowView;
 
-            Log.d("Debug", "MainInterfaceViewHolder constructor");
-
             if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
                 cbDelete = (CheckBox) rowView.findViewById(R.id.cbDelete);
 
@@ -314,14 +311,19 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
                         cbDelete.toggle();
 
-                        int toggleIndex = getPlaceTypeByIndex(currentSelectedTab);
+                        String placeName = ((TextView)v.findViewById(R.id.txtPlaceName)).getText().toString();
 
+                        if (!checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).contains(placeName)) {
+                            checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).add(placeName);
+                            checkBoxToggleStates.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).set(getPosition(), true);
+                        }
+                        else {
+                            checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).remove(placeName);
+                            checkBoxToggleStates.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).set(getPosition(), false);
+                        }
 
-                        checkBoxToggleList.get(toggleIndex).set(MainInterfaceViewHolder.this.getPosition(),
-                                                                cbDelete.isChecked());
-
-                        displayCheckListValues(checkBoxToggleList);
-
+                        displayCheckListStates(checkBoxToggleStates);
+                        displayCheckListKeyValues(checkBoxToggleMap);
 
                     }
                 });
@@ -343,10 +345,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             }
 
-
-
         }
-
 
     }
 }

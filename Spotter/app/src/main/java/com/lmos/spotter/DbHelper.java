@@ -162,12 +162,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
     }
 
-    public List<Place> getBookmarks(){
+    public List<Place> getBookmarks(String placeType){
 
         SQLiteDatabase db = this.getReadableDatabase();
         List<Place> bookmarks = new ArrayList<>();
 
-        Cursor cursor = db.rawQuery("Select * from favorites", null);
+        Cursor cursor = db.rawQuery("Select * from favorites WHERE type = '" + placeType + "'", null);
 
 
         while(cursor.moveToNext()){

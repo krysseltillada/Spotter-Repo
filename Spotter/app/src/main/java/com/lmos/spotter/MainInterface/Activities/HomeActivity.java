@@ -253,10 +253,6 @@ public class HomeActivity extends AppCompatActivity
 
         if (!type.equals(placeType)) {
 
-
-            mainLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),
-                    R.anim.fade_in));
-
             appBarLayout.setExpanded(false);
             homeNestedScrollView.smoothScrollTo(0, 0);
 
@@ -304,11 +300,9 @@ public class HomeActivity extends AppCompatActivity
                 tabLayout.removeAllTabs();
             }
 
-
             tabLayout.addTab(tabLayout.newTab().setText("Most Viewed"));
             tabLayout.addTab(tabLayout.newTab().setText("Most Popular"));
             tabLayout.addTab(tabLayout.newTab().setText("Recommend"));
-
 
             tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
@@ -336,9 +330,7 @@ public class HomeActivity extends AppCompatActivity
                 }
 
                 @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
-
-                }
+                public void onTabUnselected(TabLayout.Tab tab) {}
 
                 @Override
                 public void onTabReselected(TabLayout.Tab tab) {
@@ -383,7 +375,6 @@ public class HomeActivity extends AppCompatActivity
                 loadPlacesFromServer(placeType, (selectedSortType.equals("Most Viewed") ? "Views" :
                         (selectedSortType.equals("Most Popular")) ? "Rating" : "Recommended"));
 
-                // pullUpLoadLayout.setRefreshing(false);
             }
         });
 
@@ -397,7 +388,6 @@ public class HomeActivity extends AppCompatActivity
         mostPopularImages[0] = (ImageView) findViewById(R.id.popularImageView1);
         mostPopularImages[1] = (ImageView) findViewById(R.id.popularImageView2);
         mostPopularImages[2] = (ImageView) findViewById(R.id.popularImageView3);
-
 
         mostPopularName = (TextView) findViewById(R.id.most_pop_name);
 

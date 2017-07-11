@@ -256,9 +256,12 @@ public class SearchResultsActivity extends AppCompatActivity
     public void queryFavorites(String cmd, String args, Place place){
 
         dbHelper = new DbHelper(this, this);
-        dbHelper.addToFavorites(place);
-        if(cmd.equals("add"))
+
+
+        if(cmd.equals("add")) {
+            Log.d("debug", "bookmarked");
             dbHelper.addToFavorites(place);
+        }
         else
             dbHelper.deleteBookmark(args);
 
@@ -483,6 +486,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 List<Place> places = appScript.getPlacesList();
 
                 if(!places.isEmpty()){
+
                     int toggleTab = View.VISIBLE;
                     if(type.equals("General"))
                         switchFragment("", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));

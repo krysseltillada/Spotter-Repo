@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,8 +67,6 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
             Picasso.with(context)
                     .load(placeImageLink)
-                    .resize(0, holder.placeImage.getHeight())
-                    .centerCrop()
                     .placeholder(R.drawable.loadingplace)
                     .into(holder.placeImage);
 
@@ -88,7 +87,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
     public interface OnClickListener{
 
-        void OnItemClick(Place place);
+        void OnItemClick(View v, Place place);
         void OnItemLongClick(View view, Place place);
 
     }
@@ -98,6 +97,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         TextView name, desc, rating, priceRange;
         ImageView placeImage;
+        ImageButton bookmark;
 
         public GeneralResultsViewHolder(View itemView) {
             super(itemView);
@@ -106,6 +106,8 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
                 rating = (TextView) itemView.findViewById(R.id.general_list_rating);
                 priceRange = (TextView) itemView.findViewById(R.id.general_list_price_range);
                 placeImage = (ImageView) itemView.findViewById(R.id.general_list_image);
+                bookmark = (ImageButton) itemView.findViewById(R.id.general_list_view_bookark);
+                bookmark.setOnClickListener(this);
                 itemView.findViewById(R.id.search_general_viewContainer).setOnClickListener(this);
                 itemView.findViewById(R.id.search_general_viewContainer).setOnLongClickListener(this);
 
@@ -113,7 +115,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         @Override
         public void onClick(View v) {
-            onClickListener.OnItemClick(places.get(getAdapterPosition()));
+            onClickListener.OnItemClick(v, places.get(getAdapterPosition()));
         }
 
         @Override

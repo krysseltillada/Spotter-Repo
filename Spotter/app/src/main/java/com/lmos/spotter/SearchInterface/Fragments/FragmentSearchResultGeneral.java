@@ -49,6 +49,7 @@ public class FragmentSearchResultGeneral extends Fragment {
 
     public static List<Place> setPlaceByType(String type){
         List<Place> setPlace = new ArrayList<>();
+
         for(Place p : places){
             if(p.getPlaceType().equalsIgnoreCase(type))
                 setPlace.add(p);
@@ -87,8 +88,16 @@ public class FragmentSearchResultGeneral extends Fragment {
         // Set RecyclerView onClickListener
         mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
             @Override
-            public void OnItemClick(Place place) {
-                ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
+            public void OnItemClick(View v, Place place) {
+                switch (v.getId())
+                {
+                    case R.id.general_list_view_bookark:
+                        ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
+                        break;
+                    default:
+                        ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
+                        break;
+                }
             }
 
             @Override
