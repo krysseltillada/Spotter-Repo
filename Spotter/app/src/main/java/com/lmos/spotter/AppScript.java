@@ -1,8 +1,10 @@
 package com.lmos.spotter;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
+import com.lmos.spotter.Utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,8 +60,9 @@ public class AppScript {
     private String offSet;
     private String tableCount;
     private List<Place> placeList;
+    Activity activity;
 
-    protected AppScript(){}
+    protected AppScript(Activity activity){ this.activity = activity; }
 
     public void setData(String... params){
         String post_data = "";
@@ -160,15 +163,19 @@ public class AppScript {
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            Utilities.logError(activity, e.getMessage());
             response = e.getMessage();
         }catch(UnknownHostException e){
+            Utilities.logError(activity, e.getMessage());
             e.printStackTrace();
         }catch (SocketTimeoutException | ConnectException e){
             e.printStackTrace();
+            Utilities.logError(activity, e.getMessage());
             Log.d("debug", e.getMessage());
             response = "Couldn't connect to server. Make sure you have stable internet connection, then try again.";
         }catch (IOException e) {
             e.printStackTrace();
+            Utilities.logError(activity, e.getMessage());
             response = e.getMessage();
         }
 
@@ -228,6 +235,8 @@ public class AppScript {
                         setPlace.setRating(place_item.getString("Rating"));
                         setPlace.setplaceImageLink(place_item.getString("Image"));
 
+                        Log.d("IMAGE-JSON", place_item.getString("Image"));
+
                         if(response_code.equals("0x10")){
                             JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
                             offSet = responseData.getString("endOffset");
@@ -255,6 +264,7 @@ public class AppScript {
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Utilities.logError(activity, e.getMessage());
             response = e.getMessage();
         }
 

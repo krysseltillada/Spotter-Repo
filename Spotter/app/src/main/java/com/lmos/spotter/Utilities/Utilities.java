@@ -74,8 +74,13 @@ import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -878,4 +883,28 @@ public class Utilities {
             return returnVal;
         }
     }
+
+    /** Logger **/
+
+    public static void logError(Context context, String error){
+
+        final String FILE_NAME = "error_log";
+        String log_msg = DateFormat.getDateTimeInstance().format(new Date()) + ":" + error + "\n";
+        FileOutputStream outputStream;
+
+        try{
+
+            outputStream = context.openFileOutput(FILE_NAME, Context.MODE_APPEND);
+            outputStream.write(log_msg.getBytes());
+            outputStream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /** End og logger **/
 }

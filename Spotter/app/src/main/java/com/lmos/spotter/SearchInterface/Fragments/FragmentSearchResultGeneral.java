@@ -57,7 +57,7 @@ public class FragmentSearchResultGeneral extends Fragment {
 
             Log.d("type", p.getPlaceType());
         }
-
+        Log.d("SetPlace", String.valueOf(setPlace.size()));
         Collections.sort(setPlace, new Utilities.SortPlaces());
 
         return setPlace;
@@ -68,6 +68,7 @@ public class FragmentSearchResultGeneral extends Fragment {
             mAdapter = null;
 
         if(!setPlaceByType(type).isEmpty()){
+            Log.d("List", "Not empty");
             mAdapter = new GeneralResultsAdapter(setPlaceByType(type));
             mAdapter.notifyItemChanged(0);
             recyclerView.swapAdapter(mAdapter, false);
@@ -104,6 +105,7 @@ public class FragmentSearchResultGeneral extends Fragment {
                 switch (v.getId()){
 
                     case R.id.general_list_view_bookmark:
+                        Log.d("BK", "aw, you add me");
                         ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
                         break;
                     default:

@@ -256,7 +256,6 @@ public class SearchResultsActivity extends AppCompatActivity
     public void queryFavorites(String cmd, String args, Place place){
 
         dbHelper = new DbHelper(this, this);
-        dbHelper.addToFavorites(place);
         if(cmd.equals("add"))
             dbHelper.addToFavorites(place);
         else
@@ -319,7 +318,9 @@ public class SearchResultsActivity extends AppCompatActivity
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d("Tab", tab.getText().toString());
 
-                Fragment generalFragment = getSupportFragmentManager().findFragmentByTag("Genera");
+                //FragmentSearchResultGeneral.changeAdapter(tab.getText().toString());
+
+                Fragment generalFragment = getSupportFragmentManager().findFragmentByTag("General");
 
                 if(generalFragment != null && generalFragment instanceof FragmentSearchResultGeneral)
                     ((FragmentSearchResultGeneral) generalFragment).changeAdapter(tab.getText().toString());
@@ -474,7 +475,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
             }
             Log.d("LOG", "connecting");
-            return new AppScript(){{
+            return new AppScript(activity){{
                setData("searchPlaces.php", map_data);
             }};
 
@@ -490,7 +491,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 if(!places.isEmpty()){
                     int toggleTab = View.VISIBLE;
                     if(type.equals("General"))
-                        switchFragment("", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
+                        switchFragment("General", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
                     else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
                         switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
                         toggleTab = View.GONE;

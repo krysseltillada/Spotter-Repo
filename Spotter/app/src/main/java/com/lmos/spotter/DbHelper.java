@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -73,8 +74,8 @@ public class DbHelper extends SQLiteOpenHelper {
                         KEY_CLASS + " INTEGER," +
                         KEY_PRICE_RANGE + " TEXT," +
                         KEY_IMAGE + " TEXT," +
-                        KEY_IMAGE + " TEXT," +
-                        KEY_IMAGE + " TEXT)"
+                        KEY_RECOMMENDED + " TEXT," +
+                        KEY_RATING + " TEXT)"
 
         );
 
@@ -114,7 +115,9 @@ public class DbHelper extends SQLiteOpenHelper {
         cv.put(KEY_DEALS, place.getPlaceDeals());
         cv.put(KEY_CLASS, place.getPlaceClass());
         cv.put(KEY_PRICE_RANGE, place.getPlacePriceRange());
-        cv.put(KEY_IMAGE, place.getPlaceImage());
+        cv.put(KEY_IMAGE, place.getPlaceImageLink());
+        cv.put(KEY_RECOMMENDED, place.getRecommended());
+        cv.put(KEY_RATING, place.getRating());
 
         db.insert(TABLE_FAVORITES, null, cv);
         onDbResponseListener.onDbResponse("Place has been bookmarked.", KEY_PLACEID);
@@ -190,9 +193,11 @@ public class DbHelper extends SQLiteOpenHelper {
             place.setplaceType(cursor.getString(cursor.getColumnIndex(KEY_TYPE)));
             place.setPlaceDeals(cursor.getString(cursor.getColumnIndex(KEY_DEALS)));
             place.setplacePriceRange(cursor.getString(cursor.getColumnIndex(KEY_PRICE_RANGE)));
-            place.setplaceImage(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
+            place.setplaceImageLink(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
             place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
             place.setRating(cursor.getString(cursor.getColumnIndex(KEY_RATING)));
+
+            Log.d("BK-IMAGE_SET", place.getPlaceImageLink());
 
             bookmarks.add(place);
 
