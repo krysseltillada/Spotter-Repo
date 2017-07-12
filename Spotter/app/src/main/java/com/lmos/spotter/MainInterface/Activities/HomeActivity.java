@@ -408,6 +408,14 @@ public class HomeActivity extends AppCompatActivity
 
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
 
+        tabLayoutRecyclerView.setOnFlingListener(new RecyclerView.OnFlingListener() {
+
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+                return false;
+            }
+        });
+
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
 
             @Override
