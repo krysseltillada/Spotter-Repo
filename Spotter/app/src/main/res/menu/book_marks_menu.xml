@@ -12,8 +12,8 @@
 
     <item
 
-        android:id = "@+id/sortByDateAdded"
-        android:title = "sort by date"
+        android:id = "@+id/sortByAdded"
+        android:title = "sort by added"
         app:showAsAction="never"
 
         />

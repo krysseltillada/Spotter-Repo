@@ -882,6 +882,7 @@ public class Utilities {
         }
     }
 
+
     /** Logger **/
 
     public static void logError(Context context, String error){

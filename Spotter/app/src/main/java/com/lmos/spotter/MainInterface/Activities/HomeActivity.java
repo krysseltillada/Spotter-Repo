@@ -1,11 +1,9 @@
 package com.lmos.spotter.MainInterface.Activities;
 
 import android.app.Activity;
-import android.app.VoiceInteractor;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +29,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -407,14 +404,6 @@ public class HomeActivity extends AppCompatActivity
         collapsingToolbarLayout.setTitleEnabled(false);
 
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
-
-        tabLayoutRecyclerView.setOnFlingListener(new RecyclerView.OnFlingListener() {
-
-            @Override
-            public boolean onFling(int velocityX, int velocityY) {
-                return false;
-            }
-        });
 
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
 
