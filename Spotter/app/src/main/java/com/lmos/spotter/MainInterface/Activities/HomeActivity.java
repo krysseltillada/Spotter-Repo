@@ -510,10 +510,9 @@ public class HomeActivity extends AppCompatActivity
 
                 Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
                 searchBTN.setIconified(true);
-
                 startActivity(
                         new Intent(getApplicationContext(), SearchResultsActivity.class)
-                                .putExtra("data", new String[]{"Location"}));
+                                .putExtra("data", new String[]{"Location", ""}));
             }
 
         });
@@ -771,7 +770,6 @@ public class HomeActivity extends AppCompatActivity
             } catch (Exception e) {
                 onRespondError.onRespondError(e.getMessage());
             }
-
 
         }
     }

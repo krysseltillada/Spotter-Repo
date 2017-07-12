@@ -101,7 +101,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         TextView name, desc, rating, priceRange;
         ImageView placeImage;
-        ImageButton bookmark;
+        ImageButton bookmark, navigate;
 
         public GeneralResultsViewHolder(View itemView) {
             super(itemView);
@@ -113,6 +113,8 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
             placeImage = (ImageView) itemView.findViewById(R.id.general_list_image);
             bookmark = (ImageButton) itemView.findViewById(R.id.general_list_view_bookmark);
             bookmark.setOnClickListener(this);
+            navigate = (ImageButton) itemView.findViewById(R.id.general_list_explore);
+            navigate.setOnClickListener(this);
 
             itemView.findViewById(R.id.search_general_viewContainer).setOnClickListener(this);
 

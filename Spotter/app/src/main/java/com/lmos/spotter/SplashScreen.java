@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
@@ -84,8 +85,8 @@ public class SplashScreen extends AppCompatActivity {
             File database = getApplicationContext().getDatabasePath("Spotter");
             DbHelper dbHelper = new DbHelper(getApplicationContext());
 
-
             if(!database.exists()){
+
                 if(Utilities.checkNetworkState(activity)){
                     publishProgress("We're setting things up for you, please wait a moment.");
                     AppScript appScript = new AppScript(activity){{
@@ -95,7 +96,10 @@ public class SplashScreen extends AppCompatActivity {
                     String result = appScript.getResult();
                     if(result != null && result.equals("Data loaded."))
                         publishProgress("Almost done...");
+
                     dbHelper.savePlaceName(appScript.getPlaceNames());
+                    Log.d("Splash", String.valueOf(appScript.getPlaceNames()));
+
                 }
                 else{
                     publishProgress("You are not connected. Please try again.");

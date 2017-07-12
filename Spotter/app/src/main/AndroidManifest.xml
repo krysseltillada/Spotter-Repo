@@ -47,7 +47,8 @@
             android:theme="@style/loginTheme" />
         <activity
             android:name=".SearchInterface.Activities.SearchResultsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
@@ -71,13 +72,9 @@
         <activity
             android:name=".NavigationActivity"
             android:theme="@style/AppTheme.NoActionBar" >
-
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SearchInterface.Activities.SearchResultsActivity" />
         </activity>
 
     </application>
