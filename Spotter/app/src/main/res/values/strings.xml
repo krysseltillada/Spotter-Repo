@@ -1,5 +1,7 @@
 <resources>
 
+    <string name="banner_ad_unit_id"> ca-app-pub-2609712853286547/2328013318 </string>
+
     <string name="flat_map_style">
 
         [
