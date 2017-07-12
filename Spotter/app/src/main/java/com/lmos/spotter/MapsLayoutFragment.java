@@ -62,11 +62,11 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         destination = getArguments().getParcelable("destination");
     }
 
-    public void setUserPosition (final LatLng userPosition) {
+    public void setUserPosition (final LatLng userPosition, final String action, Float bearing) {
 
-        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        /*int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        Log.d("UserPosLatDis", String.valueOf(userPosition.latitude));
+        Log.d("UserPosLatDis", String.valueOf(userPosition.latitude));*/
 
         googleMap.addMarker(new MarkerOptions().position(userPosition)
                 .title("your here")
@@ -105,17 +105,24 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
 
-                /**cameraPosition = new CameraPosition.Builder()
-                        .target(userPosition)
-                        .zoom(150)
-                        .bearing(0)
-                        .tilt(45)
-                        .build();
+                switch (action){
 
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));**/
+                    case "navigate":
+                        cameraPosition = new CameraPosition.Builder()
+                                .target(userPosition)
+                                .zoom(50)
+                                .bearing(0)
+                                .tilt(45)
+                                .build();
 
-                googleMap.animateCamera(
-                        CameraUpdateFactory.newLatLngBounds(zoomBounds, 150));
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        break;
+                    default:
+                        googleMap.animateCamera(
+                                CameraUpdateFactory.newLatLngBounds(zoomBounds, 150));
+                        break;
+                }
+
             }
         });
 
@@ -133,7 +140,6 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
         googleMap.setTrafficEnabled(true);
         googleMap.setBuildingsEnabled(true);
-
         googleMap.getUiSettings().setMapToolbarEnabled(false);
 
     }

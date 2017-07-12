@@ -152,7 +152,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public void savePlaceName(List<Place> places){
 
+        Log.d("DBHelper", "Saving to db");
+
         SQLiteDatabase db = this.getWritableDatabase();
+
+        if(places.isEmpty())
+            Log.d("DBHelper", "NULL");
+        else
+            Log.d("DBHelper", String.valueOf(places.size()));
 
         for(Place place : places ){
 

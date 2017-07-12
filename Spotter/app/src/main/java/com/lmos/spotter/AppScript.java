@@ -202,7 +202,6 @@ public class AppScript {
 
                 }
 
-
                 response = jsonObject.getString("response_msg");
 
             } else if (response_code.equals("0x10") || response_code.equals("0x11") || response_code.equals("0x12")) {
@@ -234,7 +233,6 @@ public class AppScript {
                         setPlace.setRating(place_item.getString("Rating"));
                         setPlace.setplaceImageLink(place_item.getString("Image"));
 
-
                         Log.d("IMAGE-JSON", place_item.getString("Image"));
 
                         if (response_code.equals("0x10")) {
@@ -244,23 +242,18 @@ public class AppScript {
                             tableCount = responseData.getString("tableCount");
                         }
 
-
-                        place.add(setPlace);
-
                     }
 
-                    if (response_code.equals("0x10") || response_code.equals("0x12"))
-                        placeList = new ArrayList<>(place);
-                    else
-                        placeNames = new ArrayList<>(place);
-
-                    response = jsonObject.getString("response_msg");
-                    Log.d("LOG", response);
+                    place.add(setPlace);
 
                 }
 
-                response = jsonObject.getString("response_msg");
+                if (response_code.equals("0x10") || response_code.equals("0x12"))
+                    placeList = new ArrayList<>(place);
+                else
+                    placeNames = new ArrayList<>(place);
 
+                response = jsonObject.getString("response_msg");
 
             }
 

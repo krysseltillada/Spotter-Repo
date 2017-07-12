@@ -1,5 +1,6 @@
 package com.lmos.spotter.SearchInterface.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,11 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.lmos.spotter.MapsLayoutFragment;
+import com.lmos.spotter.NavigationActivity;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
@@ -27,6 +30,7 @@ public class FragmentSearchResult extends Fragment
 
     TextView description, review_count, place_address, place_rate_label;
     RatingBar place_rate;
+    Button navigate;
     Place place;
     Utilities.LocationHandler locationHandler;
     private RecyclerView reviews;
@@ -74,6 +78,21 @@ public class FragmentSearchResult extends Fragment
         place_rate_label = (TextView) thisView.findViewById(R.id.place_rating_label);
         place_rate = (RatingBar) thisView.findViewById(R.id.place_rate);
         place_address = (TextView)thisView.findViewById(R.id.place_address);
+        navigate = (Button) thisView.findViewById(R.id.btnNavigate);
+        navigate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent navigate = new Intent(getContext(), NavigationActivity.class);
+                navigate.putExtra(
+                        "destination",
+                        new LatLng(
+                                Double.parseDouble(place.getPlaceLat()),
+                                Double.parseDouble(place.getPlaceLng())
+                        )
+                );
+                startActivity(navigate);
+            }
+        });
 
         description.setText(place.getPlaceDescription());
         place_address.setText(place.getPlaceAddress());
@@ -111,13 +130,11 @@ public class FragmentSearchResult extends Fragment
     @Override
     public void onLocationFoundLatLng(double lat, double lng) {
 
-        Log.d("FragmenResult", "Displaying Map");
-
         Fragment mapFragment = getFragmentManager().findFragmentByTag("Map");
 
         if(mapFragment != null && mapFragment instanceof MapsLayoutFragment)
             ((MapsLayoutFragment) mapFragment).setUserPosition(
-                    new LatLng(lat, lng));
+                    new LatLng(lat, lng), "", null);
 
     }
 }

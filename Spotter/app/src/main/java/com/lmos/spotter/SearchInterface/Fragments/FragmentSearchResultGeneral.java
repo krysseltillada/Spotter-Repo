@@ -1,5 +1,6 @@
 package com.lmos.spotter.SearchInterface.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.lmos.spotter.NavigationActivity;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
@@ -109,6 +112,17 @@ public class FragmentSearchResultGeneral extends Fragment {
                     case R.id.general_list_view_bookmark:
                         Log.d("BK", "aw, you add me");
                         ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
+                        break;
+                    case R.id.general_list_explore:
+                        Intent navigate = new Intent(getContext(), NavigationActivity.class);
+                        navigate.putExtra(
+                                "destination",
+                                new LatLng(
+                                        Double.parseDouble(place.getPlaceLat()),
+                                        Double.parseDouble(place.getPlaceLng())
+                                )
+                        );
+                        startActivity(navigate);
                         break;
                     default:
                         ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
