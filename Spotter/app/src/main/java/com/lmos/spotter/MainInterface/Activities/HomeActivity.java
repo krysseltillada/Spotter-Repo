@@ -356,7 +356,7 @@ public class HomeActivity extends AppCompatActivity
 
         bannerAdView = (AdView)findViewById(R.id.adBanner);
 
-        bannerAdView.loadAd(new AdRequest.Builder().build());
+        bannerAdView.loadAd(new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build());
 
         pullUpLoadLayout = (SwipeRefreshLayout) findViewById(R.id.pullUpLoadLayout);
 
