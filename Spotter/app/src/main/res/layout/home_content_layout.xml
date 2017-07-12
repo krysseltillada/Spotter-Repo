@@ -12,6 +12,7 @@
         android:background="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:tabGravity="fill"
         app:elevation="6dp" />
 
     <include
