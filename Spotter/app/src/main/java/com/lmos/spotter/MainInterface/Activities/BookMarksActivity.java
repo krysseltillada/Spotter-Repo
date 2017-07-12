@@ -2,6 +2,7 @@ package com.lmos.spotter.MainInterface.Activities;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lmos.spotter.DbHelper;
@@ -34,6 +36,8 @@ public class BookMarksActivity extends AppCompatActivity {
 
     TabLayout bookMarksTabLayout;
     RecyclerView recyclerView;
+    TextView bookmarkEmptyText;
+    TabLayout.Tab firstTab;
 
     HashMap<String, List<Place>> bookmarkedPlaceList = new HashMap<>();
 
@@ -173,6 +177,7 @@ public class BookMarksActivity extends AppCompatActivity {
             bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText(placeType));
             bookmarkedPlaceList.put(placeType, bookmarksDB.getBookmarks(placeType));
 
+
             List <Place> test = bookmarksDB.getBookmarks(placeType);
 
             Log.d("debug", "for " + placeType);
@@ -190,7 +195,10 @@ public class BookMarksActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
+
         bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
+
+        bookmarkEmptyText = (TextView)findViewById(R.id.messageRecyclerView);
 
         bookmarksDB = new DbHelper(getApplicationContext());
 
@@ -198,25 +206,34 @@ public class BookMarksActivity extends AppCompatActivity {
         checkAndInitBookmarks("Restaurant");
         checkAndInitBookmarks("Tourist Spot");
 
-        currentlySelectedPlace = getPlaceType(bookMarksTabLayout.getTabAt(0).getText().toString());
+        firstTab = bookMarksTabLayout.getTabAt(0);
 
-        final RecyclerView bookMarksRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        recyclerView = bookMarksRecyclerView;
+        if (firstTab != null) {
 
-        bookMarksRecyclerView.getRecycledViewPool().setMaxRecycledViews(MainInterfaceAdapter.VIEW_TYPE_ITEM, 0);
+            currentlySelectedPlace = getPlaceType(firstTab.getText().toString());
+
+            final RecyclerView bookMarksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            recyclerView = bookMarksRecyclerView;
+
+            bookMarksRecyclerView.getRecycledViewPool().setMaxRecycledViews(MainInterfaceAdapter.VIEW_TYPE_ITEM, 0);
 
 
-        bookMarksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
-                                                                       LinearLayoutManager.VERTICAL,
-                                                                       false));
+            bookMarksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
+                    LinearLayoutManager.VERTICAL,
+                    false));
 
-        bookMarksRecyclerView.setNestedScrollingEnabled(false);
+            bookMarksRecyclerView.setNestedScrollingEnabled(false);
 
-        bookMarksTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+            bookMarksTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
-                           bookMarksRecyclerView,
-                           bookMarksTabLayout);
+            changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE,
+                    bookMarksRecyclerView,
+                    bookMarksTabLayout);
+
+        } else {
+            bookMarksTabLayout.setVisibility(View.GONE);
+            bookmarkEmptyText.setVisibility(View.VISIBLE);
+        }
 
 
         setSupportActionBar(toolbar);
@@ -230,8 +247,12 @@ public class BookMarksActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.book_marks_menu, menu);
-        bookMarksMenu = menu;
+        if (firstTab != null) {
+
+            getMenuInflater().inflate(R.menu.book_marks_menu, menu);
+            bookMarksMenu = menu;
+
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
