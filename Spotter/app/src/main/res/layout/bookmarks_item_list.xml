@@ -39,16 +39,6 @@
                 android:textSize="12sp"
                 />
 
-            <TextView
-                android:id="@+id/txtReview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="110dp"
-                android:layout_marginTop= "40dp"
-                android:text="Good (304 reviews)"
-                android:textSize="12sp"
-
-                />
 
 
             <TextView
@@ -61,27 +51,6 @@
                 android:textSize="12sp"
                 />
 
-            <ImageView
-                android:id="@+id/gradeIcon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_gravity="end"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="-2dp"
-                android:alpha="0.5"
-                android:src="@drawable/ic_grade_black_18dp" />
-
-            <TextView
-                android:id="@+id/txtGeneralRatingDigit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="36dp"
-                android:layout_marginTop="-3dp"
-                android:paddingBottom="@dimen/min_padding"
-                android:paddingTop="@dimen/min_padding"
-                android:text="3.9"
-                android:textSize="14sp" />
 
         </FrameLayout>
 

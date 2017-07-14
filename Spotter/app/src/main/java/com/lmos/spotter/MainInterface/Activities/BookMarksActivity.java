@@ -26,6 +26,8 @@ import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -156,10 +158,20 @@ public class BookMarksActivity extends AppCompatActivity {
 
             checkDeleteList.set(rowItemCount, isSelected);
 
-
             View view = recView.getLayoutManager().findViewByPosition(rowItemCount);
 
             if (view != null) {
+
+                TextView placeNameTextView = (TextView)view.findViewById(R.id.txtPlaceName);
+
+                String placeName = placeNameTextView.getText().toString();
+
+                if (!MainInterfaceAdapter.getCheckToggleMap().get(getPlaceTypeStr(currentlySelectedPlace)).contains(placeName)) {
+
+                    MainInterfaceAdapter.getCheckToggleMap().get(getPlaceTypeStr(currentlySelectedPlace))
+                            .add(placeName);
+
+                }
 
                 CheckBox cbDelete = (CheckBox) view.findViewById(R.id.cbDelete);
                 cbDelete.setChecked(checkDeleteList.get(rowItemCount));
@@ -262,6 +274,44 @@ public class BookMarksActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
 
+            case R.id.sortByAdded:
+
+                bookmarkedPlaceList.clear();
+
+                bookMarksTabLayout.clearOnTabSelectedListeners();
+
+                int prevTab = bookMarksTabLayout.getSelectedTabPosition();
+
+                bookMarksTabLayout.removeAllTabs();
+
+                checkAndInitBookmarks("Hotel");
+                checkAndInitBookmarks("Restaurant");
+                checkAndInitBookmarks("Tourist Spot");
+
+                bookMarksTabLayout.getTabAt(prevTab).select();
+
+                changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE, recyclerView, bookMarksTabLayout);
+
+                break;
+
+            case R.id.sortByPlace:
+
+                for (String placeKey : bookmarkedPlaceList.keySet()) {
+
+                    Collections.sort(bookmarkedPlaceList.get(placeKey), new Comparator<Place>() {
+
+                        @Override
+                        public int compare(Place o1, Place o2) {
+                            return o1.getPlaceName().compareTo(o2.getPlaceName());
+                        }
+                    });
+
+                }
+
+                changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE, recyclerView, bookMarksTabLayout);
+
+                break;
+
             case android.R.id.home:
 
                 onBackPressed();
@@ -327,6 +377,8 @@ public class BookMarksActivity extends AppCompatActivity {
 
                                     MainInterfaceAdapter.displayCheckListStates(MainInterfaceAdapter.getCheckToggleStates());
 
+                                    MainInterfaceAdapter.getCheckToggleMap().clear();
+
                                 }
                             })
                             .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -363,6 +415,8 @@ public class BookMarksActivity extends AppCompatActivity {
                     selectAllCheckBox(recyclerView,
                                       MainInterfaceAdapter.getCheckToggleStates().get(getPlaceTypeStr(currentlySelectedPlace)),
                                       true);
+
+
 
                 break;
 

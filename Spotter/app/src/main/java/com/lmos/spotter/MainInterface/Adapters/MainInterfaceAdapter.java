@@ -65,6 +65,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
         activityType = acType;
     }
 
+
     public static void setAllCheckToggleStates (boolean isChecked) {
         for (String placeKey : checkBoxToggleStates.keySet()) {
             for (int i = 0; i != checkBoxToggleStates.get(placeKey).size(); ++i)
@@ -193,32 +194,9 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
                 String recommend = places.get(position).getRecommended();
 
                 mainInterfaceViewHolder.txtRecommend.setText(recommend + " people recommend this");
+                mainInterfaceViewHolder.txtGeneralRatingDigit.setText(places.get(position).getRating());
 
             }
-
-            mainInterfaceViewHolder.txtPlaceName.setText(places.get(position).getPlaceName());
-            mainInterfaceViewHolder.txtLocation.setText(places.get(position).getPlaceLocality());
-
-            mainInterfaceViewHolder.txtGeneralRatingDigit.setText(places.get(position).getRating());
-
-        /*
-
-        double userRating = (double)places.get(position)[3];
-        double userPriceMin = (double)places.get(position)[5];
-        double userPriceMax = (double)places.get(position)[6]; */
-
-        /*
-
-        int userReviews = (int)places.get(position)[4];
-
-        String reviewInfo = "Good(" + userReviews + " reviews)";
-        String priceRangeInfo = "₱" + userPriceMin + " - " + userPriceMax;
-
-        holder.txtReview.setText(reviewInfo);
-        holder.txtGeneralRatingDigit.setText(String.valueOf(userRating)); */
-
-            mainInterfaceViewHolder.txtPrice.setText(places.get(position).getPlacePriceRange());
-
 
 
             if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
@@ -234,6 +212,9 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             }
 
+            mainInterfaceViewHolder.txtPlaceName.setText(places.get(position).getPlaceName());
+            mainInterfaceViewHolder.txtLocation.setText(places.get(position).getPlaceLocality());
+            mainInterfaceViewHolder.txtPrice.setText(places.get(position).getPlacePriceRange());
 
             setAnimation(mainInterfaceViewHolder.rowV.findViewById(R.id.placeItemRow), position);
 

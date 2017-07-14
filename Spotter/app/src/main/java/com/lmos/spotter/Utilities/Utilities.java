@@ -920,5 +920,4 @@ public class Utilities {
         }
     }
 
-    /** End og logger **/
 }

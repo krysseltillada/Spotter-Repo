@@ -206,7 +206,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
             Place place = new Place();
 
-
             place.setPlaceID(cursor.getString(cursor.getColumnIndex(KEY_PLACEID)));
             place.setplaceName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
             place.setplaceAddress(cursor.getString(cursor.getColumnIndex(KEY_ADDRESS)));
@@ -220,9 +219,9 @@ public class DbHelper extends SQLiteOpenHelper {
             place.setplacePriceRange(cursor.getString(cursor.getColumnIndex(KEY_PRICE_RANGE)));
             place.setplaceImageLink(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
             //place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
-           // place.setRating(cursor.getString(cursor.getColumnIndex(KEY_RATING)));
+            //place.setRating(cursor.getString(cursor.getColumnIndex(KEY_RATING)));
 
-           // Log.d("BK-IMAGE_SET", place.getPlaceImageLink());
+            // Log.d("BK-IMAGE_SET", place.getPlaceImageLink());
 
             bookmarks.add(place);
 

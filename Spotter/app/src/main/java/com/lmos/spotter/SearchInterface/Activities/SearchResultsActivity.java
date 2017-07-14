@@ -302,11 +302,10 @@ public class SearchResultsActivity extends AppCompatActivity
                     this,
                     R.anim.fade_out
             ));
-            if(!(fragmentType.equals("General") || fragmentType.equals("Location")))
-                showBookmarkInAppBar = true;
+            if(!(fragmentType.equals("Location") || fragmentType.equals("General") || fragmentType.equals("Undefined")))
+                 showBookmarkInAppBar = true;
 
             invalidateOptionsMenu();
-
         }
         else {
             showBookmarkInAppBar = false;
@@ -548,6 +547,8 @@ public class SearchResultsActivity extends AppCompatActivity
                                 true
                         );
                     }
+
+                    loading_screen.setVisibility(View.GONE);
 
                 }
                 else {
