@@ -45,6 +45,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
@@ -101,6 +103,8 @@ public class HomeActivity extends AppCompatActivity
     private String[] mostPopularNames;
 
     private SwipeRefreshLayout pullUpLoadLayout;
+
+    private AdView bannerAdView;
 
     private boolean isLoadingItem = false;
     private boolean isLoadingPlace = false;
@@ -355,6 +359,10 @@ public class HomeActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_home_menu);
 
+        bannerAdView = (AdView)findViewById(R.id.adBanner);
+
+        bannerAdView.loadAd(new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build());
+
         pullUpLoadLayout = (SwipeRefreshLayout) findViewById(R.id.pullUpLoadLayout);
 
         pullUpLoadLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -409,14 +417,6 @@ public class HomeActivity extends AppCompatActivity
         collapsingToolbarLayout.setTitleEnabled(false);
 
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
-
-        tabLayoutRecyclerView.setOnFlingListener(new RecyclerView.OnFlingListener() {
-
-            @Override
-            public boolean onFling(int velocityX, int velocityY) {
-                return false;
-            }
-        });
 
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
 
