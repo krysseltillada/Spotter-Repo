@@ -55,12 +55,12 @@ import java.util.Map;
 public class AppScript {
 
     final String default_url = "http://admin-spotter.000webhostapp.com/app_scripts/";
+    Activity activity;
     private List<Place> placeNames;
     private String response;
     private String offSet;
     private String tableCount;
     private List<Place> placeList;
-    Activity activity;
 
     protected AppScript(Activity activity){ this.activity = activity; }
 
@@ -168,6 +168,7 @@ public class AppScript {
         }catch(UnknownHostException e){
             Utilities.logError(activity, e.getMessage());
             e.printStackTrace();
+            response = e.getMessage();
         }catch (SocketTimeoutException | ConnectException e){
             e.printStackTrace();
             Utilities.logError(activity, e.getMessage());

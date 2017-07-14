@@ -3,7 +3,9 @@ package com.lmos.spotter;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -62,7 +64,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS " + TABLE_FAVORITES + "(" +
                         KEY_ID + " INTEGER PRIMARY KEY," +
-                        KEY_PLACEID + " INTEGER," +
+                        KEY_PLACEID + " INTEGER UNIQUE," +
                         KEY_NAME + " TEXT," +
                         KEY_ADDRESS + " TEXT," +
                         KEY_DESC + " TEXT," +
@@ -119,10 +121,22 @@ public class DbHelper extends SQLiteOpenHelper {
         cv.put(KEY_RECOMMENDED, place.getRecommended());
         cv.put(KEY_RATING, place.getRating());
 
-        db.insert(TABLE_FAVORITES, null, cv);
-        onDbResponseListener.onDbResponse("Place has been bookmarked.", KEY_PLACEID);
+        String msg = "";
 
-        db.close();
+        try {
+            db.insert(TABLE_FAVORITES, null, cv);
+            msg = "Place has been bookmarked.";
+        }
+        catch (SQLiteConstraintException e){
+            msg = "Place is already bookmarked.";
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        finally {
+            db.close();
+            onDbResponseListener.onDbResponse(msg, KEY_PLACEID);
+        }
 
     }
 

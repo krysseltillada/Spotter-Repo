@@ -259,8 +259,6 @@ public class SearchResultsActivity extends AppCompatActivity
         dbHelper = new DbHelper(this, this);
 
         if(cmd.equals("add")) {
-            Log.d("debug", "bookmarked");
-
             dbHelper.addToFavorites(place);
         }
         else
@@ -289,7 +287,6 @@ public class SearchResultsActivity extends AppCompatActivity
         // visibility
         desc_tab_holder.setVisibility(visibility);
         nsview.setVisibility(visibility);
-        loading_screen.setVisibility(loading_visibility);
         actionBarView.setVisibility(visibility);
         searchResultsTab.setVisibility(tab_visibility);
 
@@ -305,18 +302,22 @@ public class SearchResultsActivity extends AppCompatActivity
                     this,
                     R.anim.fade_out
             ));
-            if(fragmentType.equals("Hotel") || fragmentType.equals("Restaurant") || fragmentType.equals("Tourist Spot")){
+            if(!(fragmentType.equals("General") || fragmentType.equals("Location")))
                 showBookmarkInAppBar = true;
-                invalidateOptionsMenu();
-            }
-        }
-        else
-            appBarLayout.setExpanded(prop_value);
 
+            invalidateOptionsMenu();
+
+        }
+        else {
+            showBookmarkInAppBar = false;
+            appBarLayout.setExpanded(prop_value);
+            invalidateOptionsMenu();
+        }
         params.bottomMargin = value;
         appBarLayout.setActivated(prop_value);
         appBarLayout.setVerticalScrollBarEnabled(prop_value);
         toolbar.setLayoutParams(params);
+        loading_screen.setVisibility(loading_visibility);
 
     }
 
@@ -524,8 +525,6 @@ public class SearchResultsActivity extends AppCompatActivity
                         switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
                         toggleTab = View.GONE;
                     }
-
-                    loading_screen.setVisibility(View.GONE);
 
                     if(type.equals("Undefined")){
                         contentSettings(

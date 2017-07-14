@@ -138,4 +138,20 @@ public class FragmentSearchResult extends Fragment
         locationHandler.stopLocationRequest();
 
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(locationHandler.checkApiState()){
+            locationHandler.stopLocationRequest();
+            locationHandler.changeApiState("disconnect");}
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(locationHandler.checkApiState()){
+            locationHandler.stopLocationRequest();
+            locationHandler.changeApiState("disconnect");}
+    }
 }
