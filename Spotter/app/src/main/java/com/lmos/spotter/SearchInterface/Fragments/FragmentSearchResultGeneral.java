@@ -40,6 +40,8 @@ public class FragmentSearchResultGeneral extends Fragment {
     private RecyclerView recyclerView;
     private GeneralResultsAdapter mAdapter;
 
+    public static String placeID;
+
     public static FragmentSearchResultGeneral newInstance(String focusedTab, List<Place> places){
 
         FragmentSearchResultGeneral fsg = new FragmentSearchResultGeneral();
@@ -86,6 +88,7 @@ public class FragmentSearchResultGeneral extends Fragment {
 
     @Nullable
     @Override
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
@@ -125,7 +128,10 @@ public class FragmentSearchResultGeneral extends Fragment {
                         startActivity(navigate);
                         break;
                     default:
+
                         ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
+                        placeID = place.getPlaceID();
+
                         break;
                 }
 

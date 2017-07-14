@@ -31,7 +31,7 @@ public class FragmentSearchResult extends Fragment
     TextView description, review_count, place_address, place_rate_label;
     RatingBar place_rate;
     Button navigate;
-    Place place;
+    public Place place;
     Utilities.LocationHandler locationHandler;
     private RecyclerView reviews;
     private RecyclerView deals;

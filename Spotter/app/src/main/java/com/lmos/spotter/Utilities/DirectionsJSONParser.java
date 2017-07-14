@@ -1,5 +1,7 @@
 package com.lmos.spotter.Utilities;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -43,6 +45,8 @@ public class DirectionsJSONParser {
                     jDistance = ((JSONObject) jLegs.get(j)).getJSONObject("distance");
                     HashMap<String, String> hmDistance = new HashMap<String, String>();
                     hmDistance.put("distance", jDistance.getString("text"));
+
+                    Log.d("debug", ((JSONObject) jLegs.get(j)).getString("html_instructions"));
 
                     /** Getting duration from the json data */
                     jDuration = ((JSONObject) jLegs.get(j)).getJSONObject("duration");

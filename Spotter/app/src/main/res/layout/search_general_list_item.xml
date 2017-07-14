@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:background="@color/blackTransparent"
             android:padding="@dimen/min_padding"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/white"
             android:textSize="22sp" />
 
         <LinearLayout

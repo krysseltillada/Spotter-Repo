@@ -45,8 +45,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
@@ -108,6 +110,9 @@ public class HomeActivity extends AppCompatActivity
     private SwipeRefreshLayout pullUpLoadLayout;
 
     private AdView bannerAdView;
+
+
+    private InterstitialAd interstitialAd;
 
     private boolean isLoadingItem = false;
     private boolean isLoadingPlace = false;
@@ -353,6 +358,22 @@ public class HomeActivity extends AppCompatActivity
         SharedPreferences userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         setContentView(R.layout.activity_home_menu);
+
+        interstitialAd = new InterstitialAd(this);
+
+        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+
+        interstitialAd.loadAd(new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build());
+
+        interstitialAd.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+                if (interstitialAd.isLoaded())
+                    interstitialAd.show();
+            }
+        });
+
 
         bannerAdView = (AdView)findViewById(R.id.adBanner);
 

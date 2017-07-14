@@ -21,6 +21,8 @@
             android:layout_height="match_parent"
             >
 
+
+
                 <android.support.design.widget.AppBarLayout
                     android:id="@+id/app_bar_layout"
                     android:layout_width="match_parent"
@@ -160,6 +162,7 @@
                 app:fabSize="auto"
                 android:tint="@color/white"
                 app:srcCompat="@drawable/ic_near_me_black_36dp" />
+
 
             <com.google.android.gms.ads.AdView
                 android:id="@+id/adBanner"
