@@ -272,7 +272,7 @@ public class ReviewActivity extends AppCompatActivity {
                 reviewProgressBar.setVisibility(View.GONE);
 
 
-                recyclerView.setAdapter(new SearchReviewsAdapter());
+                reviewList.setAdapter(new SearchReviewsAdapter(getApplicationContext(), userReviewList));
 
                 for (UserReview userReview : userReviewList) {
 
