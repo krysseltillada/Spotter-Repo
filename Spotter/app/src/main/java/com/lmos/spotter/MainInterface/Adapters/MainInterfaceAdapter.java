@@ -35,16 +35,14 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
     public static final int VIEW_TYPE_ITEM = 0;
     public static final int VIEW_TYPE_LOADING = 1;
-
+    public static OnAdapterItemClickListener onAdapterItemClickListener;
     public static PlaceType currentSelectedTab;
+    private static HashMap<String, ArrayList<Boolean>> checkBoxToggleStates = new HashMap<>();
+    private static HashMap<String, ArrayList<String>> checkBoxToggleMap = new HashMap<>();
     private int lastPosition = -1;
     private ActivityType activityType;
     private List<Place> places;
     private Context context;
-
-    private static HashMap<String, ArrayList<Boolean>> checkBoxToggleStates = new HashMap<>();
-    private static HashMap<String, ArrayList<String>> checkBoxToggleMap = new HashMap<>();
-
     public MainInterfaceAdapter(Context con, ActivityType acType, PlaceType placeType, List<Place> pl) {
 
         places = pl;
@@ -76,21 +74,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
         displayCheckListStates(checkBoxToggleStates);
     }
 
-    public  void checkCreateToggleList (String keyPlace) {
-
-        if (!checkBoxToggleMap.containsKey(keyPlace)) {
-            checkBoxToggleMap.put(keyPlace, new ArrayList<String>());
-
-            ArrayList<Boolean> checkStates = new ArrayList<>();
-
-            for (int i = 0; i != places.size(); ++i)
-                checkStates.add(false);
-
-            checkBoxToggleStates.put(keyPlace, checkStates);
-        }
-
-    }
-
     public static boolean checkToggleState() {
 
         for (String placeKey : checkBoxToggleStates.keySet()) {
@@ -107,6 +90,47 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
     public static HashMap<String, ArrayList<String>> getCheckToggleMap () {
         return checkBoxToggleMap;
+    }
+
+    public static void displayCheckListKeyValues (HashMap<String, ArrayList<String>> cbtm) {
+        for (String placeKey : cbtm.keySet()) {
+
+            Log.d("debug,", "for place: " + placeKey);
+
+            for (String checkPlaces : cbtm.get(placeKey))
+                Log.d("debug", checkPlaces);
+
+        }
+    }
+
+    public static void displayCheckListStates (HashMap<String, ArrayList<Boolean>> chls) {
+        for (String placeKey : chls.keySet()) {
+
+            Log.d("debug,", "for place: " + placeKey);
+
+            for (int i = 0; i != chls.get(placeKey).size(); ++i)
+                Log.d("debug", "index: " + i + " value: " + chls.get(placeKey).get(i));
+
+        }
+    }
+
+    public void setOnItemClickListener(OnAdapterItemClickListener onAdapterItemClickListener){
+        MainInterfaceAdapter.onAdapterItemClickListener = onAdapterItemClickListener;
+    }
+
+    public  void checkCreateToggleList (String keyPlace) {
+
+        if (!checkBoxToggleMap.containsKey(keyPlace)) {
+            checkBoxToggleMap.put(keyPlace, new ArrayList<String>());
+
+            ArrayList<Boolean> checkStates = new ArrayList<>();
+
+            for (int i = 0; i != places.size(); ++i)
+                checkStates.add(false);
+
+            checkBoxToggleStates.put(keyPlace, checkStates);
+        }
+
     }
 
     private int getLayoutIdByType (ActivityType type) {
@@ -245,26 +269,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
         return places.size();
     }
 
-    public static void displayCheckListKeyValues (HashMap<String, ArrayList<String>> cbtm) {
-        for (String placeKey : cbtm.keySet()) {
-
-            Log.d("debug,", "for place: " + placeKey);
-
-            for (String checkPlaces : cbtm.get(placeKey))
-                Log.d("debug", checkPlaces);
-
-        }
-    }
-
-    public static void displayCheckListStates (HashMap<String, ArrayList<Boolean>> chls) {
-        for (String placeKey : chls.keySet()) {
-
-            Log.d("debug,", "for place: " + placeKey);
-
-            for (int i = 0; i != chls.get(placeKey).size(); ++i)
-                Log.d("debug", "index: " + i + " value: " + chls.get(placeKey).get(i));
-
-        }
+    public interface OnAdapterItemClickListener{
+        void onItemClick(Place place);
     }
 
     public class LoadingItemViewHolder extends RecyclerView.ViewHolder {
@@ -276,7 +282,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
         }
     }
 
-   public class MainInterfaceViewHolder extends RecyclerView.ViewHolder {
+   public class MainInterfaceViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         public ImageView placeCompanyImage, gradeIcon;
         public TextView  txtPlaceName, txtLocation, txtPrice, txtGeneralRatingDigit, txtReview, txtRecommend;
@@ -345,7 +352,13 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             }
 
+            rowView.setOnClickListener(this);
+
         }
 
-    }
+       @Override
+       public void onClick(View v) {
+           onAdapterItemClickListener.onItemClick(places.get(getAdapterPosition()));
+       }
+   }
 }

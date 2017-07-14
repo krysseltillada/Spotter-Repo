@@ -1,6 +1,5 @@
 package com.lmos.spotter;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +17,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.lmos.spotter.Utilities.MapDirections;
 
@@ -34,6 +34,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
     GoogleMap googleMap;
     LatLng destination;
+    Marker mMarker;
 
     public static MapsLayoutFragment newInstance(LatLng destination){
 
@@ -68,18 +69,17 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
         Log.d("UserPosLatDis", String.valueOf(userPosition.latitude));*/
 
-        googleMap.addMarker(new MarkerOptions().position(userPosition)
-                .title("your here")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        int lwidth = 25;
 
-        googleMap.addMarker(new MarkerOptions().position(destination).title("destination"));
+        if(action.equals("directions"))
+            lwidth = 5;
 
         new MapDirections(getContext(),
                 googleMap,
                 userPosition,
                 destination,
-                Color.CYAN,
-                5
+                getResources().getColor(R.color.colorPrimaryDark),
+                lwidth
         ).drawDirections()
                 .setOnDoneDrawDirectionListener(new MapDirections.OnDoneDrawDirectionListener() {
                     @Override
@@ -108,6 +108,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
                 switch (action){
 
                     case "navigate":
+                        Log.d("LocationHandler", "Updating camera position");
                         cameraPosition = new CameraPosition.Builder()
                                 .target(userPosition)
                                 .zoom(50)
@@ -122,6 +123,16 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
                                 CameraUpdateFactory.newLatLngBounds(zoomBounds, 150));
                         break;
                 }
+
+                if(mMarker == null)
+                {
+                    mMarker = googleMap.addMarker(new MarkerOptions().position(userPosition)
+                            .title("your here")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+                }
+                else
+                    mMarker.setPosition(userPosition);
 
             }
         });
@@ -138,6 +149,8 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         if (!googleMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.flat_map_style))))
             Log.d("debug", "style set up success");
 
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, 150));
+        googleMap.addMarker(new MarkerOptions().position(destination).title("destination"));
         googleMap.setTrafficEnabled(true);
         googleMap.setBuildingsEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);

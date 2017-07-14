@@ -1,11 +1,9 @@
 package com.lmos.spotter.MainInterface.Activities;
 
 import android.app.Activity;
-import android.app.VoiceInteractor;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +29,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -71,10 +68,7 @@ import java.util.Map;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public interface OnRespondError {
-        void onRespondError(String error);
-    }
-
+    PlaceLoader placeLoader;
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -171,8 +165,6 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    PlaceLoader placeLoader;
-
     private void loadPlacesFromServer(final String pType, final String sType) {
 
 
@@ -248,7 +240,6 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-
     private void loadPlacesByType(final String type) {
 
         if (!type.equals(placeType)) {
@@ -264,7 +255,18 @@ public class HomeActivity extends AppCompatActivity
                     ActivityType.HOME_ACTIVITY,
                     PlaceType.NONE,
                     placeDataList);
+            mainInterfaceAdapter.setOnItemClickListener(
+                    new MainInterfaceAdapter.OnAdapterItemClickListener(){
 
+                        @Override
+                        public void onItemClick(Place place) {
+                            Intent displayResult = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                            displayResult.putExtra("data", new String[]{ "Home", "" });
+                            displayResult.putExtra("Place", place);
+                            startActivity(displayResult);
+                        }
+                    }
+            );
             tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
 
             getMostPopular(type);
@@ -666,7 +668,6 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -715,6 +716,10 @@ public class HomeActivity extends AppCompatActivity
                 super.onBackPressed();
 
         }
+    }
+
+    public interface OnRespondError {
+        void onRespondError(String error);
     }
 
     private class PlaceLoader extends AsyncTask<String, Void, AppScript> {
