@@ -1,5 +1,6 @@
 package com.lmos.spotter.SearchInterface.Adapters;
 
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -22,10 +23,13 @@ import java.util.List;
 public class SearchReviewsAdapter extends RecyclerView.Adapter<SearchReviewsAdapter.SearchReviewsHolder> {
 
     List<UserReview> dataList;
+    Context context;
 
-    public SearchReviewsAdapter (List<UserReview> data) {
+    public SearchReviewsAdapter (Context con, List<UserReview> data) {
         dataList = data;
+        context = con;
     }
+
 
     @Override
     public SearchReviewsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -38,8 +42,15 @@ public class SearchReviewsAdapter extends RecyclerView.Adapter<SearchReviewsAdap
     @Override
     public void onBindViewHolder(SearchReviewsHolder holder, int position) {
 
-        holder.userImage.setImageDrawable(new BitmapDrawable())
+        UserReview userReview = dataList.get(position);
 
+        holder.userImage.setImageDrawable(new BitmapDrawable(context.getResources(), userReview.profileImage));
+
+        holder.userName.setText("by " + userReview.userName);
+        holder.review.setText(userReview.getReview());
+        holder.date.setText(userReview.getDate());
+        holder.isRecommended.setVisibility((userReview.isRecommend()) ? View.VISIBLE : View.GONE);
+        holder.rating.setText(String.valueOf(userReview.getRating()));
 
     }
 

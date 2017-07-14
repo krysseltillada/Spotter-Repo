@@ -100,12 +100,9 @@ public class ReviewActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Reviews");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setAdapter(new SearchReviewsAdapter());
+        
+        reviewList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        reviewList.setNestedScrollingEnabled(false);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.reviewFab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -273,6 +270,9 @@ public class ReviewActivity extends AppCompatActivity {
                 placeRatingText.setText(sumRating + " Stars");
 
                 reviewProgressBar.setVisibility(View.GONE);
+
+
+                recyclerView.setAdapter(new SearchReviewsAdapter());
 
                 for (UserReview userReview : userReviewList) {
 
