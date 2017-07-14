@@ -33,7 +33,6 @@ public class Place implements Parcelable {
     private String placeClass;
     private String placeType;
     private String placePriceRange;
-    private String placeImage;
     private String placeDeals;
     private String placeImageLink;
     private String recommended;
@@ -52,7 +51,7 @@ public class Place implements Parcelable {
         placeClass = in.readString();
         placeType = in.readString();
         placePriceRange = in.readString();
-        placeImage = in.readString();
+        placeImageLink = in.readString();
         placeDeals = in.readString();
         recommended = in.readString();
         rating = in.readString();
@@ -73,11 +72,7 @@ public class Place implements Parcelable {
 
     public void setplacePriceRange(String placePriceRange){this.placePriceRange = placePriceRange;}
 
-    public void setplaceImage(String placeImage){this.placeImage = placeImage;}
-
     public void setplaceImageLink(String placeImageLink){this.placeImageLink = placeImageLink;}
-    public void setRecommended(String recom) {this.recommended = recom;}
-    public void setRating(String rt) {this.rating = rt;}
 
     public String getPlaceID() {
         return placeID;
@@ -113,9 +108,6 @@ public class Place implements Parcelable {
         return placePriceRange;
     }
 
-    public String getPlaceImage() {
-        return placeImage; }
-
     public String getPlaceImageLink() {
         return placeImageLink;
     }
@@ -129,10 +121,16 @@ public class Place implements Parcelable {
     public void setPlaceLat(String placeLat){ this.placeLat = placeLat; }
 
     public String getPlaceLng(){ return placeLng; }
-    public String getRecommended () { return recommended; }
-    public String getRating () { return rating; }
 
     public void setPlaceLng(String placeLng){ this.placeLng = placeLng; }
+
+    public String getRecommended () { return recommended; }
+
+    public void setRecommended(String recom) {this.recommended = recom;}
+
+    public String getRating () { return rating; }
+
+    public void setRating(String rt) {this.rating = rt;}
 
     public String getPlaceRating(){ return rating; }
 
@@ -154,7 +152,7 @@ public class Place implements Parcelable {
         dest.writeString(placeClass);
         dest.writeString(placeType);
         dest.writeString(placePriceRange);
-        dest.writeString(placeImage);
+        dest.writeString(placeImageLink);
         dest.writeString(placeDeals);
         dest.writeString(recommended);
         dest.writeString(rating);

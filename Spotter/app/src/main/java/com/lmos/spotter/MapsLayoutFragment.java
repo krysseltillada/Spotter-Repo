@@ -70,15 +70,18 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         Log.d("UserPosLatDis", String.valueOf(userPosition.latitude));*/
 
         int lwidth = 25;
+        int color = getResources().getColor(R.color.colorPrimaryDark);
 
-        if(action.equals("directions"))
+        if(action.equals("directions")) {
             lwidth = 5;
+            color = getResources().getColor(R.color.colorAccent);
+        }
 
         new MapDirections(getContext(),
                 googleMap,
                 userPosition,
                 destination,
-                getResources().getColor(R.color.colorPrimaryDark),
+                color,
                 lwidth
         ).drawDirections()
                 .setOnDoneDrawDirectionListener(new MapDirections.OnDoneDrawDirectionListener() {

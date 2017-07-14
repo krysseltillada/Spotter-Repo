@@ -305,10 +305,10 @@ public class SearchResultsActivity extends AppCompatActivity
                     this,
                     R.anim.fade_out
             ));
-            if(fragmentType.equals("Hotel") || fragmentType.equals("Restaurant") || fragmentType.equals("Tourist Spot")){
-                showBookmarkInAppBar = true;
-                invalidateOptionsMenu();
-            }
+            if(!(fragmentType.equals("Location") || fragmentType.equals("General") || fragmentType.equals("Undefined")))
+                 showBookmarkInAppBar = true;
+
+            invalidateOptionsMenu();
         }
         else
             appBarLayout.setExpanded(prop_value);
@@ -525,8 +525,6 @@ public class SearchResultsActivity extends AppCompatActivity
                         toggleTab = View.GONE;
                     }
 
-                    loading_screen.setVisibility(View.GONE);
-
                     if(type.equals("Undefined")){
                         contentSettings(
                                 View.GONE,
@@ -549,6 +547,8 @@ public class SearchResultsActivity extends AppCompatActivity
                                 true
                         );
                     }
+
+                    loading_screen.setVisibility(View.GONE);
 
                 }
                 else {
