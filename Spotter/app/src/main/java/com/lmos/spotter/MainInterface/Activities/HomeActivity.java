@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -89,10 +90,10 @@ public class HomeActivity extends AppCompatActivity
     private RecyclerView tabLayoutRecyclerView;
     private ProgressBar itemListProgressBar;
     private ProgressBar recycleViewProgressBar;
-    private CoordinatorLayout mainLayout;
     private TabLayout tabLayout;
     private TextView mostPopularName;
 
+    private ImageView userProfileImage;
     private TextView userName;
     private TextView userEmail;
 
@@ -440,8 +441,6 @@ public class HomeActivity extends AppCompatActivity
 
         tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
-        mainLayout = (CoordinatorLayout) findViewById(R.id.homeLayout);
-
         recycleViewProgressBar = (ProgressBar) findViewById(R.id.recycleViewProgressBar);
         itemListProgressBar = (ProgressBar) findViewById(R.id.item_progress_bar);
 
@@ -538,14 +537,20 @@ public class HomeActivity extends AppCompatActivity
 
         userName = (TextView)headerLayout.findViewById(R.id.userName);
         userEmail = (TextView)headerLayout.findViewById(R.id.userEmail);
+        userProfileImage = (ImageView)headerLayout.findViewById(R.id.userProfileImage);
+
+        Log.d("debug", "account image: " + userData.getString("accountImage", ""));
+
 
         if (userData.getString("status", "").equals("Logged In")) {
 
+            userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), Utilities.BlurImg.stringToBitmap(userData.getString("accountImage", ""))));
             userName.setText(userData.getString("accountName", ""));
             userEmail.setText(userData.getString("accountEmail", ""));
 
         } else {
 
+            userProfileImage.setImageDrawable(getResources().getDrawable(R.drawable.account));
             userName.setText("Guest");
             userEmail.setVisibility(View.INVISIBLE);
 
