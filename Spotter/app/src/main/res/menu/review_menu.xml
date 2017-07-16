@@ -12,4 +12,11 @@
           app:showAsAction="never"
         />
 
+    <item android:id="@+id/sortByDate"
+        android:title = "sort by date"
+        app:showAsAction="never"
+        />
+
+
+
 </menu>

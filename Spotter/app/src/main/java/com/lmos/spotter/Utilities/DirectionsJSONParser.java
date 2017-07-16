@@ -46,8 +46,6 @@ public class DirectionsJSONParser {
                     HashMap<String, String> hmDistance = new HashMap<String, String>();
                     hmDistance.put("distance", jDistance.getString("text"));
 
-                    Log.d("debug", ((JSONObject) jLegs.get(j)).getString("html_instructions"));
-
                     /** Getting duration from the json data */
                     jDuration = ((JSONObject) jLegs.get(j)).getJSONObject("duration");
                     HashMap<String, String> hmDuration = new HashMap<String, String>();

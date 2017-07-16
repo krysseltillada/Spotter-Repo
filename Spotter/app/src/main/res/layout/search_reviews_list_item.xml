@@ -22,8 +22,8 @@
 
             <ImageView
                 android:id="@+id/userImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:scaleType="centerCrop"
                 android:src="@drawable/place2" />
@@ -51,6 +51,7 @@
                 android:layout_marginLeft="2dp"
                 android:maxLines="5"
                 android:padding="@dimen/min_padding"
+                android:ellipsize="none"
                 android:text="This is exciting. I do not want to be in this hotel anymore. But do you even care?"
                 android:textAlignment="textStart"
                 android:textSize="@dimen/min_font_size" />
@@ -59,6 +60,7 @@
                 android:id="@+id/grade_icon"
                 android:layout_width="@dimen/grade_width"
                 android:layout_height="@dimen/grade_height"
+                android:adjustViewBounds="true"
                 android:layout_alignEnd="@+id/review"
                 android:layout_gravity="right"
                 android:layout_marginRight="2dp"
@@ -70,9 +72,8 @@
                 android:id="@+id/general_rating_digit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/review"
-                android:layout_alignBottom="@+id/review"
                 android:layout_marginLeft="-18dp"
+                android:layout_marginTop="7dp"
                 android:layout_toStartOf="@+id/grade_icon"
                 android:text="3.9"
                 android:textSize="11sp" />

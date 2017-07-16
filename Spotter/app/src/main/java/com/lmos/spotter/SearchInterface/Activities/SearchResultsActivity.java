@@ -215,7 +215,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
                 Picasso.with(this)
                         .load(json_prevImg.get(i).toString())
-                        .resize(0, prevImages[i].getHeight())
                         .placeholder(R.drawable.loadingplace)
                         .into(prevImages[i]);
 

@@ -2,6 +2,7 @@ package com.lmos.spotter.MainInterface.Activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -9,7 +10,9 @@ import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -39,6 +42,12 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
         SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
+        String username = sharedPreferences.getString("accountUsername", "");
+        String accountEmail = sharedPreferences.getString("accountEmail", "");
+        String accountName = sharedPreferences.getString("accountName", "");
+        String accountPassword = sharedPreferences.getString("accountPassword", "")
+                .replaceAll(".", "*");
+
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         Preference userName = findPreference("username");
@@ -47,13 +56,15 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         Preference name = findPreference("name");
         Preference clearFavoritesItem = findPreference("clearBookmarks");
 
-        userName.setSummary(sharedPreferences.getString("username", ""));
-        email.setSummary(sharedPreferences.getString("email", ""));
-        password.setSummary(sharedPreferences.getString("password", ""));
-        name.setSummary(sharedPreferences.getString("name", ""));
+        ((EditTextPreference)userName).setText(username);
+        ((EditTextPreference)email).setText(accountEmail);
+        ((EditTextPreference)password).setText(accountPassword);
+        ((EditTextPreference)name).setText(accountName);
 
-        password.setSummary(sharedPreferences.getString("password", "")
-                                                 .replaceAll(".", "*"));
+        userName.setSummary(username);
+        email.setSummary(accountEmail);
+        password.setSummary(accountPassword);
+        name.setSummary(accountName);
 
         clearFavoritesItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

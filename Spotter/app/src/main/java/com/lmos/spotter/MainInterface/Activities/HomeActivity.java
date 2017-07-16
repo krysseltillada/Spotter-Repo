@@ -93,6 +93,9 @@ public class HomeActivity extends AppCompatActivity
     private TabLayout tabLayout;
     private TextView mostPopularName;
 
+    private TextView userName;
+    private TextView userEmail;
+
     private int startingIndex;
     private int tableCount;
 
@@ -111,6 +114,9 @@ public class HomeActivity extends AppCompatActivity
 
     private AdView bannerAdView;
 
+    String pageCount = "10";
+
+    SharedPreferences userData;
 
     private InterstitialAd interstitialAd;
 
@@ -145,7 +151,14 @@ public class HomeActivity extends AppCompatActivity
 
         PopupMenu userNavDropDownMenu = new PopupMenu(HomeActivity.this, view);
 
-        userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu, userNavDropDownMenu.getMenu());
+        if (userData.getString("status", "").equals("Logged In")) {
+
+            userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu_login, userNavDropDownMenu.getMenu());
+
+        } else {
+            userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu_guest, userNavDropDownMenu.getMenu());
+
+        }
 
         userNavDropDownMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
@@ -156,11 +169,17 @@ public class HomeActivity extends AppCompatActivity
 
                     case R.id.sign_out:
                         Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
+                        userData.edit().putString("status", "Logged out").apply();
                         break;
 
                     case R.id.user_settings:
                         Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class, null);
                         break;
+
+                    case R.id.sign_in:
+                        Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
+                        break;
+
 
                 }
 
@@ -208,7 +227,7 @@ public class HomeActivity extends AppCompatActivity
         });
 
 
-        placeLoader.execute("0", "5", pType, sType);
+        placeLoader.execute("0", pageCount, pType, sType);
 
         homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
 
@@ -238,7 +257,7 @@ public class HomeActivity extends AppCompatActivity
                                                                                        HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
                                                                                        HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
                                                                                    }
-                                                                               }).execute(String.valueOf(startingIndex), "5", placeType, sType);
+                                                                               }).execute(String.valueOf(startingIndex), pageCount, placeType, sType);
 
 
                                                                            }
@@ -355,7 +374,7 @@ public class HomeActivity extends AppCompatActivity
 
     private void initComp() {
 
-        SharedPreferences userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
+        userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         setContentView(R.layout.activity_home_menu);
 
@@ -514,6 +533,23 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerLayout = navigationView.getHeaderView(0);
+
+        userName = (TextView)headerLayout.findViewById(R.id.userName);
+        userEmail = (TextView)headerLayout.findViewById(R.id.userEmail);
+
+        if (userData.getString("status", "").equals("Logged In")) {
+
+            userName.setText(userData.getString("accountName", ""));
+            userEmail.setText(userData.getString("accountEmail", ""));
+
+        } else {
+
+            userName.setText("Guest");
+            userEmail.setVisibility(View.INVISIBLE);
+
+        }
 
         Utilities.setNavTitleStyle(this,
                 R.id.nav_view,

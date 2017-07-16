@@ -198,6 +198,7 @@ public class AppScript {
                     LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
                     LoginActivity.set_login_prefs.putString("accountUsername", accountProfile.get(2).toString());
                     LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
+                    LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(4).toString());
                     LoginActivity.set_login_prefs.apply();
 
                 }

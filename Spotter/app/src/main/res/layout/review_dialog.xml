@@ -5,6 +5,7 @@
 
 
     <RatingBar
+        android:id="@+id/reviewRating"
         android:layout_marginLeft="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +25,7 @@
             android:layout_height="match_parent"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
             android:hint="write your review here"
-            android:maxLength="100"
+            android:maxLength="50"
             android:textAlignment="textStart"
             android:textSize="16sp" />
 
@@ -42,6 +43,7 @@
             android:text="recommend this place?"/>
 
         <CheckBox
+            android:id="@+id/checkboxIsRecommended"
             android:layout_marginLeft="80dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

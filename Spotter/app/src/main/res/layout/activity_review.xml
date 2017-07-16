@@ -151,9 +151,19 @@
 
             <include layout="@layout/recycler_view_layout" />
 
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/txtReviewMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="28sp"
+        android:text="no reviews"/>
 
 
 </android.support.design.widget.CoordinatorLayout>
