@@ -664,6 +664,7 @@ public class Utilities {
                 byte[] byteBitmap = byteArrayOutputStream.toByteArray();
                 return Base64.encodeToString(byteBitmap, Base64.DEFAULT);
             } catch (Exception e) {
+                Log.d("debug", e.getMessage());
                 return null;
             }
         }

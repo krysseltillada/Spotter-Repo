@@ -54,7 +54,6 @@ import java.util.Map;
 
 public class AppScript {
 
-    final String default_url = "http://admin-spotter.000webhostapp.com/app_scripts/";
     private List<Place> placeNames;
     private String response;
     private String offSet;
@@ -63,19 +62,6 @@ public class AppScript {
     Activity activity;
 
     protected AppScript(Activity activity){ this.activity = activity; }
-
-    public void setData(String... params){
-        String post_data = "";
-        try {
-            connect(
-                    default_url + params[0],
-                    URLEncoder.encode("startIndex", "UTF-8") + "="
-                    + URLEncoder.encode(params[1], "UTF-8")
-            );
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void setData(String url, Map<String, String> params){
 
@@ -90,6 +76,8 @@ public class AppScript {
 
                 Map.Entry<String, String> index_item = entry.next();
                 try {
+
+                    Log.d("debug", "key: " + index_item.getKey() + " value: " + index_item.getValue());
 
                     post_data += URLEncoder.encode(index_item.getKey(), "UTF-8") + "="
                               +  URLEncoder.encode(index_item.getValue(), "UTF-8");

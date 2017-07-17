@@ -3,11 +3,13 @@ package com.lmos.spotter.AccountInterface.Fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +53,7 @@ public class FragmentSignUp extends Fragment {
         sign_up = (Button) registerView.findViewById(R.id.register_sign_up);
 
         register_img.setImageDrawable(getResources().getDrawable(R.drawable.account));
+        userImage = ((BitmapDrawable)getResources().getDrawable(R.drawable.account)).getBitmap();
 
         register_img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +86,12 @@ public class FragmentSignUp extends Fragment {
                         Toast.makeText(getContext(), "invalid email", Toast.LENGTH_LONG).show();
                         return;
                     }
+
+                    Log.d("debug", "username: " + registeredUserAccount.userName);
+                    Log.d("debug", "password: " + registeredUserAccount.password);
+                    Log.d("debug", "name: " + registeredUserAccount.name);
+                    Log.d("debug", "email: " + registeredUserAccount.email);
+                    Log.d("debug", "image: " + Utilities.BlurImg.bitmapToString(registeredUserAccount.profileImage));
 
                     final Map<String, String> map_data = new HashMap<String, String>() {{
 

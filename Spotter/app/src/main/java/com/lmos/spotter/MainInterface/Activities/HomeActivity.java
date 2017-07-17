@@ -198,13 +198,21 @@ public class HomeActivity extends AppCompatActivity
     }
 
     PlaceLoader placeLoader;
+    PlaceLoader itemLoader;
 
     private void loadPlacesFromServer(final String pType, final String sType) {
 
+        if (itemLoader != null) {
+            Log.d("debug", "item exist");
+            itemLoader.cancel(true);
+            itemLoader = null;
+        }
 
         if (placeLoader != null) {
             placeLoader.cancel(true);
             placeLoader = null;
+
+
         }
 
         isLoadingPlace = true;
@@ -220,8 +228,14 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onRespondError(String error) {
 
-                HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
-                HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+                Log.d("debug", "error trying to get the data again");
+
+                new PlaceLoader().setOnRespondError(this)
+                                 .execute("0", pageCount, pType, sType);
+
+
+               // HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
+               // HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
 
             }
 
@@ -251,14 +265,21 @@ public class HomeActivity extends AppCompatActivity
                                                                            @Override
                                                                            public void run() {
 
-                                                                               new PlaceLoader().setOnRespondError(new OnRespondError() {
+                                                                               itemLoader = new PlaceLoader().setOnRespondError(new OnRespondError() {
 
                                                                                    @Override
                                                                                    public void onRespondError(String error) {
-                                                                                       HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
-                                                                                       HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+
+                                                                                       Log.d("debug", "error getting items from the server im tryingg");
+
+                                                                                       itemLoader = new PlaceLoader().setOnRespondError(this);
+                                                                                       itemLoader.execute(String.valueOf(startingIndex), pageCount, placeType, sType);
+
+
                                                                                    }
-                                                                               }).execute(String.valueOf(startingIndex), pageCount, placeType, sType);
+                                                                               });
+
+                                                                               itemLoader.execute(String.valueOf(startingIndex), pageCount, placeType, sType);
 
 
                                                                            }
@@ -457,8 +478,6 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
-                Log.d("debug", "offset: " + verticalOffset);
-
                 if (!isLoadingPlace) {
                     appBarLayout.setExpanded(false);
                     homeNestedScrollView.smoothScrollTo(0, 0);
@@ -586,7 +605,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    private void getMostPopular(String type) {
+    private void getMostPopular(final String type) {
 
         viewFlipperManager.stopFlipping();
 
@@ -661,7 +680,8 @@ public class HomeActivity extends AppCompatActivity
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.d("debug", "most popular trying to get data from server");
+                getMostPopular(type);
             }
         }) {
             protected Map<String, String> getParams() {
