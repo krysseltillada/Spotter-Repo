@@ -11,9 +11,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -24,22 +31,69 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class SettingsActivity extends PreferenceActivity  {
 
     SharedPreferences userData;
     String message;
+
+    EditTextPreference userEditText;
+    EditTextPreference emailEditText;
+    EditTextPreference passwordEditText;
+    EditTextPreference nameEditText;
+
+    SharedPreferences.OnSharedPreferenceChangeListener userChangePreference = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+            Preference preference = findPreference(key);
+
+            SharedPreferences.Editor editUserData = userData.edit();
+
+            editUserData.putString("accountUsername",  sharedPreferences.getString("username", ""));
+            editUserData.putString("accountEmail", sharedPreferences.getString("email", ""));
+            editUserData.putString("accountName",  sharedPreferences.getString("name", ""));
+            editUserData.putString("accountPassword",  sharedPreferences.getString("password", ""));
+
+            editUserData.apply();
+
+            Log.d("debug", userData.getString("accountID", ""));
+
+            Log.d("debug", userData.getString("accountUsername", ""));
+
+            Log.d("debug", userData.getString("accountName", ""));
+
+            Log.d("debug", userData.getString("accountPassword", ""));
+
+            Log.d("debug", userData.getString("accountEmail", ""));
+
+
+            preference.setSummary( ((key.equals("password")) ? sharedPreferences.getString(key, "")
+                    .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
+
+
+            message = (key.equals("username")) ? "username changed" :
+                    (key.equals("email")) ? "email change" : (key.equals("name")) ? "name changed" : "password changed";
+
+
+            updateAccountInfo();
+
+        }
+    };
 
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
+        userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         if (userData.getString("status", "").equals("Logged In")) {
 
             addPreferencesFromResource(R.xml.settings_user);
 
-            userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
+            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(userChangePreference);
+
 
             String username = userData.getString("accountUsername", "");
             String accountEmail = userData.getString("accountEmail", "");
@@ -47,7 +101,6 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
             String accountPassword = userData.getString("accountPassword", "")
                     .replaceAll(".", "*");
 
-            userData.registerOnSharedPreferenceChangeListener(this);
 
             Preference userName = findPreference("username");
             Preference email = findPreference("email");
@@ -55,10 +108,15 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
             Preference name = findPreference("name");
             Preference clearFavoritesItem = findPreference("clearBookmarks");
 
-            ((EditTextPreference) userName).setText(username);
-            ((EditTextPreference) email).setText(accountEmail);
-            ((EditTextPreference) password).setText(accountPassword);
-            ((EditTextPreference) name).setText(accountName);
+            userEditText = (EditTextPreference) userName;
+            emailEditText = (EditTextPreference) email;
+            passwordEditText = (EditTextPreference) password;
+            nameEditText = (EditTextPreference) name;
+
+            userEditText.setText(username);
+            emailEditText.setText(accountEmail);
+            passwordEditText.setText(accountPassword);
+            nameEditText.setText(accountName);
 
             userName.setSummary(username);
             email.setSummary(accountEmail);
@@ -97,12 +155,12 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     }
 
+
     private void updateAccountInfo () {
 
-        final ProgressDialog updateProgressDialog = new ProgressDialog(getApplicationContext());
+        final ProgressDialog updateProgressDialog = new ProgressDialog(this);
 
         updateProgressDialog.setIndeterminate(true);
-        updateProgressDialog.setTitle("updating");
         updateProgressDialog.setMessage("updating your account");
         updateProgressDialog.setCancelable(false);
 
@@ -126,17 +184,50 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     updateProgressDialog.dismiss();
+
+                    NetworkResponse networkResponse = error.networkResponse;
+                    if (networkResponse != null) {
+                        Log.d("debug", "Error. HTTP Status Code:"+networkResponse.statusCode);
+                    }
+
+                    if (error instanceof TimeoutError) {
+                        Log.d("debug", "TimeoutError");
+                    }else if(error instanceof NoConnectionError){
+                        Log.d("debug", "NoConnectionError");
+                    } else if (error instanceof AuthFailureError) {
+                        Log.d("debug", "AuthFailureError");
+                    } else if (error instanceof ServerError) {
+                        Log.d("debug", "ServerError");
+                    } else if (error instanceof NetworkError) {
+                        Log.d("debug", "NetworkError");
+                    } else if (error instanceof ParseError) {
+                        Log.d("debug", "ParseError");
+                    }
+
+
                     Toast.makeText(getApplicationContext(), "please check your connection", Toast.LENGTH_SHORT).show();
                 }
         }){
 
             protected Map<String, String> getParams () {
                 return new HashMap<String, String>(){{
+
+
                    put("accountID", userData.getString("accountID", ""));
                    put("userName", userData.getString("accountUsername", ""));
                    put("name", userData.getString("accountName", ""));
                    put("email", userData.getString("accountEmail", ""));
                    put("password", userData.getString("accountPassword", ""));
+
+
+                    /*
+                    put("accountID", "201707050318202546");
+                    put("userName", "judyando");
+                    put("name", "finalexistence");
+                    put("email", "judyando@gmail.com");
+                    put("password", "kryssel2821"); */
+
+
                 }};
             }
 
@@ -146,23 +237,5 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-        Log.d("debug", "change");
-
-        Preference preference = findPreference(key);
-
-
-        preference.setSummary( ((key.equals("password")) ? sharedPreferences.getString(key, "")
-                                        .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
-
-
-        message = (key.equals("username")) ? "username changed" :
-                    (key.equals("email")) ? "email change" : "password changed";
-
-        updateAccountInfo();
-
-    }
 
 }
