@@ -227,6 +227,7 @@ public class AppScript {
                         setPlace.setplacePriceRange(place_item.getString("PriceRange"));
                         setPlace.setRecommended(place_item.getString("Recommended"));
                         setPlace.setRating(place_item.getString("Rating"));
+                        setPlace.setUserReviews(place_item.getString("userReviews"));
                         setPlace.setplaceImageLink(place_item.getString("Image"));
 
                         Log.d("IMAGE-JSON", place_item.getString("Image"));
