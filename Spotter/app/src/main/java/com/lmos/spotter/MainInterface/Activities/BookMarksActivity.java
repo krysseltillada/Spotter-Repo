@@ -39,6 +39,7 @@ public class BookMarksActivity extends AppCompatActivity {
     TabLayout bookMarksTabLayout;
     RecyclerView recyclerView;
     TextView bookmarkEmptyText;
+    TextView bookmarkEmptyText1;
     TabLayout.Tab firstTab;
 
     HashMap<String, List<Place>> bookmarkedPlaceList = new HashMap<>();
@@ -189,7 +190,6 @@ public class BookMarksActivity extends AppCompatActivity {
             bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText(placeType));
             bookmarkedPlaceList.put(placeType, bookmarksDB.getBookmarks(placeType));
 
-
             List <Place> test = bookmarksDB.getBookmarks(placeType);
 
             Log.d("debug", "for " + placeType);
@@ -203,6 +203,9 @@ public class BookMarksActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /// TODO SYNC A BOOKMARK ON CLOUD
+
         setContentView(R.layout.activity_book_marks);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -211,6 +214,7 @@ public class BookMarksActivity extends AppCompatActivity {
         bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
 
         bookmarkEmptyText = (TextView)findViewById(R.id.messageRecyclerView);
+        bookmarkEmptyText1 = (TextView)findViewById(R.id.messageRecyclerView2);
 
         bookmarksDB = new DbHelper(getApplicationContext());
 
@@ -245,6 +249,7 @@ public class BookMarksActivity extends AppCompatActivity {
         } else {
             bookMarksTabLayout.setVisibility(View.GONE);
             bookmarkEmptyText.setVisibility(View.VISIBLE);
+            bookmarkEmptyText1.setVisibility(View.VISIBLE);
         }
 
 
@@ -259,12 +264,12 @@ public class BookMarksActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if (firstTab != null) {
-
+        if (firstTab != null)
             getMenuInflater().inflate(R.menu.book_marks_menu, menu);
-            bookMarksMenu = menu;
+        else
+            getMenuInflater().inflate(R.menu.book_marks_menu_empty, menu);
 
-        }
+        bookMarksMenu = menu;
 
         return super.onCreateOptionsMenu(menu);
     }

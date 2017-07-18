@@ -3,6 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id = "@+id/syncBookmarks"
+        android:icon="@drawable/ic_sync_white_48dp"
+        android:title=""
+        app:showAsAction="always"
+
+        />
+    <item
 
         android:id = "@+id/sortByPlace"
         android:title = "sort by place"

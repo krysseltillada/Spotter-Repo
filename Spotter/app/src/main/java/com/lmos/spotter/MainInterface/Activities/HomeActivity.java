@@ -605,7 +605,6 @@ public class HomeActivity extends AppCompatActivity
         userEmail = (TextView)headerLayout.findViewById(R.id.userEmail);
         userProfileImage = (ImageView)headerLayout.findViewById(R.id.userProfileImage);
 
-
         displayUserInfo();
 
         Utilities.setNavTitleStyle(this,
@@ -683,7 +682,7 @@ public class HomeActivity extends AppCompatActivity
 
                                     Picasso.with(getApplicationContext())
                                             .load(imageLinks.getString(0))
-                                            .placeholder(R.drawable.loadingplace)
+                                            .placeholder(R.drawable.landscape_placeholder)
                                             .fit()
                                             .into(mostPopularImages[i]);
 
