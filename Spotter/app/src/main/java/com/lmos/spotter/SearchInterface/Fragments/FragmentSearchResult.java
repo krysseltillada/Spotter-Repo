@@ -40,6 +40,8 @@ public class FragmentSearchResult extends Fragment
 
         FragmentSearchResult fragmentSearchResult = new FragmentSearchResult();
 
+        FragmentSearchResultGeneral.placeID = place.getPlaceID();
+
         Bundle bundle = new Bundle();
         bundle.putParcelable("data", place);
 
@@ -132,9 +134,10 @@ public class FragmentSearchResult extends Fragment
 
         Fragment mapFragment = getFragmentManager().findFragmentByTag("Map");
 
-        if(mapFragment != null && mapFragment instanceof MapsLayoutFragment)
+        if(mapFragment != null && mapFragment instanceof MapsLayoutFragment) {
             ((MapsLayoutFragment) mapFragment).setUserPosition(
                     new LatLng(lat, lng), "", null);
+        }
 
     }
 }

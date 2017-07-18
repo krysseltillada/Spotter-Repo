@@ -108,11 +108,12 @@ public class FragmentSignUp extends Fragment {
                             map_data
                     );
                 }
-                else
+                else {
                     Toast.makeText(
                             getContext(),
                             "Your credentials must consist of at least 6 characters in length.",
                             Toast.LENGTH_SHORT).show();
+                }
 
             }
 

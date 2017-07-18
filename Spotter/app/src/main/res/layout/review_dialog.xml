@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
             android:hint="write your review here"
-            android:maxLength="50"
+            android:maxLength="100"
             android:textAlignment="textStart"
             android:textSize="16sp" />
 

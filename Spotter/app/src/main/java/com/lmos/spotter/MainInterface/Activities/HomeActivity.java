@@ -147,6 +147,13 @@ public class HomeActivity extends AppCompatActivity
         super.onPause();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        displayUserInfo();
+    }
+
 
     public void userNavDropDown(View view) {
 
@@ -170,7 +177,19 @@ public class HomeActivity extends AppCompatActivity
 
                     case R.id.sign_out:
                         Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
-                        userData.edit().putString("status", "Logged out").apply();
+
+                        SharedPreferences.Editor userDataEdit = userData.edit();
+
+                        userDataEdit.putString("status", "Logged out");
+                        userDataEdit.putString("accountName", "");
+                        userDataEdit.putString("accountUsername", "");
+                        userDataEdit.putString("accountEmail", "");
+                        userDataEdit.putString("accountPassword", "");
+                        userDataEdit.putString("accountImage", "");
+
+                        userDataEdit.apply();
+
+
                         break;
 
                     case R.id.user_settings:
@@ -394,6 +413,34 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+
+
+    private void displayUserInfo () {
+
+        if (userData.getString("status", "").equals("Logged In")) {
+
+            Log.d("debug", "username: " + userData.getString("accountUsername", ""));
+            Log.d("debug", "email: " + userData.getString("accountEmail", ""));
+            Log.d("debug", "password: " + userData.getString("accountPassword", ""));
+            Log.d("debug", "accountid: " + userData.getString("accountID", ""));
+            Log.d("debug", "image: " + userData.getString("accountImage", ""));
+            Log.d("debug", "name: " + userData.getString("accountName", ""));
+
+            userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), Utilities.BlurImg.stringToBitmap(userData.getString("accountImage", ""))));
+            userName.setText(userData.getString("accountName", ""));
+            userEmail.setText(userData.getString("accountEmail", ""));
+
+        } else {
+
+            userProfileImage.setImageDrawable(getResources().getDrawable(R.drawable.account));
+            userName.setText("Guest");
+            userEmail.setVisibility(View.INVISIBLE);
+
+        }
+
+
+    }
+
     private void initComp() {
 
         userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
@@ -558,22 +605,8 @@ public class HomeActivity extends AppCompatActivity
         userEmail = (TextView)headerLayout.findViewById(R.id.userEmail);
         userProfileImage = (ImageView)headerLayout.findViewById(R.id.userProfileImage);
 
-        Log.d("debug", "account image: " + userData.getString("accountImage", ""));
 
-
-        if (userData.getString("status", "").equals("Logged In")) {
-
-            userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), Utilities.BlurImg.stringToBitmap(userData.getString("accountImage", ""))));
-            userName.setText(userData.getString("accountName", ""));
-            userEmail.setText(userData.getString("accountEmail", ""));
-
-        } else {
-
-            userProfileImage.setImageDrawable(getResources().getDrawable(R.drawable.account));
-            userName.setText("Guest");
-            userEmail.setVisibility(View.INVISIBLE);
-
-        }
+        displayUserInfo();
 
         Utilities.setNavTitleStyle(this,
                 R.id.nav_view,
@@ -780,6 +813,16 @@ public class HomeActivity extends AppCompatActivity
         }
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (!searchBTN.isIconified()) {
+            searchBTN.setIconified(true);
+        }
+
     }
 
     @Override

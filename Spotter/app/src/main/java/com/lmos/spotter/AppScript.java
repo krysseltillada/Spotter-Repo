@@ -176,18 +176,24 @@ public class AppScript {
             final JSONObject jsonObject = new JSONObject(processResult);
             String response_code = jsonObject.getString("response_code");
 
+            Log.d("debug", processResult);
+
+            Log.d("debug", jsonObject.getString("response_msg"));
+
             if (response_code.equals("0x01") || response_code.equals("0x02") || response_code.equals("0x03")) {
 
                 if (!response_code.equals("0x03")) {
 
                     JSONArray accountProfile = jsonObject.getJSONArray("response_data");
 
+                    Log.d("debug", jsonObject.getString("response_data"));
+
                     LoginActivity.set_login_prefs.putString("accountID", accountProfile.get(0).toString());
                     LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
                     LoginActivity.set_login_prefs.putString("accountUsername", accountProfile.get(2).toString());
                     LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
-                    LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(4).toString());
-                    LoginActivity.set_login_prefs.putString("accountImage", accountProfile.get(5).toString());
+                    LoginActivity.set_login_prefs.putString("accountImage", accountProfile.get(4).toString());
+                    LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(5).toString());
                     LoginActivity.set_login_prefs.apply();
 
                 }
@@ -245,6 +251,8 @@ public class AppScript {
 
                 response = jsonObject.getString("response_msg");
 
+            } else if (response_code.equals("1x01")) {
+                response = jsonObject.getString("response_msg");
             }
 
         }catch(JSONException e){

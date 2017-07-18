@@ -156,8 +156,9 @@ public class LoginActivity extends AppCompatActivity {
                 Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
 
             }
-            else
+            else {
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+            }
 
         }
 

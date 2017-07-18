@@ -1,5 +1,6 @@
 package com.lmos.spotter.MainInterface.Activities;
 
+import android.accounts.Account;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
+import com.lmos.spotter.Utilities.UserAccount;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,51 +37,108 @@ public class SettingsActivity extends PreferenceActivity  {
 
     SharedPreferences userData;
     String message;
+    String typeInfo;
+
+    UserAccount modifiedAccount = new UserAccount();
 
     EditTextPreference userEditText;
     EditTextPreference emailEditText;
     EditTextPreference passwordEditText;
     EditTextPreference nameEditText;
 
+    RequestQueue requestUpdateAccountInfo;
+
+    boolean isReInitInfo = false;
+
+    private void updateUserPreferences () {
+
+        SharedPreferences.Editor editUserData = userData.edit();
+
+        editUserData.putString("accountUsername", modifiedAccount.userName);
+        editUserData.putString("accountEmail", modifiedAccount.email);
+        editUserData.putString("accountName", modifiedAccount.name);
+        editUserData.putString("accountPassword", modifiedAccount.password);
+
+        editUserData.apply();
+
+    }
+
+
     SharedPreferences.OnSharedPreferenceChangeListener userChangePreference = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-            Preference preference = findPreference(key);
+            if (!isReInitInfo) {
 
-            SharedPreferences.Editor editUserData = userData.edit();
+                Preference preference = findPreference(key);
 
-            editUserData.putString("accountUsername",  sharedPreferences.getString("username", ""));
-            editUserData.putString("accountEmail", sharedPreferences.getString("email", ""));
-            editUserData.putString("accountName",  sharedPreferences.getString("name", ""));
-            editUserData.putString("accountPassword",  sharedPreferences.getString("password", ""));
+                modifiedAccount.userName = sharedPreferences.getString("username", "");
+                modifiedAccount.email = sharedPreferences.getString("email", "");
+                modifiedAccount.name = sharedPreferences.getString("name", "");
+                modifiedAccount.password = sharedPreferences.getString("password", "");
 
-            editUserData.apply();
+                Log.d("debug", userData.getString("accountID", ""));
 
-            Log.d("debug", userData.getString("accountID", ""));
+                Log.d("debug", userData.getString("accountUsername", ""));
 
-            Log.d("debug", userData.getString("accountUsername", ""));
+                Log.d("debug", userData.getString("accountName", ""));
 
-            Log.d("debug", userData.getString("accountName", ""));
+                Log.d("debug", userData.getString("accountPassword", ""));
 
-            Log.d("debug", userData.getString("accountPassword", ""));
-
-            Log.d("debug", userData.getString("accountEmail", ""));
+                Log.d("debug", userData.getString("accountEmail", ""));
 
 
-            preference.setSummary( ((key.equals("password")) ? sharedPreferences.getString(key, "")
-                    .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
+                preference.setSummary(((key.equals("password")) ? sharedPreferences.getString(key, "")
+                        .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
+
+                typeInfo = key;
 
 
-            message = (key.equals("username")) ? "username changed" :
-                    (key.equals("email")) ? "email change" : (key.equals("name")) ? "name changed" : "password changed";
+                message = (key.equals("username")) ? "username changed" :
+                        (key.equals("email")) ? "email change" : (key.equals("name")) ? "name changed" : "password changed";
 
 
-            updateAccountInfo();
+                updateAccountInfo();
+
+            } else {
+                isReInitInfo = false;
+            }
 
         }
     };
+
+    private void initUserInfo () {
+
+        String username = userData.getString("accountUsername", "");
+        String accountEmail = userData.getString("accountEmail", "");
+        String accountName = userData.getString("accountName", "");
+        String accountPassword = userData.getString("accountPassword", "")
+                .replaceAll(".", "*");
+
+
+        Preference userName = findPreference("username");
+        Preference email = findPreference("email");
+        Preference password = findPreference("password");
+        Preference name = findPreference("name");
+
+
+        userEditText = (EditTextPreference) userName;
+        emailEditText = (EditTextPreference) email;
+        passwordEditText = (EditTextPreference) password;
+        nameEditText = (EditTextPreference) name;
+
+        userEditText.setText(username);
+        emailEditText.setText(accountEmail);
+        passwordEditText.setText(accountPassword);
+        nameEditText.setText(accountName);
+
+        userName.setSummary(username);
+        email.setSummary(accountEmail);
+        password.setSummary(accountPassword);
+        name.setSummary(accountName);
+
+    }
 
 
     @Override
@@ -92,36 +151,12 @@ public class SettingsActivity extends PreferenceActivity  {
 
             addPreferencesFromResource(R.xml.settings_user);
 
-            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(userChangePreference);
 
+            initUserInfo();
 
-            String username = userData.getString("accountUsername", "");
-            String accountEmail = userData.getString("accountEmail", "");
-            String accountName = userData.getString("accountName", "");
-            String accountPassword = userData.getString("accountPassword", "")
-                    .replaceAll(".", "*");
-
-
-            Preference userName = findPreference("username");
-            Preference email = findPreference("email");
-            Preference password = findPreference("password");
-            Preference name = findPreference("name");
             Preference clearFavoritesItem = findPreference("clearBookmarks");
 
-            userEditText = (EditTextPreference) userName;
-            emailEditText = (EditTextPreference) email;
-            passwordEditText = (EditTextPreference) password;
-            nameEditText = (EditTextPreference) name;
-
-            userEditText.setText(username);
-            emailEditText.setText(accountEmail);
-            passwordEditText.setText(accountPassword);
-            nameEditText.setText(accountName);
-
-            userName.setSummary(username);
-            email.setSummary(accountEmail);
-            password.setSummary(accountPassword);
-            name.setSummary(accountName);
+            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(userChangePreference);
 
             clearFavoritesItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -155,18 +190,25 @@ public class SettingsActivity extends PreferenceActivity  {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+
 
     private void updateAccountInfo () {
 
         final ProgressDialog updateProgressDialog = new ProgressDialog(this);
-
         updateProgressDialog.setIndeterminate(true);
         updateProgressDialog.setMessage("updating your account");
         updateProgressDialog.setCancelable(false);
 
-        updateProgressDialog.show();
+        if (!isFinishing()) {
+            updateProgressDialog.show();
+        }
 
-        RequestQueue requestUpdateAccountInfo = Volley.newRequestQueue(getApplicationContext());
+        requestUpdateAccountInfo = Volley.newRequestQueue(getApplicationContext());
 
         StringRequest updateAccount = new StringRequest(Request.Method.POST,
                 "http://admin-spotter.000webhostapp.com/app_scripts/updateUserAccount.php",
@@ -176,7 +218,13 @@ public class SettingsActivity extends PreferenceActivity  {
                     public void onResponse(String response) {
                         if (response.equals("account updated")) {
                             updateProgressDialog.dismiss();
+                            SettingsActivity.this.updateUserPreferences();
                             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                        } else {
+                            updateProgressDialog.dismiss();
+                            isReInitInfo = true;
+                            initUserInfo();
+                            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -184,6 +232,8 @@ public class SettingsActivity extends PreferenceActivity  {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     updateProgressDialog.dismiss();
+
+                    Log.d("debug", error.getMessage());
 
                     NetworkResponse networkResponse = error.networkResponse;
                     if (networkResponse != null) {
@@ -214,11 +264,11 @@ public class SettingsActivity extends PreferenceActivity  {
 
 
                    put("accountID", userData.getString("accountID", ""));
-                   put("userName", userData.getString("accountUsername", ""));
-                   put("name", userData.getString("accountName", ""));
-                   put("email", userData.getString("accountEmail", ""));
-                   put("password", userData.getString("accountPassword", ""));
-
+                   put("userName", modifiedAccount.userName);
+                   put("name", modifiedAccount.name);
+                   put("email", modifiedAccount.email);
+                   put("password", modifiedAccount.password);
+                   put("typeInfo", typeInfo);
 
                     /*
                     put("accountID", "201707050318202546");

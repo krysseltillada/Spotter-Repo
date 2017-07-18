@@ -132,6 +132,8 @@ public class FragmentSearchResultGeneral extends Fragment {
                         ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
                         placeID = place.getPlaceID();
 
+                        Log.d("debug", "placeID: " + placeID);
+
                         break;
                 }
 
