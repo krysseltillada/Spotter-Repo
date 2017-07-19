@@ -274,10 +274,19 @@ public class BookMarksActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void syncBookmarks () {
+
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+
+            case R.id.syncBookmarks:
+
+                break;
 
             case R.id.sortByAdded:
 
