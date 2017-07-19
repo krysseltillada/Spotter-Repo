@@ -305,5 +305,8 @@
     <string name="title_activity_review">ReviewActivity</string>
     <string name="loading_msg_1">Hi! We\'re getting your location. Make sure you have a stable internet connection.</string>
     <string name="loading_msg_2">Getting some information for you.</string>
+    <string name="loading_msg_3">In order to locate the places near you, please enable your GPS.</string>
+    <string name="loading_msg_4">Connection failed. Please try again later.</string>
+    <string name="loading_msg_5">You\'re not connected to the outside world. Please enable yout Wi-Fi or Mobile Data.</string>
 
 </resources>

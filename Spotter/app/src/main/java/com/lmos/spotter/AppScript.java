@@ -2,6 +2,7 @@ package com.lmos.spotter;
 
 import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.Utilities.Utilities;
@@ -168,12 +169,12 @@ public class AppScript {
         }catch(UnknownHostException e){
             Utilities.logError(activity, e.getMessage());
             e.printStackTrace();
-            response = e.getMessage();
+            response = "Couldn't connect to server. Make sure you have stable internet connection.";
         }catch (SocketTimeoutException | ConnectException e){
             e.printStackTrace();
             Utilities.logError(activity, e.getMessage());
             Log.d("debug", e.getMessage());
-            response = "Couldn't connect to server. Make sure you have stable internet connection, then try again.";
+            response = "Couldn't connect to server.";
         }catch (IOException e) {
             e.printStackTrace();
             Utilities.logError(activity, e.getMessage());
@@ -242,6 +243,8 @@ public class AppScript {
                             offSet = responseData.getString("endOffset");
                             tableCount = responseData.getString("tableCount");
                         }
+                        else
+                            Log.d("LOCATION-SERVER", jsonObject.getString("response_ada"));
 
                     }
 

@@ -77,6 +77,10 @@
                 android:value=".SearchInterface.Activities.SearchResultsActivity" />
         </activity>
 
+        <service
+            android:name=".SyncService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

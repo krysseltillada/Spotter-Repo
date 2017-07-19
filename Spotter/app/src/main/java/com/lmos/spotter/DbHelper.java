@@ -83,11 +83,13 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL(
                 "Create virtual table " + TABLE_PLACE_NAME + " using fts4 (" +
+                        KEY_PLACEID + " TEXT," +
                         KEY_NAME + " TEXT," +
                         KEY_ADDRESS + " TEXT," +
                         KEY_TYPE + " TEXT," +
                         KEY_LAT + " DOUBLE," +
                         KEY_LNG + " DOUBLE," +
+                        " notindexed=" + KEY_PLACEID + "," +
                         " notindexed=" + KEY_ADDRESS + "," +
                         " notindexed=" + KEY_LAT + "," +
                         " notindexed=" + KEY_LNG + "," +
@@ -178,6 +180,7 @@ public class DbHelper extends SQLiteOpenHelper {
         for(Place place : places ){
 
             ContentValues cv = new ContentValues();
+            cv.put(KEY_PLACEID, place.getPlaceID());
             cv.put(KEY_NAME, place.getPlaceName());
             cv.put(KEY_ADDRESS, place.getPlaceAddress());
             cv.put(KEY_TYPE, place.getPlaceType());
@@ -232,6 +235,23 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
 
         return bookmarks;
+    }
+
+    public String getLastKeyword(){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "Select " + KEY_PLACEID + " from " + TABLE_PLACE_NAME +
+                        " order by " + KEY_PLACEID + " desc limit 1",
+                null
+        );
+
+        String placeID = cursor.getString(cursor.getColumnIndex(KEY_PLACEID));
+
+        db.close();
+
+        return placeID;
     }
 
 }

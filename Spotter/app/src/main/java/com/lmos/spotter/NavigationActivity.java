@@ -52,15 +52,15 @@ public class NavigationActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLocationFoundLatLng(double lat, double lng) {
+    public void onLocationFoundLatLng(double lat, double lng, float bearing) {
 
         Fragment mapFragment = getSupportFragmentManager().findFragmentByTag("Map");
         Log.d("Nav", "Location Found!");
         if(mapFragment != null && mapFragment instanceof MapsLayoutFragment)
             ((MapsLayoutFragment) mapFragment).setUserPosition(
-                    new LatLng(lat, lng), "navigate", null);
+                    new LatLng(lat, lng), "navigate", bearing);
 
-        Log.d("NAV-POS", String.valueOf(lat) + " " + String.valueOf(lng));
+        Log.d("NAV-POS", String.valueOf(lat) + " " + String.valueOf(lng) + " " + String.valueOf(bearing));
 
     }
 

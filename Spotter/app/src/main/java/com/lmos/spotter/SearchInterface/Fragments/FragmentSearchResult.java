@@ -66,7 +66,6 @@ public class FragmentSearchResult extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         place = getArguments().getParcelable("data");
-
         View thisView = inflater.inflate(R.layout.search_result_hrt, container, false);
 
         ((SearchResultsActivity) getContext() ).setHeaderText(place.getPlaceName());
@@ -127,7 +126,7 @@ public class FragmentSearchResult extends Fragment
     }
 
     @Override
-    public void onLocationFoundLatLng(double lat, double lng) {
+    public void onLocationFoundLatLng(double lat, double lng, float bearing) {
 
         Fragment mapFragment = getFragmentManager().findFragmentByTag("Map");
 

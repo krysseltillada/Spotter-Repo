@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ public class SplashScreen extends AppCompatActivity {
 
     private static final String LOGIN_PREFS = "LoginSharedPreference";
     TextView splash_msg;
+    final int SPLASH_REQUEST = 1902;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +67,14 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
-    public class GetPlaceNames extends AsyncTask<Void, String, Void>{
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Utilities.checkNetworkState(this))
+            new GetPlaceNames(this).execute();
+    }
+
+    class GetPlaceNames extends AsyncTask<Void, String, Void>{
 
         Activity activity;
 
@@ -88,6 +97,7 @@ public class SplashScreen extends AppCompatActivity {
             if(!database.exists()){
 
                 if(Utilities.checkNetworkState(activity)){
+
                     publishProgress("We're setting things up for you, please wait a moment.");
                     AppScript appScript = new AppScript(activity){{
                         setData("get-all-place-name.php", null);
@@ -102,7 +112,7 @@ public class SplashScreen extends AppCompatActivity {
 
                 }
                 else{
-                    publishProgress("You are not connected. Please try again.");
+                    Utilities.showDialogActivity(activity, SPLASH_REQUEST, R.string.loading_msg_5);
                 }
 
             }
@@ -117,4 +127,14 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == SPLASH_REQUEST && resultCode == RESULT_OK)
+            startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+        else
+            finish();
+
+    }
 }

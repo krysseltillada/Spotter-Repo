@@ -13,7 +13,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.GnssStatus;
+import android.location.GpsStatus;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -78,6 +81,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -442,6 +447,7 @@ public class Utilities {
                         to
                 );
 
+
                 return false;
             }
         });
@@ -479,7 +485,6 @@ public class Utilities {
                 searchCursor.getString(2),
                 searchCursor.getString(3),
                 searchCursor.getString(4) };
-
         return selectedItem;
     }
 
@@ -629,7 +634,7 @@ public class Utilities {
 
     public interface OnLocationFoundListener {
         void onLocationFoundCity(String city);
-        void onLocationFoundLatLng(double lat, double lng);
+        void onLocationFoundLatLng(double lat, double lng, float bearing);
     }
 
     public interface OnDbResponseListener{
@@ -685,9 +690,11 @@ public class Utilities {
 
     }
 
-    public static class LocationHandler implements LocationListener{
+    public static class LocationHandler
+            implements
+                LocationListener {
 
-        private final int INTERVAL = 5000, FAST_INTERVAL = 2000;
+        private final int INTERVAL = 0, FAST_INTERVAL = 0;
         OnLocationFoundListener OnLocationFoundListener;
         private GoogleApiClient apiClient;
         private LocationRequest locationRequest;
@@ -819,8 +826,8 @@ public class Utilities {
             Log.d("LocationHandler", "Requesting location");
             locationRequest = LocationRequest.create()
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(0)
-                    .setFastestInterval(0)
+                    .setInterval(INTERVAL)
+                    .setFastestInterval(FAST_INTERVAL)
                     .setSmallestDisplacement(3);
 
             if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -847,7 +854,8 @@ public class Utilities {
             Log.d("FragmentResult", "Location found!");
             OnLocationFoundListener.onLocationFoundLatLng(
                     location.getLatitude(),
-                    location.getLongitude()
+                    location.getLongitude(),
+                    location.getBearing()
             );
 
         }
@@ -855,7 +863,7 @@ public class Utilities {
         class getLocationName extends AsyncTask<Double, Void, Void>{
 
             private double latitude;
-            private double longtitude;
+            private double longitude;
 
             @Override
             protected Void doInBackground(Double... params) {
@@ -866,11 +874,11 @@ public class Utilities {
                     List<Address> addresses;
 
                     latitude = params[0];
-                    longtitude = params[1];
+                    longitude = params[1];
 
                     try {
 
-                        addresses = getLocationName.getFromLocation(latitude, longtitude, 1);
+                        addresses = getLocationName.getFromLocation(latitude, longitude, 1);
                         response = addresses.get(0).getLocality();
 
                         break;
