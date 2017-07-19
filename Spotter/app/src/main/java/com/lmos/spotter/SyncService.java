@@ -28,9 +28,9 @@ public class SyncService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-        AppScript appScript = new AppScript((Activity) getApplicationContext()){{
-           setData("get-all-place-name.php", dbHelper.getLastKeyword());
-        }};
+       // AppScript appScript = new AppScript((Activity) getApplicationContext()){{
+         //  setData("get-all-place-name.php", dbHelper.getLastKeyword());
+        //}};
 
     }
 

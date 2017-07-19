@@ -171,25 +171,27 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             MainInterfaceViewHolder mainInterfaceViewHolder = (MainInterfaceViewHolder)viewHolder;
 
-            double placeRating = Double.parseDouble(places.get(position).getPlaceRating());
-            int userReviews = Integer.parseInt(places.get(position).getUserReviews());
-
-            String ratingScale = "";
-
-            if (placeRating >= 0.0 && placeRating <= 1.0)
-                ratingScale = "Poor";
-            else if (placeRating <= 2.0 && placeRating >= 1.0)
-                ratingScale = "Fair";
-            else if (placeRating <= 3.0 && placeRating >= 2.0)
-                ratingScale = "Average";
-            else if (placeRating <= 4.0 && placeRating >= 3.0)
-                ratingScale = "Good";
-            else if (placeRating <= 5.0 && placeRating >= 4.0)
-                ratingScale = "Excellent";
-
             if (activityType == ActivityType.HOME_ACTIVITY) {
 
+                double placeRating = Double.parseDouble(places.get(position).getPlaceRating());
+                int userReviews = Integer.parseInt(places.get(position).getUserReviews());
+
+                String ratingScale = "";
+
+                if (placeRating >= 0.0 && placeRating <= 1.0)
+                    ratingScale = "Poor";
+                else if (placeRating <= 2.0 && placeRating >= 1.0)
+                    ratingScale = "Fair";
+                else if (placeRating <= 3.0 && placeRating >= 2.0)
+                    ratingScale = "Average";
+                else if (placeRating <= 4.0 && placeRating >= 3.0)
+                    ratingScale = "Good";
+                else if (placeRating <= 5.0 && placeRating >= 4.0)
+                    ratingScale = "Excellent";
+
                 try {
+
+
 
                     String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
                             .getPlaceImageLink())

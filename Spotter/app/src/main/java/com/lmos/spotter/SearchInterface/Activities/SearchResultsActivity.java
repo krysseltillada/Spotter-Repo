@@ -467,7 +467,7 @@ public class SearchResultsActivity extends AppCompatActivity
             nsview.smoothScrollTo(0, 0);
             setHeaderText(name);
             searchResultsTab.getTabAt(0).select();
-
+            setShowBookmarkInAppBar(false);
             getSupportFragmentManager().popBackStack();
 
         } else {
@@ -627,7 +627,7 @@ public class SearchResultsActivity extends AppCompatActivity
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            /**if(!(result != null && result.equals("Data loaded."))){
+            if(!(result != null && result.equals("Data loaded."))){
                 loading_img.setImageResource(android.R.drawable.stat_notify_error);
                 if(tries < 5){
                     tries ++;
@@ -637,9 +637,9 @@ public class SearchResultsActivity extends AppCompatActivity
                 else
                     loading_msg.setText(R.string.loading_msg_4);
             }
-            else{ **/
+            else{
                 toggleLoadingScreen(View.GONE, AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
-            //}
+            }
         }
     }
     /** End of AsycTask **/

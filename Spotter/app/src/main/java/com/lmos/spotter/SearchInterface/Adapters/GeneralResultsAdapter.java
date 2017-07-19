@@ -70,7 +70,7 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
             Picasso.with(context)
                     .load(placeImageLink)
-                    .placeholder(R.drawable.loadingplace)
+                    .placeholder(R.drawable.landscape_placeholder)
                     .into(holder.placeImage);
 
         }catch (JSONException e){
