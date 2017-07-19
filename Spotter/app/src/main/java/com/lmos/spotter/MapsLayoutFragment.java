@@ -63,22 +63,25 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         destination = getArguments().getParcelable("destination");
     }
 
-    public void setUserPosition (final LatLng userPosition, final String action, Float bearing) {
+    public void setUserPosition (final LatLng userPosition, final String action, final Float bearing) {
 
         /*int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
         Log.d("UserPosLatDis", String.valueOf(userPosition.latitude));*/
 
-        int lwidth = 25;
+        int lwidth = 30;
+        int color = getResources().getColor(R.color.colorPrimaryDark);
 
-        if(action.equals("directions"))
+        if(action.equals("directions")) {
             lwidth = 5;
+            color = getResources().getColor(R.color.colorAccent);
+        }
 
         new MapDirections(getContext(),
                 googleMap,
                 userPosition,
                 destination,
-                getResources().getColor(R.color.colorPrimaryDark),
+                color,
                 lwidth
         ).drawDirections()
                 .setOnDoneDrawDirectionListener(new MapDirections.OnDoneDrawDirectionListener() {
@@ -111,9 +114,9 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
                         Log.d("LocationHandler", "Updating camera position");
                         cameraPosition = new CameraPosition.Builder()
                                 .target(userPosition)
-                                .zoom(50)
-                                .bearing(0)
-                                .tilt(45)
+                                .zoom(25)
+                                .bearing(bearing)
+                                .tilt(15)
                                 .build();
 
                         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -128,7 +131,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
                 {
                     mMarker = googleMap.addMarker(new MarkerOptions().position(userPosition)
                             .title("your here")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_navigation_white_24dp)));
 
                 }
                 else
@@ -151,6 +154,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, 150));
         googleMap.addMarker(new MarkerOptions().position(destination).title("destination"));
+        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         googleMap.setTrafficEnabled(true);
         googleMap.setBuildingsEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);

@@ -23,17 +23,18 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="275dp"
+        app:expanded="false"
         android:theme="@style/AppTheme.AppBarOverlay">
 
     <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:collapsedTitleTextAppearance="@style/collapsingToolbarStyle"
-            app:contentScrim="@color/blackTransparent"
-            app:expandedTitleGravity="left"
-            app:expandedTitleTextAppearance="@style/collapsingToolbarStyle"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+        android:id="@+id/collapsing_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:collapsedTitleTextAppearance="@style/collapsingToolbarStyle"
+        app:contentScrim="@color/blackTransparent"
+        app:expandedTitleGravity="left"
+        app:expandedTitleTextAppearance="@style/collapsingToolbarStyle"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ViewFlipper
                 android:id="@+id/viewFlipManager"
@@ -145,13 +146,6 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:contentDescription="This will hold the gif for loading" />
-
-        <TextView
-            android:id="@+id/loading_error_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:padding="@dimen/mid_padding" />
 
         <TextView
             android:id="@+id/loading_msg"

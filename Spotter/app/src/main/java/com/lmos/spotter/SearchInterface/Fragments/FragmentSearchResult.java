@@ -68,7 +68,6 @@ public class FragmentSearchResult extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         place = getArguments().getParcelable("data");
-
         View thisView = inflater.inflate(R.layout.search_result_hrt, container, false);
 
         ((SearchResultsActivity) getContext() ).setHeaderText(place.getPlaceName());
@@ -129,7 +128,7 @@ public class FragmentSearchResult extends Fragment
     }
 
     @Override
-    public void onLocationFoundLatLng(double lat, double lng) {
+    public void onLocationFoundLatLng(double lat, double lng, float bearing) {
 
         Fragment mapFragment = getFragmentManager().findFragmentByTag("Map");
 
@@ -138,7 +137,22 @@ public class FragmentSearchResult extends Fragment
                     new LatLng(lat, lng), "directions", null);
 
             locationHandler.stopLocationRequest();
-
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(locationHandler.checkApiState()){
+            locationHandler.stopLocationRequest();
+            locationHandler.changeApiState("disconnect");}
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(locationHandler.checkApiState()){
+            locationHandler.stopLocationRequest();
+            locationHandler.changeApiState("disconnect");}
     }
 }

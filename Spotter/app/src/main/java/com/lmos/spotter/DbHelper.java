@@ -3,7 +3,9 @@ package com.lmos.spotter;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -62,7 +64,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS " + TABLE_FAVORITES + "(" +
                         KEY_ID + " INTEGER PRIMARY KEY," +
-                        KEY_PLACEID + " INTEGER," +
+                        KEY_PLACEID + " INTEGER UNIQUE," +
                         KEY_NAME + " TEXT," +
                         KEY_ADDRESS + " TEXT," +
                         KEY_DESC + " TEXT," +
@@ -81,11 +83,13 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL(
                 "Create virtual table " + TABLE_PLACE_NAME + " using fts4 (" +
+                        KEY_PLACEID + " TEXT," +
                         KEY_NAME + " TEXT," +
                         KEY_ADDRESS + " TEXT," +
                         KEY_TYPE + " TEXT," +
                         KEY_LAT + " DOUBLE," +
                         KEY_LNG + " DOUBLE," +
+                        " notindexed=" + KEY_PLACEID + "," +
                         " notindexed=" + KEY_ADDRESS + "," +
                         " notindexed=" + KEY_LAT + "," +
                         " notindexed=" + KEY_LNG + "," +
@@ -119,10 +123,22 @@ public class DbHelper extends SQLiteOpenHelper {
         cv.put(KEY_RECOMMENDED, place.getRecommended());
         cv.put(KEY_RATING, place.getRating());
 
-        db.insert(TABLE_FAVORITES, null, cv);
-        onDbResponseListener.onDbResponse("Place has been bookmarked.", KEY_PLACEID);
+        String msg = "";
 
-        db.close();
+        try {
+            db.insert(TABLE_FAVORITES, null, cv);
+            msg = "Place has been bookmarked.";
+        }
+        catch (SQLiteConstraintException e){
+            msg = "Place is already bookmarked.";
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        finally {
+            db.close();
+            onDbResponseListener.onDbResponse(msg, KEY_PLACEID);
+        }
 
     }
 
@@ -164,6 +180,7 @@ public class DbHelper extends SQLiteOpenHelper {
         for(Place place : places ){
 
             ContentValues cv = new ContentValues();
+            cv.put(KEY_PLACEID, place.getPlaceID());
             cv.put(KEY_NAME, place.getPlaceName());
             cv.put(KEY_ADDRESS, place.getPlaceAddress());
             cv.put(KEY_TYPE, place.getPlaceType());
@@ -218,6 +235,23 @@ public class DbHelper extends SQLiteOpenHelper {
         db.close();
 
         return bookmarks;
+    }
+
+    public String getLastKeyword(){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "Select " + KEY_PLACEID + " from " + TABLE_PLACE_NAME +
+                        " order by " + KEY_PLACEID + " desc limit 1",
+                null
+        );
+
+        String placeID = cursor.getString(cursor.getColumnIndex(KEY_PLACEID));
+
+        db.close();
+
+        return placeID;
     }
 
 }

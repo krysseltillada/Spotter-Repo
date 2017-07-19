@@ -129,7 +129,6 @@ public class FragmentSignUp extends Fragment {
 
         if(requestCode == TAKE_PHOTO_REQUEST && resultCode == Activity.RESULT_OK){
             Bundle getPic = data.getExtras();
-
             userImage = (Bitmap) getPic.get("data");
             register_img.setImageBitmap(userImage);
         }
