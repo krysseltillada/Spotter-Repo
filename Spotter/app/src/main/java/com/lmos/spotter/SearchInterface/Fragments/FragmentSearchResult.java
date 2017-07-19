@@ -133,16 +133,12 @@ public class FragmentSearchResult extends Fragment
 
         Fragment mapFragment = getFragmentManager().findFragmentByTag("Map");
 
-        if(mapFragment != null && mapFragment instanceof MapsLayoutFragment) {
+        if (mapFragment != null && mapFragment instanceof MapsLayoutFragment) {
             ((MapsLayoutFragment) mapFragment).setUserPosition(
-<<<<<<< HEAD
-                    new LatLng(lat, lng), "", null);
-        }
-=======
                     new LatLng(lat, lng), "directions", null);
 
-        locationHandler.stopLocationRequest();
->>>>>>> 013d9b6b3ee9d3c51e60f43c916928a6fd892828
+            locationHandler.stopLocationRequest();
 
+        }
     }
 }
