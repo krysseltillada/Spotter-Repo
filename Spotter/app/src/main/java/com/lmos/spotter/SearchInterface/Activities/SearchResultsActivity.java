@@ -142,19 +142,34 @@ public class SearchResultsActivity extends AppCompatActivity
                 });
 
                 if (isPlayServicesAvailable) {
+                    locationHandler = new Utilities.LocationHandler(this, this);
                     locationHandler.buildGoogleClient();
                     Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
                     loading_msg.setText(R.string.loading_msg_1);
                 }
 
             }
-            else{
+            else {
+
                 Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
                 loading_msg.setText(R.string.loading_msg_2);
-                new LoadSearchData().execute(params);
-
+                if (fragmentType.equals("Home")) {
+                    setHeaderText(params[1]);
+                    Place place = fetch_intent.getParcelable("Place");
+                    switchFragment("", "add", FragmentSearchResult.newInstance(place));
+                    contentSettings(
+                            View.GONE,
+                            View.VISIBLE,
+                            View.GONE,
+                            200,
+                            getResources().getColor(R.color.blackTransparent),
+                            true
+                    );
+                }
+                else {
+                    new LoadSearchData().execute(params);
+                }
             }
-
         }
 
     }
@@ -164,20 +179,6 @@ public class SearchResultsActivity extends AppCompatActivity
         super.onStart();
         if(fragmentType.equals("Location"))
             locationHandler.changeApiState("connect");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        appBarLayout.setExpanded(true);
-        nsview.smoothScrollTo(0, 0);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(fragmentType.equals("Location") && locationHandler != null)
-            locationHandler.changeApiState("disconnect");
     }
 
     @Override
@@ -271,6 +272,20 @@ public class SearchResultsActivity extends AppCompatActivity
 
     }
 
+    public void runTask(String... params){
+        Utilities.loadGifImageView(this, loading_img, R.drawable.loadingplaces);
+        loading_msg.setText(R.string.loading_msg_2);
+        contentSettings(
+                View.VISIBLE,
+                View.GONE,
+                View.VISIBLE,
+                0,
+                getResources().getColor(R.color.colorPrimary),
+                false
+        );
+        new LoadSearchData().execute(params);
+    }
+
     private void contentSettings(int loading_visibility, int visibility, int tab_visibility, int value, int color, boolean prop_value){
 
         CollapsingToolbarLayout.LayoutParams params = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
@@ -294,15 +309,17 @@ public class SearchResultsActivity extends AppCompatActivity
                     this,
                     R.anim.fade_out
             ));
-            showBookmarkInAppBar = true;
-            invalidateOptionsMenu();
-
+            if(fragmentType.equals("Hotel") || fragmentType.equals("Restaurant") || fragmentType.equals("Tourist Spot")){
+                showBookmarkInAppBar = true;
+                invalidateOptionsMenu();
+            }
         }
         else
             appBarLayout.setExpanded(prop_value);
 
         params.bottomMargin = value;
         appBarLayout.setActivated(prop_value);
+        appBarLayout.setVerticalScrollBarEnabled(prop_value);
         toolbar.setLayoutParams(params);
 
     }
@@ -443,12 +460,14 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public void onLocationFoundCity(String city) {
         new LoadSearchData().execute("General", city);
+        locationHandler.changeApiState("disconnect");
     }
 
     @Override
     public void onLocationFoundLatLng(double lat, double lng) {
         locationHandler.getLocality(lat, lng);
     }
+
 
     /** End of Abstract Methods **/
 
@@ -476,6 +495,10 @@ public class SearchResultsActivity extends AppCompatActivity
                     break;
                 case "Location":
                     break;
+                case "Undefined":
+                    map_data.put("field_ref", "Undefined");
+                    map_data.put("field_ref_val", params[1]);
+                    break;
                 default:
                     map_data.put("field_ref", "Name");
                     map_data.put("field_ref_val", params[1]);
@@ -499,7 +522,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 if(!places.isEmpty()){
 
                     int toggleTab = View.VISIBLE;
-                    if(type.equals("General"))
+                    if(type.equals("General") || type.equals("Undefined"))
                         switchFragment("General", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
                     else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
                         switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
@@ -507,21 +530,40 @@ public class SearchResultsActivity extends AppCompatActivity
                     }
 
                     loading_screen.setVisibility(View.GONE);
-                    setHeaderText(data[1]);
-                    contentSettings(
-                            View.GONE,
-                            View.VISIBLE,
-                            toggleTab,
-                            200,
-                            getResources().getColor(R.color.blackTransparent),
-                            true
-                    );
+
+                    if(type.equals("Undefined")){
+                        contentSettings(
+                                View.GONE,
+                                View.VISIBLE,
+                                toggleTab,
+                                70,
+                                getResources().getColor(R.color.colorPrimary),
+                                false
+                        );
+                        place_name.setVisibility(View.GONE);
+                    }
+                    else{
+                        setHeaderText(data[1]);
+                        contentSettings(
+                                View.GONE,
+                                View.VISIBLE,
+                                toggleTab,
+                                200,
+                                getResources().getColor(R.color.blackTransparent),
+                                true
+                        );
+                    }
+
                 }
                 else {
-                    loading_img.setImageResource(android.R.drawable.alert_dark_frame);
+                    loading_img.setImageResource(android.R.drawable.stat_notify_error);
                     loading_msg.setText("No results found.");
                 }
 
+            }
+            else{
+                loading_img.setImageResource(android.R.drawable.stat_notify_error);
+                loading_msg.setText(appScript.getResult());
             }
 
         }

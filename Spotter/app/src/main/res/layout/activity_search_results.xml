@@ -46,10 +46,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="false"
-                    android:background="@drawable/place1"
                     android:contentDescription="@string/most_popular_desc"
                     android:cropToPadding="false"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     android:visibility="visible" />
 
                 <ImageView
@@ -57,10 +56,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="false"
-                    android:background="@drawable/place"
                     android:contentDescription="@string/most_popular_desc"
                     android:cropToPadding="false"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     android:visibility="gone" />
 
                 <ImageView
@@ -68,10 +66,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="false"
-                    android:background="@drawable/place1"
                     android:contentDescription="@string/most_popular_desc"
                     android:cropToPadding="false"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     android:visibility="gone" />
 
             </ViewFlipper>

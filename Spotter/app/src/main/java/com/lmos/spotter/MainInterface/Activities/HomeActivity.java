@@ -73,10 +73,7 @@ import java.util.Map;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public interface OnRespondError {
-        void onRespondError(String error);
-    }
-
+    PlaceLoader placeLoader;
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -314,7 +311,6 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-
     private void loadPlacesByType(final String type) {
 
         if (!type.equals(placeType)) {
@@ -330,7 +326,18 @@ public class HomeActivity extends AppCompatActivity
                     ActivityType.HOME_ACTIVITY,
                     PlaceType.NONE,
                     placeDataList);
+            mainInterfaceAdapter.setOnItemClickListener(
+                    new MainInterfaceAdapter.OnAdapterItemClickListener(){
 
+                        @Override
+                        public void onItemClick(Place place) {
+                            Intent displayResult = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                            displayResult.putExtra("data", new String[]{ "Home", "" });
+                            displayResult.putExtra("Place", place);
+                            startActivity(displayResult);
+                        }
+                    }
+            );
             tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
 
             getMostPopular(type);
@@ -777,7 +784,6 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -836,6 +842,10 @@ public class HomeActivity extends AppCompatActivity
                 super.onBackPressed();
 
         }
+    }
+
+    public interface OnRespondError {
+        void onRespondError(String error);
     }
 
     private class PlaceLoader extends AsyncTask<String, Void, AppScript> {

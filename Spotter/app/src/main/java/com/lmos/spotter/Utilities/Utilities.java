@@ -70,6 +70,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.DialogActivity;
+import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
@@ -77,7 +78,6 @@ import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -382,6 +382,7 @@ public class Utilities {
         );
 
         searchView.setSuggestionsAdapter(searchAdapter);
+
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionSelect(int position) {
@@ -390,13 +391,21 @@ public class Utilities {
 
             @Override
             public boolean onSuggestionClick(int position) {
-                Intent send_data = new Intent(activity, SearchResultsActivity.class);
-                send_data.putExtra("data", getSuggestionText(position, searchAdapter));
-                activity.startActivity(send_data);
+
+                if(activity instanceof HomeActivity){
+                    Intent send_data = new Intent(activity, SearchResultsActivity.class);
+                    send_data.putExtra("data", getSuggestionText(position, searchAdapter));
+                    activity.startActivity(send_data);
+                }
+                else{
+                    ((SearchResultsActivity) activity).runTask(getSuggestionText(position, searchAdapter));
+                }
+
                 return true;
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
 
@@ -408,9 +417,14 @@ public class Utilities {
 
                 } else {
 
-                    Intent send_data = new Intent(activity, SearchResultsActivity.class);
-                    send_data.putExtra("type", query);
-                    activity.startActivity(send_data);
+                    if(activity instanceof HomeActivity){
+                        Intent send_data = new Intent(activity, SearchResultsActivity.class);
+                        send_data.putExtra("data", new String[] { "Undefined", query });
+                        activity.startActivity(send_data);
+                    }
+                    else{
+                        ((SearchResultsActivity) activity).runTask("Undefined", query);
+                    }
 
                 }
 
@@ -419,8 +433,6 @@ public class Utilities {
 
             @Override
             public boolean onQueryTextChange(String searchValue) {
-
-                Log.d("Query", "QueryTextChange");
 
                 searchAdapter.changeCursorAndColumns(
                         dbHelper.querySearch(new String[]{ searchValue + "*"}),
@@ -610,6 +622,28 @@ public class Utilities {
         return true;
     }
 
+    /** Logger **/
+
+    public static void logError(Context context, String error){
+
+        final String FILE_NAME = "error_log";
+        String log_msg = DateFormat.getDateTimeInstance().format(new Date()) + ":" + error + "\n";
+        FileOutputStream outputStream;
+
+        try{
+
+            outputStream = context.openFileOutput(FILE_NAME, Context.MODE_APPEND);
+            outputStream.write(log_msg.getBytes());
+            outputStream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     /** Intefaces **/
 
     public interface OnLocationFoundListener {
@@ -671,7 +705,7 @@ public class Utilities {
 
     }
 
-    public static class LocationHandler {
+    public static class LocationHandler implements LocationListener{
 
         private final int INTERVAL = 5000, FAST_INTERVAL = 2000;
         OnLocationFoundListener OnLocationFoundListener;
@@ -784,6 +818,7 @@ public class Utilities {
                         public void onConnected(@Nullable Bundle bundle) {
                             Log.d("LocationHandler", "Connected");
                             setLocationRequest();
+                            checkLocationSettingsState();
                         }
 
                         @Override
@@ -804,8 +839,9 @@ public class Utilities {
             Log.d("LocationHandler", "Requesting location");
             locationRequest = LocationRequest.create()
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(INTERVAL)
-                    .setFastestInterval(FAST_INTERVAL);
+                    .setInterval(0)
+                    .setFastestInterval(0)
+                    .setSmallestDisplacement(3);
 
             if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
 
@@ -815,23 +851,25 @@ public class Utilities {
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     apiClient,
                     locationRequest,
-                    new LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
-                            Log.d("FragmentResult", "Location found!");
-                            OnLocationFoundListener.onLocationFoundLatLng(
-                                    location.getLatitude(),
-                                    location.getLongitude()
-                            );
-                            LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
-                        }
-                    }
+                    this
             );
 
         }
 
+        public void stopLocationRequest(){ LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this); }
+
         public void getLocality(Double lat, Double lng){
             new getLocationName().execute(lat, lng);
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.d("FragmentResult", "Location found!");
+            OnLocationFoundListener.onLocationFoundLatLng(
+                    location.getLatitude(),
+                    location.getLongitude()
+            );
+
         }
 
         class getLocationName extends AsyncTask<Double, Void, Void>{
@@ -902,28 +940,4 @@ public class Utilities {
         }
     }
 
-
-    /** Logger **/
-
-    public static void logError(Context context, String error){
-
-        final String FILE_NAME = "error_log";
-        String log_msg = DateFormat.getDateTimeInstance().format(new Date()) + ":" + error + "\n";
-        FileOutputStream outputStream;
-
-        try{
-
-            outputStream = context.openFileOutput(FILE_NAME, Context.MODE_APPEND);
-            outputStream.write(log_msg.getBytes());
-            outputStream.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /** End og logger **/
 }

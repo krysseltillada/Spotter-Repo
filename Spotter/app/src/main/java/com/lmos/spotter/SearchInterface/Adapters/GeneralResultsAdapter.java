@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
-import com.lmos.spotter.Utilities.Utilities;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -76,7 +75,6 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
 
         }catch (JSONException e){
             e.printStackTrace();
-            Utilities.logError(context, e.getMessage());
         }
 
     }

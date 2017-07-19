@@ -6,15 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.lmos.spotter.NavigationActivity;
@@ -34,9 +31,9 @@ import java.util.List;
 
 public class FragmentSearchResultGeneral extends Fragment {
 
-    private static List<Place> places;
     TextView no_result;
     RecyclerView.LayoutManager layoutManager;
+    private List<Place> places;
     private RecyclerView recyclerView;
     private GeneralResultsAdapter mAdapter;
 
@@ -54,7 +51,7 @@ public class FragmentSearchResultGeneral extends Fragment {
         return fsg;
     }
 
-    public static List<Place> setPlaceByType(String type){
+    public List<Place> setPlaceByType(String type){
         List<Place> setPlace = new ArrayList<>();
 
         for(Place p : places){
@@ -74,14 +71,46 @@ public class FragmentSearchResultGeneral extends Fragment {
             mAdapter = null;
 
         if(!setPlaceByType(type).isEmpty()){
-            Log.d("List", "Not empty");
-            mAdapter = new GeneralResultsAdapter(setPlaceByType(type));
-            mAdapter.notifyItemChanged(0);
-            recyclerView.swapAdapter(mAdapter, false);
+            mAdapter = new GeneralResultsAdapter(getContext(), setPlaceByType(type));
+            mAdapter.notifyDataSetChanged();
+            // Set RecyclerView onClickListener
+            mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
+                @Override
+                public void OnItemClick(View v, Place place) {
+
+                    switch (v.getId()){
+
+                        case R.id.general_list_view_bookmark:
+                            Log.d("BK", "aw, you add me");
+                            ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
+                            break;
+                        case R.id.general_list_explore:
+                            Intent navigate = new Intent(getContext(), NavigationActivity.class);
+                            navigate.putExtra(
+                                    "destination",
+                                    new LatLng(
+                                            Double.parseDouble(place.getPlaceLat()),
+                                            Double.parseDouble(place.getPlaceLng())
+                                    )
+                            );
+                            startActivity(navigate);
+                            break;
+                        default:
+                            Log.d("RESULT-CLICK", place.getPlaceID());
+                            ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
+                            break;
+                    }
+
+                }
+
+            });
+            recyclerView.setAdapter(mAdapter);
             no_result.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
         else{
             no_result.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
         }
 
     }
@@ -102,49 +131,14 @@ public class FragmentSearchResultGeneral extends Fragment {
 
         recyclerView = (RecyclerView) thisView.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getContext());
-        mAdapter = new GeneralResultsAdapter(getContext(), setPlaceByType(getArguments().getString("type")));
+        //mAdapter = new GeneralResultsAdapter(getContext(), setPlaceByType(getArguments().getString("type")));
+        changeAdapter(getArguments().getString("type"));
 
-
-        // Set RecyclerView onClickListener
-        mAdapter.setOnItemClickListener(new GeneralResultsAdapter.OnClickListener() {
-            @Override
-            public void OnItemClick(View v, Place place) {
-
-                switch (v.getId()){
-
-                    case R.id.general_list_view_bookmark:
-                        Log.d("BK", "aw, you add me");
-                        ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
-                        break;
-                    case R.id.general_list_explore:
-                        Intent navigate = new Intent(getContext(), NavigationActivity.class);
-                        navigate.putExtra(
-                                "destination",
-                                new LatLng(
-                                        Double.parseDouble(place.getPlaceLat()),
-                                        Double.parseDouble(place.getPlaceLng())
-                                )
-                        );
-                        startActivity(navigate);
-                        break;
-                    default:
-
-                        ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
-                        placeID = place.getPlaceID();
-
-                        Log.d("debug", "placeID: " + placeID);
-
-                        break;
-                }
-
-            }
-
-        });
 
         // Set recyclerview params
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
+        //recyclerView.setAdapter(mAdapter);
         /**
          * This method will allow the RecyclerView to scroll
           * smoothly inside NestedScrollView

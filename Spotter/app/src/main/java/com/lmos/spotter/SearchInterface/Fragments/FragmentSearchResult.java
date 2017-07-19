@@ -102,9 +102,8 @@ public class FragmentSearchResult extends Fragment
         String rating_place_holder = place.getPlaceRating() + " Stars";
         place_rate_label.setText(rating_place_holder);
 
-        Log.d("JSON-imageLink", place.getPlaceImageLink());
-
-        ((SearchResultsActivity) getContext()).setHeaderImg(place.getPlaceImageLink());
+        if(place.getPlaceImageLink() != null)
+            ((SearchResultsActivity) getContext()).setHeaderImg(place.getPlaceImageLink());
 
         getFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, 0)
@@ -136,8 +135,14 @@ public class FragmentSearchResult extends Fragment
 
         if(mapFragment != null && mapFragment instanceof MapsLayoutFragment) {
             ((MapsLayoutFragment) mapFragment).setUserPosition(
+<<<<<<< HEAD
                     new LatLng(lat, lng), "", null);
         }
+=======
+                    new LatLng(lat, lng), "directions", null);
+
+        locationHandler.stopLocationRequest();
+>>>>>>> 013d9b6b3ee9d3c51e60f43c916928a6fd892828
 
     }
 }

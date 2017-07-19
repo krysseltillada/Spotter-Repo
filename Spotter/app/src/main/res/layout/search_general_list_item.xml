@@ -12,7 +12,8 @@
         android:id="@+id/general_list_image"
         android:layout_width="match_parent"
         android:layout_height="170dp"
-        android:scaleType="centerCrop" />
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
