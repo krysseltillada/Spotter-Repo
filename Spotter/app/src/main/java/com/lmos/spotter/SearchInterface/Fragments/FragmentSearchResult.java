@@ -31,7 +31,7 @@ public class FragmentSearchResult extends Fragment
     TextView description, review_count, place_address, place_rate_label;
     RatingBar place_rate;
     Button navigate;
-    Place place;
+    public Place place;
     Utilities.LocationHandler locationHandler;
     private RecyclerView reviews;
     private RecyclerView deals;
@@ -39,6 +39,8 @@ public class FragmentSearchResult extends Fragment
     public static FragmentSearchResult newInstance(Place place){
 
         FragmentSearchResult fragmentSearchResult = new FragmentSearchResult();
+
+        FragmentSearchResultGeneral.placeID = place.getPlaceID();
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("data", place);
@@ -130,11 +132,16 @@ public class FragmentSearchResult extends Fragment
 
         Fragment mapFragment = getFragmentManager().findFragmentByTag("Map");
 
-        if(mapFragment != null && mapFragment instanceof MapsLayoutFragment)
+        if(mapFragment != null && mapFragment instanceof MapsLayoutFragment) {
             ((MapsLayoutFragment) mapFragment).setUserPosition(
+<<<<<<< HEAD
+                    new LatLng(lat, lng), "", null);
+        }
+=======
                     new LatLng(lat, lng), "directions", null);
 
         locationHandler.stopLocationRequest();
+>>>>>>> 013d9b6b3ee9d3c51e60f43c916928a6fd892828
 
     }
 

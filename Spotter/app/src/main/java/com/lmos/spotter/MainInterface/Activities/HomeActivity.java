@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,8 +46,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
@@ -69,8 +72,7 @@ import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    PlaceLoader placeLoader;
+    
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -84,9 +86,12 @@ public class HomeActivity extends AppCompatActivity
     private RecyclerView tabLayoutRecyclerView;
     private ProgressBar itemListProgressBar;
     private ProgressBar recycleViewProgressBar;
-    private CoordinatorLayout mainLayout;
     private TabLayout tabLayout;
     private TextView mostPopularName;
+
+    private ImageView userProfileImage;
+    private TextView userName;
+    private TextView userEmail;
 
     private int startingIndex;
     private int tableCount;
@@ -105,6 +110,12 @@ public class HomeActivity extends AppCompatActivity
     private SwipeRefreshLayout pullUpLoadLayout;
 
     private AdView bannerAdView;
+
+    String pageCount = "10";
+
+    SharedPreferences userData;
+
+    private InterstitialAd interstitialAd;
 
     private boolean isLoadingItem = false;
     private boolean isLoadingPlace = false;
@@ -132,12 +143,26 @@ public class HomeActivity extends AppCompatActivity
         super.onPause();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        displayUserInfo();
+    }
+
 
     public void userNavDropDown(View view) {
 
         PopupMenu userNavDropDownMenu = new PopupMenu(HomeActivity.this, view);
 
-        userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu, userNavDropDownMenu.getMenu());
+        if (userData.getString("status", "").equals("Logged In")) {
+
+            userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu_login, userNavDropDownMenu.getMenu());
+
+        } else {
+            userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu_guest, userNavDropDownMenu.getMenu());
+
+        }
 
         userNavDropDownMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
@@ -148,11 +173,29 @@ public class HomeActivity extends AppCompatActivity
 
                     case R.id.sign_out:
                         Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
+
+                        SharedPreferences.Editor userDataEdit = userData.edit();
+
+                        userDataEdit.putString("status", "Logged out");
+                        userDataEdit.putString("accountName", "");
+                        userDataEdit.putString("accountUsername", "");
+                        userDataEdit.putString("accountEmail", "");
+                        userDataEdit.putString("accountPassword", "");
+                        userDataEdit.putString("accountImage", "");
+
+                        userDataEdit.apply();
+
+
                         break;
 
                     case R.id.user_settings:
                         Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class, null);
                         break;
+
+                    case R.id.sign_in:
+                        Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
+                        break;
+
 
                 }
 
@@ -169,12 +212,22 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    PlaceLoader placeLoader;
+    PlaceLoader itemLoader;
+
     private void loadPlacesFromServer(final String pType, final String sType) {
 
+        if (itemLoader != null) {
+            Log.d("debug", "item exist");
+            itemLoader.cancel(true);
+            itemLoader = null;
+        }
 
         if (placeLoader != null) {
             placeLoader.cancel(true);
             placeLoader = null;
+
+
         }
 
         isLoadingPlace = true;
@@ -190,15 +243,21 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onRespondError(String error) {
 
-                HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
-                HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+                Log.d("debug", "error trying to get the data again");
+
+                new PlaceLoader().setOnRespondError(this)
+                                 .execute("0", pageCount, pType, sType);
+
+
+               // HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
+               // HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
 
             }
 
         });
 
 
-        placeLoader.execute("0", "5", pType, sType);
+        placeLoader.execute("0", pageCount, pType, sType);
 
         homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
 
@@ -221,14 +280,21 @@ public class HomeActivity extends AppCompatActivity
                                                                            @Override
                                                                            public void run() {
 
-                                                                               new PlaceLoader().setOnRespondError(new OnRespondError() {
+                                                                               itemLoader = new PlaceLoader().setOnRespondError(new OnRespondError() {
 
                                                                                    @Override
                                                                                    public void onRespondError(String error) {
-                                                                                       HomeActivity.this.recycleViewProgressBar.setVisibility(View.GONE);
-                                                                                       HomeActivity.this.itemListProgressBar.setVisibility(View.GONE);
+
+                                                                                       Log.d("debug", "error getting items from the server im tryingg");
+
+                                                                                       itemLoader = new PlaceLoader().setOnRespondError(this);
+                                                                                       itemLoader.execute(String.valueOf(startingIndex), pageCount, placeType, sType);
+
+
                                                                                    }
-                                                                               }).execute(String.valueOf(startingIndex), "5", placeType, sType);
+                                                                               });
+
+                                                                               itemLoader.execute(String.valueOf(startingIndex), pageCount, placeType, sType);
 
 
                                                                            }
@@ -353,11 +419,55 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+
+
+    private void displayUserInfo () {
+
+        if (userData.getString("status", "").equals("Logged In")) {
+
+            Log.d("debug", "username: " + userData.getString("accountUsername", ""));
+            Log.d("debug", "email: " + userData.getString("accountEmail", ""));
+            Log.d("debug", "password: " + userData.getString("accountPassword", ""));
+            Log.d("debug", "accountid: " + userData.getString("accountID", ""));
+            Log.d("debug", "image: " + userData.getString("accountImage", ""));
+            Log.d("debug", "name: " + userData.getString("accountName", ""));
+
+            userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), Utilities.BlurImg.stringToBitmap(userData.getString("accountImage", ""))));
+            userName.setText(userData.getString("accountName", ""));
+            userEmail.setText(userData.getString("accountEmail", ""));
+
+        } else {
+
+            userProfileImage.setImageDrawable(getResources().getDrawable(R.drawable.account));
+            userName.setText("Guest");
+            userEmail.setVisibility(View.INVISIBLE);
+
+        }
+
+
+    }
+
     private void initComp() {
 
-        SharedPreferences userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
+        userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         setContentView(R.layout.activity_home_menu);
+
+        interstitialAd = new InterstitialAd(this);
+
+        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+
+        interstitialAd.loadAd(new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build());
+
+        interstitialAd.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdLoaded() {
+                if (interstitialAd.isLoaded())
+                    interstitialAd.show();
+            }
+        });
+
 
         bannerAdView = (AdView)findViewById(R.id.adBanner);
 
@@ -405,8 +515,6 @@ public class HomeActivity extends AppCompatActivity
 
         tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
-        mainLayout = (CoordinatorLayout) findViewById(R.id.homeLayout);
-
         recycleViewProgressBar = (ProgressBar) findViewById(R.id.recycleViewProgressBar);
         itemListProgressBar = (ProgressBar) findViewById(R.id.item_progress_bar);
 
@@ -422,8 +530,6 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
-                Log.d("debug", "offset: " + verticalOffset);
 
                 if (!isLoadingPlace) {
                     appBarLayout.setExpanded(false);
@@ -499,6 +605,14 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View headerLayout = navigationView.getHeaderView(0);
+
+        userName = (TextView)headerLayout.findViewById(R.id.userName);
+        userEmail = (TextView)headerLayout.findViewById(R.id.userEmail);
+        userProfileImage = (ImageView)headerLayout.findViewById(R.id.userProfileImage);
+
+        displayUserInfo();
+
         Utilities.setNavTitleStyle(this,
                 R.id.nav_view,
                 R.id.settingsTitle,
@@ -529,7 +643,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    private void getMostPopular(String type) {
+    private void getMostPopular(final String type) {
 
         viewFlipperManager.stopFlipping();
 
@@ -574,7 +688,7 @@ public class HomeActivity extends AppCompatActivity
 
                                     Picasso.with(getApplicationContext())
                                             .load(imageLinks.getString(0))
-                                            .placeholder(R.drawable.loadingplace)
+                                            .placeholder(R.drawable.landscape_placeholder)
                                             .fit()
                                             .into(mostPopularImages[i]);
 
@@ -604,7 +718,8 @@ public class HomeActivity extends AppCompatActivity
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.d("debug", "most popular trying to get data from server");
+                getMostPopular(type);
             }
         }) {
             protected Map<String, String> getParams() {
@@ -702,6 +817,16 @@ public class HomeActivity extends AppCompatActivity
         }
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (!searchBTN.isIconified()) {
+            searchBTN.setIconified(true);
+        }
+
     }
 
     @Override

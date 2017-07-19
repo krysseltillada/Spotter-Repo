@@ -1,6 +1,8 @@
 package com.lmos.spotter.Utilities;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -50,6 +52,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -455,13 +458,29 @@ public class Utilities {
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                int cx = searchView.getRight() - 30;
+                int cy = searchView.getBottom() - 60;
+                int finalRadius = Math.max(searchView.getWidth(), searchView.getHeight());
+                Animator anim = ViewAnimationUtils.createCircularReveal(searchView, cx, cy, 0, finalRadius);
+                anim.start();
+
+
                 title.setVisibility(View.GONE);
+
             }
         });
 
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+
+                int cx = searchView.getRight() - 30;
+                int cy = searchView.getBottom() - 60;
+                int initialRadius = searchView.getWidth();
+                Animator anim = ViewAnimationUtils.createCircularReveal(searchView, cx, cy, initialRadius, 0);
+                anim.start();
+
                 title.setVisibility(View.VISIBLE);
                 return false;
             }
@@ -684,6 +703,7 @@ public class Utilities {
                 byte[] byteBitmap = byteArrayOutputStream.toByteArray();
                 return Base64.encodeToString(byteBitmap, Base64.DEFAULT);
             } catch (Exception e) {
+                Log.d("debug", e.getMessage());
                 return null;
             }
         }

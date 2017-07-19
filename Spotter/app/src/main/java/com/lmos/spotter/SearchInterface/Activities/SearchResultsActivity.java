@@ -100,7 +100,12 @@ public class SearchResultsActivity extends AppCompatActivity
     }
 
     public void showReviewActivity (View view) {
-        Utilities.OpenActivity(activity, ReviewActivity.class, null);
+
+        Bundle placeID = new Bundle();
+
+        placeID.putString("placeID", FragmentSearchResultGeneral.placeID);
+
+        Utilities.OpenActivityWithBundle(activity, ReviewActivity.class, null, placeID);
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,7 +226,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
                 Picasso.with(this)
                         .load(json_prevImg.get(i).toString())
-                        //.resize(0, prevImages[i].getHeight())
                         .placeholder(R.drawable.loadingplace)
                         .into(prevImages[i]);
 

@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -146,6 +147,8 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(response);
             pd.dismiss();
 
+            Log.d("debug", response);
+
             if(response.equals("Sign in success.") || response.equals("Account has been registered.")){
 
                 set_login_prefs.putString("status", "Logged In");
@@ -153,8 +156,9 @@ public class LoginActivity extends AppCompatActivity {
                 Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
 
             }
-            else
+            else {
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+            }
 
         }
 

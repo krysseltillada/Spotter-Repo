@@ -7,6 +7,28 @@
     tools:context="com.lmos.spotter.SearchInterface.Activities.ReviewActivity">
 
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ProgressBar
+        android:id="@+id/reviewProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/reviewFab"
         android:layout_width="60dp"
@@ -15,35 +37,30 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_mode_comment_white_48dp" />
 
-    <ScrollView
-        android:id = "@+id/activityReviewScrollView"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/activityReviewScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.design.widget.AppBarLayout
+            <android.support.v7.widget.CardView
+                android:id="@+id/reviewInfoLayout"
+                android:layout_margin="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/AppTheme.AppBarOverlay">
+                android:layout_height="150dp"
+                app:layout_collapseMode="parallax"
+                >
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="?attr/colorPrimary"
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-            </android.support.design.widget.AppBarLayout>
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="170dp"
-                android:background="@drawable/layout_white_bg">
+                    android:layout_height="match_parent">
 
                 <RatingBar
                     android:id="@+id/userRatingBar"
@@ -55,137 +72,98 @@
                     android:rating="5" />
 
                 <TextView
+                    android:id="@+id/userRatingBarText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@id/userRatingBar"
                     android:layout_marginLeft="15dp"
                     android:layout_toRightOf="@id/userRatingBar"
+                    android:textColor="@color/colorAccent"
                     android:text="4.5 stars"
                     android:textSize="30sp" />
 
                 <ImageView
+                    android:id="@+id/userImageIcon"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignLeft="@id/userRatingBar"
                     android:layout_below="@id/userRatingBar"
-                    android:layout_alignLeft="@id/userRatingBar"
-                    android:id = "@+id/userImageIcon"
-                    android:backgroundTint="#757575"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/ic_person_black_48dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp" />
+                    android:backgroundTint="@color/colorPrimary" />
 
                 <TextView
-                    android:id = "@+id/reviewTxtUserReview"
-                    android:layout_marginLeft="5dp"
+                    android:id="@+id/reviewTxtUserReview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1,000,000 user reviews"
                     android:layout_alignBottom="@+id/userImageIcon"
-                    android:layout_toEndOf="@+id/userImageIcon" />
+                    android:layout_marginLeft="5dp"
+                    android:layout_toEndOf="@+id/userImageIcon"
+                    android:textColor="@color/blackTransparent"
+                    android:text="1,000,000 user reviews" />
 
                 <ImageView
+                    android:id="@+id/bookmarkImageIcon"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignLeft="@id/userRatingBar"
                     android:layout_below="@id/userImageIcon"
-                    android:layout_alignLeft="@id/userRatingBar"
-                    android:id = "@+id/bookmarkImageIcon"
-                    android:backgroundTint="#757575"
-                    android:background="@drawable/ic_bookmark_black_48dp"
                     android:layout_marginTop="3dp"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp" />
+                    android:background="@drawable/ic_bookmark_black_48dp"
+                    android:backgroundTint="@color/colorPrimary" />
 
                 <TextView
-                    android:id = "@+id/reviewTxtBookmark"
+                    android:id="@+id/reviewTxtBookmark"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="5dp"
                     android:layout_below="@id/reviewTxtUserReview"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
                     android:layout_toRightOf="@id/bookmarkImageIcon"
-                    android:text="100,00 bookmarked this"/>
+                    android:textColor="@color/blackTransparent"
+                    android:text="100,00 bookmarked this" />
 
                 <ImageView
-                    android:backgroundTint="#757575"
-                    android:background="@drawable/ic_thumb_up_black_48dp"
-                    android:layout_below="@id/bookmarkImageIcon"
-                    android:layout_alignLeft="@id/userRatingBar"
-                    android:layout_marginTop="4dp"
                     android:layout_width="25dp"
-                    android:layout_height="25dp" />
+                    android:layout_height="25dp"
+                    android:layout_alignLeft="@id/userRatingBar"
+                    android:layout_below="@id/bookmarkImageIcon"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/ic_thumb_up_black_48dp"
+                    android:backgroundTint="@color/colorPrimary" />
 
                 <TextView
+                    android:id="@+id/reviewRecommend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="5dp"
                     android:layout_below="@id/reviewTxtBookmark"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
                     android:layout_toRightOf="@id/bookmarkImageIcon"
-                    android:text="100 recommend this"/>
+                    android:textColor="@color/blackTransparent"
+                    android:text="100 recommend this" />
 
-                <!--
-
-
-            <RatingBar
-                style="?android:attr/ratingBarStyleSmall"
-                android:id = "@+id/fiveStar"
-                android:layout_below="@id/userRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:rating="5" />
+                </RelativeLayout>
 
 
-            <RatingBar
-                style="?android:attr/ratingBarStyleSmall"
-                android:id = "@+id/fourStar"
-                android:layout_below="@id/fiveStar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="18dp"
-                android:layout_marginTop="1dp"
-                android:rating="4" />
+            </android.support.v7.widget.CardView>
 
-            <RatingBar
-                style="?android:attr/ratingBarStyleSmall"
-                android:id = "@+id/threeStar"
-                android:layout_below="@id/fourStar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="18dp"
-                android:layout_marginTop="1dp"
-                android:rating="3" />
-
-            <RatingBar
-                style="?android:attr/ratingBarStyleSmall"
-                android:id = "@+id/twoStar"
-                android:layout_below="@id/threeStar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="18dp"
-                android:layout_marginTop="1dp"
-                android:rating="2" />
-
-            <RatingBar
-                style="?android:attr/ratingBarStyleSmall"
-                android:id = "@+id/oneStar"
-                android:layout_below="@id/twoStar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="18dp"
-                android:layout_marginTop="1dp"
-                android:rating="1" />
-
-                -->
-
-
-
-
-            </RelativeLayout>
 
             <include layout="@layout/recycler_view_layout" />
 
+
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/txtReviewMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="28sp"
+        android:text="no reviews"/>
 
 
 </android.support.design.widget.CoordinatorLayout>

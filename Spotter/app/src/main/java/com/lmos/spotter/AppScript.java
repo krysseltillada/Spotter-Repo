@@ -55,7 +55,6 @@ import java.util.Map;
 
 public class AppScript {
 
-    final String default_url = "http://admin-spotter.000webhostapp.com/app_scripts/";
     Activity activity;
     private List<Place> placeNames;
     private String response;
@@ -64,19 +63,6 @@ public class AppScript {
     private List<Place> placeList;
 
     protected AppScript(Activity activity){ this.activity = activity; }
-
-    public void setData(String... params){
-        String post_data = "";
-        try {
-            connect(
-                    default_url + params[0],
-                    URLEncoder.encode("startIndex", "UTF-8") + "="
-                    + URLEncoder.encode(params[1], "UTF-8")
-            );
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void setData(String url, Map<String, String> params){
 
@@ -91,6 +77,8 @@ public class AppScript {
 
                 Map.Entry<String, String> index_item = entry.next();
                 try {
+
+                    Log.d("debug", "key: " + index_item.getKey() + " value: " + index_item.getValue());
 
                     post_data += URLEncoder.encode(index_item.getKey(), "UTF-8") + "="
                               +  URLEncoder.encode(index_item.getValue(), "UTF-8");
@@ -190,16 +178,24 @@ public class AppScript {
             final JSONObject jsonObject = new JSONObject(processResult);
             String response_code = jsonObject.getString("response_code");
 
+            Log.d("debug", processResult);
+
+            Log.d("debug", jsonObject.getString("response_msg"));
+
             if (response_code.equals("0x01") || response_code.equals("0x02") || response_code.equals("0x03")) {
 
                 if (!response_code.equals("0x03")) {
 
                     JSONArray accountProfile = jsonObject.getJSONArray("response_data");
 
+                    Log.d("debug", jsonObject.getString("response_data"));
+
                     LoginActivity.set_login_prefs.putString("accountID", accountProfile.get(0).toString());
                     LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
                     LoginActivity.set_login_prefs.putString("accountUsername", accountProfile.get(2).toString());
                     LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
+                    LoginActivity.set_login_prefs.putString("accountImage", accountProfile.get(4).toString());
+                    LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(5).toString());
                     LoginActivity.set_login_prefs.apply();
 
                 }
@@ -233,6 +229,7 @@ public class AppScript {
                         setPlace.setplacePriceRange(place_item.getString("PriceRange"));
                         setPlace.setRecommended(place_item.getString("Recommended"));
                         setPlace.setRating(place_item.getString("Rating"));
+                        setPlace.setUserReviews(place_item.getString("userReviews"));
                         setPlace.setplaceImageLink(place_item.getString("Image"));
 
                         Log.d("IMAGE-JSON", place_item.getString("Image"));
@@ -243,8 +240,6 @@ public class AppScript {
                             offSet = responseData.getString("endOffset");
                             tableCount = responseData.getString("tableCount");
                         }
-                        else
-                            Log.d("LOCATION-SERVER", jsonObject.getString("response_ada"));
 
                     }
 
@@ -259,6 +254,8 @@ public class AppScript {
 
                 response = jsonObject.getString("response_msg");
 
+            } else if (response_code.equals("1x01")) {
+                response = jsonObject.getString("response_msg");
             }
 
         }catch(JSONException e){

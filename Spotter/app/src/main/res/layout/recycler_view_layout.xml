@@ -18,6 +18,16 @@
         android:visibility="gone"
         />
 
+    <TextView
+        android:id = "@+id/messageRecyclerView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="50dp"
+        android:layout_centerInParent="true"
+        android:textAlignment="center"
+        android:text="sync now to get your bookmarks on cloud"
+        android:visibility="gone"/>
+
     <ProgressBar
         android:id="@+id/recycleViewProgressBar"
         android:layout_width="wrap_content"
