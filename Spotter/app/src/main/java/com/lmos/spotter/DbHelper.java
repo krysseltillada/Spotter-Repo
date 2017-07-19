@@ -58,6 +58,13 @@ public class DbHelper extends SQLiteOpenHelper {
         this.onDbResponseListener = onDbResponseListener;
     }
 
+    public boolean isEmpty () {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        return (sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_FAVORITES, null).getCount() > 0);
+
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
 
@@ -193,6 +200,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.close();
 
+    }
+
+    public void clearBookmarks () {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE * FROM " + TABLE_FAVORITES);
     }
 
     public List<Place> getBookmarks(String placeType){

@@ -1,6 +1,11 @@
 package com.lmos.spotter.MainInterface.Activities;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -17,6 +22,13 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.Place;
@@ -25,11 +37,16 @@ import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.Utilities;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BookMarksActivity extends AppCompatActivity {
 
@@ -41,6 +58,8 @@ public class BookMarksActivity extends AppCompatActivity {
     TextView bookmarkEmptyText;
     TextView bookmarkEmptyText1;
     TabLayout.Tab firstTab;
+
+    SharedPreferences userData;
 
     HashMap<String, List<Place>> bookmarkedPlaceList = new HashMap<>();
 
@@ -208,8 +227,9 @@ public class BookMarksActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_book_marks);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
 
@@ -274,8 +294,53 @@ public class BookMarksActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void syncBookmarks () {
+    private void syncBookmarks (final String accountID) {
 
+
+        RequestQueue requestBookmark = Volley.newRequestQueue(getApplicationContext());
+
+        final ProgressDialog syncProgressDialog = new ProgressDialog(this);
+
+        syncProgressDialog.setIndeterminate(true);
+        syncProgressDialog.setMessage("syncing bookmarks");
+        syncProgressDialog.setTitle("syncing");
+        syncProgressDialog.show();
+
+        StringRequest stringBookmarkRequest = new StringRequest(Request.Method.POST,
+                "http://admin-spotter.000webhostapp.com/app_scripts/syncBookmarks.php",
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+
+                        if (response.equals("empty")) {
+                            Toast.makeText(getApplicationContext(), "no bookmarks on cloud", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        new SyncBookmarkTask(getApplicationContext(),
+                                             syncProgressDialog,
+                                             bookmarksDB).execute(response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }){
+
+                protected Map<String, String> getParams() {
+                    return new HashMap<String, String>(){{
+                        put("accountID", accountID);
+                    }};
+                }
+
+        };
+
+        requestBookmark.add(stringBookmarkRequest);
 
     }
 
@@ -285,6 +350,28 @@ public class BookMarksActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.syncBookmarks:
+
+                if (userData.getString("status", "").equals("Logged In")) {
+                    syncBookmarks(userData.getString("accountID", ""));
+                } else {
+                    new AlertDialog.Builder(this).setTitle("Cannot Sync")
+                                                 .setMessage("you need to sign in to sync your bookmarks")
+                                                 .setPositiveButton("sign in", new DialogInterface.OnClickListener() {
+
+                                                     @Override
+                                                     public void onClick(DialogInterface dialog, int which) {
+                                                         BookMarksActivity.this.startActivity(new Intent(BookMarksActivity.this,
+                                                                                                         LoginActivity.class));
+                                                     }
+                                                 })
+                                                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(DialogInterface dialog, int which) {
+                                                         dialog.dismiss();
+                                                     }
+                                                 })
+                                                 .show();
+                }
 
                 break;
 
@@ -437,6 +524,78 @@ public class BookMarksActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class SyncBookmarkTask extends AsyncTask<String, Integer, Void> {
+
+        ProgressDialog syncProgressDialog;
+        DbHelper bookmarkDB;
+        Context context;
+
+        public SyncBookmarkTask(Context con, ProgressDialog spD, DbHelper bookmarkdb) {
+            context = con;
+            syncProgressDialog = spD;
+            bookmarksDB = bookmarkdb;
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            try {
+
+                if (bookmarkDB.isEmpty())
+                    bookmarkDB.clearBookmarks();
+
+                JSONObject userBookmark = new JSONObject(params[0]);
+
+                JSONArray bookmarks = userBookmark.getJSONArray("userBookmarks");
+
+                for (int i = 0; i != bookmarks.length(); ++i) {
+
+                    JSONObject bookmarkElement = bookmarks.getJSONObject(i);
+                    Place place = new Place();
+
+                    place.setplaceName(bookmarkElement.getString("Name"));
+                    place.setplaceAddress(bookmarkElement.getString("Address"));
+                    place.setplaceLocality(bookmarkElement.getString("Locality"));
+                    place.setplaceDescription(bookmarkElement.getString("Description"));
+                    place.setplaceClass(bookmarkElement.getString("Class"));
+                    place.setplaceType(bookmarkElement.getString("Type"));
+                    place.setplacePriceRange(bookmarkElement.getString("PriceRange"));
+                    place.setplaceImageLink(bookmarkElement.getString("Image"));
+                    place.setPlaceLat(bookmarkElement.getString("Latitude"));
+                    place.setPlaceLng(bookmarkElement.getString("Longitude"));
+
+                    bookmarkDB.addToFavorites(place);
+
+                    publishProgress(i + 1, bookmarks.length());
+
+                }
+
+
+            } catch (JSONException e) {
+                Log.d("debug", e.getMessage());
+            }
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+            syncProgressDialog.dismiss();
+
+            super.onPostExecute(aVoid);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+            syncProgressDialog.setMessage("syncing " + values[0] + " out of " + values[1] + " bookmarks");
+
+        }
     }
 
 }
