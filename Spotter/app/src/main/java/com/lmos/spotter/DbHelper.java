@@ -144,7 +144,9 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         finally {
             db.close();
-            onDbResponseListener.onDbResponse(msg, KEY_PLACEID);
+
+            if (onDbResponseListener != null)
+                onDbResponseListener.onDbResponse(msg, KEY_PLACEID);
         }
 
     }

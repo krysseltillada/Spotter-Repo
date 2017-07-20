@@ -238,6 +238,25 @@ public class BookMarksActivity extends AppCompatActivity {
 
         bookmarksDB = new DbHelper(getApplicationContext());
 
+        refreshBookmarks();
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Bookmarks");
+
+
+    }
+
+    private void refreshBookmarks () {
+
+        bookMarksTabLayout.clearOnTabSelectedListeners();
+        bookMarksTabLayout.removeAllTabs();
+
+        MainInterfaceAdapter.checkBoxToggleStates.clear();
+        MainInterfaceAdapter.checkBoxToggleMap.clear();
+        bookmarkedPlaceList.clear();
+
         checkAndInitBookmarks("Hotel");
         checkAndInitBookmarks("Restaurant");
         checkAndInitBookmarks("Tourist Spot");
@@ -271,13 +290,6 @@ public class BookMarksActivity extends AppCompatActivity {
             bookmarkEmptyText.setVisibility(View.VISIBLE);
             bookmarkEmptyText1.setVisibility(View.VISIBLE);
         }
-
-
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Bookmarks");
-
 
     }
 
@@ -532,10 +544,10 @@ public class BookMarksActivity extends AppCompatActivity {
         DbHelper bookmarkDB;
         Context context;
 
-        public SyncBookmarkTask(Context con, ProgressDialog spD, DbHelper bookmarkdb) {
+        public SyncBookmarkTask(Context con, ProgressDialog spD, DbHelper bd) {
             context = con;
             syncProgressDialog = spD;
-            bookmarksDB = bookmarkdb;
+            bookmarkDB = bd;
         }
 
         @Override
@@ -585,6 +597,7 @@ public class BookMarksActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
 
             syncProgressDialog.dismiss();
+            refreshBookmarks();
 
             super.onPostExecute(aVoid);
         }

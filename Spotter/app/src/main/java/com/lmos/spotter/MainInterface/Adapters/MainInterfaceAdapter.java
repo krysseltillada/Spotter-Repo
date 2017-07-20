@@ -37,8 +37,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
     public static final int VIEW_TYPE_LOADING = 1;
     public static OnAdapterItemClickListener onAdapterItemClickListener;
     public static PlaceType currentSelectedTab;
-    private static HashMap<String, ArrayList<Boolean>> checkBoxToggleStates = new HashMap<>();
-    private static HashMap<String, ArrayList<String>> checkBoxToggleMap = new HashMap<>();
+    public static HashMap<String, ArrayList<Boolean>> checkBoxToggleStates = new HashMap<>();
+    public static HashMap<String, ArrayList<String>> checkBoxToggleMap = new HashMap<>();
     private int lastPosition = -1;
     private ActivityType activityType;
     private List<Place> places;
