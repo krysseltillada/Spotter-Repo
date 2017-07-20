@@ -206,7 +206,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public void clearBookmarks () {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE * FROM " + TABLE_FAVORITES);
+        db.execSQL("DELETE FROM " + TABLE_FAVORITES);
     }
 
     public List<Place> getBookmarks(String placeType){

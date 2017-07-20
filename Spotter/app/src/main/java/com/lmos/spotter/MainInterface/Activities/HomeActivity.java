@@ -436,6 +436,8 @@ public class HomeActivity extends AppCompatActivity
             userName.setText(userData.getString("accountName", ""));
             userEmail.setText(userData.getString("accountEmail", ""));
 
+            userEmail.setVisibility(View.VISIBLE);
+
         } else {
 
             userProfileImage.setImageDrawable(getResources().getDrawable(R.drawable.account));

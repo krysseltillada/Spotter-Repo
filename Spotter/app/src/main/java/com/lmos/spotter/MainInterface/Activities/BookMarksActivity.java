@@ -285,6 +285,10 @@ public class BookMarksActivity extends AppCompatActivity {
                     bookMarksRecyclerView,
                     bookMarksTabLayout);
 
+            bookMarksTabLayout.setVisibility(View.VISIBLE);
+            bookmarkEmptyText.setVisibility(View.GONE);
+            bookmarkEmptyText1.setVisibility(View.GONE);
+
         } else {
             bookMarksTabLayout.setVisibility(View.GONE);
             bookmarkEmptyText.setVisibility(View.VISIBLE);
@@ -473,13 +477,23 @@ public class BookMarksActivity extends AppCompatActivity {
 
                                     String message = "";
 
-                                    for (String placeKey : MainInterfaceAdapter.getCheckToggleMap().keySet()) {
-                                        message += "for place: " + placeKey + "\n";
+                                    List<Integer> placeID = new ArrayList<>();
 
-                                        for (int i = 0; i != MainInterfaceAdapter.getCheckToggleMap().get(placeKey).size(); ++i)
-                                            message += "index: " + i + " value: " + MainInterfaceAdapter.getCheckToggleMap().get(placeKey).get(i) + "\n";
+                                    for (String placeKey : MainInterfaceAdapter.getCheckToggleMap().keySet()) {
+
+                                        for (int i = 0; i != MainInterfaceAdapter.getCheckToggleMap().get(placeKey).size(); ++i) {
+
+                                            String placeName = MainInterfaceAdapter.getCheckToggleMap().get(placeKey).get(i);
+
+                                         ///TODO MAKE THIS WORK
+
+
+                                        }
 
                                     }
+
+                                    for (int placeid : placeID)
+                                        Log.d("debug", "place id: " + placeid);
 
                                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
@@ -598,6 +612,7 @@ public class BookMarksActivity extends AppCompatActivity {
 
             syncProgressDialog.dismiss();
             refreshBookmarks();
+            invalidateOptionsMenu();
 
             super.onPostExecute(aVoid);
         }
