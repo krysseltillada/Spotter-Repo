@@ -61,6 +61,8 @@ public class BookMarksActivity extends AppCompatActivity {
 
     SharedPreferences userData;
 
+    RecyclerView bookMarksRecyclerView;
+
     HashMap<String, List<Place>> bookmarkedPlaceList = new HashMap<>();
 
     PlaceType currentlySelectedPlace;
@@ -208,13 +210,6 @@ public class BookMarksActivity extends AppCompatActivity {
         if (bookmarksDB.getBookmarks(placeType).size() > 0) {
             bookMarksTabLayout.addTab(bookMarksTabLayout.newTab().setText(placeType));
             bookmarkedPlaceList.put(placeType, bookmarksDB.getBookmarks(placeType));
-
-            List <Place> test = bookmarksDB.getBookmarks(placeType);
-
-            Log.d("debug", "for " + placeType);
-
-            for (Place s : test)
-                Log.d("debug", s.getPlaceName());
          }
 
     }
@@ -231,6 +226,7 @@ public class BookMarksActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
+        bookMarksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         bookMarksTabLayout = (TabLayout)findViewById(R.id.home_tabLayout);
 
         bookmarkEmptyText = (TextView)findViewById(R.id.messageRecyclerView);
@@ -267,11 +263,10 @@ public class BookMarksActivity extends AppCompatActivity {
 
             currentlySelectedPlace = getPlaceType(firstTab.getText().toString());
 
-            final RecyclerView bookMarksRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
             recyclerView = bookMarksRecyclerView;
 
             bookMarksRecyclerView.getRecycledViewPool().setMaxRecycledViews(MainInterfaceAdapter.VIEW_TYPE_ITEM, 0);
-
 
             bookMarksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
                     LinearLayoutManager.VERTICAL,
@@ -285,14 +280,18 @@ public class BookMarksActivity extends AppCompatActivity {
                     bookMarksRecyclerView,
                     bookMarksTabLayout);
 
+            bookMarksRecyclerView.setVisibility(View.VISIBLE);
             bookMarksTabLayout.setVisibility(View.VISIBLE);
             bookmarkEmptyText.setVisibility(View.GONE);
             bookmarkEmptyText1.setVisibility(View.GONE);
 
         } else {
+
+            bookMarksRecyclerView.setVisibility(View.GONE);
             bookMarksTabLayout.setVisibility(View.GONE);
             bookmarkEmptyText.setVisibility(View.VISIBLE);
             bookmarkEmptyText1.setVisibility(View.VISIBLE);
+
         }
 
     }
@@ -307,6 +306,8 @@ public class BookMarksActivity extends AppCompatActivity {
 
         bookMarksMenu = menu;
 
+        getSupportActionBar().setTitle("Bookmarks");
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -319,7 +320,6 @@ public class BookMarksActivity extends AppCompatActivity {
 
         syncProgressDialog.setIndeterminate(true);
         syncProgressDialog.setMessage("syncing bookmarks");
-        syncProgressDialog.setTitle("syncing");
         syncProgressDialog.show();
 
         StringRequest stringBookmarkRequest = new StringRequest(Request.Method.POST,
@@ -475,9 +475,7 @@ public class BookMarksActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    String message = "";
-
-                                    List<Integer> placeID = new ArrayList<>();
+                                    List<String> placeNameList = new ArrayList<>();
 
                                     for (String placeKey : MainInterfaceAdapter.getCheckToggleMap().keySet()) {
 
@@ -485,25 +483,34 @@ public class BookMarksActivity extends AppCompatActivity {
 
                                             String placeName = MainInterfaceAdapter.getCheckToggleMap().get(placeKey).get(i);
 
-                                         ///TODO MAKE THIS WORK
+                                            for (String bookmarkKey : bookmarkedPlaceList.keySet()) {
 
+                                                for (int a = 0; a != bookmarkedPlaceList.get(bookmarkKey).size(); ++a) {
+
+                                                    Place bookmarkPlace = bookmarkedPlaceList.get(bookmarkKey).get(a);
+
+                                                    if (bookmarkPlace.getPlaceName().equals(placeName)) {
+                                                        placeNameList.add(bookmarkPlace.getPlaceName());
+                                                    }
+
+                                                }
+
+                                            }
 
                                         }
 
                                     }
 
-                                    for (int placeid : placeID)
-                                        Log.d("debug", "place id: " + placeid);
+                                    String[] placeNameArray = new String[placeNameList.size()];
+                                    placeNameArray = placeNameList.toArray(placeNameArray);
 
-                                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                    bookmarksDB.deleteBookmark(placeNameArray);
 
-                                    Utilities.changeActionBarLayout(BookMarksActivity.this, toolbar, bookMarksMenu, R.menu.book_marks_menu, "Bookmarks");
+                                    refreshBookmarks();
+
+                                    invalidateOptionsMenu();
+
                                     MainInterfaceAdapter.setAllCheckToggleStates(false);
-
-                                    changeBookMarkMode(ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE, recyclerView, bookMarksTabLayout);
-
-                                    MainInterfaceAdapter.displayCheckListStates(MainInterfaceAdapter.getCheckToggleStates());
-
                                     MainInterfaceAdapter.getCheckToggleMap().clear();
 
                                 }
@@ -569,7 +576,7 @@ public class BookMarksActivity extends AppCompatActivity {
 
             try {
 
-                if (bookmarkDB.isEmpty())
+                if (bookmarkDB.isNotEmpty())
                     bookmarkDB.clearBookmarks();
 
                 JSONObject userBookmark = new JSONObject(params[0]);

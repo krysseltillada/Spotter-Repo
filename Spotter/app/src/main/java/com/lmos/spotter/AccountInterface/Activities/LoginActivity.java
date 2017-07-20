@@ -3,6 +3,7 @@ package com.lmos.spotter.AccountInterface.Activities;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,13 +19,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.lmos.spotter.AccountInterface.Fragments.FragmentRecover;
 import com.lmos.spotter.AccountInterface.Fragments.FragmentSignIn;
 import com.lmos.spotter.AccountInterface.Fragments.FragmentSignUp;
 import com.lmos.spotter.AppScript;
+import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.MainInterface.Activities.HomeActivity;
+import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     ImageView imgHolder;
     SharedPreferences login_prefs;
     public static SharedPreferences.Editor set_login_prefs;
+    DbHelper bookmarksDB;
     Activity activity = this;
 
     @Override
@@ -44,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
        // getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
+        bookmarksDB = new DbHelper(activity, null);
 
         login_prefs = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
         set_login_prefs = login_prefs.edit();
@@ -93,6 +110,74 @@ public class LoginActivity extends AppCompatActivity {
                 .replace(R.id.account_fragment_holder, fragment, "Sign Up")
                 .addToBackStack("Sign In")
                 .commit();
+
+    }
+
+    private void syncBookmarks(final String accountID) {
+
+        RequestQueue requestBoomarks = Volley.newRequestQueue(getApplicationContext());
+
+        final ProgressDialog syncProgressDialog = new ProgressDialog(this);
+
+        syncProgressDialog.setMessage("syncing bookmarks");
+        syncProgressDialog.setIndeterminate(true);
+        syncProgressDialog.setCancelable(false);
+        syncProgressDialog.show();
+
+        StringRequest stringRequestBookmarks = new StringRequest(Request.Method.POST,
+                "http://admin-spotter.000webhostapp.com/app_scripts/syncBookmarks.php"
+                , new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    JSONObject userBookmarks = new JSONObject(response);
+                    JSONArray  bookmarks = userBookmarks.getJSONArray("userBookmarks");
+
+                    for (int i = 0; i != bookmarks.length(); ++i) {
+
+                        JSONObject bookmarkElement = bookmarks.getJSONObject(i);
+                        Place place = new Place();
+
+                        place.setplaceName(bookmarkElement.getString("Name"));
+                        place.setplaceAddress(bookmarkElement.getString("Address"));
+                        place.setplaceLocality(bookmarkElement.getString("Locality"));
+                        place.setplaceDescription(bookmarkElement.getString("Description"));
+                        place.setplaceClass(bookmarkElement.getString("Class"));
+                        place.setplaceType(bookmarkElement.getString("Type"));
+                        place.setplacePriceRange(bookmarkElement.getString("PriceRange"));
+                        place.setplaceImageLink(bookmarkElement.getString("Image"));
+                        place.setPlaceLat(bookmarkElement.getString("Latitude"));
+                        place.setPlaceLng(bookmarkElement.getString("Longitude"));
+
+                        bookmarksDB.addToFavorites(place);
+
+                    }
+
+                    syncProgressDialog.dismiss();
+
+                    Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
+
+                } catch(JSONException e) {
+                    Log.d("debug", e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            protected Map<String, String> getParams() {
+                return new HashMap<String, String>() {{
+                    put("accountID", accountID);
+                }};
+            }
+        };
+
+        requestBoomarks.add(stringRequestBookmarks);
 
     }
 
@@ -153,7 +238,70 @@ public class LoginActivity extends AppCompatActivity {
 
                 set_login_prefs.putString("status", "Logged In");
                 set_login_prefs.apply();
-                Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
+
+                if (login_prefs.getString("accountHasBookmark", "").equals("true")) {
+
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle("sync bookmarks")
+                                .setMessage("it seems that your bookmarks are saved online \n" +
+                                            "would you like to sync?" )
+                                .setPositiveButton("sync now", new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        if (bookmarksDB.isNotEmpty())
+                                            bookmarksDB.clearBookmarks();
+
+                                        syncBookmarks(login_prefs.getString("accountID", ""));
+
+                                    }
+
+                                })
+                                .setNegativeButton("not now", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        if(bookmarksDB.isNotEmpty()) {
+
+                                            new AlertDialog.Builder(LoginActivity.this)
+                                                           .setMessage("warning")
+                                                           .setMessage("some bookmarks is saved in this device" +
+                                                                       "would you like to delete all saved bookmarks or not?")
+                                                           .setPositiveButton("delete all", new DialogInterface.OnClickListener() {
+
+                                                               @Override
+                                                               public void onClick(DialogInterface dialog, int which) {
+
+                                                                   bookmarksDB.clearBookmarks();
+                                                                   Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
+
+                                                               }
+                                                           })
+                                                           .setNegativeButton("no", new DialogInterface.OnClickListener() {
+
+                                                               @Override
+                                                               public void onClick(DialogInterface dialog, int which) {
+
+                                                                   Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
+
+                                                               }
+                                                           })
+                                                           .show();
+
+                                        } else {
+
+                                            Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
+
+                                        }
+
+                                    }
+                                })
+                                .show();
+
+
+                }
+
 
             }
             else {

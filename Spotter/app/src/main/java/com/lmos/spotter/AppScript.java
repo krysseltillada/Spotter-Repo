@@ -1,9 +1,12 @@
 package com.lmos.spotter;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -171,6 +174,25 @@ public class AppScript {
 
     }
 
+    private void loadUserData (JSONArray accountProfile) {
+
+        try {
+
+            LoginActivity.set_login_prefs.putString("accountID", accountProfile.get(0).toString());
+            LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
+            LoginActivity.set_login_prefs.putString("accountUsername", accountProfile.get(2).toString());
+            LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
+            LoginActivity.set_login_prefs.putString("accountImage", accountProfile.get(4).toString());
+            LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(5).toString());
+            LoginActivity.set_login_prefs.putString("accountHasBookmark", accountProfile.get(6).toString());
+            LoginActivity.set_login_prefs.apply();
+
+        } catch (JSONException err) {
+            Log.d("debug", err.getMessage());
+        }
+
+    }
+
     private void parseResult(String processResult){
 
         try {
@@ -186,17 +208,12 @@ public class AppScript {
 
                 if (!response_code.equals("0x03")) {
 
+
                     JSONArray accountProfile = jsonObject.getJSONArray("response_data");
 
-                    Log.d("debug", jsonObject.getString("response_data"));
+                    loadUserData(accountProfile);
 
-                    LoginActivity.set_login_prefs.putString("accountID", accountProfile.get(0).toString());
-                    LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
-                    LoginActivity.set_login_prefs.putString("accountUsername", accountProfile.get(2).toString());
-                    LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
-                    LoginActivity.set_login_prefs.putString("accountImage", accountProfile.get(4).toString());
-                    LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(5).toString());
-                    LoginActivity.set_login_prefs.apply();
+                    Log.d("debug", jsonObject.getString("response_data"));
 
                 }
 

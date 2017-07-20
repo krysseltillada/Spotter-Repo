@@ -58,7 +58,7 @@ public class DbHelper extends SQLiteOpenHelper {
         this.onDbResponseListener = onDbResponseListener;
     }
 
-    public boolean isEmpty () {
+    public boolean isNotEmpty () {
 
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         return (sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_FAVORITES, null).getCount() > 0);
@@ -151,14 +151,15 @@ public class DbHelper extends SQLiteOpenHelper {
 
     }
 
-    public void deleteBookmark(String[] placeID){
+    public void deleteBookmark(String[] placeName){
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        if(placeID != null) {
-            for (String id : placeID)
-                db.delete(TABLE_FAVORITES, KEY_PLACEID, new String[]{id});
+        if(placeName != null) {
+            for (String pn : placeName)
+                db.execSQL("DELETE FROM " + TABLE_FAVORITES + " WHERE " + KEY_NAME + " = '" + pn + "'");
         }
+
         db.close();
 
     }
