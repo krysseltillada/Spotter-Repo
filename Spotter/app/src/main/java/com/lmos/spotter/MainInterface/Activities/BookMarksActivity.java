@@ -331,6 +331,7 @@ public class BookMarksActivity extends AppCompatActivity {
 
                         if (response.equals("empty")) {
                             Toast.makeText(getApplicationContext(), "no bookmarks on cloud", Toast.LENGTH_LONG).show();
+                            syncProgressDialog.dismiss();
                             return;
                         }
 
@@ -490,7 +491,7 @@ public class BookMarksActivity extends AppCompatActivity {
                                                     Place bookmarkPlace = bookmarkedPlaceList.get(bookmarkKey).get(a);
 
                                                     if (bookmarkPlace.getPlaceName().equals(placeName)) {
-                                                        placeNameList.add(bookmarkPlace.getPlaceName());
+                                                        placeNameList.add(bookmarkPlace.getPlaceID());
                                                     }
 
                                                 }
@@ -501,10 +502,10 @@ public class BookMarksActivity extends AppCompatActivity {
 
                                     }
 
-                                    String[] placeNameArray = new String[placeNameList.size()];
-                                    placeNameArray = placeNameList.toArray(placeNameArray);
+                                    String[] placeIDArray = new String[placeNameList.size()];
+                                    placeIDArray = placeNameList.toArray(placeIDArray);
 
-                                    bookmarksDB.deleteBookmark(placeNameArray);
+                                    bookmarksDB.deleteBookmark(placeIDArray);
 
                                     refreshBookmarks();
 
@@ -588,6 +589,7 @@ public class BookMarksActivity extends AppCompatActivity {
                     JSONObject bookmarkElement = bookmarks.getJSONObject(i);
                     Place place = new Place();
 
+                    place.setPlaceID(bookmarkElement.getString("placeID"));
                     place.setplaceName(bookmarkElement.getString("Name"));
                     place.setplaceAddress(bookmarkElement.getString("Address"));
                     place.setplaceLocality(bookmarkElement.getString("Locality"));

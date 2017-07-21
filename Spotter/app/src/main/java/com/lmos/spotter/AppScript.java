@@ -174,9 +174,23 @@ public class AppScript {
 
     }
 
-    private void loadUserData (JSONArray accountProfile) {
+    private void loadUserData (JSONArray accountProfile, String response_code) {
 
         try {
+
+            if (response_code.equals("0x01")) {
+
+                if (!LoginActivity.login_prefs.getString("accountID", "").equals(accountProfile.get(0).toString()))
+                    LoginActivity.set_login_prefs.putBoolean("isDiffAccount", true);
+                else
+                    LoginActivity.set_login_prefs.putBoolean("isDiffAccount", false);
+
+                LoginActivity.set_login_prefs.putString("accountHasBookmark", accountProfile.get(6).toString());
+
+            } else if (response_code.equals("0x02")){
+                LoginActivity.set_login_prefs.putBoolean("isDiffAccount", true);
+                LoginActivity.set_login_prefs.putString("accountHasBookmark", "false");
+            }
 
             LoginActivity.set_login_prefs.putString("accountID", accountProfile.get(0).toString());
             LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
@@ -184,7 +198,7 @@ public class AppScript {
             LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
             LoginActivity.set_login_prefs.putString("accountImage", accountProfile.get(4).toString());
             LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(5).toString());
-            LoginActivity.set_login_prefs.putString("accountHasBookmark", accountProfile.get(6).toString());
+
             LoginActivity.set_login_prefs.apply();
 
         } catch (JSONException err) {
@@ -211,7 +225,7 @@ public class AppScript {
 
                     JSONArray accountProfile = jsonObject.getJSONArray("response_data");
 
-                    loadUserData(accountProfile);
+                    loadUserData(accountProfile, response_code);
 
                     Log.d("debug", jsonObject.getString("response_data"));
 

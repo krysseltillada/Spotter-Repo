@@ -48,10 +48,11 @@ public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_PREFS = "LoginSharedPreference";
 
     ImageView imgHolder;
-    SharedPreferences login_prefs;
+    public static SharedPreferences login_prefs;
     public static SharedPreferences.Editor set_login_prefs;
     DbHelper bookmarksDB;
     Activity activity = this;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
        // getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
 
         bookmarksDB = new DbHelper(activity, null);
 
@@ -76,6 +78,8 @@ public class LoginActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.account_fragment_holder,new FragmentSignIn(), "Sign In")
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                        android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                 .commit();
 
     }
@@ -106,7 +110,8 @@ public class LoginActivity extends AppCompatActivity {
     private void switchFragment(Fragment fragment){
 
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                        android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                 .replace(R.id.account_fragment_holder, fragment, "Sign Up")
                 .addToBackStack("Sign In")
                 .commit();
@@ -140,6 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject bookmarkElement = bookmarks.getJSONObject(i);
                         Place place = new Place();
 
+                        place.setPlaceID(bookmarkElement.getString("placeID"));
                         place.setplaceName(bookmarkElement.getString("Name"));
                         place.setplaceAddress(bookmarkElement.getString("Address"));
                         place.setplaceLocality(bookmarkElement.getString("Locality"));
@@ -151,7 +157,7 @@ public class LoginActivity extends AppCompatActivity {
                         place.setPlaceLat(bookmarkElement.getString("Latitude"));
                         place.setPlaceLng(bookmarkElement.getString("Longitude"));
 
-                        bookmarksDB.addToFavorites(place);
+                        bookmarksDB.checkAndAddBookmark(place);
 
                     }
 
@@ -234,77 +240,63 @@ public class LoginActivity extends AppCompatActivity {
 
             Log.d("debug", response);
 
-            if(response.equals("Sign in success.") || response.equals("Account has been registered.")){
+            if(response.equals("Sign in success.")){
 
                 set_login_prefs.putString("status", "Logged In");
                 set_login_prefs.apply();
 
                 if (login_prefs.getString("accountHasBookmark", "").equals("true")) {
 
-                        new AlertDialog.Builder(LoginActivity.this)
-                                .setTitle("sync bookmarks")
-                                .setMessage("it seems that your bookmarks are saved online \n" +
-                                            "would you like to sync?" )
-                                .setPositiveButton("sync now", new DialogInterface.OnClickListener() {
+                    new AlertDialog.Builder(LoginActivity.this)
+                                   .setTitle("sync bookmarks?")
+                                   .setMessage("it seems your bookmarks is saved online " +
+                                               "would you like to sync your bookmarks from this device?")
+                                   .setPositiveButton("sync now", new DialogInterface.OnClickListener() {
+                                       @Override
+                                       public void onClick(DialogInterface dialog, int which) {
 
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                                           if (login_prefs.getBoolean("isDiffAccount", false))
+                                               bookmarksDB.clearBookmarks();
 
-                                        if (bookmarksDB.isNotEmpty())
-                                            bookmarksDB.clearBookmarks();
+                                           syncBookmarks(login_prefs.getString("accountID", ""));
 
-                                        syncBookmarks(login_prefs.getString("accountID", ""));
+                                       }
+                                   })
+                                   .setNegativeButton("not now", new DialogInterface.OnClickListener() {
 
-                                    }
+                                       @Override
+                                       public void onClick(DialogInterface dialog, int which) {
 
-                                })
-                                .setNegativeButton("not now", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                                           if (login_prefs.getBoolean("isDiffAccount", false))
+                                               bookmarksDB.clearBookmarks();
 
-                                        if(bookmarksDB.isNotEmpty()) {
+                                           startActivity(new Intent(LoginActivity.this, HomeActivity.class));
 
-                                            new AlertDialog.Builder(LoginActivity.this)
-                                                           .setMessage("warning")
-                                                           .setMessage("some bookmarks is saved in this device" +
-                                                                       "would you like to delete all saved bookmarks or not?")
-                                                           .setPositiveButton("delete all", new DialogInterface.OnClickListener() {
+                                       }
+                                   })
+                                   .show();
 
-                                                               @Override
-                                                               public void onClick(DialogInterface dialog, int which) {
+                }
+                else {
 
-                                                                   bookmarksDB.clearBookmarks();
-                                                                   Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
+                    if (login_prefs.getBoolean("isDiffAccount", false))
+                        bookmarksDB.clearBookmarks();
 
-                                                               }
-                                                           })
-                                                           .setNegativeButton("no", new DialogInterface.OnClickListener() {
-
-                                                               @Override
-                                                               public void onClick(DialogInterface dialog, int which) {
-
-                                                                   Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
-
-                                                               }
-                                                           })
-                                                           .show();
-
-                                        } else {
-
-                                            Utilities.OpenActivity(getApplicationContext(), HomeActivity.class, activity);
-
-                                        }
-
-                                    }
-                                })
-                                .show();
-
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
 
                 }
 
 
-            }
-            else {
+            } else if (response.equals("Account has been registered.")) {
+
+                set_login_prefs.putString("status", "Logged In");
+                set_login_prefs.apply();
+
+                bookmarksDB.clearBookmarks();
+
+                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+
+            } else {
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
             }
 
