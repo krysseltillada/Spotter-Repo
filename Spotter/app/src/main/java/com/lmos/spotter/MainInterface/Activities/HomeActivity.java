@@ -150,6 +150,10 @@ public class HomeActivity extends AppCompatActivity
             getMostPopular(placeType);
             loadPlacesByType(placeType);
         }
+
+        if(!searchBTN.isIconified())
+            searchBTN.setIconified(true);
+
     }
 
     public void userNavDropDown(View view) {

@@ -718,7 +718,7 @@ public class Utilities {
             implements
                 LocationListener {
 
-        private final int INTERVAL = 0, FAST_INTERVAL = 0;
+        private final int INTERVAL = 1000, FAST_INTERVAL = 500;
         OnLocationFoundListener OnLocationFoundListener;
         private GoogleApiClient apiClient;
         private LocationRequest locationRequest;
@@ -851,8 +851,7 @@ public class Utilities {
             locationRequest = LocationRequest.create()
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                     .setInterval(INTERVAL)
-                    .setFastestInterval(FAST_INTERVAL)
-                    .setSmallestDisplacement(3);
+                    .setFastestInterval(FAST_INTERVAL);
 
             if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
 
