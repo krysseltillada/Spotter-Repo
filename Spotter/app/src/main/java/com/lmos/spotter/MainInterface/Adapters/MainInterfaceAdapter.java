@@ -314,32 +314,36 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
                     @Override
                     public void onClick(View v) {
 
-                        CheckBox cbDelete = (CheckBox)v.findViewById(R.id.cbDelete);
-
+                        CheckBox cbDelete = (CheckBox) v.findViewById(R.id.cbDelete);
                         cbDelete.toggle();
 
-                        String placeName = ((TextView)v.findViewById(R.id.txtPlaceName)).getText().toString();
-
-                        if (!checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).contains(placeName)) {
-                            checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).add(placeName);
-                            checkBoxToggleStates.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).set(getPosition(), true);
-                        }
-                        else {
-                            checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).remove(placeName);
-                            checkBoxToggleStates.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).set(getPosition(), false);
-                        }
-
-                        displayCheckListStates(checkBoxToggleStates);
-                        displayCheckListKeyValues(checkBoxToggleMap);
-
-                    }
+                        setDeleteListener(v);
+                     }
                 });
+
 
             } else if (activityType == ActivityType.HOME_ACTIVITY ||
                        activityType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE) {
                 rowView.setOnClickListener(this);
             }
 
+        }
+
+        private void setDeleteListener (View v) {
+
+            String placeName = ((TextView)v.findViewById(R.id.txtPlaceName)).getText().toString();
+
+            if (!checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).contains(placeName)) {
+                checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).add(placeName);
+                checkBoxToggleStates.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).set(getPosition(), true);
+            }
+            else {
+                checkBoxToggleMap.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).remove(placeName);
+                checkBoxToggleStates.get(BookMarksActivity.getPlaceTypeStr(currentSelectedTab)).set(getPosition(), false);
+            }
+
+            displayCheckListStates(checkBoxToggleStates);
+            displayCheckListKeyValues(checkBoxToggleMap);
         }
 
        @Override

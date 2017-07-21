@@ -160,7 +160,8 @@ public class DbHelper extends SQLiteOpenHelper {
             msg = e.getMessage();
         }
 
-        onDbResponseListener.onDbResponse(msg, place.getPlaceID());
+        if(onDbResponseListener != null)
+            onDbResponseListener.onDbResponse(msg, place.getPlaceID());
 
     }
 

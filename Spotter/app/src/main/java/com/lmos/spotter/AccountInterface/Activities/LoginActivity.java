@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
        // getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
 
-        bookmarksDB = new DbHelper(activity, null);
+        bookmarksDB = new DbHelper(activity);
 
         login_prefs = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
         set_login_prefs = login_prefs.edit();
