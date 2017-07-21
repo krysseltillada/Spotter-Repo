@@ -59,6 +59,13 @@ public class DbHelper extends SQLiteOpenHelper {
         this.onDbResponseListener = onDbResponseListener;
     }
 
+    public boolean isNotEmpty () {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        return (sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_FAVORITES, null).getCount() > 0);
+
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
 
@@ -102,6 +109,20 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    public void checkAndAddBookmark (Place place) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Log.d("debug", "SELECT * FROM " + TABLE_FAVORITES + " WHERE placeID = " + place.getPlaceID());
+
+        int count = db.rawQuery("SELECT * FROM " + TABLE_FAVORITES + " WHERE " + KEY_PLACEID + " = " + place.getPlaceID(), null).getCount();
+
+        if (count <= 0)
+            addToFavorites(place);
+
 
     }
 
@@ -193,6 +214,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.close();
 
+    }
+
+    public void clearBookmarks () {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_FAVORITES);
     }
 
     public List<Place> getBookmarks(String placeType){

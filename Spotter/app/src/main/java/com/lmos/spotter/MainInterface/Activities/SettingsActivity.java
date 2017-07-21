@@ -2,6 +2,7 @@ package com.lmos.spotter.MainInterface.Activities;
 
 import android.accounts.Account;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.EditTextPreference;
@@ -9,6 +10,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
+import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.UserAccount;
 
@@ -45,6 +48,8 @@ public class SettingsActivity extends PreferenceActivity  {
     EditTextPreference emailEditText;
     EditTextPreference passwordEditText;
     EditTextPreference nameEditText;
+
+    DbHelper bookmarksDB;
 
     RequestQueue requestUpdateAccountInfo;
 
@@ -145,6 +150,8 @@ public class SettingsActivity extends PreferenceActivity  {
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        bookmarksDB = new DbHelper(getApplicationContext(), null);
+
         userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         if (userData.getString("status", "").equals("Logged In")) {
@@ -162,7 +169,28 @@ public class SettingsActivity extends PreferenceActivity  {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
 
-                    Toast.makeText(getApplicationContext(), "Bookmarks erased", Toast.LENGTH_SHORT).show();
+                    new AlertDialog.Builder(SettingsActivity.this)
+                                    .setTitle("delete bookmark")
+                                    .setMessage("would you like also to delete your saved bookmarks oncloud")
+                                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+
+
+                                        }
+                                    })
+                                    .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            bookmarksDB.clearBookmarks();
+                                            Toast.makeText(getApplicationContext(), "bookmarks erased", Toast.LENGTH_LONG).show();
+
+                                        }
+                                    })
+                                    .show();
 
                     return false;
                 }

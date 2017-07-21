@@ -71,11 +71,12 @@ import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    
+
     String pageCount = "10";
     SharedPreferences userData;
     PlaceLoader placeLoader;
     PlaceLoader itemLoader;
+
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -131,7 +132,12 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        placeLoader.cancel(true);
+        if(placeLoader != null)
+            placeLoader.cancel(true);
+
+        if(itemLoader != null)
+            itemLoader.cancel(true);
+
     }
 
     @Override
@@ -139,6 +145,11 @@ public class HomeActivity extends AppCompatActivity
         super.onResume();
         /** Re-run placeLoader here **/
         displayUserInfo();
+
+        if ( !(isLoadingPlace || isLoadingItem) ) {
+            getMostPopular(placeType);
+            loadPlacesByType(placeType);
+        }
     }
 
     public void userNavDropDown(View view) {
@@ -412,6 +423,8 @@ public class HomeActivity extends AppCompatActivity
             userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), Utilities.BlurImg.stringToBitmap(userData.getString("accountImage", ""))));
             userName.setText(userData.getString("accountName", ""));
             userEmail.setText(userData.getString("accountEmail", ""));
+
+            userEmail.setVisibility(View.VISIBLE);
 
         } else {
 

@@ -1,6 +1,8 @@
 package com.lmos.spotter;
 
 import android.content.Context;
+
+import java.util.List;
 import android.util.Log;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
@@ -171,6 +173,39 @@ public class AppScript {
 
     }
 
+    private void loadUserData (JSONArray accountProfile, String response_code) {
+
+        try {
+
+            if (response_code.equals("0x01")) {
+
+                if (!LoginActivity.login_prefs.getString("accountID", "").equals(accountProfile.get(0).toString()))
+                    LoginActivity.set_login_prefs.putBoolean("isDiffAccount", true);
+                else
+                    LoginActivity.set_login_prefs.putBoolean("isDiffAccount", false);
+
+                LoginActivity.set_login_prefs.putString("accountHasBookmark", accountProfile.get(6).toString());
+
+            } else if (response_code.equals("0x02")){
+                LoginActivity.set_login_prefs.putBoolean("isDiffAccount", true);
+                LoginActivity.set_login_prefs.putString("accountHasBookmark", "false");
+            }
+
+            LoginActivity.set_login_prefs.putString("accountID", accountProfile.get(0).toString());
+            LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
+            LoginActivity.set_login_prefs.putString("accountUsername", accountProfile.get(2).toString());
+            LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
+            LoginActivity.set_login_prefs.putString("accountImage", accountProfile.get(4).toString());
+            LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(5).toString());
+
+            LoginActivity.set_login_prefs.apply();
+
+        } catch (JSONException err) {
+            Log.d("debug", err.getMessage());
+        }
+
+    }
+
     private void parseResult(String processResult){
 
         try {
@@ -186,17 +221,12 @@ public class AppScript {
 
                 if (!response_code.equals("0x03")) {
 
+
                     JSONArray accountProfile = jsonObject.getJSONArray("response_data");
 
-                    Log.d("debug", jsonObject.getString("response_data"));
+                    loadUserData(accountProfile, response_code);
 
-                    LoginActivity.set_login_prefs.putString("accountID", accountProfile.get(0).toString());
-                    LoginActivity.set_login_prefs.putString("accountName", accountProfile.get(1).toString());
-                    LoginActivity.set_login_prefs.putString("accountUsername", accountProfile.get(2).toString());
-                    LoginActivity.set_login_prefs.putString("accountEmail", accountProfile.get(3).toString());
-                    LoginActivity.set_login_prefs.putString("accountImage", accountProfile.get(4).toString());
-                    LoginActivity.set_login_prefs.putString("accountPassword", accountProfile.get(5).toString());
-                    LoginActivity.set_login_prefs.apply();
+                    Log.d("debug", jsonObject.getString("response_data"));
 
                 }
 
