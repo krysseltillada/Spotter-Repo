@@ -43,6 +43,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String KEY_IMAGE = "image";
     private static final String KEY_RECOMMENDED = "recommended";
     private static final String KEY_RATING = "rating";
+    private static final String KEY_BOOKMARK = "bookmark";
 
     Context context;
     Utilities.OnDbResponseListener onDbResponseListener;
@@ -84,7 +85,8 @@ public class DbHelper extends SQLiteOpenHelper {
                         KEY_PRICE_RANGE + " TEXT," +
                         KEY_IMAGE + " TEXT," +
                         KEY_RECOMMENDED + " TEXT," +
-                        KEY_RATING + " TEXT)"
+                        KEY_RATING + " TEXT," +
+                        KEY_BOOKMARK + " TEXT)"
 
         );
 
@@ -143,25 +145,23 @@ public class DbHelper extends SQLiteOpenHelper {
         cv.put(KEY_IMAGE, place.getPlaceImageLink());
         cv.put(KEY_RECOMMENDED, place.getRecommended());
         cv.put(KEY_RATING, place.getRating());
+        cv.put(KEY_BOOKMARK, place.getBookmarks());
 
-        String msg = "";
+        String msg = "Place has been bookmarked. Synchronizing.";
 
         try {
-            db.insert(TABLE_FAVORITES, null, cv);
-            msg = "Place has been bookmarked.";
+            db.insertOrThrow(TABLE_FAVORITES, null, cv);
         }
         catch (SQLiteConstraintException e){
             msg = "Place is already bookmarked.";
         }
         catch (SQLiteException e){
             e.printStackTrace();
+            msg = e.getMessage();
         }
-        finally {
-            db.close();
 
-            if (onDbResponseListener != null)
-                onDbResponseListener.onDbResponse(msg, KEY_PLACEID);
-        }
+        if(onDbResponseListener != null)
+            onDbResponseListener.onDbResponse(msg, place.getPlaceID());
 
     }
 
@@ -170,11 +170,9 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         if(placeID != null) {
-            for (String pi : placeID)
-                db.execSQL("DELETE FROM " + TABLE_FAVORITES + " WHERE " + KEY_PLACEID + " = '" + pi + "'");
+            for (String id : placeID)
+                db.delete(TABLE_FAVORITES, KEY_PLACEID + "=?", new String[]{id});
         }
-
-        db.close();
 
     }
 
@@ -250,8 +248,9 @@ public class DbHelper extends SQLiteOpenHelper {
             place.setPlaceDeals(cursor.getString(cursor.getColumnIndex(KEY_DEALS)));
             place.setplacePriceRange(cursor.getString(cursor.getColumnIndex(KEY_PRICE_RANGE)));
             place.setplaceImageLink(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
-            //place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
-            //place.setRating(cursor.getString(cursor.getColumnIndex(KEY_RATING)));
+            place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
+            place.setRating(cursor.getString(cursor.getColumnIndex(KEY_RATING)));
+            place.setBookmarks(cursor.getString(cursor.getColumnIndex(KEY_BOOKMARK)));
 
             // Log.d("BK-IMAGE_SET", place.getPlaceImageLink());
 
@@ -260,8 +259,6 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
-
-        db.close();
 
         return bookmarks;
     }
@@ -277,8 +274,6 @@ public class DbHelper extends SQLiteOpenHelper {
         );
 
         String placeID = cursor.getString(cursor.getColumnIndex(KEY_PLACEID));
-
-        db.close();
 
         return placeID;
     }

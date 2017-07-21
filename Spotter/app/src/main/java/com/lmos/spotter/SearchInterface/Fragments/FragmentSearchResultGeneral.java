@@ -31,13 +31,12 @@ import java.util.List;
 
 public class FragmentSearchResultGeneral extends Fragment {
 
+    public static String placeID;
     TextView no_result;
     RecyclerView.LayoutManager layoutManager;
     private List<Place> places;
     private RecyclerView recyclerView;
     private GeneralResultsAdapter mAdapter;
-
-    public static String placeID;
 
     public static FragmentSearchResultGeneral newInstance(String focusedTab, List<Place> places){
 
@@ -81,7 +80,6 @@ public class FragmentSearchResultGeneral extends Fragment {
                     switch (v.getId()){
 
                         case R.id.general_list_view_bookmark:
-                            Log.d("BK", "aw, you add me");
                             ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
                             break;
                         case R.id.general_list_explore:
@@ -96,7 +94,7 @@ public class FragmentSearchResultGeneral extends Fragment {
                             startActivity(navigate);
                             break;
                         default:
-                            Log.d("RESULT-CLICK", place.getPlaceID());
+                            ((SearchResultsActivity) getContext()).setTemp_place(place);
                             ((SearchResultsActivity) getContext()).switchFragment("", "replace", FragmentSearchResult.newInstance(place));
                             break;
                     }

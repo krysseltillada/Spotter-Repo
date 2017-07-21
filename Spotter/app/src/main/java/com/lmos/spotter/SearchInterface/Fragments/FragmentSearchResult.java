@@ -28,10 +28,11 @@ import com.lmos.spotter.Utilities.Utilities;
 public class FragmentSearchResult extends Fragment
     implements Utilities.OnLocationFoundListener{
 
-    TextView description, review_count, place_address, place_rate_label;
+    public Place place;
+    TextView description, review_count, place_address,
+            place_rate_label, place_recommended, place_bookmark ;
     RatingBar place_rate;
     Button navigate;
-    public Place place;
     Utilities.LocationHandler locationHandler;
     private RecyclerView reviews;
     private RecyclerView deals;
@@ -79,6 +80,8 @@ public class FragmentSearchResult extends Fragment
         place_rate_label = (TextView) thisView.findViewById(R.id.place_rating_label);
         place_rate = (RatingBar) thisView.findViewById(R.id.place_rate);
         place_address = (TextView)thisView.findViewById(R.id.place_address);
+        place_recommended = (TextView) thisView.findViewById(R.id.place_recommended_label);
+        place_bookmark = (TextView) thisView.findViewById(R.id.place_bookmark_label);
         navigate = (Button) thisView.findViewById(R.id.btnNavigate);
         navigate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +103,10 @@ public class FragmentSearchResult extends Fragment
         place_rate.setRating(Float.parseFloat(place.getPlaceRating()));
         String rating_place_holder = place.getPlaceRating() + " Stars";
         place_rate_label.setText(rating_place_holder);
+        String rec = place.getRecommended() + " people recommended this.";
+        String bkmk = place.getRecommended() + " people bookmarked this.";
+        place_recommended.setText(rec);
+        place_bookmark.setText(bkmk);
 
         if(place.getPlaceImageLink() != null)
             ((SearchResultsActivity) getContext()).setHeaderImg(place.getPlaceImageLink());

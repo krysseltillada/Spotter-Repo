@@ -1,12 +1,10 @@
 package com.lmos.spotter;
 
-import android.app.Activity;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.widget.Toast;
+import android.content.Context;
 
-import com.android.volley.RequestQueue;
+import java.util.List;
+import android.util.Log;
+
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -58,19 +56,20 @@ import java.util.Map;
 
 public class AppScript {
 
-    Activity activity;
+    final String default_url = "http://admin-spotter.000webhostapp.com/app_scripts/";
+    Context context;
     private List<Place> placeNames;
     private String response;
     private String offSet;
     private String tableCount;
     private List<Place> placeList;
+    private HttpURLConnection httpURLConnection;
 
-    protected AppScript(Activity activity){ this.activity = activity; }
+    public AppScript(Context context){ this.context = context; }
 
     public void setData(String url, Map<String, String> params){
 
         String post_data = "";
-        final String default_url = "http://admin-spotter.000webhostapp.com/app_scripts/";
 
         if(params != null){
 
@@ -114,7 +113,7 @@ public class AppScript {
 
             /** Initialize connection to server **/
             URL url = new URL(setUrl);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod(REQUEST_METHOD);
             httpURLConnection.setConnectTimeout(CONNECTION_TIME_OUT);
             httpURLConnection.setRequestProperty("connection", "close");
@@ -155,20 +154,20 @@ public class AppScript {
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            Utilities.logError(activity, e.getMessage());
+            Utilities.logError(context, e.getMessage());
             response = e.getMessage();
         }catch(UnknownHostException e){
-            Utilities.logError(activity, e.getMessage());
+            Utilities.logError(context, e.getMessage());
             e.printStackTrace();
             response = "Couldn't connect to server. Make sure you have stable internet connection.";
         }catch (SocketTimeoutException | ConnectException e){
             e.printStackTrace();
-            Utilities.logError(activity, e.getMessage());
+            Utilities.logError(context, e.getMessage());
             Log.d("debug", e.getMessage());
             response = "Couldn't connect to server.";
         }catch (IOException e) {
             e.printStackTrace();
-            Utilities.logError(activity, e.getMessage());
+            Utilities.logError(context, e.getMessage());
             response = e.getMessage();
         }
 
@@ -262,8 +261,7 @@ public class AppScript {
                         setPlace.setRating(place_item.getString("Rating"));
                         setPlace.setUserReviews(place_item.getString("userReviews"));
                         setPlace.setplaceImageLink(place_item.getString("Image"));
-
-                        Log.d("IMAGE-JSON", place_item.getString("Image"));
+                        setPlace.setBookmarks(place_item.getString("bookmarks"));
 
                         if (response_code.equals("0x10")) {
 
@@ -288,10 +286,13 @@ public class AppScript {
             } else if (response_code.equals("1x01")) {
                 response = jsonObject.getString("response_msg");
             }
+            else{
+                response = jsonObject.getString("response_msg");
+            }
 
         }catch(JSONException e){
                 e.printStackTrace();
-                Utilities.logError(activity, e.getMessage());
+                Utilities.logError(context, e.getMessage());
                 response = e.getMessage();
             }
         }
@@ -303,5 +304,9 @@ public class AppScript {
     public String getTableCount () { return tableCount; }
     public String getResult(){ return response; }
     public String getOffSet(){ return offSet; }
+    public void disconnect(){
+        if(httpURLConnection != null)
+            httpURLConnection.disconnect();
+    }
 
 }

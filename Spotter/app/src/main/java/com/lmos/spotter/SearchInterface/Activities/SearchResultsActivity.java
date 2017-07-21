@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -28,14 +30,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationListener;
+import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
+import com.lmos.spotter.SyncService;
 import com.lmos.spotter.Utilities.Utilities;
 import com.squareup.picasso.Picasso;
 
@@ -82,8 +84,10 @@ public class SearchResultsActivity extends AppCompatActivity
     Utilities.LocationHandler locationHandler;
 
     Activity activity = this;
+    Place temp_place;
     String name;
     int tries = 0;
+    boolean sync = true;
     private String fragmentType;
 
     private void startBackgroundHeaderFadeIn(){
@@ -157,31 +161,15 @@ public class SearchResultsActivity extends AppCompatActivity
             }
             else {
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (fragmentType.equals("Home")) {
-                            loading_msg.setText(R.string.loading_msg_2);
-                            setHeaderText(params[1]);
-                            Place place = fetch_intent.getParcelable("Place");
-                            switchFragment("", "add", FragmentSearchResult.newInstance(place));
-                            contentSettings(
-                                    View.VISIBLE,
-                                    View.GONE,
-                                    200,
-                                    getResources().getColor(R.color.blackTransparent)
-                            );
-                            toggleLoadingScreen(View.GONE, AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
-                        }
-                        else {
-                            runTask(params);
-                        }
-                    }
-                });
+                if (fragmentType.equals("Home")) {
+                    loading_msg.setText(R.string.loading_mgs_3);
+                    temp_place = fetch_intent.getParcelable("Place");
+                }
 
+                runTask(params);
             }
-        }
 
+        }
     }
 
     @Override
@@ -255,13 +243,14 @@ public class SearchResultsActivity extends AppCompatActivity
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    contentSettings(View.GONE, View.GONE, 0, getResources().getColor(R.color.colorPrimary));
                     toggleLoadingScreen(View.VISIBLE, AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
                     fragmentManager.beginTransaction()
                             .addToBackStack("General")
                             .replace(view_id, fragment, type)
                             .commit();
 
-                    searchResultsTab.setVisibility(View.GONE);
+                    contentSettings(View.VISIBLE, View.GONE, 200, getResources().getColor(R.color.blackTransparent));
                     toggleLoadingScreen(View.GONE, AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                     setShowBookmarkInAppBar(true);
                     nsview.smoothScrollTo(0,0);
@@ -276,13 +265,20 @@ public class SearchResultsActivity extends AppCompatActivity
 
     public void queryFavorites(String cmd, String args, Place place){
 
-        dbHelper = new DbHelper(this, this);
+        SharedPreferences login_prefs = getSharedPreferences("LoginSharedPreference", MODE_PRIVATE);
+        if(login_prefs.getString("accountID", null) != null){
 
-        if(cmd.equals("add")) {
-            dbHelper.addToFavorites(place);
+            dbHelper = new DbHelper(this, this);
+            if(cmd.equals("add")) {
+                dbHelper.addToFavorites(place);
+            }
+            else
+                dbHelper.deleteBookmark(new String[] { args });
+
         }
-        else
-            dbHelper.deleteBookmark(new String[] { args });
+        else{
+            Utilities.showDialogActivity(this, Utilities.REQUEST_CODES.LOGIN_REQUEST, R.string.not_sign);
+        }
 
     }
 
@@ -312,9 +308,11 @@ public class SearchResultsActivity extends AppCompatActivity
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                appBarLayout.setActivated(activated);
-                appBarLayout.setExpanded(activated, activated);
-                appBarLayout.setVerticalScrollBarEnabled(activated);
+                /**if(activated) {
+                    appBarLayout.setActivated(activated);
+                    appBarLayout.setExpanded(activated, activated);
+                    appBarLayout.setVerticalScrollBarEnabled(activated);
+                }**/
             }
 
             @Override
@@ -322,6 +320,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 appBarLayout.setActivated(activated);
                 appBarLayout.setExpanded(activated, activated);
                 appBarLayout.setVerticalScrollBarEnabled(activated);
+                nsview.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -340,9 +339,9 @@ public class SearchResultsActivity extends AppCompatActivity
 
         // visibility
         desc_tab_holder.setVisibility(visibility);
-        nsview.setVisibility(visibility);
         actionBarView.setVisibility(visibility);
         searchResultsTab.setVisibility(tab_visibility);
+        nsview.smoothScrollTo(0,0);
 
         if(searchResultsTab.getVisibility() == View.GONE)
             value -= 50;
@@ -425,6 +424,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
     }
 
+    public void setTemp_place(Place place){ this.temp_place = place; }
+
     public void setShowBookmarkInAppBar(boolean val){
         showBookmarkInAppBar = val;
         invalidateOptionsMenu();
@@ -444,7 +445,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 return true;
 
             case R.id.add_to_bookmark:
-             //   addToFavorites();
+                queryFavorites("add", null, temp_place);
                 break;
 
 
@@ -478,18 +479,45 @@ public class SearchResultsActivity extends AppCompatActivity
 
     @Override
     public void onDbResponse(String response, final String undo_id) {
+
+        final String action_msg;
+
+        if(response.equals("Place has been bookmarked. Synchronizing."))
+            action_msg = "Undo";
+        else
+            action_msg = "Ok";
+
         Utilities.showSnackBar(
                 findViewById(R.id.search_view_wrapper),
                 response,
                 Snackbar.LENGTH_LONG,
-                "Undo",
+                action_msg,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        queryFavorites("undo", undo_id, null);
+                        if(action_msg.equals("Undo")) {
+                            queryFavorites("undo", undo_id, null);
+                            sync = false;
+                        }
+                    }
+                },
+                new BaseTransientBottomBar.BaseCallback() {
+                    @Override
+                    public void onDismissed(Object transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        if(action_msg.equals("Undo") && sync){
+                            SharedPreferences login_prefs = getSharedPreferences("LoginSharedPreference", MODE_PRIVATE);
+                            Intent bookmarkServer = new Intent(getApplicationContext(), SyncService.class);
+                            bookmarkServer.putExtra("action", "save");
+                            bookmarkServer.putExtra("accountID", login_prefs.getString("accountID", null));
+                            bookmarkServer.putExtra("placeID", undo_id);
+                            startService(bookmarkServer);
+                        }
+
                     }
                 }
         );
+
     }
 
     @Override
@@ -521,6 +549,9 @@ public class SearchResultsActivity extends AppCompatActivity
                         return;
                 }
                 break;
+            case Utilities.REQUEST_CODES.LOGIN_REQUEST:
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
         }
 
     }
@@ -533,14 +564,15 @@ public class SearchResultsActivity extends AppCompatActivity
 
         String type;
         String[] data;
+        int toggleTab = View.VISIBLE;
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(final String... params) {
 
             data = params;
+            String result = "";
 
             final Map<String, String> map_data = new HashMap<String, String>();
-
             type = params[0];
 
             switch (type){
@@ -553,50 +585,68 @@ public class SearchResultsActivity extends AppCompatActivity
                     map_data.put("field_ref", "Undefined");
                     map_data.put("field_ref_val", params[1]);
                     break;
+                case "Home":
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            switchFragment("", "add", FragmentSearchResult.newInstance(temp_place));
+                            setShowBookmarkInAppBar(true);
+                            setHeaderText(data[1]);
+                            contentSettings(
+                                    View.VISIBLE,
+                                    View.GONE,
+                                    200,
+                                    getResources().getColor(R.color.blackTransparent)
+                            );
+                        }
+                    });
+                    result = "Data loaded.";
+                    break;
                 default:
                     map_data.put("field_ref", "Name");
                     map_data.put("field_ref_val", params[1]);
                     break;
 
             }
-            Log.d("LOG", "connecting");
-            AppScript appScript = new AppScript(activity){{
-               setData("searchPlaces.php", map_data);
-            }};
 
-            String result = "";
+            if(!type.equals("Home")){
 
-            if(appScript.getResult() != null && appScript.getResult().equals("Data loaded.")){
+                final AppScript appScript = new AppScript(activity){{
+                    setData("searchPlaces.php", map_data);
+                }};
 
-                final List<Place> places = appScript.getPlacesList();
 
-                if(!places.isEmpty()){
+                if(appScript.getResult() != null && appScript.getResult().equals("Data loaded.")){
 
-                    result = appScript.getResult();
+                    final List<Place> placesList = appScript.getPlacesList();
 
-                    runOnUiThread(new Runnable() {
+                    if(!placesList.isEmpty()){
+
+                        result = appScript.getResult();
+
+                        runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                int toggleTab = View.VISIBLE;
+
                                 if(type.equals("General") || type.equals("Undefined"))
-                                    switchFragment("General", "add", FragmentSearchResultGeneral.newInstance("Hotel", places));
+                                    switchFragment("General", "add", FragmentSearchResultGeneral.newInstance("Hotel", placesList));
                                 else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
-                                    switchFragment("", "add", FragmentSearchResult.newInstance(places.get(0)));
+                                    switchFragment("", "add", FragmentSearchResult.newInstance(placesList.get(0)));
+                                    temp_place = placesList.get(0);
                                     setShowBookmarkInAppBar(true);
                                     toggleTab = View.GONE;
                                 }
-
                                 if(type.equals("Undefined")){
                                     setShowBookmarkInAppBar(false);
+                                    setHeaderText("Results for " + data[1]);
                                     contentSettings(
                                             View.VISIBLE,
                                             toggleTab,
                                             70,
                                             getResources().getColor(R.color.colorPrimary)
                                     );
-                                    place_name.setVisibility(View.GONE);
                                 }
-                                else{
+                                else {
                                     setHeaderText(data[1]);
                                     contentSettings(
                                             View.VISIBLE,
@@ -605,7 +655,6 @@ public class SearchResultsActivity extends AppCompatActivity
                                             getResources().getColor(R.color.blackTransparent)
                                     );
                                 }
-
                             }
                         });
 
@@ -619,6 +668,8 @@ public class SearchResultsActivity extends AppCompatActivity
                     result = appScript.getResult();
                 }
 
+            }
+
             return result;
 
         }
@@ -626,8 +677,8 @@ public class SearchResultsActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-
-            if(!(result != null && result.equals("Data loaded."))){
+            Log.d("SEARCH", result);
+            if(!result.equals("Data loaded.")){
                 loading_img.setImageResource(android.R.drawable.stat_notify_error);
                 if(tries < 5){
                     tries ++;

@@ -1,10 +1,12 @@
 package com.lmos.spotter;
 
-import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by emman on 7/18/2017.
@@ -19,18 +21,31 @@ public class SyncService extends IntentService {
 
     DbHelper dbHelper;
 
+    public SyncService(){
+        super("SyncService");
+    }
+
     public SyncService(String name) {
         super(name);
         setIntentRedelivery(true);
-        dbHelper = new DbHelper(getApplicationContext());
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-       // AppScript appScript = new AppScript((Activity) getApplicationContext()){{
-         //  setData("get-all-place-name.php", dbHelper.getLastKeyword());
-        //}};
+        AppScript appScript = new AppScript(getApplicationContext());
+        final Map<String, String> map_data = new HashMap<String, String>();
+
+        if(intent.getStringExtra("action").equals("save")){
+            Log.d("SyncService", "Starting ....");
+            map_data.put("action", intent.getStringExtra("action"));
+            map_data.put("accountID", intent.getStringExtra("accountID"));
+            map_data.put("placeID", intent.getStringExtra("placeID"));
+
+            appScript.setData("bookmark.php", map_data);
+
+        }
+
 
     }
 

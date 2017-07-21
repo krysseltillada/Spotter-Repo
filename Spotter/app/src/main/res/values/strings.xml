@@ -309,5 +309,8 @@
     <string name="loading_msg_3">In order to locate the places near you, please enable your GPS.</string>
     <string name="loading_msg_4">Connection failed. Please try again later.</string>
     <string name="loading_msg_5">You\'re not connected to the outside world. Please enable yout Wi-Fi or Mobile Data.</string>
+    <string name="not_sign">You must log in your account before you bookmark.</string>
+    <string name="recommended_lable">people recommended this.</string>
+    <string name="loading_mgs_3">Setting things up for you.</string>
 
 </resources>
