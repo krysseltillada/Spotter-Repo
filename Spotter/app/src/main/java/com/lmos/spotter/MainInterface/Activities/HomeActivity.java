@@ -131,7 +131,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-
+        //placeLoader.cancel();
     }
 
     @Override
@@ -827,16 +827,21 @@ public class HomeActivity extends AppCompatActivity
     private class PlaceLoader extends AsyncTask<String, Void, AppScript> {
 
         OnRespondError onRespondError;
+        AppScript loadPlaces;
 
         public PlaceLoader setOnRespondError(OnRespondError onRespondError) {
             this.onRespondError = onRespondError;
             return this;
         }
 
+        public void cancel(){
+            loadPlaces.disconnect();
+        }
+
         @Override
         protected AppScript doInBackground(final String... params) {
 
-            final AppScript loadPlaces = new AppScript(activity) {{
+            loadPlaces = new AppScript(activity) {{
                 setData("loadPlaces.php", new HashMap<String, String>() {{
                     put("currentRow", params[0]);
                     put("rowOffset", params[1]);

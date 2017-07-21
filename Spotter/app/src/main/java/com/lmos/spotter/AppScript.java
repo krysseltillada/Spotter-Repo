@@ -61,6 +61,7 @@ public class AppScript {
     private String offSet;
     private String tableCount;
     private List<Place> placeList;
+    private HttpURLConnection httpURLConnection;
 
     public AppScript(Context context){ this.context = context; }
 
@@ -110,7 +111,7 @@ public class AppScript {
 
             /** Initialize connection to server **/
             URL url = new URL(setUrl);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod(REQUEST_METHOD);
             httpURLConnection.setConnectTimeout(CONNECTION_TIME_OUT);
             httpURLConnection.setRequestProperty("connection", "close");
@@ -273,5 +274,9 @@ public class AppScript {
     public String getTableCount () { return tableCount; }
     public String getResult(){ return response; }
     public String getOffSet(){ return offSet; }
+    public void disconnect(){
+        if(httpURLConnection != null)
+            httpURLConnection.disconnect();
+    }
 
 }
