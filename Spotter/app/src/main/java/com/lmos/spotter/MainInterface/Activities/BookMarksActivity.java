@@ -313,7 +313,6 @@ public class BookMarksActivity extends AppCompatActivity {
 
     private void syncBookmarks (final String accountID) {
 
-
         RequestQueue requestBookmark = Volley.newRequestQueue(getApplicationContext());
 
         final ProgressDialog syncProgressDialog = new ProgressDialog(this);
