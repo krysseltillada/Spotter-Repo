@@ -852,12 +852,6 @@ public class HomeActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            loadPlaces.disconnect();
-        }
-
-        @Override
         protected AppScript doInBackground(final String... params) {
 
             loadPlaces = new AppScript(activity) {{

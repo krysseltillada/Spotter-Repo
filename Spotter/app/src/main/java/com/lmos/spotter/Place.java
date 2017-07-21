@@ -62,6 +62,8 @@ public class Place implements Parcelable {
 
     }
 
+    public void setPlaceRating (String pr) {this.rating = pr;}
+
     public void setplaceName(String placeName){this.placeName = placeName;}
 
     public void setplaceAddress(String placeAddress){this.placeAddress = placeAddress;}

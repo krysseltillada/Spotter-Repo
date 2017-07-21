@@ -188,34 +188,34 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
                 else if (placeRating <= 5.0 && placeRating >= 4.0)
                     ratingScale = "Excellent";
 
-                try {
-
-
-
-                    String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
-                            .getPlaceImageLink())
-                            .getString("placeImages"))
-                            .getString("frontImage");
-
-                    Picasso.with(context)
-                            .load(frontPlaceImageLink)
-                            .resize(90, 90)
-                            .placeholder(R.drawable.loadingplace)
-                            .into(mainInterfaceViewHolder.placeCompanyImage);
-
-
-                } catch (JSONException e) {
-                    Log.d("debug", e.getMessage());
-                }
-
                 String recommend = places.get(position).getRecommended();
-
 
                 mainInterfaceViewHolder.txtReview.setText(ratingScale + "(" + userReviews + " reviews)");
                 mainInterfaceViewHolder.txtRecommend.setText(recommend + " people recommend this");
                 mainInterfaceViewHolder.txtGeneralRatingDigit.setText(places.get(position).getRating());
+                mainInterfaceViewHolder.txtPrice.setText(places.get(position).getPlacePriceRange());
+
 
             }
+
+            try {
+
+                String frontPlaceImageLink = new JSONObject(new JSONObject(places.get(position)
+                        .getPlaceImageLink())
+                        .getString("placeImages"))
+                        .getString("frontImage");
+
+                Picasso.with(context)
+                        .load(frontPlaceImageLink)
+                        .resize(90, 90)
+                        .placeholder(R.drawable.loadingplace)
+                        .into(mainInterfaceViewHolder.placeCompanyImage);
+
+
+            } catch (JSONException e) {
+                Log.d("debug", e.getMessage());
+            }
+
 
 
             if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
@@ -233,7 +233,6 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             mainInterfaceViewHolder.txtPlaceName.setText(places.get(position).getPlaceName());
             mainInterfaceViewHolder.txtLocation.setText(places.get(position).getPlaceLocality());
-            mainInterfaceViewHolder.txtPrice.setText(places.get(position).getPlacePriceRange());
 
             setAnimation(mainInterfaceViewHolder.rowV.findViewById(R.id.placeItemRow), position);
 
@@ -291,7 +290,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
         public CheckBox cbDelete;
         View rowV;
 
-        public MainInterfaceViewHolder (View rowView) {
+        public MainInterfaceViewHolder (final View rowView) {
 
             super(rowView);
 
@@ -310,15 +309,26 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
             if (activityType == ActivityType.BOOKMARKS_ACTIVITY_DELETE_MODE) {
                 cbDelete = (CheckBox) rowView.findViewById(R.id.cbDelete);
 
-                rowView.findViewById(R.id.placeItemRow).setOnClickListener(new View.OnClickListener() {
+
+                rowV.setOnClickListener(new View.OnClickListener() {
+
                     @Override
                     public void onClick(View v) {
 
-                        CheckBox cbDelete = (CheckBox) v.findViewById(R.id.cbDelete);
-                        cbDelete.toggle();
+                        CheckBox cb = (CheckBox) v.findViewById(R.id.cbDelete);
+                        cb.toggle();
 
-                        setDeleteListener(v);
-                     }
+                        toggleDelete(v);
+
+                    }
+                });
+
+                cbDelete.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        toggleDelete(rowView);
+                    }
                 });
 
 
@@ -329,7 +339,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
         }
 
-        private void setDeleteListener (View v) {
+        private void toggleDelete (View v) {
 
             String placeName = ((TextView)v.findViewById(R.id.txtPlaceName)).getText().toString();
 

@@ -18,7 +18,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/place3" />
+                app:srcCompat="@drawable/loadingplace" />
 
             <TextView
                 android:id="@+id/txtPlaceName"
@@ -41,15 +41,7 @@
 
 
 
-            <TextView
-                android:id="@+id/txtPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="110dp"
-                android:layout_marginTop= "80dp"
-                android:text="₱200.00 - 1000.0"
-                android:textSize="12sp"
-                />
+
 
 
         </FrameLayout>

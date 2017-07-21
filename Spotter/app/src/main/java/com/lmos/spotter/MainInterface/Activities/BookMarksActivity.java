@@ -22,9 +22,16 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -360,6 +367,109 @@ public class BookMarksActivity extends AppCompatActivity {
 
     }
 
+    private String[] getDeletedBookmarks () {
+        List<String> placeNameList = new ArrayList<>();
+
+        for (String placeKey : MainInterfaceAdapter.getCheckToggleMap().keySet()) {
+
+            for (int i = 0; i != MainInterfaceAdapter.getCheckToggleMap().get(placeKey).size(); ++i) {
+
+                String placeName = MainInterfaceAdapter.getCheckToggleMap().get(placeKey).get(i);
+
+                for (String bookmarkKey : bookmarkedPlaceList.keySet()) {
+
+                    for (int a = 0; a != bookmarkedPlaceList.get(bookmarkKey).size(); ++a) {
+
+                        Place bookmarkPlace = bookmarkedPlaceList.get(bookmarkKey).get(a);
+
+                        if (bookmarkPlace.getPlaceName().equals(placeName)) {
+                            placeNameList.add(bookmarkPlace.getPlaceID());
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        String[] placeIDArray = new String[placeNameList.size()];
+        placeIDArray = placeNameList.toArray(placeIDArray);
+
+        return placeIDArray;
+    }
+
+    private void deleteBookmarksOnCloud (final String accountID, final String jsonDeletedBookmarks) {
+
+        RequestQueue deleteRequest = Volley.newRequestQueue(getApplicationContext());
+
+        final ProgressDialog deleteBookmarksProgress = new ProgressDialog(this);
+
+        deleteBookmarksProgress.setIndeterminate(true);
+        deleteBookmarksProgress.setMessage("deleting bookmarks on cloud");
+        deleteBookmarksProgress.setCancelable(false);
+        deleteBookmarksProgress.show();
+
+        StringRequest deleteStringRequest = new StringRequest(Request.Method.POST,
+                "http://admin-spotter.000webhostapp.com/app_scripts/deleteBookmarks.php",
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        if (response.equals("true")) {
+
+                            deleteBookmarksProgress.dismiss();
+
+                            refreshBookmarks();
+
+                            invalidateOptionsMenu();
+
+                            MainInterfaceAdapter.setAllCheckToggleStates(false);
+                            MainInterfaceAdapter.getCheckToggleMap().clear();
+
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        NetworkResponse networkResponse = error.networkResponse;
+                        if (networkResponse != null) {
+                            Log.d("debug", "Error. HTTP Status Code:"+networkResponse.statusCode);
+                        }
+
+                        if (error instanceof TimeoutError) {
+                            Log.d("debug", "TimeoutError");
+                        }else if(error instanceof NoConnectionError){
+                            Log.d("debug", "NoConnectionError");
+                        } else if (error instanceof AuthFailureError) {
+                            Log.d("debug", "AuthFailureError");
+                        } else if (error instanceof ServerError) {
+                            Log.d("debug", "ServerError");
+                        } else if (error instanceof NetworkError) {
+                            Log.d("debug", "NetworkError");
+                        } else if (error instanceof ParseError) {
+                            Log.d("debug", "ParseError");
+                        }
+
+                        deleteBookmarksProgress.dismiss();
+                    }
+                }){
+                protected Map<String, String> getParams() {
+                    return new HashMap<String, String>(){{
+                        put("accountID", accountID);
+                        put("placeIDJSON", jsonDeletedBookmarks);
+                    }};
+                }
+        };
+
+        deleteRequest.add(deleteStringRequest);
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -475,51 +585,64 @@ public class BookMarksActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    List<String> placeNameList = new ArrayList<>();
+                                    new AlertDialog.Builder(BookMarksActivity.this)
+                                                   .setMessage("do you want also to delete your bookmarks on cloud?")
+                                                   .setPositiveButton("yes", new DialogInterface.OnClickListener() {
 
-                                    for (String placeKey : MainInterfaceAdapter.getCheckToggleMap().keySet()) {
+                                                       @Override
+                                                       public void onClick(DialogInterface dialog, int which) {
 
-                                        for (int i = 0; i != MainInterfaceAdapter.getCheckToggleMap().get(placeKey).size(); ++i) {
+                                                           try {
 
-                                            String placeName = MainInterfaceAdapter.getCheckToggleMap().get(placeKey).get(i);
+                                                               JSONArray deleteBookmarkArray = new JSONArray();
+                                                               JSONObject deleteUserBookmarks = new JSONObject();
 
-                                            for (String bookmarkKey : bookmarkedPlaceList.keySet()) {
+                                                               String[] placeIDArray = getDeletedBookmarks();
 
-                                                for (int a = 0; a != bookmarkedPlaceList.get(bookmarkKey).size(); ++a) {
+                                                               for (String placeID : placeIDArray)
+                                                                   deleteBookmarkArray.put(placeID);
 
-                                                    Place bookmarkPlace = bookmarkedPlaceList.get(bookmarkKey).get(a);
+                                                               deleteUserBookmarks.put("userDeletedBookmarks", deleteBookmarkArray);
 
-                                                    if (bookmarkPlace.getPlaceName().equals(placeName)) {
-                                                        placeNameList.add(bookmarkPlace.getPlaceID());
-                                                    }
+                                                               bookmarksDB.deleteBookmark(placeIDArray);
 
-                                                }
+                                                               deleteBookmarksOnCloud(userData.getString("accountID", ""),
+                                                                                      deleteUserBookmarks.toString());
 
-                                            }
+                                                               Log.d("debug", deleteUserBookmarks.toString());
 
-                                        }
+                                                           } catch (JSONException e) {
+                                                               Log.d("debug", e.getMessage());
+                                                           }
 
-                                    }
+                                                       }
 
-                                    String[] placeIDArray = new String[placeNameList.size()];
-                                    placeIDArray = placeNameList.toArray(placeIDArray);
 
-                                    bookmarksDB.deleteBookmark(placeIDArray);
+                                                   })
+                                                   .setNegativeButton("no", new DialogInterface.OnClickListener() {
 
-                                    refreshBookmarks();
+                                                       @Override
+                                                       public void onClick(DialogInterface dialog, int which) {
+                                                           bookmarksDB.deleteBookmark(getDeletedBookmarks());
 
-                                    invalidateOptionsMenu();
+                                                           refreshBookmarks();
 
-                                    MainInterfaceAdapter.setAllCheckToggleStates(false);
-                                    MainInterfaceAdapter.getCheckToggleMap().clear();
+                                                           invalidateOptionsMenu();
+
+                                                           MainInterfaceAdapter.setAllCheckToggleStates(false);
+                                                           MainInterfaceAdapter.getCheckToggleMap().clear();
+                                                       }
+                                                   })
+                                                   .show();
+
+
 
                                 }
                             })
                             .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
-
+                                    dialog.dismiss();
                                 }
                             })
                             .create()
@@ -599,6 +722,9 @@ public class BookMarksActivity extends AppCompatActivity {
                     place.setplaceImageLink(bookmarkElement.getString("Image"));
                     place.setPlaceLat(bookmarkElement.getString("Latitude"));
                     place.setPlaceLng(bookmarkElement.getString("Longitude"));
+                    place.setPlaceRating(bookmarkElement.getString("Rating"));
+                    place.setRecommended(bookmarkElement.getString("Recommended"));
+                    place.setBookmarks(bookmarkElement.getString("Bookmarks"));
 
                     bookmarkDB.addToFavorites(place);
 

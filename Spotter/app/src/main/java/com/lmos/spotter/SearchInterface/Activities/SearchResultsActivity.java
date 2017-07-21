@@ -214,7 +214,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
                 Picasso.with(this)
                         .load(json_prevImg.get(i).toString())
-                        .placeholder(R.drawable.loadingplace)
+                        .placeholder(R.drawable.landscape_placeholder)
                         .into(prevImages[i]);
 
             }
