@@ -131,13 +131,13 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        //placeLoader.cancel();
+        placeLoader.cancel(true);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        /** Re-run placeLoader here **/
         displayUserInfo();
     }
 
@@ -834,7 +834,9 @@ public class HomeActivity extends AppCompatActivity
             return this;
         }
 
-        public void cancel(){
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
             loadPlaces.disconnect();
         }
 
