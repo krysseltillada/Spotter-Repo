@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -73,6 +72,10 @@ import java.util.Map;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     
+    String pageCount = "10";
+    SharedPreferences userData;
+    PlaceLoader placeLoader;
+    PlaceLoader itemLoader;
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -88,35 +91,22 @@ public class HomeActivity extends AppCompatActivity
     private ProgressBar recycleViewProgressBar;
     private TabLayout tabLayout;
     private TextView mostPopularName;
-
     private ImageView userProfileImage;
     private TextView userName;
     private TextView userEmail;
-
     private int startingIndex;
     private int tableCount;
-
     private String placeType;
     private Activity activity = this;
     private ActionBarDrawerToggle drawerToggle;
-
     private List<Place> placeDataList;
-
     private ViewFlipper viewFlipperManager;
     private LinearLayout backgroundMostPopular;
     private ImageView[] mostPopularImages;
     private String[] mostPopularNames;
-
     private SwipeRefreshLayout pullUpLoadLayout;
-
     private AdView bannerAdView;
-
-    String pageCount = "10";
-
-    SharedPreferences userData;
-
     private InterstitialAd interstitialAd;
-
     private boolean isLoadingItem = false;
     private boolean isLoadingPlace = false;
 
@@ -141,6 +131,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+
     }
 
     @Override
@@ -149,7 +140,6 @@ public class HomeActivity extends AppCompatActivity
 
         displayUserInfo();
     }
-
 
     public void userNavDropDown(View view) {
 
@@ -173,19 +163,9 @@ public class HomeActivity extends AppCompatActivity
 
                     case R.id.sign_out:
                         Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
-
                         SharedPreferences.Editor userDataEdit = userData.edit();
-
-                        userDataEdit.putString("status", "Logged out");
-                        userDataEdit.putString("accountName", "");
-                        userDataEdit.putString("accountUsername", "");
-                        userDataEdit.putString("accountEmail", "");
-                        userDataEdit.putString("accountPassword", "");
-                        userDataEdit.putString("accountImage", "");
-
+                        userDataEdit.clear();
                         userDataEdit.apply();
-
-
                         break;
 
                     case R.id.user_settings:
@@ -211,9 +191,6 @@ public class HomeActivity extends AppCompatActivity
         userNavDropDownMenu.show();
 
     }
-
-    PlaceLoader placeLoader;
-    PlaceLoader itemLoader;
 
     private void loadPlacesFromServer(final String pType, final String sType) {
 
@@ -910,6 +887,7 @@ public class HomeActivity extends AppCompatActivity
             }
 
         }
+
     }
 }
 

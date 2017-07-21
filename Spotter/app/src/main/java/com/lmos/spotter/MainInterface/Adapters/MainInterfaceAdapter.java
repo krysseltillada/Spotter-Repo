@@ -11,7 +11,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lmos.spotter.MainInterface.Activities.BookMarksActivity;
 import com.lmos.spotter.Place;
@@ -338,22 +337,8 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
 
             } else if (activityType == ActivityType.HOME_ACTIVITY ||
                        activityType == ActivityType.BOOKMARKS_ACTIVITY_NORMAL_MODE) {
-
-                rowView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Toast.makeText(context,
-                                       "place: " + txtPlaceName.getText() + "\n" +
-                                       "row item position: " + getPosition()    ,
-                                       Toast.LENGTH_LONG).show();
-
-                    }
-                });
-
+                rowView.setOnClickListener(this);
             }
-
-            rowView.setOnClickListener(this);
 
         }
 

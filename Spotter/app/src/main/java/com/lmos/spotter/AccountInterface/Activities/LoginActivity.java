@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lmos.spotter.AccountInterface.Fragments.FragmentRecover;
@@ -25,17 +23,15 @@ import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.Utilities;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
 
     public static final String LOGIN_PREFS = "LoginSharedPreference";
-
+    public static SharedPreferences.Editor set_login_prefs;
     ImageView imgHolder;
     SharedPreferences login_prefs;
-    public static SharedPreferences.Editor set_login_prefs;
     Activity activity = this;
 
     @Override

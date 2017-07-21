@@ -1,12 +1,10 @@
 package com.lmos.spotter;
 
 import android.app.Activity;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,8 +27,8 @@ import java.io.File;
 public class SplashScreen extends AppCompatActivity {
 
     private static final String LOGIN_PREFS = "LoginSharedPreference";
-    TextView splash_msg;
     final int SPLASH_REQUEST = 1902;
+    TextView splash_msg;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +70,17 @@ public class SplashScreen extends AppCompatActivity {
         super.onResume();
         if(Utilities.checkNetworkState(this))
             new GetPlaceNames(this).execute();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == SPLASH_REQUEST && resultCode == RESULT_OK)
+            startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+        else
+            finish();
+
     }
 
     class GetPlaceNames extends AsyncTask<Void, String, Void>{
@@ -125,16 +134,5 @@ public class SplashScreen extends AppCompatActivity {
             super.onPostExecute(aVoid);
             finishSplash();
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == SPLASH_REQUEST && resultCode == RESULT_OK)
-            startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
-        else
-            finish();
-
     }
 }

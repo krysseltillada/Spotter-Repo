@@ -50,33 +50,34 @@
             android:theme="@style/loginTheme" />
         <activity
             android:name=".SearchInterface.Activities.SearchResultsActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTop">
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
         </activity>
         <activity
             android:name=".MainInterface.Activities.SettingsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_settings"
 
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_settings" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainInterface.Activities.BookMarksActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_book_marks"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DialogActivity"
-            android:screenOrientation="portrait"
             android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
             android:theme="@style/DialogTheme" />
+
         <activity
             android:name=".SearchInterface.Activities.ReviewActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_review"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
@@ -88,8 +89,7 @@
                 android:value=".SearchInterface.Activities.SearchResultsActivity" />
         </activity>
 
-        <service
-            android:name=".SyncService"
+        <service android:name=".SyncService"
             android:exported="false" />
 
     </application>
