@@ -156,56 +156,6 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    public void userNavDropDown(View view) {
-
-        PopupMenu userNavDropDownMenu = new PopupMenu(HomeActivity.this, view);
-
-        if (userData.getString("status", "").equals("Logged In")) {
-
-            userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu_login, userNavDropDownMenu.getMenu());
-
-        } else {
-            userNavDropDownMenu.getMenuInflater().inflate(R.menu.popupmenu_guest, userNavDropDownMenu.getMenu());
-
-        }
-
-        userNavDropDownMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                switch (item.getItemId()) {
-
-                    case R.id.sign_out:
-                        Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
-                        SharedPreferences.Editor userDataEdit = userData.edit();
-                        userDataEdit.clear();
-                        userDataEdit.apply();
-                        break;
-
-                    case R.id.user_settings:
-                        Utilities.OpenActivity(getApplicationContext(), SettingsActivity.class, null);
-                        break;
-
-                    case R.id.sign_in:
-                        Utilities.OpenActivity(getApplicationContext(), LoginActivity.class, activity);
-                        break;
-
-
-                }
-
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                }
-
-                return true;
-            }
-
-        });
-
-        userNavDropDownMenu.show();
-
-    }
 
     private void loadPlacesFromServer(final String pType, final String sType) {
 
@@ -599,6 +549,11 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        if (userData.getString("status", "").equals("Logged In"))
+            navigationView.inflateMenu(R.menu.main_drawer);
+        else
+            navigationView.inflateMenu(R.menu.main_drawer_guest);
+
         View headerLayout = navigationView.getHeaderView(0);
 
         userName = (TextView)headerLayout.findViewById(R.id.userName);
@@ -785,6 +740,18 @@ public class HomeActivity extends AppCompatActivity
         }
 
         switch (item.getItemId()) {
+
+            case R.id.signIn:
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
+
+            case R.id.signOut:
+                SharedPreferences.Editor editor = userData.edit();
+                editor.putString("status", "false");
+                editor.apply();
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
+
             case R.id.Home:
                 loadPlacesByType("General");
                 break;

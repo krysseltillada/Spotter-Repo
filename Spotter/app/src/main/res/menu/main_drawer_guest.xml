@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:checkableBehavior="single"
+        android:title = "Menu"
+        android:id = "@+id/menuTitle">
+
+        <menu>
+            <item
+                android:id="@+id/Home"
+                android:icon = "@drawable/ic_home_black_24dp"
+                android:title="Home" />
+            <item
+                android:id="@+id/Hotels"
+                android:icon="@drawable/hotel"
+                android:title="Hotels" />
+
+            <item
+
+                android:id = "@+id/TouristSpots"
+                android:icon = "@drawable/tourist"
+                android:title = "Tourist spots"
+
+                />
+
+            <item
+
+                android:id = "@+id/Restaurants"
+                android:icon = "@drawable/restaurant"
+                android:title = "Restaurants"
+
+                />
+
+            <item
+
+                android:icon="@drawable/ic_book_white_48dp"
+                android:id = "@+id/Favorites"
+                android:title = "Bookmarks"
+
+                />
+
+        </menu>
+
+    </item>
+
+    <item android:title="Settings"
+        android:id="@+id/settingsTitle">
+        <menu>
+
+            <item
+                android:id="@+id/Settings"
+                android:icon="@drawable/settings"
+                android:title="Settings"
+                />
+
+            <item
+                android:icon="@drawable/ic_person_white_48dp"
+                android:id="@+id/signIn"
+                android:title="Sign In"
+                />
+
+        </menu>
+    </item>
+
+</menu>

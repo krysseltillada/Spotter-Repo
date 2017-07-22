@@ -63,23 +63,6 @@
         </LinearLayout>
 
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground">
-
-            <ImageButton
-                android:id="@+id/userNavDropDown"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="25dp"
-                android:background="@drawable/ic_expand_more_white_48dp"
-                android:onClick="userNavDropDown" />
-
-        </FrameLayout>
-
-
     </LinearLayout>
 
 

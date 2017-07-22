@@ -49,6 +49,16 @@ public class LoginActivity extends AppCompatActivity {
     DbHelper bookmarksDB;
     Activity activity = this;
 
+    public interface OnSignUpListener {
+        void OnSignUp (String response);
+    }
+
+    OnSignUpListener onSignUpListener;
+
+    public void setOnSignUpListener (OnSignUpListener onSignUpListener) {
+        this.onSignUpListener = onSignUpListener;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +162,9 @@ public class LoginActivity extends AppCompatActivity {
                         place.setplaceImageLink(bookmarkElement.getString("Image"));
                         place.setPlaceLat(bookmarkElement.getString("Latitude"));
                         place.setPlaceLng(bookmarkElement.getString("Longitude"));
+                        place.setPlaceRating(bookmarkElement.getString("Rating"));
+                        place.setRecommended(bookmarkElement.getString("Recommended"));
+                        place.setBookmarks(bookmarkElement.getString("Bookmarks"));
 
                         bookmarksDB.checkAndAddBookmark(place);
 
@@ -182,6 +195,8 @@ public class LoginActivity extends AppCompatActivity {
         requestBoomarks.add(stringRequestBookmarks);
 
     }
+
+
 
     /**
      *
@@ -235,6 +250,10 @@ public class LoginActivity extends AppCompatActivity {
             pd.dismiss();
 
             Log.d("debug", response);
+
+            if (onSignUpListener != null) {
+                onSignUpListener.OnSignUp(response);
+            }
 
             if(response.equals("Sign in success.")){
 

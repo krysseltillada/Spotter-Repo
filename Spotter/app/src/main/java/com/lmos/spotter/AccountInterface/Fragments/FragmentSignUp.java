@@ -107,6 +107,22 @@ public class FragmentSignUp extends Fragment {
                             "register.php",
                             map_data
                     );
+
+                    ((LoginActivity) getContext()).setOnSignUpListener(new LoginActivity.OnSignUpListener() {
+
+                        @Override
+                        public void OnSignUp(String response) {
+                            if (response.equals("Account has been registered.")) {
+                                username.setText("");
+                                name.setText("");
+                                email.setText("");
+                                password.setText("");
+                                register_img.setImageDrawable(getResources().getDrawable(R.drawable.account));
+                            }
+                        }
+                    });
+
+
                 }
                 else {
                     Toast.makeText(

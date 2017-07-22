@@ -53,6 +53,12 @@
                 android:title="Settings"
                 />
 
+            <item
+                android:icon="@drawable/ic_person_white_48dp"
+                android:id="@+id/signOut"
+                android:title="Sign Out"
+                />
+
         </menu>
     </item>
 
