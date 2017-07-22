@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:clickable="true"
     android:background="@drawable/layout_white_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="110dp"
         android:background="?attr/selectableItemBackground"
         android:orientation="horizontal">
 
@@ -91,12 +91,12 @@
                 android:id="@+id/isRecommended"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:layout_alignParentRight="true"
                 android:layout_below="@id/bookmarkImageIcon"
-                android:layout_marginRight="2dp"
+                android:layout_marginRight="6dp"
                 android:layout_marginTop="86dp"
                 android:background="@drawable/ic_thumb_up_black_48dp"
-                android:backgroundTint="@color/colorPrimary" />
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_alignEnd="@+id/grade_icon" />
 
         </RelativeLayout>
 

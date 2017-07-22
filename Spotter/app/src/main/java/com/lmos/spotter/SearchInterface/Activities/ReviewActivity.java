@@ -131,31 +131,33 @@ public class ReviewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (userPreference.getString("status", "").equals("Logged In")) {
+                if (reviewProgressBar.getVisibility() != View.VISIBLE) {
 
-                    ReviewDialogFragment reviewDialogFragment = new ReviewDialogFragment();
+                    if (userPreference.getString("status", "").equals("Logged In")) {
 
-                    reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
-                        @Override
-                        public void reviewPost(String placeID) {
-                            loadReviews(placeID);
-                        }
-                    });
+                        ReviewDialogFragment reviewDialogFragment = new ReviewDialogFragment();
 
-                    reviewDialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
-                    reviewDialogFragment.show(getSupportFragmentManager(), "reviewDialogFragment");
+                        reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
+                            @Override
+                            public void reviewPost(String placeID) {
+                                loadReviews(placeID);
+                            }
+                        });
 
-                } else {
+                        reviewDialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
+                        reviewDialogFragment.show(getSupportFragmentManager(), "reviewDialogFragment");
 
-                    new AlertDialog.Builder(ReviewActivity.this).setTitle("sign in")
+                    } else {
+
+                        new AlertDialog.Builder(ReviewActivity.this).setTitle("sign in")
                                                                     .setMessage("sign in to post a review")
                                                                     .setPositiveButton("sign in", new DialogInterface.OnClickListener() {
 
                                                                         @Override
                                                                         public void onClick(DialogInterface dialog, int which) {
                                                                             Utilities.OpenActivity(getApplicationContext(),
-                                                                                                   LoginActivity.class,
-                                                                                                   null);
+                                                                                    LoginActivity.class,
+                                                                                    null);
                                                                         }
                                                                     })
                                                                     .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -166,6 +168,8 @@ public class ReviewActivity extends AppCompatActivity {
 
                                                                         }
                                                                     }).show();
+
+                    }
 
                 }
 

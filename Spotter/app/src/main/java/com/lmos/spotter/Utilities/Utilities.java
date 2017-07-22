@@ -40,6 +40,7 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.TextAppearanceSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -507,6 +508,7 @@ public class Utilities {
                 searchCursor.getString(4) };
         return selectedItem;
     }
+
 
     public static void changeActionBarLayout (AppCompatActivity activity, Toolbar toolbar, Menu menu,
                                               int menuLayout, String title) {

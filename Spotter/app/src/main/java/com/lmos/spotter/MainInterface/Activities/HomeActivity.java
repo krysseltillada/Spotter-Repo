@@ -26,6 +26,9 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -88,7 +91,7 @@ public class HomeActivity extends AppCompatActivity
     private AppBarLayout appBarLayout;
     private MainInterfaceAdapter mainInterfaceAdapter;
     private RecyclerView tabLayoutRecyclerView;
-    private ProgressBar itemListProgressBar;
+    NavigationView navigationView;
     private ProgressBar recycleViewProgressBar;
     private TabLayout tabLayout;
     private TextView mostPopularName;
@@ -104,7 +107,7 @@ public class HomeActivity extends AppCompatActivity
     private ViewFlipper viewFlipperManager;
     private LinearLayout backgroundMostPopular;
     private ImageView[] mostPopularImages;
-    private String[] mostPopularNames;
+    private Place[] mostPopularPlaces;
     private SwipeRefreshLayout pullUpLoadLayout;
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
@@ -118,7 +121,10 @@ public class HomeActivity extends AppCompatActivity
         placeDataList = new ArrayList<>();
 
         mostPopularImages = new ImageView[3];
-        mostPopularNames = new String[3];
+        mostPopularPlaces = new Place[3];
+
+        for (int i = 0; i != mostPopularPlaces.length; ++i)
+            mostPopularPlaces[i] = new Place();
 
         initComp();
 
@@ -365,7 +371,11 @@ public class HomeActivity extends AppCompatActivity
 
     private void displayUserInfo () {
 
+        navigationView.getMenu().clear();
+
         if (userData.getString("status", "").equals("Logged In")) {
+
+            navigationView.inflateMenu(R.menu.main_drawer);
 
             Log.d("debug", "username: " + userData.getString("accountUsername", ""));
             Log.d("debug", "email: " + userData.getString("accountEmail", ""));
@@ -382,14 +392,26 @@ public class HomeActivity extends AppCompatActivity
 
         } else {
 
+            navigationView.inflateMenu(R.menu.main_drawer_guest);
+
             userProfileImage.setImageDrawable(getResources().getDrawable(R.drawable.account));
             userName.setText("Guest");
             userEmail.setVisibility(View.INVISIBLE);
 
         }
 
+        changeItemTitleColor(R.id.menuTitle, R.color.white);
+        changeItemTitleColor(R.id.settingsTitle, R.color.white);
 
     }
+
+    private void changeItemTitleColor (int itemID, int itemColor) {
+        MenuItem menuItem = navigationView.getMenu().findItem(itemID);
+        SpannableString s = new SpannableString(menuItem.getTitle());
+        s.setSpan(new ForegroundColorSpan(getResources().getColor(itemColor)), 0, s.length(), 0);
+        menuItem.setTitle(s);
+    }
+
 
     private void initComp() {
 
@@ -460,7 +482,6 @@ public class HomeActivity extends AppCompatActivity
         tabLayout = (TabLayout) findViewById(R.id.home_tabLayout);
 
         recycleViewProgressBar = (ProgressBar) findViewById(R.id.recycleViewProgressBar);
-        itemListProgressBar = (ProgressBar) findViewById(R.id.item_progress_bar);
 
         homeNestedScrollView = (NestedScrollView) findViewById(R.id.homeContentScrollView);
 
@@ -546,13 +567,8 @@ public class HomeActivity extends AppCompatActivity
 
         drawerToggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        if (userData.getString("status", "").equals("Logged In"))
-            navigationView.inflateMenu(R.menu.main_drawer);
-        else
-            navigationView.inflateMenu(R.menu.main_drawer_guest);
 
         View headerLayout = navigationView.getHeaderView(0);
 
@@ -652,7 +668,7 @@ public class HomeActivity extends AppCompatActivity
 
                                 }
 
-                                mostPopularNames[i] = mostPopularData.getString("Name");
+                                mostPopularPlaces[i].setplaceName(mostPopularData.getString("Name"));
 
                             }
 
@@ -685,7 +701,7 @@ public class HomeActivity extends AppCompatActivity
     private void startMostPopularFlipping() {
 
         viewFlipperManager.setDisplayedChild(0);
-        mostPopularName.setText(mostPopularNames[0]);
+        mostPopularName.setText(mostPopularPlaces[0].getPlaceName());
 
         viewFlipperManager.setVisibility(View.VISIBLE);
         backgroundMostPopular.setVisibility(View.VISIBLE);
@@ -709,12 +725,11 @@ public class HomeActivity extends AppCompatActivity
         viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
         viewFlipperManager.setFlipInterval(3000);
 
-
         viewFlipperManager.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
 
             @Override
             public void onAnimationStart(Animation animation) {
-                mostPopularName.setText(mostPopularNames[viewFlipperManager.getDisplayedChild()]);
+                mostPopularName.setText(mostPopularPlaces[viewFlipperManager.getDisplayedChild()].getPlaceName());
             }
 
             @Override
