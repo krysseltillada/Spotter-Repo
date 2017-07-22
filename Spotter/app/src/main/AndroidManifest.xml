@@ -63,7 +63,7 @@
             android:name=".MainInterface.Activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".MainInterface.Activities.BookMarksActivity"
             android:label="@string/title_activity_book_marks"

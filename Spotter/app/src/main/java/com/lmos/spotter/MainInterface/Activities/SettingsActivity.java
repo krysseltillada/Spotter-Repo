@@ -68,6 +68,44 @@ public class SettingsActivity extends PreferenceActivity  {
 
     }
 
+    private void clearBookmarks (final String accountID) {
+
+        RequestQueue clearBookmarksRequest = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest clearBookmarks = new StringRequest(Request.Method.POST,
+                "http://admin-spotter.000webhostapp.com/app_scripts/clearBookmarks.php",
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        if (response.equals("cleared")) {
+                            bookmarksDB.clearBookmarks();
+                            Toast.makeText(getApplicationContext(), "bookmarks cleared", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }){
+
+                protected Map<String, String> getParams() {
+
+                    return new HashMap<String, String>() {{
+                        put("accountID", accountID);
+                    }};
+
+                }
+
+        };
+
+        clearBookmarksRequest.add(clearBookmarks);
+
+    }
+
 
     SharedPreferences.OnSharedPreferenceChangeListener userChangePreference = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
@@ -170,14 +208,14 @@ public class SettingsActivity extends PreferenceActivity  {
                 public boolean onPreferenceClick(Preference preference) {
 
                     new AlertDialog.Builder(SettingsActivity.this)
-                                    .setTitle("delete bookmark")
+                                    .setTitle("delete bookmarks")
                                     .setMessage("would you like also to delete your saved bookmarks oncloud")
                                     .setPositiveButton("yes", new DialogInterface.OnClickListener() {
 
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
 
-
+                                            clearBookmarks(userData.getString("accountID", ""));
 
                                         }
                                     })
@@ -186,7 +224,7 @@ public class SettingsActivity extends PreferenceActivity  {
                                         public void onClick(DialogInterface dialog, int which) {
 
                                             bookmarksDB.clearBookmarks();
-                                            Toast.makeText(getApplicationContext(), "bookmarks erased", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), "bookmarks cleared", Toast.LENGTH_LONG).show();
 
                                         }
                                     })
@@ -290,21 +328,12 @@ public class SettingsActivity extends PreferenceActivity  {
             protected Map<String, String> getParams () {
                 return new HashMap<String, String>(){{
 
-
                    put("accountID", userData.getString("accountID", ""));
                    put("userName", modifiedAccount.userName);
                    put("name", modifiedAccount.name);
                    put("email", modifiedAccount.email);
                    put("password", modifiedAccount.password);
                    put("typeInfo", typeInfo);
-
-                    /*
-                    put("accountID", "201707050318202546");
-                    put("userName", "judyando");
-                    put("name", "finalexistence");
-                    put("email", "judyando@gmail.com");
-                    put("password", "kryssel2821"); */
-
 
                 }};
             }
