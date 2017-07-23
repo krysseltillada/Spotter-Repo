@@ -31,6 +31,7 @@ import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.ReviewActivity;
 import com.lmos.spotter.UserReview;
+import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.HashMap;
 

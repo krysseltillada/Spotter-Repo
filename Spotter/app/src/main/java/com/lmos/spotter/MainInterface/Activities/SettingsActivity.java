@@ -31,6 +31,7 @@ import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.R;
 import com.lmos.spotter.Utilities.UserAccount;
+import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -214,6 +215,13 @@ public class SettingsActivity extends PreferenceActivity  {
 
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+
+                                            if (!Utilities.checkNetworkState(SettingsActivity.this)) {
+
+                                                Toast.makeText(getApplicationContext(), "cant clear bookmarks no connection", Toast.LENGTH_LONG).show();
+                                                return;
+
+                                            }
 
                                             clearBookmarks(userData.getString("accountID", ""));
 

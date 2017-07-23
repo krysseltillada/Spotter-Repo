@@ -119,7 +119,8 @@ public class FragmentSearchResult extends Fragment
                                 new LatLng(
                                     Double.parseDouble(place.getPlaceLat()),
                                     Double.parseDouble(place.getPlaceLng())
-                                )
+                                ),
+                                place
                         ),
                         "Map"
                 )

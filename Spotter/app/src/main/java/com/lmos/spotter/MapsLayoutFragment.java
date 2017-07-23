@@ -35,13 +35,16 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
     GoogleMap googleMap;
     LatLng destination;
     Marker mMarker;
+    Place destinationPlace;
 
-    public static MapsLayoutFragment newInstance(LatLng destination){
+    public static MapsLayoutFragment newInstance(LatLng destination, Place place){
 
         MapsLayoutFragment mapsLayoutFragment = new MapsLayoutFragment();
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("destination", destination);
+        bundle.putParcelable("place", place);
+
         mapsLayoutFragment.setArguments(bundle);
 
         return mapsLayoutFragment;
@@ -61,6 +64,9 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_holder);
         mapFragment.getMapAsync(this);
         destination = getArguments().getParcelable("destination");
+
+        if (getArguments().getParcelable("place") != null)
+            destinationPlace = getArguments().getParcelable("place");
     }
 
     public void setUserPosition (final LatLng userPosition, final String action, final Float bearing) {
@@ -153,9 +159,13 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
             Log.d("debug", "style set up success");
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination, 150));
-        googleMap.addMarker(new MarkerOptions().position(destination).title("destination"));
+
+        if (destinationPlace != null) {
+            googleMap.addMarker(new MarkerOptions().position(destination).title(destinationPlace.getPlaceName()))
+                     .showInfoWindow();
+        }
+
         googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        googleMap.setTrafficEnabled(true);
         googleMap.setBuildingsEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
 

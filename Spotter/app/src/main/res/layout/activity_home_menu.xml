@@ -35,6 +35,12 @@
                         android:layout_height="match_parent"
                         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
+                        <ProgressBar
+                            android:id="@+id/mostPopularProgressBar"
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
                         <ViewFlipper
                             android:id="@+id/viewFlipManager"
                             android:layout_width="match_parent"

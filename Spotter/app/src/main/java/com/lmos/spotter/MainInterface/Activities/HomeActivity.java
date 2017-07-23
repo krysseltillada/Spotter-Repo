@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -48,6 +50,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.util.Util;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -93,6 +96,7 @@ public class HomeActivity extends AppCompatActivity
     private RecyclerView tabLayoutRecyclerView;
     NavigationView navigationView;
     private ProgressBar recycleViewProgressBar;
+    private ProgressBar mostPopularProgressBar;
     private TabLayout tabLayout;
     private TextView mostPopularName;
     private ImageView userProfileImage;
@@ -128,7 +132,6 @@ public class HomeActivity extends AppCompatActivity
 
         initComp();
 
-
         getMostPopular("General");
 
         loadPlacesByType("General");
@@ -151,6 +154,7 @@ public class HomeActivity extends AppCompatActivity
         super.onResume();
         /** Re-run placeLoader here **/
         displayUserInfo();
+
 
         if ( !(isLoadingPlace || isLoadingItem) ) {
             getMostPopular(placeType);
@@ -405,6 +409,42 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    private void startCheckingConnection (final Activity activity) {
+
+        final Snackbar snackBarCheckConnection = Snackbar.make(activity.getWindow().getDecorView(), "Your Device is Offline", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Go Bookmarks", new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        activity.startActivity(new Intent(activity, BookMarksActivity.class));
+                    }
+                })
+                .setActionTextColor(activity.getResources().getColor(R.color.colorAccent));
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                for (;true;) {
+
+                    if (!Utilities.checkNetworkState(activity)) {
+
+                        if (!snackBarCheckConnection.isShown())
+                            snackBarCheckConnection.show();
+
+                    } else {
+
+                        if (snackBarCheckConnection.isShown())
+                            snackBarCheckConnection.dismiss();
+
+                    }
+                }
+
+            }
+        }).start();
+
+    }
+
     private void changeItemTitleColor (int itemID, int itemColor) {
         MenuItem menuItem = navigationView.getMenu().findItem(itemID);
         SpannableString s = new SpannableString(menuItem.getTitle());
@@ -418,6 +458,8 @@ public class HomeActivity extends AppCompatActivity
         userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         setContentView(R.layout.activity_home_menu);
+
+        startCheckingConnection(this);
 
         interstitialAd = new InterstitialAd(this);
 
@@ -441,11 +483,14 @@ public class HomeActivity extends AppCompatActivity
 
         pullUpLoadLayout = (SwipeRefreshLayout) findViewById(R.id.pullUpLoadLayout);
 
+
         pullUpLoadLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
             public void onRefresh() {
                 Log.d("debug", "pulled up");
+
+
 
                 pullUpLoadLayout.setRefreshing(false);
 
@@ -466,6 +511,8 @@ public class HomeActivity extends AppCompatActivity
 
         pullUpLoadLayout.setProgressViewOffset(false, 0, 180);
         pullUpLoadLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent);
+
+        mostPopularProgressBar = (ProgressBar)findViewById(R.id.mostPopularProgressBar);
 
         backgroundMostPopular = (LinearLayout) findViewById(R.id.mostPopularBlackBackground);
 
@@ -615,7 +662,9 @@ public class HomeActivity extends AppCompatActivity
         viewFlipperManager.setVisibility(View.INVISIBLE);
         backgroundMostPopular.setVisibility(View.INVISIBLE);
 
-        RequestQueue request = Volley.newRequestQueue(getApplicationContext());
+        mostPopularProgressBar.setVisibility(View.VISIBLE);
+
+        final RequestQueue request = Volley.newRequestQueue(getApplicationContext());
 
         final String ptype = type;
 
@@ -627,6 +676,8 @@ public class HomeActivity extends AppCompatActivity
                     public void onResponse(String response) {
 
                         Log.d("debug", response);
+
+                        mostPopularProgressBar.setVisibility(View.GONE);
 
                         try {
                             JSONObject jsonPopularData = new JSONObject(response);
@@ -684,7 +735,10 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("debug", "most popular trying to get data from server");
+
+                request.stop();
                 getMostPopular(type);
+
             }
         }) {
             protected Map<String, String> getParams() {
@@ -729,6 +783,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onAnimationStart(Animation animation) {
+                mostPopularName.setAnimation(AnimationUtils.loadAnimation(HomeActivity.this, android.R.anim.fade_in));
                 mostPopularName.setText(mostPopularPlaces[viewFlipperManager.getDisplayedChild()].getPlaceName());
             }
 

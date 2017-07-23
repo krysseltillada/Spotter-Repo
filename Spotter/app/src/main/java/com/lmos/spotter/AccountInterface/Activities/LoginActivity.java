@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
 
        // getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
-
         bookmarksDB = new DbHelper(activity);
 
         login_prefs = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
@@ -101,9 +100,15 @@ public class LoginActivity extends AppCompatActivity {
                 switchFragment(new FragmentRecover());
                 return;
             case R.id.skip_login:
+
+                if (bookmarksDB.isNotEmpty())
+                    bookmarksDB.clearBookmarks();
+
                 startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
                 set_login_prefs.putString("status", "true");
                 set_login_prefs.apply();
+
                 finish();
                 return;
             default:

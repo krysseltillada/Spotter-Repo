@@ -33,7 +33,7 @@ public class NavigationActivity extends AppCompatActivity
         LatLng destination = getIntent().getParcelableExtra("destination");
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.nav_map_holder, MapsLayoutFragment.newInstance(destination), "Map")
+                .replace(R.id.nav_map_holder, MapsLayoutFragment.newInstance(destination, null), "Map")
                 .commit();
 
 

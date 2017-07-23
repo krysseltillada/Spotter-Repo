@@ -402,13 +402,14 @@ public class BookMarksActivity extends AppCompatActivity {
 
     private void deleteBookmarksOnCloud (final String accountID, final String jsonDeletedBookmarks) {
 
+
         RequestQueue deleteRequest = Volley.newRequestQueue(getApplicationContext());
 
         final ProgressDialog deleteBookmarksProgress = new ProgressDialog(this);
 
         deleteBookmarksProgress.setIndeterminate(true);
         deleteBookmarksProgress.setMessage("deleting bookmarks on cloud");
-        deleteBookmarksProgress.setCancelable(false);
+        deleteBookmarksProgress.setCancelable(true);
         deleteBookmarksProgress.show();
 
         StringRequest deleteStringRequest = new StringRequest(Request.Method.POST,
@@ -421,12 +422,7 @@ public class BookMarksActivity extends AppCompatActivity {
 
                             deleteBookmarksProgress.dismiss();
 
-                            refreshBookmarks();
-
-                            invalidateOptionsMenu();
-
-                            MainInterfaceAdapter.setAllCheckToggleStates(false);
-                            MainInterfaceAdapter.getCheckToggleMap().clear();
+                            resetDelete();
 
                         }
                     }
@@ -470,6 +466,17 @@ public class BookMarksActivity extends AppCompatActivity {
 
     }
 
+    private void resetDelete () {
+
+        refreshBookmarks();
+
+        invalidateOptionsMenu();
+
+        MainInterfaceAdapter.setAllCheckToggleStates(false);
+        MainInterfaceAdapter.getCheckToggleMap().clear();
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -478,8 +485,16 @@ public class BookMarksActivity extends AppCompatActivity {
             case R.id.syncBookmarks:
 
                 if (userData.getString("status", "").equals("Logged In")) {
-                    syncBookmarks(userData.getString("accountID", ""));
+
+                    if (Utilities.checkNetworkState(this)) {
+                        syncBookmarks(userData.getString("accountID", ""));
+                    } else {
+                        Toast.makeText(getApplicationContext(), "cant sync no connection", Toast.LENGTH_LONG).show();
+                        return true;
+                    }
+
                 } else {
+
                     new AlertDialog.Builder(this).setTitle("Cannot Sync")
                                                  .setMessage("you need to sign in to sync your bookmarks")
                                                  .setPositiveButton("sign in", new DialogInterface.OnClickListener() {
@@ -592,27 +607,36 @@ public class BookMarksActivity extends AppCompatActivity {
                                                        @Override
                                                        public void onClick(DialogInterface dialog, int which) {
 
-                                                           try {
+                                                           if (Utilities.checkNetworkState(BookMarksActivity.this)) {
 
-                                                               JSONArray deleteBookmarkArray = new JSONArray();
-                                                               JSONObject deleteUserBookmarks = new JSONObject();
+                                                               try {
 
-                                                               String[] placeIDArray = getDeletedBookmarks();
+                                                                   JSONArray deleteBookmarkArray = new JSONArray();
+                                                                   JSONObject deleteUserBookmarks = new JSONObject();
 
-                                                               for (String placeID : placeIDArray)
-                                                                   deleteBookmarkArray.put(placeID);
+                                                                   String[] placeIDArray = getDeletedBookmarks();
 
-                                                               deleteUserBookmarks.put("userDeletedBookmarks", deleteBookmarkArray);
+                                                                   for (String placeID : placeIDArray)
+                                                                       deleteBookmarkArray.put(placeID);
 
-                                                               bookmarksDB.deleteBookmark(placeIDArray);
+                                                                   deleteUserBookmarks.put("userDeletedBookmarks", deleteBookmarkArray);
 
-                                                               deleteBookmarksOnCloud(userData.getString("accountID", ""),
-                                                                                      deleteUserBookmarks.toString());
+                                                                   bookmarksDB.deleteBookmark(placeIDArray);
 
-                                                               Log.d("debug", deleteUserBookmarks.toString());
+                                                                   deleteBookmarksOnCloud(userData.getString("accountID", ""),
+                                                                           deleteUserBookmarks.toString());
 
-                                                           } catch (JSONException e) {
-                                                               Log.d("debug", e.getMessage());
+                                                                   Log.d("debug", deleteUserBookmarks.toString());
+
+                                                               } catch (JSONException e) {
+                                                                   Log.d("debug", e.getMessage());
+                                                               }
+
+                                                           } else {
+
+                                                               resetDelete();
+
+                                                               Toast.makeText(getApplicationContext(), "cant delete no connection", Toast.LENGTH_LONG).show();
                                                            }
 
                                                        }
@@ -624,13 +648,7 @@ public class BookMarksActivity extends AppCompatActivity {
                                                        @Override
                                                        public void onClick(DialogInterface dialog, int which) {
                                                            bookmarksDB.deleteBookmark(getDeletedBookmarks());
-
-                                                           refreshBookmarks();
-
-                                                           invalidateOptionsMenu();
-
-                                                           MainInterfaceAdapter.setAllCheckToggleStates(false);
-                                                           MainInterfaceAdapter.getCheckToggleMap().clear();
+                                                           resetDelete();
                                                        }
                                                    })
                                                    .show();
