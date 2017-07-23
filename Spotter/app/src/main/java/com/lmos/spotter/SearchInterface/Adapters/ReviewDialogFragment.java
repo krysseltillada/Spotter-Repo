@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -82,63 +83,68 @@ public class ReviewDialogFragment extends DialogFragment {
                      @Override
                      public void onClick(DialogInterface dialog, int which) {
 
+                         if (reviewEditText.getText().length() > 0) {
 
-                         final SharedPreferences userPreference = ReviewDialogFragment.this.getActivity().getSharedPreferences(LoginActivity.LOGIN_PREFS,
-                                 Context.MODE_PRIVATE);
+                             final SharedPreferences userPreference = ReviewDialogFragment.this.getActivity().getSharedPreferences(LoginActivity.LOGIN_PREFS,
+                                     Context.MODE_PRIVATE);
 
-                         postReviewProgress = new ProgressDialog(ReviewDialogFragment.this.getContext());
+                             postReviewProgress = new ProgressDialog(ReviewDialogFragment.this.getContext());
 
-                         postReviewProgress.setIndeterminate(true);
-                         postReviewProgress.setMessage("posting your review");
-                         postReviewProgress.setCancelable(false);
-                         postReviewProgress.show();
+                             postReviewProgress.setIndeterminate(true);
+                             postReviewProgress.setMessage("posting your review");
+                             postReviewProgress.setCancelable(false);
+                             postReviewProgress.show();
 
-                         RequestQueue postReviewRequest = Volley.newRequestQueue(getActivity());
+                             RequestQueue postReviewRequest = Volley.newRequestQueue(getActivity());
 
-                         StringRequest postReviewString = new StringRequest(Request.Method.POST,
-                                 "http://admin-spotter.000webhostapp.com/app_scripts/postReview.php",
-                                 new Response.Listener<String>() {
+                             StringRequest postReviewString = new StringRequest(Request.Method.POST,
+                                     "http://admin-spotter.000webhostapp.com/app_scripts/postReview.php",
+                                     new Response.Listener<String>() {
 
-                                     @Override
-                                     public void onResponse(String response) {
+                                         @Override
+                                         public void onResponse(String response) {
 
-                                         Log.d("debug", response);
+                                             Log.d("debug", response);
 
-                                         postReviewProgress.dismiss();
+                                             postReviewProgress.dismiss();
 
-                                         if (!response.equals("review posted")) {
-                                             errorDialog.show();
-                                         } else {
-                                             onReviewPost.reviewPost(ReviewActivity.placeID);
+                                             if (!response.equals("review posted")) {
+                                                 errorDialog.show();
+                                             } else {
+                                                 onReviewPost.reviewPost(ReviewActivity.placeID);
+                                             }
+
                                          }
+                                     },
+                                     new Response.ErrorListener() {
 
-                                     }
-                                 },
-                                 new Response.ErrorListener() {
+                                         @Override
+                                         public void onErrorResponse(VolleyError error) {
+                                             Log.d("debug", error.getMessage() + "aa");
+                                             postReviewProgress.dismiss();
+                                             errorDialog.show();
+                                         }
+                                     }) {
+                                 protected HashMap<String, String> getParams() {
+                                     return new HashMap<String, String>() {{
+                                         put("accountID", userPreference.getString("accountID", ""));
+                                         put("placeID", ReviewActivity.placeID);
+                                         put("Review", reviewEditText.getText().toString());
+                                         put("Rating", Float.toString(reviewRatingBar.getRating()));
+                                         put("isRecommended", Boolean.toString(isRecommended.isChecked()));
+                                     }};
+                                 }
+                             };
 
-                                     @Override
-                                     public void onErrorResponse(VolleyError error) {
-                                         Log.d("debug", error.getMessage() + "aa");
-                                         postReviewProgress.dismiss();
-                                         errorDialog.show();
-                                     }
-                                 }){
-                             protected HashMap<String, String> getParams() {
-                                 return new HashMap<String, String>(){{
-                                     put("accountID", userPreference.getString("accountID", ""));
-                                     put("placeID", ReviewActivity.placeID);
-                                     put("Review", reviewEditText.getText().toString());
-                                     put("Rating", Float.toString(reviewRatingBar.getRating()));
-                                     put("isRecommended", Boolean.toString(isRecommended.isChecked()));
-                                 }};
-                             }
-                         };
+                             Log.d("debug", "review: " + reviewEditText.getText().toString());
+                             Log.d("debug", "Rating: " + Float.toString(reviewRatingBar.getRating()));
+                             Log.d("debug", "IsRecommended: " + Boolean.toString(isRecommended.isChecked()));
 
-                         Log.d("debug", "review: " + reviewEditText.getText().toString());
-                         Log.d("debug", "Rating: " + Float.toString(reviewRatingBar.getRating()));
-                         Log.d("debug", "IsRecommended: " + Boolean.toString(isRecommended.isChecked()));
+                             postReviewRequest.add(postReviewString);
 
-                         postReviewRequest.add(postReviewString);
+                         } else {
+                             Toast.makeText(getContext(), "write a review", Toast.LENGTH_LONG).show();
+                         }
 
                      }
                  })
