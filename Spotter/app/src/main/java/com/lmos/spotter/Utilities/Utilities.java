@@ -19,6 +19,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
@@ -566,6 +567,22 @@ public class Utilities {
     public static float dpToPx(Context context, float valueInDp) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
+    }
+
+    public static int getSoftButtonsBarSizePort(Activity activity) {
+        // getRealMetrics is only available with API 17 and +
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int usableHeight = metrics.heightPixels;
+            activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+            int realHeight = metrics.heightPixels;
+            if (realHeight > usableHeight)
+                return realHeight - usableHeight;
+            else
+                return 0;
+        }
+        return 0;
     }
 
     public static boolean checkNetworkState(Activity activity){

@@ -1,5 +1,6 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
+import com.facebook.FacebookSdk;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
