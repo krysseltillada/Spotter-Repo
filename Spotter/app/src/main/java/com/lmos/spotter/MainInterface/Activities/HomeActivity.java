@@ -170,6 +170,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -532,6 +533,13 @@ public class HomeActivity extends AppCompatActivity
 
                 pullUpLoadLayout.setRefreshing(false);
 
+                if (!placeDataList.isEmpty()) {
+
+                    placeDataList.clear();
+                    mainInterfaceAdapter.notifyDataSetChanged();
+
+                }
+
                 if (Utilities.checkNetworkState(HomeActivity.this)) {
 
                     recycleViewProgressBar.setVisibility(View.VISIBLE);
@@ -551,18 +559,22 @@ public class HomeActivity extends AppCompatActivity
                         return;
                     }
 
-                    if (!placeDataList.isEmpty()) {
-
-                        placeDataList.clear();
-                        mainInterfaceAdapter.notifyDataSetChanged();
-
-                    }
-
                     String selectedSortType = tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getText().toString();
 
                     getMostPopular(placeType);
                     loadPlacesFromServer(placeType, (selectedSortType.equals("Most Viewed") ? "Views" :
                             (selectedSortType.equals("Most Popular")) ? "Rating" : "Recommended"));
+
+                } else {
+
+
+                    pullUpLoadLayout.setEnabled(true);
+                    imgOfflineImage.setVisibility(View.VISIBLE);
+                    txtOfflineMessage.setVisibility(View.VISIBLE);
+                    txtMostPopular.setText("no connection");
+                    homeNestedScrollView.setVisibility(View.GONE);
+
+                    appBarLayout.setExpanded(false);
 
                 }
 
@@ -613,7 +625,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
-                if (Utilities.checkNetworkState(HomeActivity.this)) {
+                if (homeNestedScrollView.getVisibility() != View.GONE) {
 
                     if (!pullUpLoadLayout.isRefreshing())
                         pullUpLoadLayout.setEnabled(verticalOffset == 0);
