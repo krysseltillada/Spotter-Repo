@@ -128,7 +128,7 @@ public class Utilities {
 
         BranchUniversalObject placeLinkData = new BranchUniversalObject()
                 .setCanonicalIdentifier(linkCode)
-                .setContentImageUrl("http://www.iconsfind.com/wp-content/uploads/2017/05/20170525_592661ad3138f.png")
+                .setContentImageUrl("https://b.zmtcdn.com/data/pictures/6/6314766/63d665910e5f922cadba84361ba3c838.jpg?fit=around%7C200%3A200&crop=200%3A200%3B%2A%2C%2A")
                 .setTitle(place.getPlaceName())
                 .setContentDescription(place.getPlaceDescription())
                 .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC);
@@ -172,7 +172,7 @@ public class Utilities {
 
                             BranchUniversalObject pd = new BranchUniversalObject()
                                     .setCanonicalIdentifier(linkCode)
-                                    .setContentImageUrl("http://www.iconsfind.com/wp-content/uploads/2017/05/20170525_592661ad3138f.png")
+                                    .setContentImageUrl("https://b.zmtcdn.com/data/pictures/6/6314766/63d665910e5f922cadba84361ba3c838.jpg?fit=around%7C200%3A200&crop=200%3A200%3B%2A%2C%2A")
                                     .setTitle(place.getPlaceName())
                                     .setContentDescription(place.getPlaceDescription())
                                     .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC);
