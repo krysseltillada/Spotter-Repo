@@ -155,7 +155,6 @@ public class HomeActivity extends AppCompatActivity
         /** Re-run placeLoader here **/
         displayUserInfo();
 
-
         if ( !(isLoadingPlace || isLoadingItem) ) {
             getMostPopular(placeType);
             loadPlacesByType(placeType);
@@ -178,8 +177,6 @@ public class HomeActivity extends AppCompatActivity
         if (placeLoader != null) {
             placeLoader.cancel(true);
             placeLoader = null;
-
-
         }
 
         isLoadingPlace = true;

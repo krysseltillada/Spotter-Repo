@@ -1,110 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/recover_username_wrapper"
-        android:layout_width="@dimen/textInputLayout_width"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/acc_layout_max_margin"
-        android:layout_centerHorizontal="true"
-        android:padding="@dimen/min_padding"
-        android:theme="@style/TextInputLayoutTheme" >
+        android:layout_alignParentBottom="true">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/recover_username"
-            android:layout_width="match_parent"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/recover_username_wrapper"
+            android:layout_width="@dimen/textInputLayout_width"
             android:layout_height="wrap_content"
-            android:hint="@string/login_username"
-            android:textSize="@dimen/max_font_size"
-            android:padding="@dimen/mid_padding"
-            android:imeOptions="actionNext"
-            android:singleLine="true"
-            android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
-            android:textColor="@color/white" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/recover_email_wrapper"
-        android:layout_width="@dimen/textInputLayout_width"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/recover_username_wrapper"
-        android:padding="@dimen/min_padding"
-        android:theme="@style/TextInputLayoutTheme" >
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/recover_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            android:textSize="@dimen/max_font_size"
-            android:padding="@dimen/mid_padding"
-            android:imeOptions="actionNext"
-            android:singleLine="true"
-            android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
-            android:textColor="@color/white" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <Button
-        android:id="@+id/recover_account_btn"
-        android:layout_width="@dimen/account_btn_width"
-        android:layout_height="@dimen/account_btn_height"
-        android:layout_below="@id/recover_email_wrapper"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/acc_layout_mid_margin"
-        android:background="@drawable/button_bg"
-        android:text="@string/recover_account"
-        android:textColor="@color/white" />
-
-    <TextView
-        android:id="@+id/recover_acc_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/recover_account_btn"
-        android:layout_marginTop="@dimen/acc_layout_mid_margin"
-        android:paddingStart="@dimen/acc_layout_mid_margin"
-        android:paddingEnd="@dimen/acc_layout_mid_margin"
-        android:textSize="@dimen/mid_font_size"
-        android:layout_centerHorizontal="true"
-        android:textAlignment="gravity"
-        android:textColor="@color/white"
-        android:text="@string/recover_msg"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/recover_acc_msg"
-        android:paddingStart="@dimen/mid_padding"
-        android:layout_marginStart="@dimen/min_padding"
-        android:paddingEnd="@dimen/mid_padding"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginTop="@dimen/acc_layout_max_margin"
+            android:layout_centerHorizontal="true"
             android:padding="@dimen/min_padding"
-            android:text="@string/resend_lbl"
-            android:textSize="@dimen/mid_font_size"
-            android:textColor="@color/white"/>
+            android:theme="@style/TextInputLayoutTheme" >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/recover_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_username"
+                android:textSize="@dimen/max_font_size"
+                android:padding="@dimen/mid_padding"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
+                android:textColor="@color/white" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/recover_email_wrapper"
+            android:layout_width="@dimen/textInputLayout_width"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/recover_username_wrapper"
+            android:padding="@dimen/min_padding"
+            android:theme="@style/TextInputLayoutTheme" >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/recover_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
+                android:textSize="@dimen/max_font_size"
+                android:padding="@dimen/mid_padding"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
+                android:textColor="@color/white" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/recover_account_btn"
+            android:layout_width="@dimen/account_btn_width"
+            android:layout_height="@dimen/account_btn_height"
+            android:layout_below="@id/recover_email_wrapper"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/acc_layout_mid_margin"
+            android:background="@drawable/button_bg"
+            android:text="@string/recover_account"
+            android:textColor="@color/white" />
 
         <TextView
-            android:id="@+id/resend_btn"
+            android:id="@+id/recover_acc_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/min_padding"
-            android:clickable="true"
-            android:onClick="clickListener"
-            android:text="@string/resend"
-            android:textSize="@dimen/max_font_size"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimary"/>
+            android:layout_below="@id/recover_account_btn"
+            android:layout_marginTop="@dimen/acc_layout_mid_margin"
+            android:paddingStart="@dimen/acc_layout_mid_margin"
+            android:paddingEnd="@dimen/acc_layout_mid_margin"
+            android:textSize="@dimen/mid_font_size"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="gravity"
+            android:textColor="@color/white"
+            android:text="@string/recover_msg"/>
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/recover_acc_msg"
+            android:paddingStart="@dimen/mid_padding"
+            android:layout_marginStart="@dimen/min_padding"
+            android:paddingEnd="@dimen/mid_padding"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/min_padding"
+                android:text="@string/resend_lbl"
+                android:textSize="@dimen/mid_font_size"
+                android:textColor="@color/white"/>
+
+            <TextView
+                android:id="@+id/resend_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/min_padding"
+                android:clickable="true"
+                android:onClick="clickListener"
+                android:text="@string/resend"
+                android:textSize="@dimen/max_font_size"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>

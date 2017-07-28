@@ -120,7 +120,7 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
                         Log.d("LocationHandler", "Updating camera position");
                         cameraPosition = new CameraPosition.Builder()
                                 .target(userPosition)
-                                .zoom(25)
+                                .zoom(5)
                                 .bearing(bearing)
                                 .tilt(15)
                                 .build();
