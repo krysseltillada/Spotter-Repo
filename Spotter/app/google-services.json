@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1042859273605",
+    "firebase_url": "https://spotter-169213.firebaseio.com",
+    "project_id": "spotter-169213",
+    "storage_bucket": "spotter-169213.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042859273605:android:b8e0088e8f951b50",
+        "android_client_info": {
+          "package_name": "com.lmos.spotter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1042859273605-gis6lu33ce3pffk0ch3rcvga06d6vjkn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA66OcvX9C1O0i6PX9FEnTDu6gl21to_VA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

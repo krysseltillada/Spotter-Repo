@@ -28,7 +28,7 @@ import com.lmos.spotter.Utilities.Utilities;
 public class FragmentSearchResult extends Fragment
     implements Utilities.OnLocationFoundListener{
 
-    public Place place;
+    public static Place place;
     TextView description, review_count, place_address,
             place_rate_label, place_recommended, place_bookmark ;
     RatingBar place_rate;
@@ -129,6 +129,9 @@ public class FragmentSearchResult extends Fragment
         return thisView;
     }
 
+    public static Place getPlace () {
+        return place;
+    }
 
     @Override
     public void onLocationFoundCity(String city) {

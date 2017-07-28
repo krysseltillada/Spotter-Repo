@@ -16,15 +16,25 @@
 
     <application
         android:allowBackup="true"
+        android:name="io.branch.referral.BranchApp"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
 
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+                   android:value="@string/facebook_app_id" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAsY2k2M1rOeO-P2F1fxkEmkCAqe_263kw" />
+
+        <provider android:authorities="com.facebook.app.FacebookContentProvider2024269634471844"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
+
+
 
         <activity
             android:name=".SplashScreen"
@@ -33,10 +43,44 @@
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Branch URI scheme -->
+            <intent-filter>
+                <data android:scheme="Spotter" android:host="open" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="spotterlmos.app.link" />
+                <data android:scheme="https" android:host="spotterlmos-alternate.app.link" />
+                <data android:scheme="https" android:host="spotterlmos.test-app.link" />
+                <data android:scheme="https" android:host="spotterlmos-alternate.test-app.link" />
+            </intent-filter>
+
         </activity>
+
+        <!-- Branch init -->
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_iexA4gZ1ReWAgnle0pUZ7kcbuseXym7w" />
+        <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="key_test_agvAXn63Vl5walka2eK86miauwc4Cm3p" />
+
+        <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
+        <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
+
+        <!-- Branch install referrer tracking -->
+        <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+
         <activity
             android:name=".MainInterface.Activities.HomeActivity"
             android:label="@string/title_activity_home"
@@ -57,6 +101,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
+
+            <intent-filter>
+
+                <data android:scheme="Spotter" android:host="open" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+            </intent-filter>
 
         </activity>
         <activity

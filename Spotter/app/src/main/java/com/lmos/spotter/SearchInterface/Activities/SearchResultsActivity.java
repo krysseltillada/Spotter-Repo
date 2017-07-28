@@ -1,10 +1,19 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -16,6 +25,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,23 +33,38 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.ShareOpenGraphAction;
+import com.facebook.share.model.ShareOpenGraphContent;
+import com.facebook.share.model.ShareOpenGraphObject;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.DbHelper;
+import com.lmos.spotter.Item;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
 import com.lmos.spotter.SyncService;
+import com.lmos.spotter.Utilities.RandomString;
 import com.lmos.spotter.Utilities.Utilities;
 import com.squareup.picasso.Picasso;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +73,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import bolts.AppLinks;
+import io.branch.indexing.BranchUniversalObject;
+import io.branch.referral.Branch;
+import io.branch.referral.BranchError;
+import io.branch.referral.util.LinkProperties;
 
 /**
  * Created by linker on 02/06/2017.
@@ -62,7 +93,10 @@ public class SearchResultsActivity extends AppCompatActivity
         Utilities.OnDbResponseListener,
         Utilities.OnLocationFoundListener {
 
+    static final int SHARE_REQUEST_CODE = 28;
+
     /** Initialize views **/
+    CallbackManager shareCallback;
     ViewFlipper viewFlipperManager;
     Toolbar toolbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -114,6 +148,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         Log.d("debug", "onCreate SearchResults");
 
@@ -358,6 +393,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
         Log.d("debug", "initComp");
 
+        shareCallback = CallbackManager.Factory.create();
+
         coordinatorLayout = (CoordinatorLayout)findViewById(R.id.search_view_wrapper);
         searchResultsTab = (TabLayout)findViewById(R.id.search_tab_layout);
         loading_screen = (RelativeLayout) findViewById(R.id.loading_screen);
@@ -431,6 +468,119 @@ public class SearchResultsActivity extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
+    private void tweetPlaceOnTwitter (String link) {
+
+        TweetComposer.Builder composeTweets = new TweetComposer.Builder(this)
+                                                               .text(link);
+
+        composeTweets.show();
+
+    }
+
+    private void sharePlaceOnFacebook (String link) {
+
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+
+            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                    .setContentUrl(Uri.parse(link))
+                    .build();
+
+            ShareDialog placeShare = new ShareDialog(SearchResultsActivity.this);
+
+            placeShare.registerCallback(shareCallback, new FacebookCallback<Sharer.Result>() {
+                @Override
+                public void onSuccess(Sharer.Result result) {
+                    Toast.makeText(getApplicationContext(), "sucessfully shared..", Toast.LENGTH_LONG);
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    Log.d("debug", error.getMessage());
+                    Toast.makeText(getApplicationContext(), "shared failed", Toast.LENGTH_LONG);
+                }
+            }, SHARE_REQUEST_CODE);
+
+            placeShare.show(linkContent);
+
+        }
+
+    }
+
+    private void showShareDialog() {
+
+        final Item[] items = {
+                new Item("Facebook", R.drawable.facebook_icon),
+                new Item("Twitter", R.drawable.twitter_icon)
+        };
+
+        ListAdapter adapter = new ArrayAdapter<Item>(
+                this,
+                android.R.layout.select_dialog_item,
+                android.R.id.text1,
+                items){
+            public View getView(int position, View convertView, ViewGroup parent) {
+                //Use super class to create the View
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView)v.findViewById(android.R.id.text1);
+
+                //Put the image on the TextView
+                /*
+                int dp50 = (int) (50 * getResources().getDisplayMetrics().density + 0.5f);
+                Drawable dr = getResources().getDrawable(items[position].icon);
+                Bitmap bitmap = ((BitmapDrawable) dr).getBitmap();
+                Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, dp50, dp50, true));
+                tv.setCompoundDrawablesWithIntrinsicBounds(d, null, null, null);*/
+
+                tv.setCompoundDrawablesWithIntrinsicBounds(items[position].icon, 0, 0, 0);
+
+                //Add margin between image and text (support various screen densities)
+                int dp5 = (int) (20 * getResources().getDisplayMetrics().density + 0.5f);
+                tv.setCompoundDrawablePadding(dp5);
+
+                return v;
+            }
+        };
+
+
+        new AlertDialog.Builder(this)
+                .setTitle("Share On")
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, final int item) {
+
+                        Place placeInfo = FragmentSearchResult.place;
+
+                        String socialType = (item == 0) ? "facebook" : "twitter";
+
+                        Utilities.generateLinkPlace(placeInfo, SearchResultsActivity.this,
+                                new Utilities.OnGenerateLinkListener() {
+
+                                    @Override
+                                    public void OnGenerateLink(String generatedLink) {
+                                        if (!generatedLink.equals("error")) {
+                                            switch(item) {
+                                                case 0:
+                                                    sharePlaceOnFacebook(generatedLink);
+                                                    break;
+                                                case 1:
+                                                    tweetPlaceOnTwitter(generatedLink);
+                                                    break;
+                                            }
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "please check your connection", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }, socialType);
+
+                    }
+                }).show();
+
+    }
+
     /** End of activity methods **/
 
     /** Abstract Methods **/
@@ -446,6 +596,12 @@ public class SearchResultsActivity extends AppCompatActivity
 
             case R.id.add_to_bookmark:
                 queryFavorites("add", null, temp_place);
+                break;
+
+            case R.id.sharePlace:
+
+                showShareDialog();
+
                 break;
 
 
@@ -535,6 +691,9 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        shareCallback.onActivityResult(requestCode, resultCode, data);
+
+        Log.d("debug", "onActivityResult " + requestCode);
 
         switch (requestCode){
             case Utilities.REQUEST_CODES.CHECK_SETTING_REQUEST_CODE:
@@ -552,6 +711,7 @@ public class SearchResultsActivity extends AppCompatActivity
             case Utilities.REQUEST_CODES.LOGIN_REQUEST:
                 startActivity(new Intent(this, LoginActivity.class));
                 break;
+
         }
 
     }

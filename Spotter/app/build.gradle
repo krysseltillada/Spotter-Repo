@@ -22,6 +22,11 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -41,9 +46,14 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:11.0.0'
     compile 'com.iamtheib.infiniterecyclerview:library:1.4'
     compile 'com.google.android.gms:play-services-ads:11.0.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.23.+'
+    compile 'io.branch.sdk.android:library:2.+'
+    compile 'com.twitter.sdk.android:twitter:3.0.0'
     testCompile 'org.testng:testng:6.9.6'
     compile files('libs/commons-validator-1.6.jar')
 }
+
+apply plugin: 'com.google.gms.google-services'
 
 
 

@@ -54,7 +54,7 @@ public class SettingsActivity extends PreferenceActivity  {
 
     RequestQueue requestUpdateAccountInfo;
 
-    boolean isReInitInfo = false;
+    boolean isReInitInfo = true;
 
     private void updateUserPreferences () {
 
@@ -132,18 +132,26 @@ public class SettingsActivity extends PreferenceActivity  {
 
                 Log.d("debug", userData.getString("accountEmail", ""));
 
+                Log.d("debug", "key: " + key);
 
-                preference.setSummary(((key.equals("password")) ? sharedPreferences.getString(key, "")
-                        .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
+                try {
 
-                typeInfo = key;
-
-
-                message = (key.equals("username")) ? "username changed" :
-                        (key.equals("email")) ? "email change" : (key.equals("name")) ? "name changed" : "password changed";
+                    preference.setSummary(((key.equals("password")) ? sharedPreferences.getString(key, "")
+                            .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
 
 
-                updateAccountInfo();
+                    typeInfo = key;
+
+
+                    message = (key.equals("username")) ? "username changed" :
+                            (key.equals("email")) ? "email change" : (key.equals("name")) ? "name changed" : "password changed";
+
+
+                    updateAccountInfo();
+
+                } catch (Exception e) {
+                    return;
+                }
 
             } else {
                 isReInitInfo = false;
@@ -296,10 +304,10 @@ public class SettingsActivity extends PreferenceActivity  {
                             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                         } else {
                             updateProgressDialog.dismiss();
-                            isReInitInfo = true;
                             initUserInfo();
                             Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                         }
+
                     }
                 }, new Response.ErrorListener() {
 

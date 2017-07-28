@@ -8,4 +8,12 @@
         android:icon="@drawable/ic_book_white_48dp"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/sharePlace"
+        android:title="Share"
+        android:icon="@drawable/ic_share_white_48dp"
+        app:showAsAction="always"/>
+
+
+
 </menu>

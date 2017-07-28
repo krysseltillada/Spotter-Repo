@@ -10,11 +10,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.facebook.FacebookSdk;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.MainInterface.Activities.HomeActivity;
+import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.lmos.spotter.Utilities.Utilities;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+
+import org.json.JSONObject;
 
 import java.io.File;
+import java.util.HashMap;
+
+import io.branch.indexing.BranchUniversalObject;
+import io.branch.referral.Branch;
+import io.branch.referral.BranchError;
+import io.branch.referral.util.LinkProperties;
 
 /**
  * Created by emman on 6/12/2017.
@@ -31,8 +45,71 @@ public class SplashScreen extends AppCompatActivity {
     TextView splash_msg;
 
     @Override
+    public void onStart() {
+        super.onStart();
+        final Branch branch = Branch.getInstance();
+
+
+        branch.initSession(new Branch.BranchUniversalReferralInitListener() {
+            @Override
+            public void onInitFinished(BranchUniversalObject branchUniversalObject, LinkProperties linkProperties, BranchError error) {
+                if (error == null) {
+                    // params are the deep linked params associated with the link that the user clicked -> was re-directed to this app
+                    // params will be empty if no data found
+                    // ... insert custom logic here ...
+
+                    if (branchUniversalObject.getMetadata().containsKey("placeName")) {
+
+                        Log.d("debug", "link clicked: " + branchUniversalObject.convertToJson().toString());
+
+                        HashMap<String, String> linkMetaData = branchUniversalObject.getMetadata();
+
+                        Intent send_data = new Intent(SplashScreen.this, SearchResultsActivity.class);
+                        send_data.putExtra("data", new String[] {
+
+                                linkMetaData.get("placeType"),
+                                linkMetaData.get("placeName"),
+                                linkMetaData.get("placeAddress"),
+                                linkMetaData.get("placeLat"),
+                                linkMetaData.get("placeLng")
+
+                        });
+
+                        SplashScreen.this.startActivity(send_data);
+
+                    } else {
+                        Log.d("debug", "onInitFinished");
+                    }
+
+
+                } else {
+                    branch.initSession(this);
+                    Log.i("debug", error.getMessage());
+                }
+            }
+        }, this.getIntent().getData(), this);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        this.setIntent(intent);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig(getString(R.string.com_twitter_sdk_android_CONSUMER_KEY),
+                                                         getString(R.string.com_twitter_sdk_android_CONSUMER_SECRET)))
+                .debug(true)
+                .build();
+
+        Twitter.initialize(config);
+
         setContentView(R.layout.splash_screen);
 
         /*
@@ -68,6 +145,8 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+
         if(Utilities.checkNetworkState(this))
             new GetPlaceNames(this).execute();
     }
