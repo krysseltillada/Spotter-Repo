@@ -20,11 +20,12 @@
                 <TextView
 
                     android:id="@+id/txtPlaceName"
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="6dp"
                     android:text="Pico Cove Hotel"
+                    android:textAlignment="textStart"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16sp" />
 

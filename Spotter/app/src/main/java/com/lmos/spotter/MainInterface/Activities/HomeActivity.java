@@ -69,7 +69,6 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,6 +118,7 @@ public class HomeActivity extends AppCompatActivity
     private SwipeRefreshLayout pullUpLoadLayout;
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
+
     private boolean isLoadingItem = false;
     private boolean isLoadingPlace = false;
 
@@ -153,7 +153,7 @@ public class HomeActivity extends AppCompatActivity
             if (homeNestedScrollView.getVisibility() != View.VISIBLE)
                 homeNestedScrollView.setVisibility(View.VISIBLE);
 
-            loadPlacesByType(pt);
+            loadPlacesByType(pt, false);
 
         } else {
 
@@ -192,7 +192,7 @@ public class HomeActivity extends AppCompatActivity
 
             if (!(isLoadingPlace || isLoadingItem)) {
                 getMostPopular(placeType);
-                loadPlacesByType(placeType);
+                loadPlacesByType(placeType, false);
             }
 
         }
@@ -302,9 +302,11 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    private void loadPlacesByType(final String type) {
+    private void loadPlacesByType(final String type, boolean forceLoad) {
 
-        if (!type.equals(placeType)) {
+        Log.d("debug", "type: " + type + " placeType: " + placeType);
+
+        if (!type.equals(placeType) || forceLoad) {
 
             appBarLayout.setExpanded(false);
             homeNestedScrollView.smoothScrollTo(0, 0);
@@ -379,16 +381,20 @@ public class HomeActivity extends AppCompatActivity
                     homeNestedScrollView.smoothScrollTo(0, 0);
                     searchBTN.setIconified(true);
 
-                    switch (tab.getPosition()) {
-                        case 0:
-                            loadPlacesFromServer(placeType, "Views");
-                            break;
-                        case 1:
-                            loadPlacesFromServer(placeType, "Rating");
-                            break;
-                        case 2:
-                            loadPlacesFromServer(placeType, "Recommended");
-                            break;
+                    if (homeNestedScrollView.getVisibility() != View.GONE) {
+
+                        switch (tab.getPosition()) {
+                            case 0:
+                                loadPlacesFromServer(placeType, "Views");
+                                break;
+                            case 1:
+                                loadPlacesFromServer(placeType, "Rating");
+                                break;
+                            case 2:
+                                loadPlacesFromServer(placeType, "Recommended");
+                                break;
+                        }
+
                     }
 
                 }
@@ -439,7 +445,7 @@ public class HomeActivity extends AppCompatActivity
 
             userProfileImage.setImageDrawable(getResources().getDrawable(R.drawable.account));
             userName.setText("Guest");
-            userEmail.setVisibility(View.INVISIBLE);
+            userEmail.setVisibility(View.GONE);
 
         }
 
@@ -542,20 +548,19 @@ public class HomeActivity extends AppCompatActivity
 
                 if (Utilities.checkNetworkState(HomeActivity.this)) {
 
-                    recycleViewProgressBar.setVisibility(View.VISIBLE);
                     appBarLayout.setExpanded(false);
 
                     if (homeNestedScrollView.getVisibility() != View.VISIBLE) {
                         homeNestedScrollView.setVisibility(View.VISIBLE);
                         Log.d("debug", "connecting");
 
+                        txtMostPopular.setText("Most Popular");
                         txtOfflineMessage.setVisibility(View.GONE);
                         imgOfflineImage.setVisibility(View.GONE);
 
-                        if (placeType.isEmpty())
-                            placeType = txtHome.getText().toString();
+                        placeType = txtHome.getText().toString();
 
-                        loadPlacesByType(placeType.equals("Home") ? "General" : placeType);
+                        loadPlacesByType(placeType.equals("Home") ? "General" : placeType, true);
                         return;
                     }
 
@@ -566,7 +571,6 @@ public class HomeActivity extends AppCompatActivity
                             (selectedSortType.equals("Most Popular")) ? "Rating" : "Recommended"));
 
                 } else {
-
 
                     pullUpLoadLayout.setEnabled(true);
                     imgOfflineImage.setVisibility(View.VISIBLE);
@@ -675,7 +679,11 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onDrawerOpened(View drawerView) {
 
+                Log.d("debug", "drawer open");
+
                 pullUpLoadLayout.setEnabled(false);
+                pullUpLoadLayout.setRefreshing(false);
+                Log.d("debug", "pull state: " + pullUpLoadLayout.isEnabled());
                 Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
                 searchButton.setIconified(true);
 
@@ -683,6 +691,8 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onDrawerClosed(View drawerView) {
+
+                Log.d("debug", "drawer close");
 
                 pullUpLoadLayout.setEnabled(true);
 

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -55,6 +56,7 @@ import android.view.ViewAnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
@@ -86,8 +88,14 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import io.branch.indexing.BranchUniversalObject;
+import io.branch.referral.Branch;
+import io.branch.referral.BranchError;
+import io.branch.referral.util.LinkProperties;
 
 /**
  * Created by Kryssel on 6/2/2017.
@@ -105,6 +113,118 @@ import java.util.Locale;
 
 
 public class Utilities {
+
+    public interface OnGenerateLinkListener {
+        void OnGenerateLink (String generatedLink);
+    }
+
+    public static void generateLinkPlace (final Place place, final Activity activity, final OnGenerateLinkListener onGenerateLinkListener, final String socialType) {
+
+        RandomString codeLinkGenerator = new RandomString(10);
+
+        final String linkCode = "spotterlmos/" + codeLinkGenerator.nextString();
+
+        Log.d("debug", "link code: " + linkCode);
+
+        BranchUniversalObject placeLinkData = new BranchUniversalObject()
+                .setCanonicalIdentifier(linkCode)
+                .setContentImageUrl("http://www.iconsfind.com/wp-content/uploads/2017/05/20170525_592661ad3138f.png")
+                .setTitle(place.getPlaceName())
+                .setContentDescription(place.getPlaceDescription())
+                .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC);
+
+        placeLinkData.addContentMetadata(new HashMap<String, String>() {{
+            put ("placeName", place.getPlaceName());
+            put ("placeType", place.getPlaceType());
+            put ("placeAddress", place.getPlaceAddress());
+            put ("placeLat", place.getPlaceLat());
+            put ("placeLng", place.getPlaceLng());
+        }});
+
+        LinkProperties linkProperties = new LinkProperties()
+                .setChannel("social")
+                .setFeature("travel");
+
+
+        final ProgressDialog generateLinkProgressDialog = new ProgressDialog(activity);
+
+        generateLinkProgressDialog.setMessage("please wait..");
+        generateLinkProgressDialog.setCancelable(false);
+        generateLinkProgressDialog.setIndeterminate(true);
+        generateLinkProgressDialog.show();
+
+        placeLinkData.generateShortUrl(activity, linkProperties, new Branch.BranchLinkCreateListener() {
+
+                @Override
+                public void onLinkCreate(String url, BranchError error) {
+
+                    if (error == null) {
+
+                        if (!socialType.equals("twitter")) {
+
+                            generateLinkProgressDialog.dismiss();
+
+                            Log.d("debug", "link generated: " + url);
+
+                            onGenerateLinkListener.OnGenerateLink(url);
+
+                        } else {
+
+                            BranchUniversalObject pd = new BranchUniversalObject()
+                                    .setCanonicalIdentifier(linkCode)
+                                    .setContentImageUrl("http://www.iconsfind.com/wp-content/uploads/2017/05/20170525_592661ad3138f.png")
+                                    .setTitle(place.getPlaceName())
+                                    .setContentDescription(place.getPlaceDescription())
+                                    .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC);
+
+                            pd.addContentMetadata(new HashMap<String, String>() {{
+                                put ("placeName", place.getPlaceName());
+                                put ("placeType", place.getPlaceType());
+                                put ("placeAddress", place.getPlaceAddress());
+                                put ("placeLat", place.getPlaceLat());
+                                put ("placeLng", place.getPlaceLng());
+                            }});
+
+                            LinkProperties lp = new LinkProperties()
+                                    .addControlParameter("$android_url", url)
+                                    .setChannel("social")
+                                    .setFeature("travel");
+
+                            pd.generateShortUrl(activity, lp, new Branch.BranchLinkCreateListener() {
+
+                                // TODO DO THIS THING
+
+                                @Override
+                                public void onLinkCreate(String url2, BranchError error) {
+
+                                    Log.d("debug", "url 2");
+
+                                    generateLinkProgressDialog.dismiss();
+
+                                    if (error == null) {
+
+                                        onGenerateLinkListener.OnGenerateLink(url2);
+
+                                    } else {
+
+                                        onGenerateLinkListener.OnGenerateLink("error");
+
+                                    }
+                                }
+                            });
+
+                        }
+
+                    } else {
+
+                        onGenerateLinkListener.OnGenerateLink("error");
+
+                    }
+
+                }
+
+        });
+    }
 
     public static boolean validateEmail (String email) {
         return EmailValidator.getInstance().isValid(email);
@@ -500,13 +620,21 @@ public class Utilities {
 
         Cursor searchCursor = searchAdapter.getCursor();
         String[] selectedItem = new String[0];
-        if(searchCursor.moveToPosition(position))
-            selectedItem = new String[] {
-                searchCursor.getString(5),
-                searchCursor.getString(1),
-                searchCursor.getString(2),
-                searchCursor.getString(3),
-                searchCursor.getString(4) };
+        if(searchCursor.moveToPosition(position)) {
+            selectedItem = new String[]{
+                    searchCursor.getString(5),
+                    searchCursor.getString(1),
+                    searchCursor.getString(2),
+                    searchCursor.getString(3),
+                    searchCursor.getString(4)};
+
+            Log.d("debug", searchCursor.getString(5));
+            Log.d("debug", searchCursor.getString(1));
+            Log.d("debug", searchCursor.getString(2));
+            Log.d("debug", searchCursor.getString(3));
+            Log.d("debug", searchCursor.getString(4));
+
+        }
         return selectedItem;
     }
 
