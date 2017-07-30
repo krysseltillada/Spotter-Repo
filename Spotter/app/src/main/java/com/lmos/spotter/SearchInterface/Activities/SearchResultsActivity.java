@@ -93,6 +93,8 @@ public class SearchResultsActivity extends AppCompatActivity
         Utilities.OnDbResponseListener,
         Utilities.OnLocationFoundListener {
 
+    public static boolean isLinkClicked = false;
+
     static final int SHARE_REQUEST_CODE = 28;
 
     /** Initialize views **/
@@ -148,7 +150,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         Log.d("debug", "onCreate SearchResults");
 
@@ -490,7 +491,7 @@ public class SearchResultsActivity extends AppCompatActivity
             placeShare.registerCallback(shareCallback, new FacebookCallback<Sharer.Result>() {
                 @Override
                 public void onSuccess(Sharer.Result result) {
-                    Toast.makeText(getApplicationContext(), "sucessfully shared..", Toast.LENGTH_LONG);
+
                 }
 
                 @Override
@@ -501,7 +502,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 @Override
                 public void onError(FacebookException error) {
                     Log.d("debug", error.getMessage());
-                    Toast.makeText(getApplicationContext(), "shared failed", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "shared failed", Toast.LENGTH_LONG).show();
                 }
             }, SHARE_REQUEST_CODE);
 
@@ -692,8 +693,6 @@ public class SearchResultsActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         shareCallback.onActivityResult(requestCode, resultCode, data);
-
-        Log.d("debug", "onActivityResult " + requestCode);
 
         switch (requestCode){
             case Utilities.REQUEST_CODES.CHECK_SETTING_REQUEST_CODE:

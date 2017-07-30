@@ -80,6 +80,8 @@ import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -126,9 +128,24 @@ public class Utilities {
 
         Log.d("debug", "link code: " + linkCode);
 
-        BranchUniversalObject placeLinkData = new BranchUniversalObject()
+        String shareImage = "";
+
+        try {
+
+            shareImage = new JSONObject(new JSONObject(place.getPlaceImageLink()).getString("placeImages"))
+                                                                                 .getString("shareImage");
+
+            Log.d("debug", "ImageLink: " + place.getPlaceImageLink());
+
+            Log.d("debug", "shareImage: " + shareImage);
+
+        } catch (JSONException e) {
+            Log.d("debug", e.getMessage());
+        }
+
+        final BranchUniversalObject placeLinkData = new BranchUniversalObject()
                 .setCanonicalIdentifier(linkCode)
-                .setContentImageUrl("https://b.zmtcdn.com/data/pictures/6/6314766/63d665910e5f922cadba84361ba3c838.jpg?fit=around%7C200%3A200&crop=200%3A200%3B%2A%2C%2A")
+                .setContentImageUrl(shareImage)
                 .setTitle(place.getPlaceName())
                 .setContentDescription(place.getPlaceDescription())
                 .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC);
@@ -172,7 +189,7 @@ public class Utilities {
 
                             BranchUniversalObject pd = new BranchUniversalObject()
                                     .setCanonicalIdentifier(linkCode)
-                                    .setContentImageUrl("https://b.zmtcdn.com/data/pictures/6/6314766/63d665910e5f922cadba84361ba3c838.jpg?fit=around%7C200%3A200&crop=200%3A200%3B%2A%2C%2A")
+                                    .setContentImageUrl(placeLinkData.getImageUrl())
                                     .setTitle(place.getPlaceName())
                                     .setContentDescription(place.getPlaceDescription())
                                     .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC);
