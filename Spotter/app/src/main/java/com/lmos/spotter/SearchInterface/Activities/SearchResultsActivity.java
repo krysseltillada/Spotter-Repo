@@ -128,7 +128,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
         viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
 
-
         viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
         viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
         viewFlipperManager.setFlipInterval(3000);
@@ -709,7 +708,10 @@ public class SearchResultsActivity extends AppCompatActivity
                 }
                 break;
             case Utilities.REQUEST_CODES.LOGIN_REQUEST:
-                startActivity(new Intent(this, LoginActivity.class));
+
+                if(resultCode == RESULT_OK)
+                    startActivity(new Intent(this, LoginActivity.class));
+
                 break;
 
         }
@@ -838,19 +840,27 @@ public class SearchResultsActivity extends AppCompatActivity
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             Log.d("SEARCH", result);
-            if(!result.equals("Data loaded.")){
-                loading_img.setImageResource(android.R.drawable.stat_notify_error);
-                if(tries < 5){
-                    tries ++;
-                    loading_msg.setText(result + " Retrying(" + tries + ")");
-                    new LoadSearchData().execute(data);
-                }
-                else
-                    loading_msg.setText(R.string.loading_msg_4);
+
+            switch (result){
+
+                case "Data loaded.":
+                    toggleLoadingScreen(View.GONE, AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
+                    break;
+                case "No result found.":
+                    break;
+                default:
+                    loading_img.setImageResource(android.R.drawable.stat_notify_error);
+                    if(tries < 5){
+                        tries ++;
+                        loading_msg.setText(result + " Retrying(" + tries + ")");
+                        new LoadSearchData().execute(data);
+                    }
+                    else
+                        loading_msg.setText(R.string.loading_msg_4);
+                    break;
+
             }
-            else{
-                toggleLoadingScreen(View.GONE, AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
-            }
+
         }
     }
     /** End of AsycTask **/

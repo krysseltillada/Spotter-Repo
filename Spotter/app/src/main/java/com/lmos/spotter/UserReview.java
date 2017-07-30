@@ -51,8 +51,4 @@ public class UserReview extends UserAccount {
         return isRecommend;
     }
 
-
-
-
-
 }

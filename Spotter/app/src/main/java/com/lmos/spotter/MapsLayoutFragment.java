@@ -83,6 +83,42 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
             color = getResources().getColor(R.color.colorAccent);
         }
 
+        LatLngBounds.Builder zoomBuilder = new LatLngBounds.Builder();
+
+        zoomBuilder.include(userPosition);
+        zoomBuilder.include(destination);
+
+        final LatLngBounds zoomBounds = zoomBuilder.build();
+
+        switch (action){
+
+            case "navigate":
+                Log.d("LocationHandler", "Updating camera position");
+                CameraPosition cameraPosition = new CameraPosition.Builder(googleMap.getCameraPosition())
+                        .target(userPosition)
+                        .zoom(17)
+                        .bearing(bearing)
+                        .build();
+
+                googleMap.clear();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                if(mMarker == null)
+                {
+                    mMarker = googleMap.addMarker(new MarkerOptions().position(userPosition)
+                            .title("your here")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_navigation_white_24dp)));
+
+                }
+                else
+                    mMarker.setPosition(userPosition);
+
+                break;
+            default:
+                googleMap.animateCamera(
+                        CameraUpdateFactory.newLatLngBounds(zoomBounds, 150));
+                break;
+        }
+
         new MapDirections(getContext(),
                 googleMap,
                 userPosition,
@@ -100,52 +136,6 @@ public class MapsLayoutFragment extends Fragment implements OnMapReadyCallback{
 
                     }
                 });
-
-        LatLngBounds.Builder zoomBuilder = new LatLngBounds.Builder();
-
-        zoomBuilder.include(userPosition);
-        zoomBuilder.include(destination);
-
-        final LatLngBounds zoomBounds = zoomBuilder.build();
-
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(userPosition));
-
-        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-
-                switch (action){
-
-                    case "navigate":
-                        Log.d("LocationHandler", "Updating camera position");
-                        cameraPosition = new CameraPosition.Builder()
-                                .target(userPosition)
-                                .zoom(5)
-                                .bearing(bearing)
-                                .tilt(15)
-                                .build();
-
-                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        break;
-                    default:
-                        googleMap.animateCamera(
-                                CameraUpdateFactory.newLatLngBounds(zoomBounds, 150));
-                        break;
-                }
-
-                if(mMarker == null)
-                {
-                    mMarker = googleMap.addMarker(new MarkerOptions().position(userPosition)
-                            .title("your here")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_navigation_white_24dp)));
-
-                }
-                else
-                    mMarker.setPosition(userPosition);
-
-            }
-        });
-
 
 
     }

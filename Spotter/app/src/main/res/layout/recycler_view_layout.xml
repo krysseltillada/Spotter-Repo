@@ -15,8 +15,7 @@
         android:layout_centerInParent="true"
         android:text="No Bookmarked Places"
         android:textSize="22sp"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <TextView
         android:id = "@+id/messageRecyclerView2"

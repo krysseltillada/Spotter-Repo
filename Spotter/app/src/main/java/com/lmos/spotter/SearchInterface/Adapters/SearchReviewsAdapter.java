@@ -46,10 +46,15 @@ public class SearchReviewsAdapter extends RecyclerView.Adapter<SearchReviewsAdap
 
         holder.userImage.setImageDrawable(new BitmapDrawable(context.getResources(), userReview.profileImage));
 
-        holder.userName.setText("by " + userReview.userName);
-        holder.review.setText(userReview.getReview());
-        holder.date.setText(userReview.getDate());
+        String reviewBy = "by:" + userReview.userName;
+        String posted = "posted on " + userReview.getDate();
+        String review = "\"" + userReview.getReview() + "\"";
+
+        holder.userName.setText(reviewBy);
+        holder.review.setText(review);
+        holder.date.setText(posted);
         holder.isRecommended.setVisibility((userReview.isRecommend()) ? View.VISIBLE : View.GONE);
+        holder.recLabel.setVisibility((userReview.isRecommend()) ? View.VISIBLE : View.GONE);
         holder.rating.setText(String.valueOf(userReview.getRating()));
 
     }
@@ -62,7 +67,7 @@ public class SearchReviewsAdapter extends RecyclerView.Adapter<SearchReviewsAdap
     public class SearchReviewsHolder extends RecyclerView.ViewHolder{
 
         ImageView userImage, isRecommended;
-        TextView userName, review, rating, date;
+        TextView userName, review, rating, date, recLabel;
 
         public SearchReviewsHolder(View itemView) {
             super(itemView);
@@ -74,6 +79,7 @@ public class SearchReviewsAdapter extends RecyclerView.Adapter<SearchReviewsAdap
             review = (TextView)itemView.findViewById(R.id.review);
             rating = (TextView)itemView.findViewById(R.id.general_rating_digit);
             date = (TextView)itemView.findViewById(R.id.date);
+            recLabel = (TextView) itemView.findViewById(R.id.recLabel);
 
         }
     }

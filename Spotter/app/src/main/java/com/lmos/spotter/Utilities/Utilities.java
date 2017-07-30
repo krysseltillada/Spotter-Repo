@@ -585,8 +585,8 @@ public class Utilities {
                 }
                 anim.start();
 
-
                 title.setVisibility(View.GONE);
+                searchView.bringToFront();
 
             }
         });
@@ -627,13 +627,6 @@ public class Utilities {
                     searchCursor.getString(2),
                     searchCursor.getString(3),
                     searchCursor.getString(4)};
-
-            Log.d("debug", searchCursor.getString(5));
-            Log.d("debug", searchCursor.getString(1));
-            Log.d("debug", searchCursor.getString(2));
-            Log.d("debug", searchCursor.getString(3));
-            Log.d("debug", searchCursor.getString(4));
-
         }
         return selectedItem;
     }
