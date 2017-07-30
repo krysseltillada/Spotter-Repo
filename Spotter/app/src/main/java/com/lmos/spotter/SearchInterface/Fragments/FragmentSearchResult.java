@@ -1,6 +1,8 @@
 package com.lmos.spotter.SearchInterface.Fragments;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -139,7 +141,7 @@ public class FragmentSearchResult extends Fragment
         navigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent navigate = new Intent(getContext(), NavigationActivity.class);
+                /**Intent navigate = new Intent(getContext(), NavigationActivity.class);
                 navigate.putExtra(
                         "destination",
                         new LatLng(
@@ -147,7 +149,16 @@ public class FragmentSearchResult extends Fragment
                                 Double.parseDouble(place.getPlaceLng())
                         )
                 );
-                startActivity(navigate);
+                startActivity(navigate);**/
+                try{
+                    String url = "https://waze.com/ul?ll=" + place.getPlaceLat() + "&" + place.getPlaceLng();
+                    Intent navigate = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(navigate);
+                }
+                catch (ActivityNotFoundException e){
+                    Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
+                    startActivity(intent);
+                }
             }
         });
 

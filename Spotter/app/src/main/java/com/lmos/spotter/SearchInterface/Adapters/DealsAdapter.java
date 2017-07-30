@@ -19,10 +19,19 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
 
     String deals;
     Context context;
+    public static OnBookListener onBookListener;
+
+    public interface OnBookListener{
+        void OnBookPlaceListener(View v, String link);
+    }
 
     public DealsAdapter(Context context, String deals){
         this.context = context;
         this.deals = deals;
+    }
+
+    public void setOnBookListener(OnBookListener onBookListener){
+        DealsAdapter.onBookListener =  onBookListener;
     }
 
     @Override
@@ -44,7 +53,8 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
         return 0;
     }
 
-    public class DealsViewHolder extends RecyclerView.ViewHolder{
+    public class DealsViewHolder extends RecyclerView.ViewHolder
+        implements View.OnClickListener{
 
         ImageView dealImg;
         TextView dealDesc;
@@ -55,6 +65,11 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
             dealImg = (ImageView) itemView.findViewById(R.id.deal_img);
             dealDesc = (TextView) itemView.findViewById(R.id.deal_desc);
             dealLink = (ImageButton) itemView.findViewById(R.id.deal_link);
+        }
+
+        @Override
+        public void onClick(View v) {
+
         }
     }
 

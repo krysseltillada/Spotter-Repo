@@ -1,6 +1,8 @@
 package com.lmos.spotter.SearchInterface.Fragments;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -83,15 +85,23 @@ public class FragmentSearchResultGeneral extends Fragment {
                             ((SearchResultsActivity) getContext()).queryFavorites("add", "", place);
                             break;
                         case R.id.general_list_explore:
-                            Intent navigate = new Intent(getContext(), NavigationActivity.class);
+                            /**Intent navigate = new Intent(getContext(), NavigationActivity.class);
                             navigate.putExtra(
                                     "destination",
                                     new LatLng(
                                             Double.parseDouble(place.getPlaceLat()),
                                             Double.parseDouble(place.getPlaceLng())
                                     )
-                            );
-                            startActivity(navigate);
+                            );**/
+                            try{
+                                String url = "https://waze.com/ul?ll=" + place.getPlaceLat() + "&" + place.getPlaceLng();
+                                Intent navigate = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                startActivity(navigate);
+                            }
+                            catch (ActivityNotFoundException e){
+                                Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=com.waze" ) );
+                                startActivity(intent);
+                            }
                             break;
                         default:
                             ((SearchResultsActivity) getContext()).setTemp_place(place);

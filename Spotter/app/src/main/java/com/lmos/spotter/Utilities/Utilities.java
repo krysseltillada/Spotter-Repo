@@ -804,6 +804,7 @@ public class Utilities {
         void onDbResponse(String response, String undo_id);
     }
 
+
     public static class BlurImg {
 
         private static final float BITMAP_SCALE = 0.4f;
