@@ -215,6 +215,7 @@ public class Utilities {
                                 public void onLinkCreate(String url2, BranchError error) {
 
                                     Log.d("debug", "url 2");
+                                    Log.d("debug", "url2: " + url2);
 
                                     generateLinkProgressDialog.dismiss();
 

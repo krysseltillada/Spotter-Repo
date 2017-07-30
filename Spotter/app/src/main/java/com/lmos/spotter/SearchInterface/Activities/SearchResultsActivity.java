@@ -218,10 +218,18 @@ public class SearchResultsActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if(showBookmarkInAppBar)
-            getMenuInflater().inflate(R.menu.bookmark_info, menu);
+        Log.d("debug", "size: " + menu.size());
 
-        toolbarMenu = menu;
+        if (menu.size() < 2) {
+
+            if (showBookmarkInAppBar)
+                getMenuInflater().inflate(R.menu.bookmark_info, menu);
+
+            toolbarMenu = menu;
+
+        }
+
+
 
         return super.onPrepareOptionsMenu(menu);
     }
