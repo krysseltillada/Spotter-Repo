@@ -324,6 +324,7 @@ public class BookMarksActivity extends AppCompatActivity {
 
         final ProgressDialog syncProgressDialog = new ProgressDialog(this);
 
+        syncProgressDialog.setCancelable(false);
         syncProgressDialog.setIndeterminate(true);
         syncProgressDialog.setMessage("syncing bookmarks");
         syncProgressDialog.show();
@@ -409,7 +410,7 @@ public class BookMarksActivity extends AppCompatActivity {
 
         deleteBookmarksProgress.setIndeterminate(true);
         deleteBookmarksProgress.setMessage("deleting bookmarks on cloud");
-        deleteBookmarksProgress.setCancelable(true);
+        deleteBookmarksProgress.setCancelable(false);
         deleteBookmarksProgress.show();
 
         StringRequest deleteStringRequest = new StringRequest(Request.Method.POST,

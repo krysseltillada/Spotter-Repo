@@ -80,6 +80,8 @@ import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -126,9 +128,24 @@ public class Utilities {
 
         Log.d("debug", "link code: " + linkCode);
 
-        BranchUniversalObject placeLinkData = new BranchUniversalObject()
+        String shareImage = "";
+
+        try {
+
+            shareImage = new JSONObject(new JSONObject(place.getPlaceImageLink()).getString("placeImages"))
+                                                                                 .getString("shareImage");
+
+            Log.d("debug", "ImageLink: " + place.getPlaceImageLink());
+
+            Log.d("debug", "shareImage: " + shareImage);
+
+        } catch (JSONException e) {
+            Log.d("debug", e.getMessage());
+        }
+
+        final BranchUniversalObject placeLinkData = new BranchUniversalObject()
                 .setCanonicalIdentifier(linkCode)
-                .setContentImageUrl("http://www.iconsfind.com/wp-content/uploads/2017/05/20170525_592661ad3138f.png")
+                .setContentImageUrl(shareImage)
                 .setTitle(place.getPlaceName())
                 .setContentDescription(place.getPlaceDescription())
                 .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC);
@@ -172,7 +189,7 @@ public class Utilities {
 
                             BranchUniversalObject pd = new BranchUniversalObject()
                                     .setCanonicalIdentifier(linkCode)
-                                    .setContentImageUrl("http://www.iconsfind.com/wp-content/uploads/2017/05/20170525_592661ad3138f.png")
+                                    .setContentImageUrl(placeLinkData.getImageUrl())
                                     .setTitle(place.getPlaceName())
                                     .setContentDescription(place.getPlaceDescription())
                                     .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC);
@@ -198,6 +215,7 @@ public class Utilities {
                                 public void onLinkCreate(String url2, BranchError error) {
 
                                     Log.d("debug", "url 2");
+                                    Log.d("debug", "url2: " + url2);
 
                                     generateLinkProgressDialog.dismiss();
 

@@ -188,14 +188,32 @@ public class HomeActivity extends AppCompatActivity
         /** Re-run placeLoader here **/
         displayUserInfo();
 
+        Log.d("debug", "onResume");
+
+        Log.d("debug", "isLoadingPlace: " + isLoadingPlace);
+        Log.d("debug", "isLoadingItem: " + isLoadingItem);
+
+
+        Log.d("debug", "isLinkClicked: " + SearchResultsActivity.isLinkClicked);
+
+        if (SearchResultsActivity.isLinkClicked) {
+            SearchResultsActivity.isLinkClicked = false;
+            getMostPopular(placeType.isEmpty() ? "General" : placeType);
+            loadPlacesByType(placeType.isEmpty() ? "General" : placeType, true);
+        }
+
+        /*
+
         if (Utilities.checkNetworkState(this)) {
 
             if (!(isLoadingPlace || isLoadingItem)) {
-                getMostPopular(placeType);
-                loadPlacesByType(placeType, false);
+
+                getMostPopular(placeType.isEmpty() ? "General" : placeType);
+                loadPlacesByType(placeType.isEmpty() ? "General" : placeType, true);
+
             }
 
-        }
+        } */
 
         if(!searchBTN.isIconified())
             searchBTN.setIconified(true);
@@ -1024,7 +1042,7 @@ public class HomeActivity extends AppCompatActivity
 
                 Log.d("debug", "place data size: " + placeDataList.size());
 
-                isLoadingPlace = true;
+                isLoadingPlace = false;
                 placeLoader = null;
 
             } catch (Exception e) {

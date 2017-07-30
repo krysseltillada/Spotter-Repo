@@ -116,7 +116,7 @@
             android:name=".MainInterface.Activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainInterface.Activities.BookMarksActivity"
             android:label="@string/title_activity_book_marks"
@@ -142,6 +142,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SearchInterface.Activities.SearchResultsActivity" />
         </activity>
+
+        <receiver
+            android:name=".SearchInterface.Receivers.TweetResultReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_SUCCESS"/>
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_FAILURE"/>
+            </intent-filter>
+        </receiver>
 
         <service android:name=".SyncService"
             android:exported="false" />

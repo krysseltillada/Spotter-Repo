@@ -45,52 +45,6 @@ public class SplashScreen extends AppCompatActivity {
     TextView splash_msg;
 
     @Override
-    public void onStart() {
-        super.onStart();
-        final Branch branch = Branch.getInstance();
-
-
-        branch.initSession(new Branch.BranchUniversalReferralInitListener() {
-            @Override
-            public void onInitFinished(BranchUniversalObject branchUniversalObject, LinkProperties linkProperties, BranchError error) {
-                if (error == null) {
-                    // params are the deep linked params associated with the link that the user clicked -> was re-directed to this app
-                    // params will be empty if no data found
-                    // ... insert custom logic here ...
-
-                    if (branchUniversalObject.getMetadata().containsKey("placeName")) {
-
-                        Log.d("debug", "link clicked: " + branchUniversalObject.convertToJson().toString());
-
-                        HashMap<String, String> linkMetaData = branchUniversalObject.getMetadata();
-
-                        Intent send_data = new Intent(SplashScreen.this, SearchResultsActivity.class);
-                        send_data.putExtra("data", new String[] {
-
-                                linkMetaData.get("placeType"),
-                                linkMetaData.get("placeName"),
-                                linkMetaData.get("placeAddress"),
-                                linkMetaData.get("placeLat"),
-                                linkMetaData.get("placeLng")
-
-                        });
-
-                        SplashScreen.this.startActivity(send_data);
-
-                    } else {
-                        Log.d("debug", "onInitFinished");
-                    }
-
-
-                } else {
-                    branch.initSession(this);
-                    Log.i("debug", error.getMessage());
-                }
-            }
-        }, this.getIntent().getData(), this);
-    }
-
-    @Override
     public void onNewIntent(Intent intent) {
         this.setIntent(intent);
     }
@@ -111,6 +65,52 @@ public class SplashScreen extends AppCompatActivity {
         Twitter.initialize(config);
 
         setContentView(R.layout.splash_screen);
+
+        final Branch branch = Branch.getInstance();
+
+
+        branch.initSession(new Branch.BranchUniversalReferralInitListener() {
+            @Override
+            public void onInitFinished(BranchUniversalObject branchUniversalObject, LinkProperties linkProperties, BranchError error) {
+                if (error == null) {
+                    // params are the deep linked params associated with the link that the user clicked -> was re-directed to this app
+                    // params will be empty if no data found
+                    // ... insert custom logic here ...
+
+                    if (branchUniversalObject.getMetadata().containsKey("placeName")) {
+
+                        SearchResultsActivity.isLinkClicked = true;
+
+                        Log.d("debug", "link clicked: " + branchUniversalObject.convertToJson().toString());
+
+                        HashMap<String, String> linkMetaData = branchUniversalObject.getMetadata();
+
+                        Intent send_data = new Intent(SplashScreen.this, SearchResultsActivity.class);
+                        send_data.putExtra("data", new String[] {
+
+                                linkMetaData.get("placeType"),
+                                linkMetaData.get("placeName"),
+                                linkMetaData.get("placeAddress"),
+                                linkMetaData.get("placeLat"),
+                                linkMetaData.get("placeLng")
+
+                        });
+
+                        SplashScreen.this.startActivity(send_data);
+                        finish();
+
+                    } else {
+                        Log.d("debug", "onInitFinished");
+                    }
+
+
+                } else {
+                    branch.initSession(this);
+                    Log.i("debug", error.getMessage());
+                }
+            }
+        }, this.getIntent().getData(), this);
+
 
         /*
 
