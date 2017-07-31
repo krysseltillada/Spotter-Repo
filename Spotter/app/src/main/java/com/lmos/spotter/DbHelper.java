@@ -123,6 +123,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (count <= 0)
             addToFavorites(place);
 
+        db.close();
 
     }
 
@@ -163,6 +164,8 @@ public class DbHelper extends SQLiteOpenHelper {
         if(onDbResponseListener != null)
             onDbResponseListener.onDbResponse(msg, place.getPlaceID());
 
+        db.close();
+
     }
 
     public void deleteBookmark(String[] placeID){
@@ -173,6 +176,8 @@ public class DbHelper extends SQLiteOpenHelper {
             for (String id : placeID)
                 db.delete(TABLE_FAVORITES, KEY_PLACEID + "=?", new String[]{id});
         }
+
+        db.close();
 
     }
 
@@ -259,6 +264,8 @@ public class DbHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
+
+        db.close();
 
         return bookmarks;
     }

@@ -232,8 +232,6 @@ public class HomeActivity extends AppCompatActivity
         if (placeLoader != null) {
             placeLoader.cancel(true);
             placeLoader = null;
-
-
         }
 
         isLoadingPlace = true;
