@@ -3,6 +3,7 @@ package com.lmos.spotter.SearchInterface.Receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.twitter.sdk.android.tweetcomposer.TweetUploadService;
@@ -18,6 +19,7 @@ public class TweetResultReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         if (TweetUploadService.UPLOAD_SUCCESS.equals(intent.getAction())) {
+            Log.d("debug", "success");
             Toast.makeText(context, "tweeted successfully", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(context, "please check your connection", Toast.LENGTH_LONG).show();
