@@ -344,6 +344,7 @@ public class HomeActivity extends AppCompatActivity
                             Intent displayResult = new Intent(getApplicationContext(), SearchResultsActivity.class);
                             displayResult.putExtra("data", new String[]{ "Home", "" });
                             displayResult.putExtra("Place", place);
+                            Toast.makeText(getApplicationContext(), "revCount: " + place.getUserReviews(), Toast.LENGTH_LONG).show();
                             startActivity(displayResult);
                         }
                     }
@@ -788,6 +789,7 @@ public class HomeActivity extends AppCompatActivity
                         mostPopularProgressBar.setVisibility(View.GONE);
 
                         try {
+
                             JSONObject jsonPopularData = new JSONObject(response);
 
                             JSONArray mostPopularDataArr = jsonPopularData.getJSONArray("mostPopularPlaces");
@@ -796,9 +798,8 @@ public class HomeActivity extends AppCompatActivity
 
                                 JSONObject mostPopularData = new JSONObject(mostPopularDataArr.getString(i));
 
-                                Log.d("debug", mostPopularData.getString("Name"));
-
                                 String imageLink = mostPopularData.getString("ImageLink");
+
 
                                 if (imageLink.length() > 0) {
 
@@ -827,7 +828,24 @@ public class HomeActivity extends AppCompatActivity
 
                                 }
 
+                                mostPopularPlaces[i].setPlaceID(mostPopularData.getString("placeID"));
                                 mostPopularPlaces[i].setplaceName(mostPopularData.getString("Name"));
+                                mostPopularPlaces[i].setplaceType(mostPopularData.getString("Type"));
+                                mostPopularPlaces[i].setplaceAddress(mostPopularData.getString("Address"));
+                                mostPopularPlaces[i].setPlaceLat(mostPopularData.getString("Latitude"));
+                                mostPopularPlaces[i].setPlaceLng(mostPopularData.getString("Longitude"));
+                                mostPopularPlaces[i].setplaceLocality(mostPopularData.getString("Locality"));
+                                mostPopularPlaces[i].setplaceDescription(mostPopularData.getString("Description"));
+                                mostPopularPlaces[i].setplaceImageLink(mostPopularData.getString("Image"));
+                                mostPopularPlaces[i].setplaceClass(mostPopularData.getString("Class"));
+                                mostPopularPlaces[i].setplacePriceRange(mostPopularData.getString("PriceRange"));
+                                mostPopularPlaces[i].setRecommended(mostPopularData.getString("Recommended"));
+                                mostPopularPlaces[i].setRating(mostPopularData.getString("Rating"));
+                                mostPopularPlaces[i].setUserReviews(mostPopularData.getString("userReviews"));
+                                mostPopularPlaces[i].setplaceImageLink(mostPopularData.getString("Image"));
+                                mostPopularPlaces[i].setBookmarks(mostPopularData.getString("bookmarks"));
+
+                                Toast.makeText(getApplicationContext(), mostPopularData.getString("Rating"), Toast.LENGTH_LONG).show();
 
                             }
 
@@ -876,7 +894,10 @@ public class HomeActivity extends AppCompatActivity
             public void onClick(View v) {
                 searchBTN.setIconified(true);
                 Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
-                Toast.makeText(getApplicationContext(), mostPopularName.getText(), Toast.LENGTH_LONG).show();
+                Intent sendMostPopularPlace = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                sendMostPopularPlace.putExtra("Place", mostPopularPlaces[viewFlipperManager.getDisplayedChild()]);
+                sendMostPopularPlace.putExtra("data", new String[]{ "Home", "" });
+                startActivity(sendMostPopularPlace);
             }
 
         });

@@ -603,8 +603,14 @@ public class Utilities {
                 }
                 anim.start();
 
+                if(activity instanceof SearchResultsActivity){
+                    if(searchView.isIconified())
+                        ((SearchResultsActivity) activity).setShowBookmarkInAppBar(true);
+                    else
+                        ((SearchResultsActivity) activity).setShowBookmarkInAppBar(false);
+                }
+
                 title.setVisibility(View.GONE);
-                searchView.bringToFront();
 
             }
         });
@@ -621,6 +627,10 @@ public class Utilities {
                     anim = ViewAnimationUtils.createCircularReveal(searchView, cx, cy, initialRadius, 0);
                 }
                 anim.start();
+
+                if(activity instanceof SearchResultsActivity)
+                    ((SearchResultsActivity) activity).setShowBookmarkInAppBar(true);
+
 
                 title.setVisibility(View.VISIBLE);
                 return false;

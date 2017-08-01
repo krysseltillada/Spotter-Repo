@@ -170,6 +170,7 @@ public class Place implements Parcelable {
         dest.writeString(placeDeals);
         dest.writeString(recommended);
         dest.writeString(rating);
+        dest.writeString(userReviews);
         dest.writeString(bookmarks);
 
     }

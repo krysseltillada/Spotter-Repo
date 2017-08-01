@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -151,7 +152,7 @@ public class FragmentSearchResult extends Fragment
                 );
                 startActivity(navigate);**/
                 try{
-                    String url = "https://waze.com/ul?ll=" + place.getPlaceLat() + "&" + place.getPlaceLng();
+                    String url = "https://waze.com/ul?ll=" + place.getPlaceLat() + "," + place.getPlaceLng() + "&navigate=yes";
                     Intent navigate = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(navigate);
                 }

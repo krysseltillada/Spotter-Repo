@@ -43,6 +43,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String KEY_IMAGE = "image";
     private static final String KEY_RECOMMENDED = "recommended";
     private static final String KEY_RATING = "rating";
+    private static final String KEY_REVIEW = "review";
     private static final String KEY_BOOKMARK = "bookmark";
 
     Context context;
@@ -86,6 +87,7 @@ public class DbHelper extends SQLiteOpenHelper {
                         KEY_IMAGE + " TEXT," +
                         KEY_RECOMMENDED + " TEXT," +
                         KEY_RATING + " TEXT," +
+                        KEY_REVIEW + " TEXT," +
                         KEY_BOOKMARK + " TEXT)"
 
         );
@@ -146,6 +148,7 @@ public class DbHelper extends SQLiteOpenHelper {
         cv.put(KEY_IMAGE, place.getPlaceImageLink());
         cv.put(KEY_RECOMMENDED, place.getRecommended());
         cv.put(KEY_RATING, place.getRating());
+        cv.put(KEY_REVIEW, place.getUserReviews());
         cv.put(KEY_BOOKMARK, place.getBookmarks());
 
         String msg = "Place has been bookmarked. Synchronizing.";
@@ -255,6 +258,7 @@ public class DbHelper extends SQLiteOpenHelper {
             place.setplaceImageLink(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
             place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
             place.setRating(cursor.getString(cursor.getColumnIndex(KEY_RATING)));
+            place.setRating(cursor.getString(cursor.getColumnIndex(KEY_REVIEW)));
             place.setBookmarks(cursor.getString(cursor.getColumnIndex(KEY_BOOKMARK)));
 
             // Log.d("BK-IMAGE_SET", place.getPlaceImageLink());

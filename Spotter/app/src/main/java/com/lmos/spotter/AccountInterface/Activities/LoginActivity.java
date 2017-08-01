@@ -211,7 +211,14 @@ public class LoginActivity extends AppCompatActivity {
      *
      **/
     public final void runAccountHandler(String transaction, Map<String, String> params){
-        new AccountHandler(this,transaction, params).execute();
+
+        if(Utilities.checkNetworkState(this)){
+            new AccountHandler(this,transaction, params).execute();
+        }
+        else{
+            Toast.makeText(this, "You are not connected in the internet", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private class AccountHandler extends AsyncTask<Void, Void, String>{
@@ -223,10 +230,12 @@ public class LoginActivity extends AppCompatActivity {
         private AccountHandler(Context context, String transaction, Map<String, String> map_data){
             this.transaction = transaction;
             this.map_data = map_data;
+            final String msg = (transaction.equals("login.php")) ? "Signing in..."
+                    : (transaction.equals("register.php")) ? "Creating Account..." : "Sending mail...";
             pd = new ProgressDialog(context){{
                 setIndeterminate(true);
                 setProgressStyle(STYLE_SPINNER);
-                setMessage("Signing in...");
+                setMessage(msg);
                 setFinishOnTouchOutside(false);
                 setCanceledOnTouchOutside(false);
             }};
@@ -303,7 +312,7 @@ public class LoginActivity extends AppCompatActivity {
                         bookmarksDB.clearBookmarks();
 
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-
+                    finish();
                 }
 
 
@@ -315,7 +324,7 @@ public class LoginActivity extends AppCompatActivity {
                 bookmarksDB.clearBookmarks();
 
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-
+                finish();
             } else {
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
             }

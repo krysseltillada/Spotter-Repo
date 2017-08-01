@@ -228,8 +228,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
         }
 
-
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -337,10 +335,14 @@ public class SearchResultsActivity extends AppCompatActivity
                 getResources().getColor(R.color.colorPrimary)
         );
 
-        if(Utilities.checkNetworkState(this))
+        if(fragmentType.equals("Home"))
             new LoadSearchData().execute(params);
-        else
-            loading_msg.setText(R.string.loading_msg_5);
+        else{
+            if(Utilities.checkNetworkState(this))
+                new LoadSearchData().execute(params);
+            else
+                loading_msg.setText(R.string.loading_msg_5);
+        }
 
     }
 
