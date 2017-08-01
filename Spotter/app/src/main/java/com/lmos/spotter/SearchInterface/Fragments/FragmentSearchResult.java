@@ -1,12 +1,16 @@
 package com.lmos.spotter.SearchInterface.Fragments;
 
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,7 +21,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,12 +29,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
+import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.MapsLayoutFragment;
-import com.lmos.spotter.NavigationActivity;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
+import com.lmos.spotter.SearchInterface.Activities.ReviewActivity;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
+import com.lmos.spotter.SearchInterface.Adapters.ReviewDialogFragment;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
+import com.lmos.spotter.SyncService;
 import com.lmos.spotter.UserReview;
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -43,6 +49,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by linker on 06/06/2017.
@@ -58,9 +66,9 @@ public class FragmentSearchResult extends Fragment
     Button navigate, showReview;
     SearchReviewsAdapter mAdapter;
     Utilities.LocationHandler locationHandler;
+    ProgressBar reviewPb;
     private RecyclerView reviews;
     private RecyclerView deals;
-    ProgressBar reviewPb;
 
     public static FragmentSearchResult newInstance(Place place){
 
@@ -74,6 +82,10 @@ public class FragmentSearchResult extends Fragment
         fragmentSearchResult.setArguments(bundle);
 
         return fragmentSearchResult;
+    }
+
+    public static Place getPlace () {
+        return place;
     }
 
     @Override
@@ -90,31 +102,47 @@ public class FragmentSearchResult extends Fragment
         Log.d("FragmentResult", "Connecting");
         locationHandler.changeApiState("connect");
 
-        RequestQueue requestReview = Volley.newRequestQueue(getContext());
+        if(Integer.parseInt(place.getUserReviews()) > 0){
+            RequestQueue requestReview = Volley.newRequestQueue(getContext());
 
-        StringRequest requestString = new StringRequest(Request.Method.POST,
-                "http://admin-spotter.000webhostapp.com/app_scripts/loadReview.php",
-                new Response.Listener<String>() {
+            StringRequest requestString = new StringRequest(Request.Method.POST,
+                    "http://admin-spotter.000webhostapp.com/app_scripts/loadReview.php",
+                    new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
-                        new loadReview().execute(response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                        @Override
+                        public void onResponse(String response) {
+                            new loadReview().execute(response);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-            }
-        }) {
-            protected Map<String, String> getParams() {
-                return new HashMap<String, String>() {{
-                    put("placeID", place.getPlaceID());
-                    put("limit", "5");
-                }};
-            }
-        };
+                }
+            }) {
+                protected Map<String, String> getParams() {
+                    return new HashMap<String, String>() {{
+                        put("placeID", place.getPlaceID());
+                        put("limit", "5");
+                    }};
+                }
+            };
 
-        requestReview.add(requestString);
+            requestReview.add(requestString);
+
+        }
+
+        else{
+            reviewPb.setVisibility(View.GONE);
+            no_review.setVisibility(View.VISIBLE);
+            showReview.setText("Give a Review.");
+        }
+
+
+        Log.d("UpdateView", "Starting " + place.getPlaceID());
+        Intent updatePlaceView = new Intent(getContext(), SyncService.class);
+        updatePlaceView.putExtra("action", "updateView");
+        updatePlaceView.putExtra("placeID", place.getPlaceID());
+        getActivity().startService(updatePlaceView);
 
     }
 
@@ -139,6 +167,65 @@ public class FragmentSearchResult extends Fragment
         review_count = (TextView) thisView.findViewById(R.id.review_count);
         navigate = (Button) thisView.findViewById(R.id.btnNavigate);
         showReview = (Button) thisView.findViewById(R.id.showAllReview);
+        showReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (String.valueOf(showReview.getText())){
+
+                    case "Give a Review.":
+                        SharedPreferences userPreference = getContext().getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
+                        if (userPreference.getString("status", "").equals("Logged In")) {
+
+                            ReviewDialogFragment reviewDialogFragment = new ReviewDialogFragment();
+
+                            reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
+                                @Override
+                                public void reviewPost(String placeID) {
+                                    ((ReviewActivity)getActivity()).loadReviews(placeID);
+                                }
+                            });
+
+                            reviewDialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
+                            reviewDialogFragment.show(getFragmentManager(), "reviewDialogFragment");
+
+
+                        } else {
+
+                            new AlertDialog.Builder(getContext()).setTitle("Account Required")
+                                    .setMessage("Hey wanderer! It looks like you are not yet signed in. Please log in your account to post a review.")
+                                    .setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Utilities.OpenActivity(getContext(),
+                                                    LoginActivity.class,
+                                                    null);
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            dialog.dismiss();
+
+                                        }
+                                    }).show();
+
+                        }
+                        break;
+                    default:
+                        Bundle placeID = new Bundle();
+
+                        placeID.putString("placeID", place.getPlaceID());
+
+                        Utilities.OpenActivityWithBundle(getActivity(), ReviewActivity.class, null, placeID);
+                        break;
+
+                }
+
+            }
+        });
         navigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,8 +286,38 @@ public class FragmentSearchResult extends Fragment
         return thisView;
     }
 
-    public static Place getPlace () {
-        return place;
+    @Override
+    public void onLocationFoundCity(String city) {
+
+    }
+
+    @Override
+    public void onLocationFoundLatLng(double lat, double lng, float bearing) {
+
+        Fragment mapFragment = getFragmentManager().findFragmentByTag("Map");
+
+        if (mapFragment != null && mapFragment instanceof MapsLayoutFragment) {
+            ((MapsLayoutFragment) mapFragment).setUserPosition(
+                    new LatLng(lat, lng), "directions", null);
+
+            locationHandler.stopLocationRequest();
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(locationHandler.checkApiState()){
+            locationHandler.stopLocationRequest();
+            locationHandler.changeApiState("disconnect");}
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(locationHandler.checkApiState()){
+            locationHandler.stopLocationRequest();
+            locationHandler.changeApiState("disconnect");}
     }
 
     class loadReview extends AsyncTask<String, Void, String>{
@@ -259,48 +376,9 @@ public class FragmentSearchResult extends Fragment
                     reviews.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
                     reviewPb.setVisibility(View.GONE);
                     reviews.setVisibility(View.VISIBLE);
-                    showReview.setVisibility(View.VISIBLE);
 
-            }
-            else{
-                reviewPb.setVisibility(View.GONE);
-                no_review.setVisibility(View.VISIBLE);
             }
 
         }
-    }
-
-    @Override
-    public void onLocationFoundCity(String city) {
-
-    }
-
-    @Override
-    public void onLocationFoundLatLng(double lat, double lng, float bearing) {
-
-        Fragment mapFragment = getFragmentManager().findFragmentByTag("Map");
-
-        if (mapFragment != null && mapFragment instanceof MapsLayoutFragment) {
-            ((MapsLayoutFragment) mapFragment).setUserPosition(
-                    new LatLng(lat, lng), "directions", null);
-
-            locationHandler.stopLocationRequest();
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        if(locationHandler.checkApiState()){
-            locationHandler.stopLocationRequest();
-            locationHandler.changeApiState("disconnect");}
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(locationHandler.checkApiState()){
-            locationHandler.stopLocationRequest();
-            locationHandler.changeApiState("disconnect");}
     }
 }

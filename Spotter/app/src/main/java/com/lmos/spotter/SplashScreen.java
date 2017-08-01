@@ -20,8 +20,6 @@ import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.HashMap;
 

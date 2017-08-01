@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
 
     <string name="com.twitter.sdk.android.CONSUMER_KEY">RBWEZABIo9AUfcAhJQnAHFDrB</string>
@@ -319,6 +319,6 @@
     <string name="not_sign">You must log in your account before you bookmark.</string>
     <string name="recommended_lable">people recommended this.</string>
     <string name="loading_mgs_3">Setting things up for you.</string>
-    <string name="no_reviews_found">Hey wanderer! be the first one to give a review for this place.</string>
+    <string name="no_reviews_found">Hey wanderer! Be the first one to give a review for this place.</string>
 
 </resources>

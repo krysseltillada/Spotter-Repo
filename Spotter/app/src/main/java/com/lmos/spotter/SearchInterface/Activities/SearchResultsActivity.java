@@ -1,18 +1,10 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,13 +36,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.model.ShareOpenGraphAction;
-import com.facebook.share.model.ShareOpenGraphContent;
-import com.facebook.share.model.ShareOpenGraphObject;
-import com.facebook.share.model.SharePhoto;
-import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
@@ -61,7 +51,6 @@ import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResultGeneral;
 import com.lmos.spotter.SyncService;
-import com.lmos.spotter.Utilities.RandomString;
 import com.lmos.spotter.Utilities.Utilities;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
@@ -73,12 +62,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import bolts.AppLinks;
-import io.branch.indexing.BranchUniversalObject;
-import io.branch.referral.Branch;
-import io.branch.referral.BranchError;
-import io.branch.referral.util.LinkProperties;
 
 /**
  * Created by linker on 02/06/2017.
@@ -93,10 +76,8 @@ public class SearchResultsActivity extends AppCompatActivity
         Utilities.OnDbResponseListener,
         Utilities.OnLocationFoundListener {
 
-    public static boolean isLinkClicked = false;
-
     static final int SHARE_REQUEST_CODE = 28;
-
+    public static boolean isLinkClicked = false;
     /** Initialize views **/
     CallbackManager shareCallback;
     ViewFlipper viewFlipperManager;
@@ -136,15 +117,6 @@ public class SearchResultsActivity extends AppCompatActivity
 
         viewFlipperManager.startFlipping();
 
-    }
-
-    public void showReviewActivity (View view) {
-
-        Bundle placeID = new Bundle();
-
-        placeID.putString("placeID", FragmentSearchResultGeneral.placeID);
-
-        Utilities.OpenActivityWithBundle(activity, ReviewActivity.class, null, placeID);
     }
 
     protected void onCreate(Bundle savedInstanceState) {

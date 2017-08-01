@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,12 +23,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
-import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,7 +47,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.util.Util;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -82,7 +78,7 @@ public class HomeActivity extends AppCompatActivity
     SharedPreferences userData;
     PlaceLoader placeLoader;
     PlaceLoader itemLoader;
-
+    NavigationView navigationView;
     private ImageView imgOfflineImage;
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
@@ -97,7 +93,6 @@ public class HomeActivity extends AppCompatActivity
     private AppBarLayout appBarLayout;
     private MainInterfaceAdapter mainInterfaceAdapter;
     private RecyclerView tabLayoutRecyclerView;
-    NavigationView navigationView;
     private ProgressBar recycleViewProgressBar;
     private ProgressBar mostPopularProgressBar;
     private TabLayout tabLayout;
@@ -344,7 +339,6 @@ public class HomeActivity extends AppCompatActivity
                             Intent displayResult = new Intent(getApplicationContext(), SearchResultsActivity.class);
                             displayResult.putExtra("data", new String[]{ "Home", "" });
                             displayResult.putExtra("Place", place);
-                            Toast.makeText(getApplicationContext(), "revCount: " + place.getUserReviews(), Toast.LENGTH_LONG).show();
                             startActivity(displayResult);
                         }
                     }
@@ -879,6 +873,10 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void startMostPopularFlipping() {
+
+        for (Place place : mostPopularPlaces) {
+            Log.d("debug", place.getPlaceName());
+        }
 
         viewFlipperManager.setDisplayedChild(0);
         mostPopularName.setText(mostPopularPlaces[0].getPlaceName());

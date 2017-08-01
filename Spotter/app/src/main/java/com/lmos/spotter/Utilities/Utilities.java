@@ -42,7 +42,6 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.TextAppearanceSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -56,7 +55,6 @@ import android.view.ViewAnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
@@ -115,10 +113,6 @@ import io.branch.referral.util.LinkProperties;
 
 
 public class Utilities {
-
-    public interface OnGenerateLinkListener {
-        void OnGenerateLink (String generatedLink);
-    }
 
     public static void generateLinkPlace (final Place place, final Activity activity, final OnGenerateLinkListener onGenerateLinkListener, final String socialType) {
 
@@ -247,7 +241,6 @@ public class Utilities {
     public static boolean validateEmail (String email) {
         return EmailValidator.getInstance().isValid(email);
     }
-
 
     public static boolean checkIfLastScrolledItem (NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
@@ -659,7 +652,6 @@ public class Utilities {
         return selectedItem;
     }
 
-
     public static void changeActionBarLayout (AppCompatActivity activity, Toolbar toolbar, Menu menu,
                                               int menuLayout, String title) {
 
@@ -681,7 +673,6 @@ public class Utilities {
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
-
 
     public static void setNavTitleStyle(AppCompatActivity appCompatActivity, int navId, int titleId, int styleId) {
 
@@ -734,9 +725,9 @@ public class Utilities {
         return 0;
     }
 
-    public static boolean checkNetworkState(Activity activity){
+    public static boolean checkNetworkState(Context context){
 
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
         return netInfo != null && netInfo.isConnectedOrConnecting();
@@ -767,7 +758,6 @@ public class Utilities {
         sb.show();
 
     }
-
 
     public static boolean checkPlayServices(Activity activity, DialogInterface.OnDismissListener onDismissListener) {
 
@@ -819,6 +809,10 @@ public class Utilities {
             e.printStackTrace();
         }
 
+    }
+
+    public interface OnGenerateLinkListener {
+        void OnGenerateLink (String generatedLink);
     }
 
     /** Intefaces **/

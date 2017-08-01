@@ -1,15 +1,14 @@
 package com.lmos.spotter.MainInterface.Activities;
 
-import android.accounts.Account;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.annotation.Nullable;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
@@ -55,59 +54,6 @@ public class SettingsActivity extends PreferenceActivity  {
     RequestQueue requestUpdateAccountInfo;
 
     boolean isReInitInfo = true;
-
-    private void updateUserPreferences () {
-
-        SharedPreferences.Editor editUserData = userData.edit();
-
-        editUserData.putString("accountUsername", modifiedAccount.userName);
-        editUserData.putString("accountEmail", modifiedAccount.email);
-        editUserData.putString("accountName", modifiedAccount.name);
-        editUserData.putString("accountPassword", modifiedAccount.password);
-
-        editUserData.apply();
-
-    }
-
-    private void clearBookmarks (final String accountID) {
-
-        RequestQueue clearBookmarksRequest = Volley.newRequestQueue(getApplicationContext());
-
-        StringRequest clearBookmarks = new StringRequest(Request.Method.POST,
-                "http://admin-spotter.000webhostapp.com/app_scripts/clearBookmarks.php",
-                new Response.Listener<String>() {
-
-                    @Override
-                    public void onResponse(String response) {
-                        if (response.equals("cleared")) {
-                            bookmarksDB.clearBookmarks();
-                            Toast.makeText(getApplicationContext(), "bookmarks cleared", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }){
-
-                protected Map<String, String> getParams() {
-
-                    return new HashMap<String, String>() {{
-                        put("accountID", accountID);
-                    }};
-
-                }
-
-        };
-
-        clearBookmarksRequest.add(clearBookmarks);
-
-    }
-
-
     SharedPreferences.OnSharedPreferenceChangeListener userChangePreference = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
         @Override
@@ -159,6 +105,57 @@ public class SettingsActivity extends PreferenceActivity  {
 
         }
     };
+
+    private void updateUserPreferences () {
+
+        SharedPreferences.Editor editUserData = userData.edit();
+
+        editUserData.putString("accountUsername", modifiedAccount.userName);
+        editUserData.putString("accountEmail", modifiedAccount.email);
+        editUserData.putString("accountName", modifiedAccount.name);
+        editUserData.putString("accountPassword", modifiedAccount.password);
+
+        editUserData.apply();
+
+    }
+
+    private void clearBookmarks (final String accountID) {
+
+        RequestQueue clearBookmarksRequest = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest clearBookmarks = new StringRequest(Request.Method.POST,
+                "http://admin-spotter.000webhostapp.com/app_scripts/clearBookmarks.php",
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        if (response.equals("cleared")) {
+                            bookmarksDB.clearBookmarks();
+                            Toast.makeText(getApplicationContext(), "bookmarks cleared", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }){
+
+                protected Map<String, String> getParams() {
+
+                    return new HashMap<String, String>() {{
+                        put("accountID", accountID);
+                    }};
+
+                }
+
+        };
+
+        clearBookmarksRequest.add(clearBookmarks);
+
+    }
 
     private void initUserInfo () {
 

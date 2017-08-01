@@ -1,12 +1,10 @@
 package com.lmos.spotter.SearchInterface.Activities;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
@@ -16,15 +14,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -34,7 +29,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
-import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.ReviewDialogFragment;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
@@ -63,33 +57,22 @@ import java.util.Map;
 
 public class ReviewActivity extends AppCompatActivity {
 
+    public static String placeID;
+    SharedPreferences userPreference;
+    List<UserReview> userReviewList;
+    List<UserReview> prevUserReviewList;
     private Toolbar toolbar;
     private NestedScrollView reviewScrollView;
-
     private ProgressBar reviewProgressBar;
-
     private RatingBar placeRatingBar;
-
     private TextView placeRatingText;
     private TextView placeUserReviews;
     private TextView placeBookmarks;
     private TextView placeRecommend;
-
     private TextView reviewListMsg;
-
     private CardView reviewInfoLayout;
-
-    SharedPreferences userPreference;
-
     private RecyclerView reviewList;
-
-    List<UserReview> userReviewList;
-    List<UserReview> prevUserReviewList;
-
     private boolean isHasReviews;
-
-    public static String placeID;
-
 
     private void initComp() {
 
@@ -149,9 +132,9 @@ public class ReviewActivity extends AppCompatActivity {
 
                     } else {
 
-                        new AlertDialog.Builder(ReviewActivity.this).setTitle("sign in")
-                                                                    .setMessage("sign in to post a review")
-                                                                    .setPositiveButton("sign in", new DialogInterface.OnClickListener() {
+                        new AlertDialog.Builder(ReviewActivity.this).setTitle("Account Required")
+                                                                    .setMessage("Hey wanderer! It looks like you are not yet signed in. Please log in your account to post a review.")
+                                                                    .setPositiveButton("Sign in", new DialogInterface.OnClickListener() {
 
                                                                         @Override
                                                                         public void onClick(DialogInterface dialog, int which) {
@@ -160,7 +143,7 @@ public class ReviewActivity extends AppCompatActivity {
                                                                                     null);
                                                                         }
                                                                     })
-                                                                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                                                         @Override
                                                                         public void onClick(DialogInterface dialog, int which) {
 
