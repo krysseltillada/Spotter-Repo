@@ -151,6 +151,8 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject userBookmarks = new JSONObject(response);
                     JSONArray  bookmarks = userBookmarks.getJSONArray("userBookmarks");
 
+                    Log.d("debug", response);
+
                     for (int i = 0; i != bookmarks.length(); ++i) {
 
                         JSONObject bookmarkElement = bookmarks.getJSONObject(i);
@@ -170,6 +172,7 @@ public class LoginActivity extends AppCompatActivity {
                         place.setPlaceRating(bookmarkElement.getString("Rating"));
                         place.setRecommended(bookmarkElement.getString("Recommended"));
                         place.setBookmarks(bookmarkElement.getString("Bookmarks"));
+                        place.setUserReviews(bookmarkElement.getString("userReviews"));
 
                         bookmarksDB.checkAndAddBookmark(place);
 
@@ -187,6 +190,10 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+
+                syncProgressDialog.dismiss();
+
+                Toast.makeText(getApplicationContext(), "error please check your connection", Toast.LENGTH_LONG).show();
 
             }
         }){

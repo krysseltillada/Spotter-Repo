@@ -4,12 +4,15 @@
     <color name="colorPrimary">#00E676</color>
     <color name="colorPrimaryDark">#00C853</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorAccentTransparent">#FF4081</color>
     <color name="white">#ffffff</color>
-    <color name="blackTransparent">#73000000</color>
+    <color name="blackTransparent">#99000000</color>
+    <color name ="darkTransparent">#424242</color>
 	<color name="gray">#455A64</color>
     <color name="transparent">#00000000</color>
     <color name="sprayBlue"> #81CFE0 </color>
     <color name="pink"> #F06292 </color>
     <color name="A200"> #00E676 </color>
     <color name="fontPrimary">#212121</color>
+
 </resources>

@@ -45,13 +45,14 @@
                 <android.support.design.widget.AppBarLayout
                     android:id="@+id/app_bar_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="275dp"
+                    android:layout_height="match_parent"
                     android:theme="@style/AppTheme.AppBarOverlay">
 
                         <android.support.design.widget.CollapsingToolbarLayout
                         android:id="@+id/home_collapsing_toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="@color/cardview_dark_background"
                         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                         <ProgressBar
@@ -61,11 +62,19 @@
                             android:layout_height="wrap_content"
                             android:visibility="gone"/>
 
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
                         <ViewFlipper
-                            android:id="@+id/viewFlipManager"
+                            android:id="@+id/mostPopularViewFlipper"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            app:layout_collapseMode="parallax">
+                            app:layout_collapseMode="parallax"
+                            android:layout_weight="1">
 
                             <ImageView
                                 android:id="@+id/popularImageView1"
@@ -97,71 +106,150 @@
                                 android:cropToPadding="false"
                                 android:visibility="gone" />
 
+
                         </ViewFlipper>
 
+                            <ViewFlipper
+                                android:id="@+id/featureViewFlipper"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:layout_collapseMode="parallax"
+                                android:layout_weight="1">
+
+                                <ImageView
+                                    android:id="@+id/featureImageView1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:adjustViewBounds="false"
+                                    android:background="@drawable/sample"
+                                    android:contentDescription="@string/most_popular_desc"
+                                    android:cropToPadding="false"
+                                    android:visibility="visible" />
+
+
+                            </ViewFlipper>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id = "@+id/mostPopularBlackBackground1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@color/colorAccentTransparent"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="55dp">
+
+                                <TextView
+                                    android:paddingTop="5dp"
+                                    android:paddingBottom="5dp"
+                                    android:paddingLeft="10dp"
+                                    android:paddingRight="10dp"
+                                    android:id="@+id/home_header_lbl"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:text="Most Popular"
+                                    android:visibility="visible"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id = "@+id/mostPopularBlackBackground"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="222dp"
+                                android:background="@color/darkTransparent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/most_pop_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:paddingBottom="@dimen/min_padding"
+                                    android:paddingEnd="@dimen/min_padding"
+                                    android:paddingStart="@dimen/mid_padding"
+                                    android:paddingTop="@dimen/min_padding"
+                                    android:textAlignment="center"
+                                    android:layout_gravity="center"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id = "@+id/featureLabelBlackBackground"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="254dp"
+                                android:background="@color/colorAccentTransparent"
+                                android:orientation="horizontal"
+                                >
+
+                                <TextView
+                                    android:paddingTop="5dp"
+                                    android:paddingBottom="5dp"
+                                    android:paddingLeft="10dp"
+                                    android:paddingRight="10dp"
+                                    android:id="@+id/featureLabel"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:text="Featured Places"
+                                    android:visibility="visible"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id = "@+id/featurePlaceBlackBackground"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:background="@color/darkTransparent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/mostFeaturePlaceName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:paddingBottom="@dimen/min_padding"
+                                    android:paddingEnd="@dimen/min_padding"
+                                    android:paddingStart="@dimen/mid_padding"
+                                    android:paddingTop="@dimen/min_padding"
+                                    android:textAlignment="center"
+                                    android:layout_gravity="center"
+                                    android:textColor="@color/white"
+                                    android:text="Siayan Travellers Inn"
+                                    android:textSize="16sp"/>
+
+                            </LinearLayout>
+
+
                         <android.support.v7.widget.Toolbar
-                            android:id="@+id/action_bar_toolbar"
-                            android:layout_width="match_parent"
-                            android:layout_height="?attr/actionBarSize"
-                            android:layout_marginBottom="48dp"
-                            android:background="@color/colorPrimary"
-                            app:layout_collapseMode="pin"
-                            app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+                                android:id="@+id/action_bar_toolbar"
+                                android:layout_width="match_parent"
+                                android:layout_height="?attr/actionBarSize"
+                                android:background="@color/blackTransparent"
+                                android:layout_marginBottom="48dp"
+                                app:layout_collapseMode="pin"
+                                app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
 
-                        <LinearLayout
-                            android:id = "@+id/mostPopularBlackBackground"
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp"
-                            android:layout_marginTop="195dp"
-                            android:background="@color/blackTransparent"
-                            android:orientation="horizontal"
-                            app:layout_collapseMode="parallax">
-
-                            <TextView
-                                android:id="@+id/most_pop_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:paddingBottom="@dimen/min_padding"
-                                android:paddingEnd="@dimen/min_padding"
-                                android:paddingStart="@dimen/mid_padding"
-                                android:paddingTop="@dimen/min_padding"
-                                android:text=""
-                                android:textColor="@color/white"
-                                android:textSize="16sp"/>
-
-                            <TextView
-                                android:id="@+id/home_header_lbl"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_weight="2"
-                                android:gravity="end|center_vertical"
-                                android:paddingBottom="@dimen/min_padding"
-                                android:paddingEnd="@dimen/mid_padding"
-                                android:paddingStart="@dimen/min_padding"
-                                android:paddingTop="@dimen/min_padding"
-                                android:layout_marginTop="-120dp"
-                                android:text="Most Popular"
-                                android:textColor="@color/white"
-                                android:textSize="16sp"/>
-
-                        </LinearLayout>
-
-
-                        <android.support.design.widget.TabLayout
-                            android:id="@+id/home_tabLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:background="@color/colorPrimary"
-                            android:minHeight="?attr/actionBarSize"
-                            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                            app:tabGravity="fill"
-                            app:elevation="6dp" />
-
+                            <android.support.design.widget.TabLayout
+                                android:id="@+id/home_tabLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:background="@color/colorPrimary"
+                                android:minHeight="?attr/actionBarSize"
+                                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                                android:visibility="gone"
+                                app:tabGravity="fill"
+                                app:elevation="6dp" />
 
 
                     </android.support.design.widget.CollapsingToolbarLayout>
+
 
                 </android.support.design.widget.AppBarLayout>
 

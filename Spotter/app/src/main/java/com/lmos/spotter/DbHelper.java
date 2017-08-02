@@ -133,6 +133,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
+        Log.d("debug", "Add to favorites");
+
+        place.displayInfo();
+
         ContentValues cv = new ContentValues();
         cv.put(KEY_PLACEID, place.getPlaceID());
         cv.put(KEY_NAME, place.getPlaceName());
@@ -258,8 +262,10 @@ public class DbHelper extends SQLiteOpenHelper {
             place.setplaceImageLink(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
             place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
             place.setRating(cursor.getString(cursor.getColumnIndex(KEY_RATING)));
-            place.setRating(cursor.getString(cursor.getColumnIndex(KEY_REVIEW)));
+            place.setUserReviews(cursor.getString(cursor.getColumnIndex(KEY_REVIEW)));
             place.setBookmarks(cursor.getString(cursor.getColumnIndex(KEY_BOOKMARK)));
+
+            place.displayInfo();
 
             // Log.d("BK-IMAGE_SET", place.getPlaceImageLink());
 

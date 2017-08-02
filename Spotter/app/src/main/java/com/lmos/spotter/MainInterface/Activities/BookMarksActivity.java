@@ -743,6 +743,7 @@ public class BookMarksActivity extends AppCompatActivity {
                     place.setPlaceRating(bookmarkElement.getString("Rating"));
                     place.setRecommended(bookmarkElement.getString("Recommended"));
                     place.setBookmarks(bookmarkElement.getString("Bookmarks"));
+                    place.setUserReviews(bookmarkElement.getString("userReviews"));
 
                     bookmarkDB.addToFavorites(place);
 

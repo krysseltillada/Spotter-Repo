@@ -2,6 +2,7 @@ package com.lmos.spotter;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 /**
  * Created by emman on 6/21/2017.
@@ -172,6 +173,30 @@ public class Place implements Parcelable {
         dest.writeString(rating);
         dest.writeString(userReviews);
         dest.writeString(bookmarks);
+
+    }
+
+    public void displayInfo () {
+        Log.d("debug", "placeID: " + placeID);
+        Log.d("debug", "placeName: " + placeName);
+        Log.d("debug", "placeAddress: " + placeAddress);
+        Log.d("debug", "placeLocality: " + placeLocality);
+        Log.d("debug", "placeDescription: " + placeDescription);
+        Log.d("debug", "placeLat: " + placeLat);
+        Log.d("debug", "placeLng: " + placeLng);
+        Log.d("debug", "placeClass: " + placeClass);
+        Log.d("debug", "placeType: " + placeType);
+        Log.d("debug", "placePriceRange: " + placePriceRange);
+        Log.d("debug", "placeImageLink: " + placeImageLink);
+        Log.d("debug", "placeDeals: " + placeDeals);
+        Log.d("debug", "placeRecommended: " + recommended);
+        Log.d("debug", "placeRating: " + rating);
+        Log.d("debug", "userReviews: " + userReviews);
+        Log.d("debug", "bookmarks: " + bookmarks);
+
+
+
+
 
     }
 

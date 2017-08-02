@@ -16,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
@@ -32,13 +33,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.android.volley.Request;
@@ -70,6 +72,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -79,6 +82,7 @@ public class HomeActivity extends AppCompatActivity
     PlaceLoader placeLoader;
     PlaceLoader itemLoader;
     NavigationView navigationView;
+    private Window homeActivityWindow;
     private ImageView imgOfflineImage;
     private NestedScrollView homeNestedScrollView;
     private Toolbar toolbar;
@@ -87,7 +91,7 @@ public class HomeActivity extends AppCompatActivity
     private View actionBarView;
     private TextView txtOfflineMessage;
     private TextView txtHome;
-    private TextView txtMostPopular;
+    private TextView txtMostPopular; // TODO DO THIS MAKE THE text feature and feature name disappear and the most popular ones
     private SearchView searchBTN;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
@@ -106,13 +110,16 @@ public class HomeActivity extends AppCompatActivity
     private Activity activity = this;
     private ActionBarDrawerToggle drawerToggle;
     private List<Place> placeDataList;
-    private ViewFlipper viewFlipperManager;
-    private LinearLayout backgroundMostPopular;
+    private ViewFlipper mostPopularViewFlipper;
+    private ViewFlipper featureViewFlipper;
     private ImageView[] mostPopularImages;
     private Place[] mostPopularPlaces;
     private SwipeRefreshLayout pullUpLoadLayout;
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
+
+    LinearLayout []frontLayouts;
+    LinearLayout navHeaderLayout;
 
     private boolean isLoadingItem = false;
     private boolean isLoadingPlace = false;
@@ -125,6 +132,8 @@ public class HomeActivity extends AppCompatActivity
 
         mostPopularImages = new ImageView[3];
         mostPopularPlaces = new Place[3];
+
+        frontLayouts = new LinearLayout[4];
 
         for (int i = 0; i != mostPopularPlaces.length; ++i)
             mostPopularPlaces[i] = new Place();
@@ -336,6 +345,7 @@ public class HomeActivity extends AppCompatActivity
 
                         @Override
                         public void onItemClick(Place place) {
+
                             Intent displayResult = new Intent(getApplicationContext(), SearchResultsActivity.class);
                             displayResult.putExtra("data", new String[]{ "Home", "" });
                             displayResult.putExtra("Place", place);
@@ -468,7 +478,7 @@ public class HomeActivity extends AppCompatActivity
     private void startCheckingConnection (final Activity activity) {
 
         final Snackbar snackBarCheckConnection = Snackbar.make(activity.getWindow().getDecorView(), "Your Device is Offline", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Go Bookmarks", new View.OnClickListener() {
+                .setAction("Go to Bookmarks", new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -510,6 +520,8 @@ public class HomeActivity extends AppCompatActivity
 
 
     private void initComp() {
+
+        homeActivityWindow = getWindow();
 
         userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
@@ -607,9 +619,13 @@ public class HomeActivity extends AppCompatActivity
 
         mostPopularProgressBar = (ProgressBar)findViewById(R.id.mostPopularProgressBar);
 
-        backgroundMostPopular = (LinearLayout) findViewById(R.id.mostPopularBlackBackground);
+        mostPopularViewFlipper = (ViewFlipper) findViewById(R.id.mostPopularViewFlipper);
+        featureViewFlipper = (ViewFlipper) findViewById(R.id.featureViewFlipper);
 
-        viewFlipperManager = (ViewFlipper) findViewById(R.id.viewFlipManager);
+        frontLayouts[0] = (LinearLayout) findViewById(R.id.mostPopularBlackBackground1);
+        frontLayouts[1] = (LinearLayout) findViewById(R.id.mostPopularBlackBackground);
+        frontLayouts[2] = (LinearLayout) findViewById(R.id.featureLabelBlackBackground);
+        frontLayouts[3] = (LinearLayout) findViewById(R.id.featurePlaceBlackBackground);
 
         mostPopularImages[0] = (ImageView) findViewById(R.id.popularImageView1);
         mostPopularImages[1] = (ImageView) findViewById(R.id.popularImageView2);
@@ -639,6 +655,51 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                Log.d("debug", "vertical offset: " + verticalOffset);
+
+                if (verticalOffset == 0 && tabLayout.getVisibility() != View.GONE) {
+
+                    Utilities.animateViewColor(toolbar,
+                                               getResources().getColor(R.color.colorPrimary),
+                                               getResources().getColor(R.color.cardview_dark_background),
+                                               250);
+
+                    homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorAccent));
+
+                    tabLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
+                    tabLayout.setVisibility(View.GONE);
+
+                    tabLayoutRecyclerView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
+                    tabLayoutRecyclerView.setVisibility(View.INVISIBLE);
+
+                    navHeaderLayout.setBackgroundColor(getResources().getColor(R.color.cardview_dark_background));
+                    navigationView.setBackgroundColor(getResources().getColor(R.color.cardview_dark_background));
+
+
+                } else if (verticalOffset < -250 && tabLayout.getVisibility() != View.VISIBLE) {
+
+                    Utilities.animateViewColor(toolbar,
+                                               getResources().getColor(R.color.blackTransparent),
+                                               getResources().getColor(R.color.colorPrimary),
+                                               250);
+
+                    homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorPrimary));
+
+                    tabLayout.setVisibility(View.VISIBLE);
+                    tabLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
+
+                    tabLayoutRecyclerView.setVisibility(View.VISIBLE);
+                    tabLayoutRecyclerView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
+
+                    navHeaderLayout.setBackground(getResources().getDrawable(R.drawable.littleleaf));
+                    navigationView.setBackground(getResources().getDrawable(R.drawable.littleleaf));
+
+                }
 
                 if (homeNestedScrollView.getVisibility() != View.GONE) {
 
@@ -722,6 +783,8 @@ public class HomeActivity extends AppCompatActivity
 
         View headerLayout = navigationView.getHeaderView(0);
 
+        navHeaderLayout = (LinearLayout) headerLayout.findViewById(R.id.navHeaderBackground);
+
         userName = (TextView)headerLayout.findViewById(R.id.userName);
         userEmail = (TextView)headerLayout.findViewById(R.id.userEmail);
         userProfileImage = (ImageView)headerLayout.findViewById(R.id.userProfileImage);
@@ -760,10 +823,13 @@ public class HomeActivity extends AppCompatActivity
 
     private void getMostPopular(final String type) {
 
-        viewFlipperManager.stopFlipping();
+        mostPopularViewFlipper.stopFlipping();
 
-        viewFlipperManager.setVisibility(View.INVISIBLE);
-        backgroundMostPopular.setVisibility(View.INVISIBLE);
+        mostPopularViewFlipper.setVisibility(View.INVISIBLE);
+        featureViewFlipper.setVisibility(View.INVISIBLE);
+
+        for (LinearLayout frontLayout : frontLayouts)
+            frontLayout.setVisibility(View.INVISIBLE);
 
         mostPopularProgressBar.setVisibility(View.VISIBLE);
 
@@ -794,7 +860,6 @@ public class HomeActivity extends AppCompatActivity
 
                                 String imageLink = mostPopularData.getString("ImageLink");
 
-
                                 if (imageLink.length() > 0) {
 
                                     JSONObject placeImage = new JSONObject(imageLink);
@@ -805,8 +870,10 @@ public class HomeActivity extends AppCompatActivity
 
                                     Log.d("debug", imageLinks.getString(0));
 
+                                    Random randomImage = new Random();
+
                                     Picasso.with(getApplicationContext())
-                                            .load(imageLinks.getString(0))
+                                            .load(imageLinks.getString(randomImage.nextInt(imageLinks.length())))
                                             .placeholder(R.drawable.landscape_placeholder)
                                             .fit()
                                             .into(mostPopularImages[i]);
@@ -822,6 +889,8 @@ public class HomeActivity extends AppCompatActivity
 
                                 }
 
+                                Log.d("debug", mostPopularData.getString("Name"));
+
                                 mostPopularPlaces[i].setPlaceID(mostPopularData.getString("placeID"));
                                 mostPopularPlaces[i].setplaceName(mostPopularData.getString("Name"));
                                 mostPopularPlaces[i].setplaceType(mostPopularData.getString("Type"));
@@ -830,22 +899,19 @@ public class HomeActivity extends AppCompatActivity
                                 mostPopularPlaces[i].setPlaceLng(mostPopularData.getString("Longitude"));
                                 mostPopularPlaces[i].setplaceLocality(mostPopularData.getString("Locality"));
                                 mostPopularPlaces[i].setplaceDescription(mostPopularData.getString("Description"));
-                                mostPopularPlaces[i].setplaceImageLink(mostPopularData.getString("Image"));
+                                mostPopularPlaces[i].setplaceImageLink(imageLink);
                                 mostPopularPlaces[i].setplaceClass(mostPopularData.getString("Class"));
                                 mostPopularPlaces[i].setplacePriceRange(mostPopularData.getString("PriceRange"));
                                 mostPopularPlaces[i].setRecommended(mostPopularData.getString("Recommended"));
                                 mostPopularPlaces[i].setRating(mostPopularData.getString("Rating"));
                                 mostPopularPlaces[i].setUserReviews(mostPopularData.getString("userReviews"));
-                                mostPopularPlaces[i].setplaceImageLink(mostPopularData.getString("Image"));
-                                mostPopularPlaces[i].setBookmarks(mostPopularData.getString("bookmarks"));
-
-                                Toast.makeText(getApplicationContext(), mostPopularData.getString("Rating"), Toast.LENGTH_LONG).show();
+                                mostPopularPlaces[i].setBookmarks(mostPopularData.getString("Bookmarks"));
 
                             }
 
 
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Log.d("debug", e.getMessage());
                         }
 
                         startMostPopularFlipping();
@@ -874,44 +940,43 @@ public class HomeActivity extends AppCompatActivity
 
     private void startMostPopularFlipping() {
 
-        for (Place place : mostPopularPlaces) {
-            Log.d("debug", place.getPlaceName());
-        }
-
-        viewFlipperManager.setDisplayedChild(0);
+        mostPopularViewFlipper.setDisplayedChild(0);
         mostPopularName.setText(mostPopularPlaces[0].getPlaceName());
 
-        viewFlipperManager.setVisibility(View.VISIBLE);
-        backgroundMostPopular.setVisibility(View.VISIBLE);
+        featureViewFlipper.setVisibility(View.VISIBLE);
+        mostPopularViewFlipper.setVisibility(View.VISIBLE);
+
+        for (LinearLayout frontLayout : frontLayouts)
+            frontLayout.setVisibility(View.VISIBLE);
 
         appBarLayout.setExpanded(true);
 
-        viewFlipperManager.setOnClickListener(new View.OnClickListener() {
+        mostPopularViewFlipper.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 searchBTN.setIconified(true);
                 Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
                 Intent sendMostPopularPlace = new Intent(getApplicationContext(), SearchResultsActivity.class);
-                sendMostPopularPlace.putExtra("Place", mostPopularPlaces[viewFlipperManager.getDisplayedChild()]);
+                sendMostPopularPlace.putExtra("Place", mostPopularPlaces[mostPopularViewFlipper.getDisplayedChild()]);
                 sendMostPopularPlace.putExtra("data", new String[]{ "Home", "" });
                 startActivity(sendMostPopularPlace);
             }
 
         });
 
-        viewFlipperManager.startFlipping();
+        mostPopularViewFlipper.startFlipping();
 
-        viewFlipperManager.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
-        viewFlipperManager.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
-        viewFlipperManager.setFlipInterval(3000);
+        mostPopularViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
+        mostPopularViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
+        mostPopularViewFlipper.setFlipInterval(3000);
 
-        viewFlipperManager.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
+        mostPopularViewFlipper.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
 
             @Override
             public void onAnimationStart(Animation animation) {
                 mostPopularName.setAnimation(AnimationUtils.loadAnimation(HomeActivity.this, android.R.anim.fade_in));
-                mostPopularName.setText(mostPopularPlaces[viewFlipperManager.getDisplayedChild()].getPlaceName());
+                mostPopularName.setText(mostPopularPlaces[mostPopularViewFlipper.getDisplayedChild()].getPlaceName());
             }
 
             @Override

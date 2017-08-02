@@ -2,6 +2,8 @@ package com.lmos.spotter.Utilities;
 
 import android.Manifest;
 import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -113,6 +115,23 @@ import io.branch.referral.util.LinkProperties;
 
 
 public class Utilities {
+
+    public static void animateViewColor (final View view, int colorFrom, int colorTo, int duration) {
+
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+
+        colorAnimation.setDuration(duration);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                view.setBackgroundColor((int) animator.getAnimatedValue());
+            }
+
+        });
+
+        colorAnimation.start();
+    }
 
     public static void generateLinkPlace (final Place place, final Activity activity, final OnGenerateLinkListener onGenerateLinkListener, final String socialType) {
 
@@ -228,6 +247,8 @@ public class Utilities {
                         }
 
                     } else {
+
+                        generateLinkProgressDialog.dismiss();
 
                         onGenerateLinkListener.OnGenerateLink("error");
 
