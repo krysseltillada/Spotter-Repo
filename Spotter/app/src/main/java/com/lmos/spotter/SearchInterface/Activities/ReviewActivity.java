@@ -180,6 +180,7 @@ public class ReviewActivity extends AppCompatActivity {
         reviewScrollView.smoothScrollTo(0, 0);
         reviewListMsg.setVisibility(View.GONE);
         reviewList.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
+        reviewList.setVisibility(View.GONE);
 
         RequestQueue requestReview = Volley.newRequestQueue(getApplicationContext());
 

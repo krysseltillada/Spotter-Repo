@@ -1,13 +1,17 @@
 package com.lmos.spotter.MainInterface.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -41,6 +45,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.android.volley.Request;
@@ -54,6 +59,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
+import com.lmos.spotter.AccountInterface.Fragments.FragmentSignUp;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.Place;
@@ -789,6 +795,23 @@ public class HomeActivity extends AppCompatActivity
         userEmail = (TextView)headerLayout.findViewById(R.id.userEmail);
         userProfileImage = (ImageView)headerLayout.findViewById(R.id.userProfileImage);
 
+        userProfileImage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (userData.getString("status", "").equals("Logged In")) {
+
+                    Intent takePic = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                    if (takePic.resolveActivity(HomeActivity.this.getPackageManager()) != null) {
+                        startActivityForResult(takePic, FragmentSignUp.TAKE_PHOTO_REQUEST);
+                    }
+
+                }
+            }
+        });
+
         displayUserInfo();
 
         Utilities.setNavTitleStyle(this,
@@ -1042,9 +1065,62 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
+    private void updateProfilePicture (final Bitmap profilePicture, final String accountID) {
+
+        final ProgressDialog updateProfileProgress = new ProgressDialog(this);
+
+        updateProfileProgress.setIndeterminate(true);
+        updateProfileProgress.setCancelable(false);
+        updateProfileProgress.setMessage("updating profile picture..");
+        updateProfileProgress.show();
+
+        final RequestQueue updateProfilePicture = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest updateProfileRequest = new StringRequest(Request.Method.POST,
+                "http://admin-spotter.000webhostapp.com/app_scripts/updateProfilePicture.php",
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+
+                        updateProfileProgress.dismiss();
+
+                        if (response.equals("account updated")) {
+                            Toast.makeText(HomeActivity.this, "updated successfully..", Toast.LENGTH_LONG).show();
+                            userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), profilePicture));
+                        }
+                        else
+                            Toast.makeText(HomeActivity.this, "update failed", Toast.LENGTH_LONG).show();
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(HomeActivity.this, "please check your connection", Toast.LENGTH_LONG).show();
+            }
+        }){
+
+            protected Map<String, String> getParams() {
+                return new HashMap<String, String>() {{
+                    put("accountID", accountID);
+                    put("profileImage", Utilities.BlurImg.bitmapToString(profilePicture));
+                }};
+            }
+
+        };
+
+        updateProfilePicture.add(updateProfileRequest);
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == FragmentSignUp.TAKE_PHOTO_REQUEST && resultCode == RESULT_OK) {
+            updateProfilePicture((Bitmap)data.getExtras().get("data"), userData.getString("accountID", ""));
+        }
 
         if (!searchBTN.isIconified()) {
             searchBTN.setIconified(true);

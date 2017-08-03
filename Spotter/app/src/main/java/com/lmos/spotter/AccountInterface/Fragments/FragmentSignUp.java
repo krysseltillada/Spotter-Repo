@@ -33,7 +33,7 @@ import java.util.Map;
 
 public class FragmentSignUp extends Fragment {
 
-    private final int TAKE_PHOTO_REQUEST = 1800;
+    public static final int TAKE_PHOTO_REQUEST = 1800;
     ImageButton register_img;
     Bitmap userImage;
     TextInputEditText name, email, username, password;
