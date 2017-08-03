@@ -188,15 +188,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="20dp"
         android:layout_marginTop="@dimen/acc_layout_min_margin"/>
 
     <TextView
         android:id="@+id/no_review_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/acc_layout_mid_margin"
         android:gravity="center"
-        android:padding="@dimen/min_padding"
+        android:layout_margin="20dp"
         android:text="@string/no_reviews_found"
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/mid_font_size"
@@ -217,10 +217,10 @@
         android:layout_gravity="bottom"
         android:layout_marginEnd="@dimen/acc_layout_min_margin"
         android:layout_marginStart="@dimen/acc_layout_min_margin"
-        android:background="?attr/selectableItemBackground"
+        android:background="@color/colorPrimary"
         android:text = "Show all"
         android:textAlignment="center"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"/>
 

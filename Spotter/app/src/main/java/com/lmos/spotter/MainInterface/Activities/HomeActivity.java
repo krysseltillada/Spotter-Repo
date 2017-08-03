@@ -85,8 +85,8 @@ public class HomeActivity extends AppCompatActivity
 
     String pageCount = "10";
     SharedPreferences userData;
-    PlaceLoader placeLoader;
-    PlaceLoader itemLoader;
+    static PlaceLoader placeLoader;
+    static PlaceLoader itemLoader;
     NavigationView navigationView;
     private Window homeActivityWindow;
     private ImageView imgOfflineImage;
@@ -97,7 +97,7 @@ public class HomeActivity extends AppCompatActivity
     private View actionBarView;
     private TextView txtOfflineMessage;
     private TextView txtHome;
-    private TextView txtMostPopular; // TODO DO THIS MAKE THE text feature and feature name disappear and the most popular ones
+    private TextView txtMostPopular;
     private SearchView searchBTN;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
@@ -110,9 +110,9 @@ public class HomeActivity extends AppCompatActivity
     private ImageView userProfileImage;
     private TextView userName;
     private TextView userEmail;
-    private int startingIndex;
-    private int tableCount;
-    private String placeType = "";
+    static private int startingIndex;
+    static private int tableCount;
+    static private String placeType = "";
     private Activity activity = this;
     private ActionBarDrawerToggle drawerToggle;
     private List<Place> placeDataList;
@@ -127,8 +127,8 @@ public class HomeActivity extends AppCompatActivity
     LinearLayout []frontLayouts;
     LinearLayout navHeaderLayout;
 
-    private boolean isLoadingItem = false;
-    private boolean isLoadingPlace = false;
+    static private boolean isLoadingItem = false;
+    static private boolean isLoadingPlace = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -184,11 +184,6 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if(placeLoader != null)
-            placeLoader.cancel(true);
-
-        if(itemLoader != null)
-            itemLoader.cancel(true);
 
     }
 
@@ -197,33 +192,6 @@ public class HomeActivity extends AppCompatActivity
         super.onResume();
         /** Re-run placeLoader here **/
         displayUserInfo();
-
-        Log.d("debug", "onResume");
-
-        Log.d("debug", "isLoadingPlace: " + isLoadingPlace);
-        Log.d("debug", "isLoadingItem: " + isLoadingItem);
-
-
-        Log.d("debug", "isLinkClicked: " + SearchResultsActivity.isLinkClicked);
-
-        if (SearchResultsActivity.isLinkClicked) {
-            SearchResultsActivity.isLinkClicked = false;
-            getMostPopular(placeType.isEmpty() ? "General" : placeType);
-            loadPlacesByType(placeType.isEmpty() ? "General" : placeType, true);
-        }
-
-        /*
-
-        if (Utilities.checkNetworkState(this)) {
-
-            if (!(isLoadingPlace || isLoadingItem)) {
-
-                getMostPopular(placeType.isEmpty() ? "General" : placeType);
-                loadPlacesByType(placeType.isEmpty() ? "General" : placeType, true);
-
-            }
-
-        } */
 
         if(!searchBTN.isIconified())
             searchBTN.setIconified(true);
@@ -262,6 +230,7 @@ public class HomeActivity extends AppCompatActivity
             public void onRespondError(String error) {
 
                 Log.d("debug", "error trying to get the data again");
+                Log.d("debug", "error");
 
                 new PlaceLoader().setOnRespondError(this)
                                  .execute("0", pageCount, pType, sType);
@@ -304,6 +273,7 @@ public class HomeActivity extends AppCompatActivity
                                                                                    public void onRespondError(String error) {
 
                                                                                        Log.d("debug", "error getting items from the server im tryingg");
+                                                                                       Log.d("debug", error);
 
                                                                                        itemLoader = new PlaceLoader().setOnRespondError(this);
                                                                                        itemLoader.execute(String.valueOf(startingIndex), pageCount, placeType, sType);
@@ -346,19 +316,6 @@ public class HomeActivity extends AppCompatActivity
                     PlaceType.NONE,
                     placeDataList);
 
-            mainInterfaceAdapter.setOnItemClickListener(
-                    new MainInterfaceAdapter.OnAdapterItemClickListener(){
-
-                        @Override
-                        public void onItemClick(Place place) {
-
-                            Intent displayResult = new Intent(getApplicationContext(), SearchResultsActivity.class);
-                            displayResult.putExtra("data", new String[]{ "Home", "" });
-                            displayResult.putExtra("Place", place);
-                            startActivity(displayResult);
-                        }
-                    }
-            );
             tabLayoutRecyclerView.setAdapter(mainInterfaceAdapter);
 
             String selectedSortType = tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getText().toString();
@@ -527,6 +484,17 @@ public class HomeActivity extends AppCompatActivity
 
     private void initComp() {
 
+        MainInterfaceAdapter.setOnItemClickListener(new MainInterfaceAdapter.OnAdapterItemClickListener(){
+            @Override
+            public void onItemClick(Place place) {
+
+                Intent displayResult = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                displayResult.putExtra("data", new String[]{ "Home", "" });
+                displayResult.putExtra("Place", place);
+                startActivity(displayResult);
+            }
+        });
+
         homeActivityWindow = getWindow();
 
         userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
@@ -563,8 +531,6 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onRefresh() {
                 Log.d("debug", "pulled up");
-
-                //TODO check if is not connected and it is swiped down
 
                 pullUpLoadLayout.setRefreshing(false);
 
@@ -661,8 +627,6 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
-                Log.d("debug", "vertical offset: " + verticalOffset);
 
                 if (verticalOffset == 0 && tabLayout.getVisibility() != View.GONE) {
 
@@ -1086,8 +1050,14 @@ public class HomeActivity extends AppCompatActivity
                         updateProfileProgress.dismiss();
 
                         if (response.equals("account updated")) {
+
+                            LoginActivity.set_login_prefs = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE).edit();
+
                             Toast.makeText(HomeActivity.this, "updated successfully..", Toast.LENGTH_LONG).show();
+                            LoginActivity.set_login_prefs.putString("accountImage", Utilities.BlurImg.bitmapToString(profilePicture));
+                            LoginActivity.set_login_prefs.apply();
                             userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), profilePicture));
+
                         }
                         else
                             Toast.makeText(HomeActivity.this, "update failed", Toast.LENGTH_LONG).show();
@@ -1103,6 +1073,7 @@ public class HomeActivity extends AppCompatActivity
 
             protected Map<String, String> getParams() {
                 return new HashMap<String, String>() {{
+
                     put("accountID", accountID);
                     put("profileImage", Utilities.BlurImg.bitmapToString(profilePicture));
                 }};
@@ -1179,6 +1150,8 @@ public class HomeActivity extends AppCompatActivity
 
             try {
 
+                Log.d("debug", "placeDatalist size: " + placeDataList.size());
+
                 tableCount = Integer.parseInt(loadPlaces.getTableCount());
                 startingIndex = Integer.parseInt(loadPlaces.getOffSet());
 
@@ -1206,7 +1179,7 @@ public class HomeActivity extends AppCompatActivity
                 placeLoader = null;
 
             } catch (Exception e) {
-                onRespondError.onRespondError(e.getMessage());
+                e.printStackTrace();
             }
 
         }

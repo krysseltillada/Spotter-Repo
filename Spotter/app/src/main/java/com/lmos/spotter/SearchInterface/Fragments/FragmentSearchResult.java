@@ -103,31 +103,38 @@ public class FragmentSearchResult extends Fragment
         locationHandler.changeApiState("connect");
 
         if(Integer.parseInt(place.getUserReviews()) > 0){
-            RequestQueue requestReview = Volley.newRequestQueue(getContext());
 
-            StringRequest requestString = new StringRequest(Request.Method.POST,
-                    "http://admin-spotter.000webhostapp.com/app_scripts/loadReview.php",
-                    new Response.Listener<String>() {
+            if(Utilities.checkNetworkState(getContext())){
 
-                        @Override
-                        public void onResponse(String response) {
-                            new loadReview().execute(response);
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+                RequestQueue requestReview = Volley.newRequestQueue(getContext());
 
-                }
-            }) {
-                protected Map<String, String> getParams() {
-                    return new HashMap<String, String>() {{
-                        put("placeID", place.getPlaceID());
-                        put("limit", "5");
-                    }};
-                }
-            };
+                StringRequest requestString = new StringRequest(Request.Method.POST,
+                        "http://admin-spotter.000webhostapp.com/app_scripts/loadReview.php",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                new loadReview().execute(response);
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-            requestReview.add(requestString);
+                    }
+                }) {
+                    protected Map<String, String> getParams() {
+                        return new HashMap<String, String>() {{
+                            put("placeID", place.getPlaceID());
+                            put("limit", "5");
+                        }};
+                    }
+                };
+                requestReview.add(requestString);
+            }
+            else{
+                no_review.setText("Not connected to the internet.");
+                reviewPb.setVisibility(View.GONE);
+                showReview.setVisibility(View.GONE);
+            }
 
         }
 

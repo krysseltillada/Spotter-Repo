@@ -114,7 +114,7 @@ public class MainInterfaceAdapter extends RecyclerView.Adapter <RecyclerView.Vie
         }
     }
 
-    public void setOnItemClickListener(OnAdapterItemClickListener onAdapterItemClickListener){
+    public static void setOnItemClickListener(OnAdapterItemClickListener onAdapterItemClickListener){
         MainInterfaceAdapter.onAdapterItemClickListener = onAdapterItemClickListener;
     }
 

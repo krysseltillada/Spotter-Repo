@@ -66,18 +66,12 @@ public class SplashScreen extends AppCompatActivity {
 
         final Branch branch = Branch.getInstance();
 
-
         branch.initSession(new Branch.BranchUniversalReferralInitListener() {
             @Override
             public void onInitFinished(BranchUniversalObject branchUniversalObject, LinkProperties linkProperties, BranchError error) {
                 if (error == null) {
-                    // params are the deep linked params associated with the link that the user clicked -> was re-directed to this app
-                    // params will be empty if no data found
-                    // ... insert custom logic here ...
 
                     if (branchUniversalObject.getMetadata().containsKey("placeName")) {
-
-                        SearchResultsActivity.isLinkClicked = true;
 
                         Log.d("debug", "link clicked: " + branchUniversalObject.convertToJson().toString());
 
