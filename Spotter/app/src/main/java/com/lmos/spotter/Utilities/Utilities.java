@@ -78,6 +78,7 @@ import com.lmos.spotter.MainInterface.Activities.HomeActivity;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
+import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
@@ -642,8 +643,10 @@ public class Utilities {
                 }
                 anim.start();
 
-                if(activity instanceof SearchResultsActivity)
+                if(activity instanceof SearchResultsActivity &&
+                   activity.getSupportFragmentManager().findFragmentByTag("") instanceof FragmentSearchResult) {
                     ((SearchResultsActivity) activity).setShowBookmarkInAppBar(true);
+                }
 
 
                 title.setVisibility(View.VISIBLE);

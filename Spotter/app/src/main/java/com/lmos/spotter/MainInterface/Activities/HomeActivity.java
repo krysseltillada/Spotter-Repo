@@ -1058,6 +1058,7 @@ public class HomeActivity extends AppCompatActivity
                             LoginActivity.set_login_prefs.apply();
                             userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), profilePicture));
 
+
                         }
                         else
                             Toast.makeText(HomeActivity.this, "update failed", Toast.LENGTH_LONG).show();

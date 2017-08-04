@@ -240,6 +240,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
     public void switchFragment(final String type, String cmd, final Fragment fragment){
 
+        Log.d("debug", "type: " + type );
+
         final int view_id = R.id.search_content_holder;
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
