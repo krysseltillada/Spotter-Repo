@@ -74,8 +74,6 @@ public class FragmentSearchResult extends Fragment
 
         FragmentSearchResult fragmentSearchResult = new FragmentSearchResult();
 
-        FragmentSearchResultGeneral.placeID = place.getPlaceID();
-
         Bundle bundle = new Bundle();
         bundle.putParcelable("data", place);
 
@@ -156,6 +154,9 @@ public class FragmentSearchResult extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         place = getArguments().getParcelable("data");
+
+        ReviewActivity.placeID = place.getPlaceID();
+
         View thisView = inflater.inflate(R.layout.search_result_hrt, container, false);
 
         ((SearchResultsActivity) getContext() ).setHeaderText(place.getPlaceName());
@@ -189,7 +190,7 @@ public class FragmentSearchResult extends Fragment
                             reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
                                 @Override
                                 public void reviewPost(String placeID) {
-                                    ((ReviewActivity)getActivity()).loadReviews(placeID);
+                                    // pre dito mo i refresh ung reviews sa activity mo
                                 }
                             });
 

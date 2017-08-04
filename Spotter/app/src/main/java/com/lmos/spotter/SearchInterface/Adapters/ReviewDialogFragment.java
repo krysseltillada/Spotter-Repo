@@ -112,7 +112,8 @@ public class ReviewDialogFragment extends DialogFragment {
                                              if (!response.equals("review posted")) {
                                                  errorDialog.show();
                                              } else {
-                                                 onReviewPost.reviewPost(ReviewActivity.placeID);
+                                                 if (onReviewPost != null)
+                                                    onReviewPost.reviewPost(ReviewActivity.placeID);
                                              }
 
                                          }
@@ -137,6 +138,7 @@ public class ReviewDialogFragment extends DialogFragment {
                                  }
                              };
 
+                             Log.d("debug", "placeID" + ReviewActivity.placeID);
                              Log.d("debug", "review: " + reviewEditText.getText().toString());
                              Log.d("debug", "Rating: " + Float.toString(reviewRatingBar.getRating()));
                              Log.d("debug", "IsRecommended: " + Boolean.toString(isRecommended.isChecked()));
@@ -158,9 +160,6 @@ public class ReviewDialogFragment extends DialogFragment {
 
                      }
                  }).create();
-
-        postReview.show();
-
 
          return postReview;
     }

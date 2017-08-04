@@ -1181,6 +1181,7 @@ public class HomeActivity extends AppCompatActivity
 
             } catch (Exception e) {
                 e.printStackTrace();
+                onRespondError.onRespondError(e.getMessage());
             }
 
         }
