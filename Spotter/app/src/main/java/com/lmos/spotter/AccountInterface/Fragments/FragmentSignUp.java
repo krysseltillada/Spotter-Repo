@@ -91,7 +91,7 @@ public class FragmentSignUp extends Fragment {
                     Log.d("debug", "password: " + registeredUserAccount.password);
                     Log.d("debug", "name: " + registeredUserAccount.name);
                     Log.d("debug", "email: " + registeredUserAccount.email);
-                    Log.d("debug", "image: " + Utilities.BlurImg.bitmapToString(registeredUserAccount.profileImage));
+                    Log.d("debug", "userImage: " + Utilities.BlurImg.bitmapToString(registeredUserAccount.profileImage));
 
                     final Map<String, String> map_data = new HashMap<String, String>() {{
 

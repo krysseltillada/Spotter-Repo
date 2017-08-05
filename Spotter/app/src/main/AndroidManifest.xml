@@ -15,26 +15,24 @@
         android:required="false" />
 
     <application
-        android:allowBackup="true"
         android:name="io.branch.referral.BranchApp"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-                   android:value="@string/facebook_app_id" />
-
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAsY2k2M1rOeO-P2F1fxkEmkCAqe_263kw" />
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider2024269634471844"
+        <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:exported="true"/>
-
-
+            android:authorities="com.facebook.app.FacebookContentProvider2024269634471844"
+            android:exported="true" />
 
         <activity
             android:name=".SplashScreen"
@@ -43,43 +41,63 @@
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
             <!-- Branch URI scheme -->
             <intent-filter>
-                <data android:scheme="Spotter" android:host="open" />
+                <data
+                    android:host="open"
+                    android:scheme="Spotter" />
+
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
-
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="spotterlmos.app.link" />
-                <data android:scheme="https" android:host="spotterlmos-alternate.app.link" />
-                <data android:scheme="https" android:host="spotterlmos.test-app.link" />
-                <data android:scheme="https" android:host="spotterlmos-alternate.test-app.link" />
-            </intent-filter>
 
+                <data
+                    android:host="spotterlmos.app.link"
+                    android:scheme="https" />
+                <data
+                    android:host="spotterlmos-alternate.app.link"
+                    android:scheme="https" />
+                <data
+                    android:host="spotterlmos.test-app.link"
+                    android:scheme="https" />
+                <data
+                    android:host="spotterlmos-alternate.test-app.link"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
 
         <!-- Branch init -->
-        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_iexA4gZ1ReWAgnle0pUZ7kcbuseXym7w" />
-        <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="key_test_agvAXn63Vl5walka2eK86miauwc4Cm3p" />
+        <meta-data
+            android:name="io.branch.sdk.BranchKey"
+            android:value="key_live_iexA4gZ1ReWAgnle0pUZ7kcbuseXym7w" />
+        <meta-data
+            android:name="io.branch.sdk.BranchKey.test"
+            android:value="key_test_agvAXn63Vl5walka2eK86miauwc4Cm3p" />
 
         <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
-        <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
+        <meta-data
+            android:name="io.branch.sdk.TestMode"
+            android:value="false" />
 
         <!-- Branch install referrer tracking -->
-        <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
+        <receiver
+            android:name="io.branch.referral.InstallListener"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-
 
         <activity
             android:name=".MainInterface.Activities.HomeActivity"
@@ -87,30 +105,29 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".AccountInterface.Activities.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SearchInterface.Activities.SearchResultsActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask">
-
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainInterface.Activities.HomeActivity" />
 
             <intent-filter>
+                <data
+                    android:host="open"
+                    android:scheme="Spotter" />
 
-                <data android:scheme="Spotter" android:host="open" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
             </intent-filter>
-
         </activity>
         <activity
             android:name=".MainInterface.Activities.SettingsActivity"
@@ -127,17 +144,15 @@
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:theme="@style/DialogTheme" />
-
         <activity
             android:name=".SearchInterface.Activities.ReviewActivity"
             android:label="@string/title_activity_review"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".NavigationActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SearchInterface.Activities.SearchResultsActivity" />
@@ -147,14 +162,17 @@
             android:name=".SearchInterface.Receivers.TweetResultReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_SUCCESS"/>
-                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_FAILURE"/>
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_SUCCESS" />
+                <action android:name="com.twitter.sdk.android.tweetcomposer.UPLOAD_FAILURE" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".SyncService"
+        <service
+            android:name=".SyncService"
             android:exported="false" />
-
+        <service
+            android:name=".NearPlacesService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

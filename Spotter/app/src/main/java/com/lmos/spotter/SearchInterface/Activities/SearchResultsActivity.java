@@ -71,6 +71,7 @@ import java.util.Map;
  *
  */
 
+
 public class SearchResultsActivity extends AppCompatActivity
     implements
         Utilities.OnDbResponseListener,
@@ -245,6 +246,9 @@ public class SearchResultsActivity extends AppCompatActivity
         final int view_id = R.id.search_content_holder;
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (type.equals(""))
+            viewFlipperManager.setVisibility(View.VISIBLE);
 
         if(cmd.equals("add")){
 
@@ -601,6 +605,8 @@ public class SearchResultsActivity extends AppCompatActivity
 
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 
+            viewFlipperManager.setVisibility(View.INVISIBLE);
+
             if (searchResultsTab.getVisibility() != View.VISIBLE)
                 searchResultsTab.setVisibility(View.VISIBLE);
 
@@ -757,6 +763,7 @@ public class SearchResultsActivity extends AppCompatActivity
             if(!type.equals("Home")){
 
                 final AppScript appScript = new AppScript(activity){{
+                    disconnect();
                     setData("searchPlaces.php", map_data);
                 }};
 
@@ -776,6 +783,7 @@ public class SearchResultsActivity extends AppCompatActivity
                                 if(type.equals("General") || type.equals("Undefined"))
                                     switchFragment("General", "add", FragmentSearchResultGeneral.newInstance("Hotel", placesList));
                                 else if(type.equals("Hotel") || type.equals("Restaurant") || type.equals("Tourist Spot")){
+
                                     switchFragment("", "add", FragmentSearchResult.newInstance(placesList.get(0)));
                                     temp_place = placesList.get(0);
                                     setShowBookmarkInAppBar(true);
@@ -818,6 +826,8 @@ public class SearchResultsActivity extends AppCompatActivity
             return result;
 
         }
+
+
 
         @Override
         protected void onPostExecute(String result) {

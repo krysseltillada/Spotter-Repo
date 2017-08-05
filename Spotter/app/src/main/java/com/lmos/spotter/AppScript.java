@@ -106,7 +106,7 @@ public class AppScript {
 
         Log.d("debug", setUrl + post_data);
 
-        final int CONNECTION_TIME_OUT = 60000;
+        final int CONNECTION_TIME_OUT = 30000;
         final String REQUEST_METHOD = "POST";
 
         try {
@@ -293,7 +293,7 @@ public class AppScript {
         }catch(JSONException e){
                 e.printStackTrace();
                 Utilities.logError(context, e.getMessage());
-                response = e.getMessage();
+                response = "check your network connection and try again.";
             }
         }
 

@@ -64,6 +64,11 @@ public class SplashScreen extends AppCompatActivity {
 
         setContentView(R.layout.splash_screen);
 
+        /*
+
+        Intent startNearService = new Intent(this, NearPlacesService.class);
+        startService(startNearService); */
+
         final Branch branch = Branch.getInstance();
 
         branch.initSession(new Branch.BranchUniversalReferralInitListener() {
