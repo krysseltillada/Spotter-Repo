@@ -190,7 +190,7 @@ public class FragmentSearchResult extends Fragment
                             reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
                                 @Override
                                 public void reviewPost(String placeID) {
-                                    // pre dito mo i refresh ung reviews sa activity mo
+                                        // pre dito mo i refresh ung reviews sa activity mo
                                 }
                             });
 
