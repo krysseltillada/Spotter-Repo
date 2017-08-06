@@ -22,7 +22,7 @@
             android:layout_gravity="center"
             android:thicknessRatio="0.5"
             app:cardBackgroundColor="@color/blackTransparent"
-            app:cardCornerRadius="40dp"
+            app:cardCornerRadius="35dp"
             app:cardElevation="2dp">
 
             <ImageView

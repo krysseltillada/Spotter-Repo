@@ -44,7 +44,6 @@ public class NearPlacesService extends Service implements LocationListener, Goog
 
         Toast.makeText(getApplicationContext(), "distance from here to pldt: " + distance, Toast.LENGTH_LONG).show();
 
-        Toast.makeText(getApplicationContext(), "lat: " + location.getLatitude(), Toast.LENGTH_LONG).show();
 
     }
 
@@ -67,6 +66,7 @@ public class NearPlacesService extends Service implements LocationListener, Goog
 
         HandlerThread thread = new HandlerThread("ServiceStartArguments",
                 Process.THREAD_PRIORITY_BACKGROUND);
+
         thread.start();
 
         mServiceLooper = thread.getLooper();

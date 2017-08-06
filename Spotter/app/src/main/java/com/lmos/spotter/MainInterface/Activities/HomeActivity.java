@@ -1056,7 +1056,7 @@ public class HomeActivity extends AppCompatActivity
                             Toast.makeText(HomeActivity.this, "updated successfully..", Toast.LENGTH_LONG).show();
                             LoginActivity.set_login_prefs.putString("accountImage", Utilities.BlurImg.bitmapToString(profilePicture));
                             LoginActivity.set_login_prefs.apply();
-                            userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), profilePicture));
+                            userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), Utilities.rotateBitmapCorrectly(profilePicture, HomeActivity.this)));
 
 
                         }
