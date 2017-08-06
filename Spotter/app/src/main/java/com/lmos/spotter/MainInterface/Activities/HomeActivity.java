@@ -124,11 +124,14 @@ public class HomeActivity extends AppCompatActivity
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
 
+    int timeoutCount = 5;
+    int currentCount = 0;
+
     LinearLayout []frontLayouts;
     LinearLayout navHeaderLayout;
 
     static private boolean isLoadingItem = false;
-    static private boolean isLoadingPlace = false;
+    //static private boolean isLoadingPlace = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -154,6 +157,8 @@ public class HomeActivity extends AppCompatActivity
     private void loadData (String pt) {
 
         if (Utilities.checkNetworkState(this)) {
+
+            currentCount = 0;
 
             imgOfflineImage.setVisibility(View.GONE);
             txtOfflineMessage.setVisibility(View.GONE);
@@ -198,6 +203,21 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    private void checkTimeout () {
+        if (timeoutCount >= currentCount) {
+
+            imgOfflineImage.setVisibility(View.VISIBLE);
+            txtOfflineMessage.setVisibility(View.VISIBLE);
+            txtMostPopular.setText("no connection");
+            homeNestedScrollView.setVisibility(View.GONE);
+
+            appBarLayout.setExpanded(false);
+
+        }
+        else
+            ++currentCount;
+    }
+
 
     private void loadPlacesFromServer(final String pType, final String sType) {
 
@@ -212,7 +232,6 @@ public class HomeActivity extends AppCompatActivity
             placeLoader = null;
         }
 
-        isLoadingPlace = true;
 
         if (placeDataList.size() > 0) {
 
@@ -228,6 +247,8 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onRespondError(String error) {
+
+                checkTimeout();
 
                 Log.d("debug", "error trying to get the data again");
                 Log.d("debug", "error");
@@ -267,10 +288,13 @@ public class HomeActivity extends AppCompatActivity
                                                                            @Override
                                                                            public void run() {
 
+                                                                               checkTimeout();
+
                                                                                itemLoader = new PlaceLoader().setOnRespondError(new OnRespondError() {
 
                                                                                    @Override
                                                                                    public void onRespondError(String error) {
+
 
                                                                                        Log.d("debug", "error getting items from the server im tryingg");
                                                                                        Log.d("debug", error);
@@ -1176,7 +1200,6 @@ public class HomeActivity extends AppCompatActivity
 
                 Log.d("debug", "place data size: " + placeDataList.size());
 
-                isLoadingPlace = false;
                 placeLoader = null;
 
             } catch (Exception e) {
