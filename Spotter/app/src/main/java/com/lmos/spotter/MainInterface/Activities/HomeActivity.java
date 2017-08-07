@@ -124,6 +124,7 @@ public class HomeActivity extends AppCompatActivity
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
 
+    boolean isTimeout = false;
     int timeoutCount = 5;
     int currentCount = 0;
 
@@ -158,6 +159,7 @@ public class HomeActivity extends AppCompatActivity
 
         if (Utilities.checkNetworkState(this)) {
 
+            isTimeout = false;
             currentCount = 0;
 
             imgOfflineImage.setVisibility(View.GONE);
@@ -206,6 +208,9 @@ public class HomeActivity extends AppCompatActivity
     private void checkTimeout () {
         if (timeoutCount >= currentCount) {
 
+            isTimeout = true;
+
+            pullUpLoadLayout.setEnabled(true);
             imgOfflineImage.setVisibility(View.VISIBLE);
             txtOfflineMessage.setVisibility(View.VISIBLE);
             txtMostPopular.setText("no connection");
@@ -288,13 +293,12 @@ public class HomeActivity extends AppCompatActivity
                                                                            @Override
                                                                            public void run() {
 
-                                                                               checkTimeout();
-
                                                                                itemLoader = new PlaceLoader().setOnRespondError(new OnRespondError() {
 
                                                                                    @Override
                                                                                    public void onRespondError(String error) {
 
+                                                                                       checkTimeout();
 
                                                                                        Log.d("debug", "error getting items from the server im tryingg");
                                                                                        Log.d("debug", error);
@@ -934,7 +938,13 @@ public class HomeActivity extends AppCompatActivity
                 Log.d("debug", "most popular trying to get data from server");
 
                 request.stop();
-                getMostPopular(type);
+
+                if (!isTimeout) {
+
+                    checkTimeout();
+                    getMostPopular(type);
+
+                }
 
             }
         }) {
