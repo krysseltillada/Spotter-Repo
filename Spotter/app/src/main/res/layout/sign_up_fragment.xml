@@ -53,7 +53,7 @@
                 android:padding="@dimen/mid_padding"
                 android:imeOptions="actionNext"
                 android:singleLine="true"
-                android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
+                android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM "
                 android:textColor="@color/white" />
 
         </android.support.design.widget.TextInputLayout>

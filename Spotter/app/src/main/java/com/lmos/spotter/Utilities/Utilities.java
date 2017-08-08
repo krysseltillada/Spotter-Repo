@@ -147,6 +147,51 @@ public class Utilities {
         return Radius * c;
     }
 
+    public static class ConnectionNotifier {
+
+        static OnDeviceOfflineListener onDeviceOfflineListener;
+
+        static Thread connectionNotifierThread;
+        Context context;
+
+        public ConnectionNotifier (Context con) {
+            context = con;
+        }
+
+        public interface OnDeviceOfflineListener {
+
+            void OnDeviceOfflineListener (boolean networkState);
+
+        }
+
+        public ConnectionNotifier start () {
+
+            if (connectionNotifierThread == null) {
+                connectionNotifierThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        for(;true;) {
+
+                            if (onDeviceOfflineListener != null && context != null)
+                                onDeviceOfflineListener.OnDeviceOfflineListener(Utilities.checkNetworkState(context));
+
+                        }
+                    }
+                });
+                connectionNotifierThread.start();
+            }
+
+            return this;
+        }
+
+        public ConnectionNotifier setDeviceOfflineListener (OnDeviceOfflineListener offlineListener) {
+            onDeviceOfflineListener = offlineListener;
+            return this;
+        }
+
+    }
+
     public static void animateViewColor (final View view, int colorFrom, int colorTo, int duration) {
 
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);

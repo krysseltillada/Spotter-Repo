@@ -36,6 +36,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -46,6 +50,7 @@ import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.Item;
+import com.lmos.spotter.MainInterface.Activities.BookMarksActivity;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
@@ -238,6 +243,7 @@ public class SearchResultsActivity extends AppCompatActivity
         }
 
     }
+
 
     public void switchFragment(final String type, String cmd, final Fragment fragment){
 

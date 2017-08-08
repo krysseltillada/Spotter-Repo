@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -223,8 +222,8 @@ public class HomeActivity extends AppCompatActivity
             ++currentCount;
     }
 
-
     private void loadPlacesFromServer(final String pType, final String sType) {
+
 
         if (itemLoader != null) {
             Log.d("debug", "item exist");
@@ -253,7 +252,6 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onRespondError(String error) {
 
-                checkTimeout();
 
                 Log.d("debug", "error trying to get the data again");
                 Log.d("debug", "error");
@@ -284,6 +282,7 @@ public class HomeActivity extends AppCompatActivity
                                                                    if (startingIndex < tableCount &&
                                                                            placeDataList.size() > 0 && !isLoadingItem) {
 
+
                                                                        placeDataList.add(null);
                                                                        mainInterfaceAdapter.notifyItemInserted(placeDataList.size() - 1);
 
@@ -298,7 +297,6 @@ public class HomeActivity extends AppCompatActivity
                                                                                    @Override
                                                                                    public void onRespondError(String error) {
 
-                                                                                       checkTimeout();
 
                                                                                        Log.d("debug", "error getting items from the server im tryingg");
                                                                                        Log.d("debug", error);
@@ -478,27 +476,27 @@ public class HomeActivity extends AppCompatActivity
                 })
                 .setActionTextColor(activity.getResources().getColor(R.color.colorAccent));
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Utilities.ConnectionNotifier(getApplicationContext())
+                     .setDeviceOfflineListener(new Utilities.ConnectionNotifier.OnDeviceOfflineListener() {
 
-                for (;true;) {
+                         @Override
+                         public void OnDeviceOfflineListener(boolean networkState) {
 
-                    if (!Utilities.checkNetworkState(activity)) {
+                             if (!networkState) {
 
-                        if (!snackBarCheckConnection.isShown())
-                            snackBarCheckConnection.show();
+                                 if (!snackBarCheckConnection.isShown())
+                                     snackBarCheckConnection.show();
 
-                    } else {
+                             } else {
 
-                        if (snackBarCheckConnection.isShown())
-                            snackBarCheckConnection.dismiss();
+                                 if (snackBarCheckConnection.isShown())
+                                     snackBarCheckConnection.dismiss();
 
-                    }
-                }
+                             }
 
-            }
-        }).start();
+                         }
+                     }).start();
+
 
     }
 
