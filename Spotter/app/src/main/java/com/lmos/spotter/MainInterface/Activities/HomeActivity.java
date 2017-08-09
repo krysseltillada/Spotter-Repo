@@ -476,26 +476,26 @@ public class HomeActivity extends AppCompatActivity
                 })
                 .setActionTextColor(activity.getResources().getColor(R.color.colorAccent));
 
-        new Utilities.ConnectionNotifier(getApplicationContext())
-                     .setDeviceOfflineListener(new Utilities.ConnectionNotifier.OnDeviceOfflineListener() {
+            new Utilities.ConnectionNotifier(getApplicationContext())
+                         .setDeviceOfflineListener(new Utilities.ConnectionNotifier.OnDeviceOfflineListener() {
 
-                         @Override
-                         public void OnDeviceOfflineListener(boolean networkState) {
+                             @Override
+                             public void OnDeviceOfflineListener(boolean networkState) {
 
-                             if (!networkState) {
+                                 if (!networkState) {
 
-                                 if (!snackBarCheckConnection.isShown())
-                                     snackBarCheckConnection.show();
+                                     if (!snackBarCheckConnection.isShown())
+                                         snackBarCheckConnection.show();
 
-                             } else {
+                                 } else {
 
-                                 if (snackBarCheckConnection.isShown())
-                                     snackBarCheckConnection.dismiss();
+                                     if (snackBarCheckConnection.isShown())
+                                         snackBarCheckConnection.dismiss();
+
+                                 }
 
                              }
-
-                         }
-                     }).start();
+                         }).start();
 
 
     }

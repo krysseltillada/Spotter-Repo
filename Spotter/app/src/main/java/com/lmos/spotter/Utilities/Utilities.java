@@ -37,6 +37,7 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -56,6 +57,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -145,6 +148,20 @@ public class Utilities {
                 + " Meter   " + meterInDec);
 
         return Radius * c;
+    }
+
+    public static void changeStatusBarColor (Activity activity, int color) {
+
+        Window windowActivity = activity.getWindow();
+
+        if (Build.VERSION.SDK_INT >= 21) {
+
+            windowActivity.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            windowActivity.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            windowActivity.setStatusBarColor(ContextCompat.getColor(activity, color));
+
+        }
+
     }
 
     public static class ConnectionNotifier {
