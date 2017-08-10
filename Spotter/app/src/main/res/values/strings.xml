@@ -311,14 +311,14 @@
     <string name="title_activity_book_marks">BookMarksActivity</string>
     <string name="enable_gps_network">Spotter needs to enable your gps and network state in able to find your location.</string>
     <string name="title_activity_review">ReviewActivity</string>
-    <string name="loading_msg_1">Hi! We\'re getting your location. Make sure you have a stable internet connection.</string>
+    <string name="loading_msg_1">Hi! We\'re getting your location.\n Make sure you have a stable internet connection.</string>
     <string name="loading_msg_2">Getting some information for you.</string>
     <string name="loading_msg_3">In order to locate the places near you, please enable your GPS.</string>
     <string name="loading_msg_4">Connection failed. Please try again later.</string>
-    <string name="loading_msg_5">You\'re not connected to the outside world. Please enable yout Wi-Fi or Mobile Data.</string>
+    <string name="loading_msg_5">You\'re not connected to the outside world.\n Please enable yout Wi-Fi or Mobile Data.</string>
     <string name="not_sign">You must log in your account before you bookmark.</string>
     <string name="recommended_lable">people recommended this.</string>
     <string name="loading_mgs_3">Setting things up for you.</string>
-    <string name="no_reviews_found">Hey wanderer! Be the first one to give a review for this place.</string>
+    <string name="no_reviews_found">Hey wanderer! \n Be the first one to give a review for this place.</string>
 
 </resources>

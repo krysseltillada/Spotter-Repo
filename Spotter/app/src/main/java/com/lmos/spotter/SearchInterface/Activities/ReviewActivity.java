@@ -32,6 +32,7 @@ import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Adapters.ReviewDialogFragment;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
+import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
 import com.lmos.spotter.UserReview;
 import com.lmos.spotter.Utilities.Utilities;
 
@@ -68,6 +69,7 @@ public class ReviewActivity extends AppCompatActivity {
     private TextView placeRatingText;
     private TextView placeUserReviews;
     private TextView placeBookmarks;
+    private SearchReviewsAdapter mAdapter;
     private TextView placeRecommend;
     private TextView reviewListMsg;
     private CardView reviewInfoLayout;
@@ -122,8 +124,27 @@ public class ReviewActivity extends AppCompatActivity {
 
                         reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
                             @Override
-                            public void reviewPost(String placeID) {
-                                loadReviews(placeID);
+                            public void reviewPost(String... post_data) {
+
+                                UserReview addReview = new UserReview();
+
+                                addReview.userName = post_data[0];
+                                addReview.setReview(post_data[1]);
+                                addReview.setRating(Float.valueOf(post_data[2]));
+                                addReview.setRecommend(Boolean.valueOf(post_data[3]));
+                                addReview.setDate("Just now");
+                                FragmentSearchResult.place.setUserReviews(
+                                        String.valueOf(
+                                                Integer.parseInt(FragmentSearchResult.place.getUserReviews()) + 1));
+
+                                userReviewList.add(0, addReview);
+
+                                placeUserReviews.setText(String.valueOf(
+                                        Integer.parseInt(placeUserReviews.getText().toString() + 1)));
+
+                                if(mAdapter != null)
+                                    mAdapter.notifyItemInserted(0);
+
                             }
                         });
 
@@ -381,8 +402,8 @@ public class ReviewActivity extends AppCompatActivity {
                 reviewList.setVisibility(View.VISIBLE);
                 reviewListMsg.setVisibility(View.GONE);
 
-
-                reviewList.setAdapter(new SearchReviewsAdapter(getApplicationContext(), userReviewList));
+                mAdapter = new SearchReviewsAdapter(getApplicationContext(), userReviewList);
+                reviewList.setAdapter(mAdapter);
 
                 for (UserReview userReview : userReviewList) {
 

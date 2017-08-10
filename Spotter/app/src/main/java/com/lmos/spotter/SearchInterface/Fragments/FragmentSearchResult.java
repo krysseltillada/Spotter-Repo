@@ -30,11 +30,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
+import com.lmos.spotter.Deals;
 import com.lmos.spotter.MapsLayoutFragment;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.ReviewActivity;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
+import com.lmos.spotter.SearchInterface.Adapters.DealsAdapter;
 import com.lmos.spotter.SearchInterface.Adapters.ReviewDialogFragment;
 import com.lmos.spotter.SearchInterface.Adapters.SearchReviewsAdapter;
 import com.lmos.spotter.SyncService;
@@ -66,7 +68,11 @@ public class FragmentSearchResult extends Fragment
     Button navigate, showReview;
     SearchReviewsAdapter mAdapter;
     Utilities.LocationHandler locationHandler;
+    List<UserReview> userReviewList;
+    List<Deals> dealsItem;
     ProgressBar reviewPb;
+    DealsAdapter dealAdapter;
+    int tempUserRev;
     private RecyclerView reviews;
     private RecyclerView deals;
 
@@ -92,6 +98,47 @@ public class FragmentSearchResult extends Fragment
         Log.d("FragmentResult", "Building client");
         locationHandler = new Utilities.LocationHandler(getActivity(), this);
         locationHandler.buildGoogleClient();
+
+        place = getArguments().getParcelable("data");
+        assert place != null;
+        tempUserRev = Integer.parseInt(place.getUserReviews());
+        ReviewActivity.placeID = place.getPlaceID();
+
+        dealsItem = new ArrayList<>();
+
+        /** Get Place deals and store it in a List **/
+
+        try {
+
+            JSONObject dealObj = new JSONObject(place.getPlaceDeals());
+            JSONArray imageLink = dealObj.getJSONArray("ImageLink");
+            JSONArray dealName = dealObj.getJSONArray("DealName");
+            JSONArray dealDesc = dealObj.getJSONArray("Description");
+
+            Log.d("DEALS", "IMGSIZE: " + String.valueOf(imageLink.length()));
+            Log.d("DEALS", "NAMESIZE: " + String.valueOf(dealName.length()));
+            Log.d("DEALS", "DESCSIZE: " + String.valueOf(dealDesc.length()));
+
+            for (int i = 0; i < imageLink.length(); i++){
+
+                Deals deals = new Deals();
+                deals.setDealImg(imageLink.get(i).toString());
+                deals.setDealName(dealName.get(i).toString());
+                deals.setDealDesc(dealDesc.get(i).toString());
+                deals.setContact(place.getPlaceLinks());
+                Log.d("DEALS", "ADDING");
+                dealsItem.add(deals);
+                Log.d("DEALS", String.valueOf(dealsItem.size()));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        finally {
+            dealAdapter = new DealsAdapter(getContext(), dealsItem);
+        }
+
+
     }
 
     @Override
@@ -103,30 +150,7 @@ public class FragmentSearchResult extends Fragment
         if(Integer.parseInt(place.getUserReviews()) > 0){
 
             if(Utilities.checkNetworkState(getContext())){
-
-                RequestQueue requestReview = Volley.newRequestQueue(getContext());
-
-                StringRequest requestString = new StringRequest(Request.Method.POST,
-                        "http://admin-spotter.000webhostapp.com/app_scripts/loadReview.php",
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                new loadReview().execute(response);
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }) {
-                    protected Map<String, String> getParams() {
-                        return new HashMap<String, String>() {{
-                            put("placeID", place.getPlaceID());
-                            put("limit", "5");
-                        }};
-                    }
-                };
-                requestReview.add(requestString);
+                loadReviewData();
             }
             else{
                 no_review.setText("Not connected to the internet.");
@@ -139,9 +163,8 @@ public class FragmentSearchResult extends Fragment
         else{
             reviewPb.setVisibility(View.GONE);
             no_review.setVisibility(View.VISIBLE);
-            showReview.setText("Give a Review.");
+            showReview.setText("Give a Review");
         }
-
 
         Log.d("UpdateView", "Starting " + place.getPlaceID());
         Intent updatePlaceView = new Intent(getContext(), SyncService.class);
@@ -151,11 +174,45 @@ public class FragmentSearchResult extends Fragment
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (tempUserRev != Integer.parseInt(place.getUserReviews())){
+            loadReviewData();
+            String revCount = "Users Review (" + place.getUserReviews() + ")";
+            review_count.setText(revCount);
+        }
+    }
+
+    public void loadReviewData(){
+
+        RequestQueue requestReview = Volley.newRequestQueue(getContext());
+
+        StringRequest requestString = new StringRequest(Request.Method.POST,
+                "http://admin-spotter.000webhostapp.com/app_scripts/loadReview.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        new loadReview().execute(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                return new HashMap<String, String>() {{
+                    put("placeID", place.getPlaceID());
+                    put("limit", "5");
+                }};
+            }
+        };
+        requestReview.add(requestString);
+
+    }
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        place = getArguments().getParcelable("data");
-
-        ReviewActivity.placeID = place.getPlaceID();
 
         View thisView = inflater.inflate(R.layout.search_result_hrt, container, false);
 
@@ -181,7 +238,7 @@ public class FragmentSearchResult extends Fragment
 
                 switch (String.valueOf(showReview.getText())){
 
-                    case "Give a Review.":
+                    case "Give a Review":
                         SharedPreferences userPreference = getContext().getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
                         if (userPreference.getString("status", "").equals("Logged In")) {
 
@@ -189,8 +246,27 @@ public class FragmentSearchResult extends Fragment
 
                             reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
                                 @Override
-                                public void reviewPost(String placeID) {
-                                        // pre dito mo i refresh ung reviews sa activity mo
+                                public void reviewPost(String... post_data) {
+
+                                    UserReview addReview = new UserReview();
+
+                                    addReview.userName = post_data[0];
+                                    addReview.setReview(post_data[1]);
+                                    addReview.setRating(Float.valueOf(post_data[2]));
+                                    addReview.setRecommend(Boolean.valueOf(post_data[3]));
+                                    addReview.setDate("Just now");
+
+                                    if(userReviewList == null){
+                                        userReviewList = new ArrayList<UserReview>();
+                                        userReviewList.add(addReview);
+                                        mAdapter = new SearchReviewsAdapter(getContext(), userReviewList);
+                                        reviews.setAdapter(mAdapter);
+                                        reviews.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
+                                        reviewPb.setVisibility(View.GONE);
+                                        reviews.setVisibility(View.VISIBLE);
+                                        showReview.setText("Show All");
+                                    }
+
                                 }
                             });
 
@@ -224,9 +300,7 @@ public class FragmentSearchResult extends Fragment
                         break;
                     default:
                         Bundle placeID = new Bundle();
-
                         placeID.putString("placeID", place.getPlaceID());
-
                         Utilities.OpenActivityWithBundle(getActivity(), ReviewActivity.class, null, placeID);
                         break;
 
@@ -269,6 +343,9 @@ public class FragmentSearchResult extends Fragment
         place_recommended.setText(rec);
         place_bookmark.setText(bkmk);
         review_count.setText(revCount);
+
+        deals.setAdapter(dealAdapter);
+        deals.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         reviews.setVisibility(View.GONE);
         reviewPb.setVisibility(View.VISIBLE);
@@ -329,8 +406,6 @@ public class FragmentSearchResult extends Fragment
     }
 
     class loadReview extends AsyncTask<String, Void, String>{
-
-        List<UserReview> userReviewList;
 
         @Override
         protected String doInBackground(String... params) {

@@ -38,6 +38,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String KEY_LAT = "latitude";
     private static final String KEY_LNG = "longitude";
     private static final String KEY_DEALS = "deals";
+    private static final String KEY_CONTACTS = "contacts";
     private static final String KEY_CLASS = "class";
     private static final String KEY_PRICE_RANGE = "price_range";
     private static final String KEY_IMAGE = "image";
@@ -82,6 +83,7 @@ public class DbHelper extends SQLiteOpenHelper {
                         KEY_LNG + " DOUBLE," +
                         KEY_TYPE + " TEXT," +
                         KEY_DEALS + " TEXT," +
+                        KEY_CONTACTS + " TEXT," +
                         KEY_CLASS + " INTEGER," +
                         KEY_PRICE_RANGE + " TEXT," +
                         KEY_IMAGE + " TEXT," +
@@ -147,6 +149,7 @@ public class DbHelper extends SQLiteOpenHelper {
         cv.put(KEY_LAT, place.getPlaceLat());
         cv.put(KEY_LNG, place.getPlaceLng());
         cv.put(KEY_DEALS, place.getPlaceDeals());
+        cv.put(KEY_CONTACTS, place.getPlaceLinks());
         cv.put(KEY_CLASS, place.getPlaceClass());
         cv.put(KEY_PRICE_RANGE, place.getPlacePriceRange());
         cv.put(KEY_IMAGE, place.getPlaceImageLink());
@@ -206,26 +209,25 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        if(places.isEmpty())
+        if(places != null || !places.isEmpty()) {
             Log.d("DBHelper", "NULL");
-        else
+            for(Place place : places ){
+
+                ContentValues cv = new ContentValues();
+                cv.put(KEY_PLACEID, place.getPlaceID());
+                cv.put(KEY_NAME, place.getPlaceName());
+                cv.put(KEY_ADDRESS, place.getPlaceAddress());
+                cv.put(KEY_TYPE, place.getPlaceType());
+                cv.put(KEY_LAT, place.getPlaceLat());
+                cv.put(KEY_LNG, place.getPlaceLng());
+
+                db.insert(TABLE_PLACE_NAME, null, cv);
+
+            }
+
+            db.close();
+        }else
             Log.d("DBHelper", String.valueOf(places.size()));
-
-        for(Place place : places ){
-
-            ContentValues cv = new ContentValues();
-            cv.put(KEY_PLACEID, place.getPlaceID());
-            cv.put(KEY_NAME, place.getPlaceName());
-            cv.put(KEY_ADDRESS, place.getPlaceAddress());
-            cv.put(KEY_TYPE, place.getPlaceType());
-            cv.put(KEY_LAT, place.getPlaceLat());
-            cv.put(KEY_LNG, place.getPlaceLng());
-
-            db.insert(TABLE_PLACE_NAME, null, cv);
-
-        }
-
-        db.close();
 
     }
 
@@ -258,6 +260,7 @@ public class DbHelper extends SQLiteOpenHelper {
             place.setplaceClass(cursor.getString(cursor.getColumnIndex(KEY_CLASS)));
             place.setplaceType(cursor.getString(cursor.getColumnIndex(KEY_TYPE)));
             place.setPlaceDeals(cursor.getString(cursor.getColumnIndex(KEY_DEALS)));
+            place.setPlaceLinks(cursor.getString(cursor.getColumnIndex(KEY_CONTACTS)));
             place.setplacePriceRange(cursor.getString(cursor.getColumnIndex(KEY_PRICE_RANGE)));
             place.setplaceImageLink(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
             place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
