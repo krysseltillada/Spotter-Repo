@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -89,14 +90,22 @@ public class SplashScreen extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.splash_screen);
+
         LoginActivity.login_prefs = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
         LoginActivity.set_login_prefs = LoginActivity.login_prefs.edit();
 
         initComp();
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
-        if (!isGettingData)
-            new GetPlaceNames(this).execute();
+                if (!isGettingData)
+                    new GetPlaceNames(SplashScreen.this).execute();
+
+            }
+        }, 1000);
 
         Log.d("debug", "first: " + LoginActivity.login_prefs.getBoolean("isFirstInstalled", true));
 
@@ -119,8 +128,6 @@ public class SplashScreen extends AppCompatActivity {
             Window w = getWindow(); // in Activity's onCreate() for instance
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
-
-        setContentView(R.layout.splash_screen);
 
         loadingSplashImage = (ImageView) findViewById(R.id.loadingSplashImage);
 
