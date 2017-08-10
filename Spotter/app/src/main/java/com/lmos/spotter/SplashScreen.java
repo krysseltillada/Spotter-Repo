@@ -162,6 +162,8 @@ public class SplashScreen extends AppCompatActivity {
                     }
                 } else {
                     if (!skipButton.getText().equals("Start")) {
+                        skipButton.setTextSize(35);
+                        skipButton.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup));
                         skipButton.setText("Start");
                     }
                 }
@@ -379,6 +381,7 @@ public class SplashScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
 
+            loadingSplashImage.setVisibility(View.GONE);
             splash_msg.setVisibility(View.GONE);
 
             Log.d("debug", "arrrrrrr");
@@ -390,6 +393,12 @@ public class SplashScreen extends AppCompatActivity {
                 nextButton.setVisibility(View.VISIBLE);
                 layoutDots.setVisibility(View.VISIBLE);
                 skipButton.setVisibility(View.VISIBLE);
+
+                slidePager.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup));
+                prevButton.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup));
+                nextButton.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup));
+                layoutDots.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup));
+                skipButton.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup));
 
                 LoginActivity.set_login_prefs.putBoolean("isFirstInstalled", false);
                 LoginActivity.set_login_prefs.apply();
