@@ -158,6 +158,8 @@ public class SplashScreen extends AppCompatActivity {
 
                 if (position >= 0 && position < slideLayouts.length - 1) {
                     if (!skipButton.getText().equals("Skip")) {
+                        skipButton.setTextSize(20);
+                        skipButton.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.popup));
                         skipButton.setText("Skip");
                     }
                 } else {
