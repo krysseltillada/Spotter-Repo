@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.FacebookSdk;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.MainInterface.Activities.HomeActivity;
@@ -66,11 +70,15 @@ public class SplashScreen extends AppCompatActivity {
     ImageView prevButton;
     ImageView nextButton;
 
+    ImageView loadingSplashImage;
+
     LinearLayout layoutDots;
 
     TextView skipButton;
 
     TextView[] dots;
+
+    boolean isGettingData = false;
 
     @Override
     public void onNewIntent(Intent intent) {
@@ -81,9 +89,16 @@ public class SplashScreen extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        LoginActivity.login_prefs = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
+        LoginActivity.set_login_prefs = LoginActivity.login_prefs.edit();
+
         initComp();
 
-        new GetPlaceNames(this).execute();
+
+        if (!isGettingData)
+            new GetPlaceNames(this).execute();
+
+        Log.d("debug", "first: " + LoginActivity.login_prefs.getBoolean("isFirstInstalled", true));
 
     }
 
@@ -106,6 +121,8 @@ public class SplashScreen extends AppCompatActivity {
         }
 
         setContentView(R.layout.splash_screen);
+
+        loadingSplashImage = (ImageView) findViewById(R.id.loadingSplashImage);
 
         slideStatusBarColors = new int[] {
                 R.color.colorPrimary,
@@ -136,16 +153,21 @@ public class SplashScreen extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
 
-                if (position == slidePager.getChildCount()) {
-                    nextButton.setVisibility(View.GONE);
-                    skipButton.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
-                    skipButton.setText("Start");
+                Log.d("debug", "position: " + position);
+
+
+                if (position >= 0 && position < slideLayouts.length - 1) {
+                    if (!skipButton.getText().equals("Skip")) {
+                        skipButton.setText("Skip");
+                    }
                 } else {
-                    skipButton.setText("Skip");
+                    if (!skipButton.getText().equals("Start")) {
+                        skipButton.setText("Start");
+                    }
                 }
 
                 prevButton.setVisibility((position <= 0) ? View.GONE : View.VISIBLE);
-                nextButton.setVisibility((position >= slidePager.getChildCount() ? View.GONE : View.VISIBLE));
+                nextButton.setVisibility((position >= slideLayouts.length - 1 ? View.GONE : View.VISIBLE));
 
                 addCircleDots(position);
             }
@@ -285,7 +307,7 @@ public class SplashScreen extends AppCompatActivity {
         super.onResume();
 
 
-        if(Utilities.checkNetworkState(this))
+        if(Utilities.checkNetworkState(this) && !isGettingData)
             new GetPlaceNames(this).execute();
     }
 
@@ -347,9 +369,34 @@ public class SplashScreen extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPreExecute() {
 
+            Utilities.loadGifImageView(getApplicationContext(), loadingSplashImage, R.drawable.loadingplaces);
+
+            isGettingData = true;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+            splash_msg.setVisibility(View.GONE);
+
+            Log.d("debug", "arrrrrrr");
+
+            if (LoginActivity.login_prefs.getBoolean("isFirstInstalled", true)) {
+
+                slidePager.setVisibility(View.VISIBLE);
+                prevButton.setVisibility(View.VISIBLE);
+                nextButton.setVisibility(View.VISIBLE);
+                layoutDots.setVisibility(View.VISIBLE);
+                skipButton.setVisibility(View.VISIBLE);
+
+                LoginActivity.set_login_prefs.putBoolean("isFirstInstalled", false);
+                LoginActivity.set_login_prefs.apply();
+
+            } else {
+                finishSplash();
+            }
         }
     }
 
@@ -365,8 +412,6 @@ public class SplashScreen extends AppCompatActivity {
 
             LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
             View inflatedView = layoutInflater.inflate(slideLayouts[position], container, false);
-
-            inflatedView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
 
             container.addView(inflatedView);
 
