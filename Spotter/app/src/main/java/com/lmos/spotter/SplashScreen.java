@@ -72,6 +72,7 @@ public class SplashScreen extends AppCompatActivity {
     ImageView nextButton;
 
     ImageView loadingSplashImage;
+    ImageView logoImage;
 
     LinearLayout layoutDots;
 
@@ -97,15 +98,8 @@ public class SplashScreen extends AppCompatActivity {
 
         initComp();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                if (!isGettingData)
-                    new GetPlaceNames(SplashScreen.this).execute();
-
-            }
-        }, 1000);
+        if (!isGettingData)
+            new GetPlaceNames(SplashScreen.this).execute();
 
         Log.d("debug", "first: " + LoginActivity.login_prefs.getBoolean("isFirstInstalled", true));
 
@@ -130,6 +124,7 @@ public class SplashScreen extends AppCompatActivity {
         }
 
         loadingSplashImage = (ImageView) findViewById(R.id.loadingSplashImage);
+        logoImage = (ImageView) findViewById(R.id.logoImage);
 
         slideStatusBarColors = new int[] {
                 R.color.colorPrimary,
@@ -222,7 +217,7 @@ public class SplashScreen extends AppCompatActivity {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finishSplash();
+                finishSplash(0);
             }
         });
 
@@ -300,16 +295,25 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
-    private void finishSplash(){
+    private void finishSplash(int seconds){
 
-        SharedPreferences login_prefs = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
-        String status = login_prefs.getString("status", null);
-        if(status != null)
-            startActivity(new Intent(this, HomeActivity.class));
-        else
-            startActivity(new Intent(this, LoginActivity.class));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
-        finish();
+                SharedPreferences login_prefs = getSharedPreferences(LOGIN_PREFS, MODE_PRIVATE);
+                String status = login_prefs.getString("status", null);
+                if(status != null)
+                    startActivity(new Intent(SplashScreen.this, HomeActivity.class));
+                else
+                    startActivity(new Intent(SplashScreen.this, LoginActivity.class));
+
+                finish();
+
+
+            }
+        }, seconds * 1000);
+
 
     }
 
@@ -413,7 +417,8 @@ public class SplashScreen extends AppCompatActivity {
                 LoginActivity.set_login_prefs.apply();
 
             } else {
-                finishSplash();
+                logoImage.setVisibility(View.VISIBLE);
+                finishSplash(1);
             }
         }
     }
