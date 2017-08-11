@@ -54,6 +54,12 @@ public class SyncService extends IntentService {
             }
 
         }
+        else if(intent.getStringExtra("action").equals("syncPlaces")){
+            Log.d("SyncService", "Synchronizing places.");
+            DbHelper dbHelper = new DbHelper(getApplicationContext());
+            map_data.put("placeID", dbHelper.getLastKeyword());
+            appScript.setData("get-all-place-name.php", map_data);
+        }
 
     }
 

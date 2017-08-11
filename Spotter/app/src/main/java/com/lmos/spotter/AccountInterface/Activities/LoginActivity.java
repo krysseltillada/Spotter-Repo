@@ -332,7 +332,11 @@ public class LoginActivity extends AppCompatActivity {
 
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 finish();
+
             } else {
+                Fragment activeFragment = getSupportFragmentManager().findFragmentByTag("Sign In");
+                if(activeFragment != null && activeFragment instanceof FragmentSignIn)
+                    ((FragmentSignIn) activeFragment).clearText();
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
             }
 

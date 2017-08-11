@@ -23,8 +23,8 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="275dp"
-        app:expanded="false"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:expanded="false">
 
     <android.support.design.widget.CollapsingToolbarLayout
         android:id="@+id/collapsing_toolbar"
@@ -153,7 +153,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/loading_img_holder"
             android:layout_centerHorizontal="true"
-            android:padding="@dimen/mid_padding" />
+            android:padding="@dimen/mid_padding"
+            android:textAlignment="center"/>
 
     </RelativeLayout>
 

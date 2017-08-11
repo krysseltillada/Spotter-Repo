@@ -40,6 +40,7 @@ public class Place implements Parcelable {
     private String rating;
     private String userReviews;
     private String bookmarks;
+    private String placeLinks;
 
     public Place(){}
     public Place(Parcel in){
@@ -60,10 +61,17 @@ public class Place implements Parcelable {
         rating = in.readString();
         userReviews = in.readString();
         bookmarks = in.readString();
+        placeLinks = in.readString();
 
     }
 
-    public void setPlaceRating (String pr) {this.rating = pr;}
+    public String getPlaceLinks() {
+        return placeLinks;
+    }
+
+    public void setPlaceLinks(String placeLinks) {
+        this.placeLinks = placeLinks;
+    }
 
     public void setplaceName(String placeName){this.placeName = placeName;}
 
@@ -145,6 +153,8 @@ public class Place implements Parcelable {
 
     public String getPlaceRating(){ return rating; }
 
+    public void setPlaceRating (String pr) {this.rating = pr;}
+
     public String getBookmarks(){ return bookmarks; }
 
     public void setBookmarks(String bookmarks){ this.bookmarks = bookmarks; }
@@ -173,6 +183,7 @@ public class Place implements Parcelable {
         dest.writeString(rating);
         dest.writeString(userReviews);
         dest.writeString(bookmarks);
+        dest.writeString(placeLinks);
 
     }
 
@@ -193,11 +204,6 @@ public class Place implements Parcelable {
         Log.d("debug", "placeRating: " + rating);
         Log.d("debug", "userReviews: " + userReviews);
         Log.d("debug", "bookmarks: " + bookmarks);
-
-
-
-
-
     }
 
 }

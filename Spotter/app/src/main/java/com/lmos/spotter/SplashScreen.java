@@ -43,6 +43,7 @@ import com.twitter.sdk.android.core.TwitterConfig;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import io.branch.indexing.BranchUniversalObject;
 import io.branch.referral.Branch;
@@ -370,17 +371,25 @@ public class SplashScreen extends AppCompatActivity {
                     }};
 
                     String result = appScript.getResult();
-                    if(result != null && result.equals("Data loaded."))
+                    if(result != null && result.equals("Data loaded.")) {
                         publishProgress("Almost done...");
-
-                    dbHelper.savePlaceName(appScript.getPlaceNames());
-                    Log.d("Splash", String.valueOf(appScript.getPlaceNames()));
+                        dbHelper.savePlaceName(appScript.getPlaceNames());
+                        Log.d("Splash", String.valueOf(appScript.getPlaceNames()));
+                    }
+                    else{
+                        Log.d("SPLASH", result);
+                    }
 
                 }
                 else{
                     Utilities.showDialogActivity(activity, SPLASH_REQUEST, R.string.loading_msg_5);
                 }
 
+            }
+            else{
+                Intent syncPlaces = new Intent(getApplicationContext(), SyncService.class);
+                syncPlaces.putExtra("action", "syncPlaces");
+                startService(syncPlaces);
             }
 
             return null;

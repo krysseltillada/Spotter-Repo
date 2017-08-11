@@ -5,19 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -30,8 +25,6 @@ import com.android.volley.toolbox.Volley;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.ReviewActivity;
-import com.lmos.spotter.UserReview;
-import com.lmos.spotter.Utilities.Utilities;
 
 import java.util.HashMap;
 
@@ -41,12 +34,8 @@ import java.util.HashMap;
 
 public class ReviewDialogFragment extends DialogFragment {
 
-    public interface OnReviewPost {
-         void reviewPost(String placeID);
-    }
 
     OnReviewPost onReviewPost;
-
     TextInputEditText reviewEditText;
     RatingBar reviewRatingBar;
     CheckBox isRecommended;
@@ -79,7 +68,7 @@ public class ReviewDialogFragment extends DialogFragment {
          final AlertDialog postReview = new AlertDialog.Builder(getActivity())
                  .setTitle("Post a review")
                  .setView(view)
-                 .setPositiveButton("post review", new DialogInterface.OnClickListener() {
+                 .setPositiveButton("Post review", new DialogInterface.OnClickListener() {
 
                      @Override
                      public void onClick(DialogInterface dialog, int which) {
@@ -113,13 +102,17 @@ public class ReviewDialogFragment extends DialogFragment {
                                                  errorDialog.show();
                                              } else {
                                                  if (onReviewPost != null)
-                                                    onReviewPost.reviewPost(ReviewActivity.placeID);
+                                                    onReviewPost.reviewPost(
+                                                            userPreference.getString("accountName", ""),
+                                                            reviewEditText.getText().toString(),
+                                                            Float.toString(reviewRatingBar.getRating()),
+                                                            Boolean.toString(isRecommended.isChecked())
+                                                    );
                                              }
 
                                          }
                                      },
                                      new Response.ErrorListener() {
-
                                          @Override
                                          public void onErrorResponse(VolleyError error) {
                                              Log.d("debug", error.getMessage() + "aa");
@@ -162,6 +155,10 @@ public class ReviewDialogFragment extends DialogFragment {
                  }).create();
 
          return postReview;
+    }
+
+    public interface OnReviewPost {
+        void reviewPost(String... post_data);
     }
 
 }
