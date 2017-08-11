@@ -126,7 +126,11 @@ public class ReviewActivity extends AppCompatActivity {
 
                         reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
                             @Override
-                            public void reviewPost(String... post_data) {
+                            public void reviewPost(String placeID) {
+
+                                loadReviews(placeID);
+
+                                /*
 
                                 UserReview addReview = new UserReview();
 
@@ -135,17 +139,17 @@ public class ReviewActivity extends AppCompatActivity {
                                 addReview.setRating(Float.valueOf(post_data[2]));
                                 addReview.setRecommend(Boolean.valueOf(post_data[3]));
                                 addReview.setDate("Just now");
+                                addReview.profileImage = Utilities.BlurImg.stringToBitmap(userPreference.getString("accountImage", ""));
                                 FragmentSearchResult.place.setUserReviews(
                                         String.valueOf(
                                                 Integer.parseInt(FragmentSearchResult.place.getUserReviews()) + 1));
 
                                 userReviewList.add(0, addReview);
 
-                                placeUserReviews.setText(String.valueOf(
-                                        Integer.parseInt(placeUserReviews.getText().toString() + 1)));
+                                placeUserReviews.setText(userReviewList.size() + " user reviews");
 
                                 if(mAdapter != null)
-                                    mAdapter.notifyItemInserted(0);
+                                    mAdapter.notifyItemInserted(0); */
 
                             }
                         });
@@ -410,6 +414,8 @@ public class ReviewActivity extends AppCompatActivity {
 
                 mAdapter = new SearchReviewsAdapter(getApplicationContext(), userReviewList);
                 reviewList.setAdapter(mAdapter);
+
+                reviewScrollView.smoothScrollTo(0, 0);
 
                 for (UserReview userReview : userReviewList) {
 

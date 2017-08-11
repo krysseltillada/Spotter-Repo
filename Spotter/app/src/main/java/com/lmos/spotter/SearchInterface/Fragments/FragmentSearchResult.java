@@ -244,9 +244,18 @@ public class FragmentSearchResult extends Fragment
 
                             ReviewDialogFragment reviewDialogFragment = new ReviewDialogFragment();
 
+
+
                             reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
                                 @Override
+                                public void reviewPost(String placeID) {
+
+                                }
+
+                                /*
+                                @Override
                                 public void reviewPost(String... post_data) {
+
 
                                     UserReview addReview = new UserReview();
 
@@ -267,7 +276,7 @@ public class FragmentSearchResult extends Fragment
                                         showReview.setText("Show All");
                                     }
 
-                                }
+                                }*/
                             });
 
                             reviewDialogFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);

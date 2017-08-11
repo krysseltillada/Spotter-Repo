@@ -102,12 +102,16 @@ public class ReviewDialogFragment extends DialogFragment {
                                                  errorDialog.show();
                                              } else {
                                                  if (onReviewPost != null)
+                                                     /*
                                                     onReviewPost.reviewPost(
                                                             userPreference.getString("accountName", ""),
                                                             reviewEditText.getText().toString(),
                                                             Float.toString(reviewRatingBar.getRating()),
-                                                            Boolean.toString(isRecommended.isChecked())
-                                                    );
+                                                            Boolean.toString(isRecommended.isChecked()),
+
+                                                    ); */
+
+                                                     onReviewPost.reviewPost(ReviewActivity.placeID);
                                              }
 
                                          }
@@ -157,8 +161,14 @@ public class ReviewDialogFragment extends DialogFragment {
          return postReview;
     }
 
+    /*
+
     public interface OnReviewPost {
         void reviewPost(String... post_data);
+    } */
+
+    public interface OnReviewPost {
+        void reviewPost(String placeID);
     }
 
 }
