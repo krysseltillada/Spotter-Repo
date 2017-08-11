@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id = "@+id/navHeaderBackground"
-    android:background="@drawable/littleleaf"
+    android:background="@color/cardview_dark_background"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:gravity="bottom"

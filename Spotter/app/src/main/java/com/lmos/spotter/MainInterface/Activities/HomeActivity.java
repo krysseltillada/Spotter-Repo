@@ -555,6 +555,10 @@ public class HomeActivity extends AppCompatActivity
 
         homeActivityWindow = getWindow();
 
+        homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorAccent));
+
         userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         setContentView(R.layout.activity_home_menu);
@@ -1014,6 +1018,8 @@ public class HomeActivity extends AppCompatActivity
                                 mostPopularPlaces[i].setRating(mostPopularData.getString("Rating"));
                                 mostPopularPlaces[i].setUserReviews(mostPopularData.getString("userReviews"));
                                 mostPopularPlaces[i].setBookmarks(mostPopularData.getString("Bookmarks"));
+                                mostPopularPlaces[i].setPlaceDeals(mostPopularData.getString("Deals"));
+                                mostPopularPlaces[i].setPlaceLinks(mostPopularData.getString("Contacts"));
 
                             }
 
@@ -1129,6 +1135,8 @@ public class HomeActivity extends AppCompatActivity
                                     featuredPlace.setRating(featuredPlaceJSON.getString("Rating"));
                                     featuredPlace.setUserReviews(featuredPlaceJSON.getString("userReviews"));
                                     featuredPlace.setBookmarks(featuredPlaceJSON.getString("Bookmarks"));
+                                    featuredPlace.setPlaceDeals(featuredPlaceJSON.getString("Deals"));
+                                    featuredPlace.setPlaceLinks(featuredPlaceJSON.getString("Contacts"));
 
                                     featuredPlacesList.add(featuredPlace);
 
