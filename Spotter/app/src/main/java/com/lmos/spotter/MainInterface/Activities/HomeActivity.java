@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -124,11 +123,15 @@ public class HomeActivity extends AppCompatActivity
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
 
+    boolean isTimeout = false;
+    int timeoutCount = 5;
+    int currentCount = 0;
+
     LinearLayout []frontLayouts;
     LinearLayout navHeaderLayout;
 
     static private boolean isLoadingItem = false;
-    static private boolean isLoadingPlace = false;
+    //static private boolean isLoadingPlace = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -154,6 +157,9 @@ public class HomeActivity extends AppCompatActivity
     private void loadData (String pt) {
 
         if (Utilities.checkNetworkState(this)) {
+
+            isTimeout = false;
+            currentCount = 0;
 
             imgOfflineImage.setVisibility(View.GONE);
             txtOfflineMessage.setVisibility(View.GONE);
@@ -198,8 +204,26 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    private void checkTimeout () {
+        if (timeoutCount >= currentCount) {
+
+            isTimeout = true;
+
+            pullUpLoadLayout.setEnabled(true);
+            imgOfflineImage.setVisibility(View.VISIBLE);
+            txtOfflineMessage.setVisibility(View.VISIBLE);
+            txtMostPopular.setText("no connection");
+            homeNestedScrollView.setVisibility(View.GONE);
+
+            appBarLayout.setExpanded(false);
+
+        }
+        else
+            ++currentCount;
+    }
 
     private void loadPlacesFromServer(final String pType, final String sType) {
+
 
         if (itemLoader != null) {
             Log.d("debug", "item exist");
@@ -212,7 +236,6 @@ public class HomeActivity extends AppCompatActivity
             placeLoader = null;
         }
 
-        isLoadingPlace = true;
 
         if (placeDataList.size() > 0) {
 
@@ -228,6 +251,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onRespondError(String error) {
+
 
                 Log.d("debug", "error trying to get the data again");
                 Log.d("debug", "error");
@@ -258,6 +282,7 @@ public class HomeActivity extends AppCompatActivity
                                                                    if (startingIndex < tableCount &&
                                                                            placeDataList.size() > 0 && !isLoadingItem) {
 
+
                                                                        placeDataList.add(null);
                                                                        mainInterfaceAdapter.notifyItemInserted(placeDataList.size() - 1);
 
@@ -271,6 +296,7 @@ public class HomeActivity extends AppCompatActivity
 
                                                                                    @Override
                                                                                    public void onRespondError(String error) {
+
 
                                                                                        Log.d("debug", "error getting items from the server im tryingg");
                                                                                        Log.d("debug", error);
@@ -450,27 +476,27 @@ public class HomeActivity extends AppCompatActivity
                 })
                 .setActionTextColor(activity.getResources().getColor(R.color.colorAccent));
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+            new Utilities.ConnectionNotifier(getApplicationContext())
+                         .setDeviceOfflineListener(new Utilities.ConnectionNotifier.OnDeviceOfflineListener() {
 
-                for (;true;) {
+                             @Override
+                             public void OnDeviceOfflineListener(boolean networkState) {
 
-                    if (!Utilities.checkNetworkState(activity)) {
+                                 if (!networkState) {
 
-                        if (!snackBarCheckConnection.isShown())
-                            snackBarCheckConnection.show();
+                                     if (!snackBarCheckConnection.isShown())
+                                         snackBarCheckConnection.show();
 
-                    } else {
+                                 } else {
 
-                        if (snackBarCheckConnection.isShown())
-                            snackBarCheckConnection.dismiss();
+                                     if (snackBarCheckConnection.isShown())
+                                         snackBarCheckConnection.dismiss();
 
-                    }
-                }
+                                 }
 
-            }
-        }).start();
+                             }
+                         }).start();
+
 
     }
 
@@ -910,7 +936,13 @@ public class HomeActivity extends AppCompatActivity
                 Log.d("debug", "most popular trying to get data from server");
 
                 request.stop();
-                getMostPopular(type);
+
+                if (!isTimeout) {
+
+                    checkTimeout();
+                    getMostPopular(type);
+
+                }
 
             }
         }) {
@@ -1176,7 +1208,6 @@ public class HomeActivity extends AppCompatActivity
 
                 Log.d("debug", "place data size: " + placeDataList.size());
 
-                isLoadingPlace = false;
                 placeLoader = null;
 
             } catch (Exception e) {

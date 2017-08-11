@@ -14,5 +14,4 @@ public class UserAccount {
     public String password;
     public Bitmap profileImage;
 
-
 }

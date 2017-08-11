@@ -1,12 +1,6 @@
 package com.lmos.spotter;
 
-import android.accounts.Account;
-
 import com.lmos.spotter.Utilities.UserAccount;
-
-/**
- * Created by Kryssel on 7/14/2017.
- */
 
 public class UserReview extends UserAccount {
 

@@ -63,10 +63,16 @@ public class SettingsActivity extends PreferenceActivity  {
 
                 Preference preference = findPreference(key);
 
+
                 modifiedAccount.userName = sharedPreferences.getString("username", "");
+
                 modifiedAccount.email = sharedPreferences.getString("email", "");
+
                 modifiedAccount.name = sharedPreferences.getString("name", "");
                 modifiedAccount.password = sharedPreferences.getString("password", "");
+
+                Log.d("debug", "password change: " + modifiedAccount.password);
+                Log.d("debug", "key: " + key);
 
                 Log.d("debug", userData.getString("accountID", ""));
 
@@ -78,9 +84,9 @@ public class SettingsActivity extends PreferenceActivity  {
 
                 Log.d("debug", userData.getString("accountEmail", ""));
 
-                Log.d("debug", "key: " + key);
 
                 try {
+
 
                     preference.setSummary(((key.equals("password")) ? sharedPreferences.getString(key, "")
                             .replaceAll(".", "*") : sharedPreferences.getString(key, "")));
@@ -102,6 +108,7 @@ public class SettingsActivity extends PreferenceActivity  {
             } else {
                 isReInitInfo = false;
             }
+
 
         }
     };
@@ -165,12 +172,10 @@ public class SettingsActivity extends PreferenceActivity  {
         String accountPassword = userData.getString("accountPassword", "")
                 .replaceAll(".", "*");
 
-
         Preference userName = findPreference("username");
         Preference email = findPreference("email");
         Preference password = findPreference("password");
         Preference name = findPreference("name");
-
 
         userEditText = (EditTextPreference) userName;
         emailEditText = (EditTextPreference) email;
@@ -179,7 +184,7 @@ public class SettingsActivity extends PreferenceActivity  {
 
         userEditText.setText(username);
         emailEditText.setText(accountEmail);
-        passwordEditText.setText(accountPassword);
+        passwordEditText.setText(userData.getString("accountPassword", ""));
         nameEditText.setText(accountName);
 
         userName.setSummary(username);
@@ -269,6 +274,7 @@ public class SettingsActivity extends PreferenceActivity  {
 
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -295,6 +301,9 @@ public class SettingsActivity extends PreferenceActivity  {
 
                     @Override
                     public void onResponse(String response) {
+
+                        Log.d("debug", "response: " + response);
+
                         if (response.equals("account updated")) {
                             updateProgressDialog.dismiss();
                             SettingsActivity.this.updateUserPreferences();

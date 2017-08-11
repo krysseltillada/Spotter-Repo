@@ -164,7 +164,7 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:adjustViewBounds="false"
-                                            android:background="@drawable/landscape_placeholder"
+                                            android:scaleType="centerCrop"
                                             android:contentDescription="@string/most_popular_desc"
                                             android:cropToPadding="false"
                                             android:visibility="visible" />
@@ -174,20 +174,20 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:adjustViewBounds="false"
-                                            android:background="@drawable/place"
+                                            android:scaleType="centerCrop"
                                             android:contentDescription="@string/most_popular_desc"
                                             android:cropToPadding="false"
-                                            android:visibility="gone" />
+                                            android:visibility="visible" />
 
                                         <ImageView
                                             android:id="@+id/popularImageView3"
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:adjustViewBounds="false"
-                                            android:background="@drawable/place1"
+                                            android:scaleType="centerCrop"
                                             android:contentDescription="@string/most_popular_desc"
                                             android:cropToPadding="false"
-                                            android:visibility="gone" />
+                                            android:visibility="visible" />
 
 
                                     </ViewFlipper>

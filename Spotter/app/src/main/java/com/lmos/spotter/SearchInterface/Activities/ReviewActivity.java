@@ -80,6 +80,8 @@ public class ReviewActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_review);
 
+        prevUserReviewList = new ArrayList<>();
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         reviewScrollView = (NestedScrollView) findViewById(R.id.activityReviewScrollView);
 
@@ -308,7 +310,7 @@ public class ReviewActivity extends AppCompatActivity {
 
                 reviewScrollView.smoothScrollTo(0, 0);
                 reviewList.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
-                reviewList.setAdapter(new SearchReviewsAdapter(getApplicationContext(), userReviewList));
+                reviewList.setAdapter(new SearchReviewsAdapter(getApplicationContext(), prevUserReviewList));
 
                 break;
 
@@ -390,7 +392,11 @@ public class ReviewActivity extends AppCompatActivity {
 
                 Collections.reverse(userReviewList);
 
-                prevUserReviewList = userReviewList;
+                if (prevUserReviewList.size() > 0)
+                    prevUserReviewList.clear();
+
+                for (UserReview userReview : userReviewList)
+                    prevUserReviewList.add(userReview);
 
                 placeUserReviews.setText(noOfUserReviews + " user reviews");
                 placeRecommend.setText(userRecommend + " recommend this");
