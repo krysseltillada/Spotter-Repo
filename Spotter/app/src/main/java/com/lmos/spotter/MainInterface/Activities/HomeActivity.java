@@ -1003,6 +1003,8 @@ public class HomeActivity extends AppCompatActivity
 
                                 Log.d("debug", response);
 
+                                featuredPlacesList.clear();
+
                                 JSONArray featuredPlaces = new JSONObject(response).getJSONArray("featurePlaces");
 
                                 for (int i = 0; i != featuredPlaces.length(); ++i) {
@@ -1116,7 +1118,10 @@ public class HomeActivity extends AppCompatActivity
 
         });
 
-        featureViewFlipper.startFlipping();
+        if (!placeType.equals("General"))
+            featureViewFlipper.stopFlipping();
+        else
+            featureViewFlipper.startFlipping();
 
         featureViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
         featureViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
@@ -1126,12 +1131,12 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onAnimationStart(Animation animation) {
-               if ( !(featureViewFlipper.getDisplayedChild() >= 0 && featureViewFlipper.getDisplayedChild() <= featuredPlacesList.size() - 1))
-                   Log.d("debug", "out");
-               else {
-                   featureLabel.setAnimation(AnimationUtils.loadAnimation(HomeActivity.this, android.R.anim.fade_in));
-                   featureLabel.setText(featuredPlacesList.get(featureViewFlipper.getDisplayedChild()).getPlaceName());
-               }
+
+                Log.d("debug", "index feature: " + featureViewFlipper.getDisplayedChild());
+
+                featureLabel.setAnimation(AnimationUtils.loadAnimation(HomeActivity.this, android.R.anim.fade_in));
+                featureLabel.setText(featuredPlacesList.get(featureViewFlipper.getDisplayedChild()).getPlaceName());
+
             }
 
             @Override
@@ -1184,6 +1189,8 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onAnimationStart(Animation animation) {
+
+                Log.d("debug", "index mostpopular: " + mostPopularViewFlipper.getDisplayedChild());
                 mostPopularName.setAnimation(AnimationUtils.loadAnimation(HomeActivity.this, android.R.anim.fade_in));
                 mostPopularName.setText(mostPopularPlaces[mostPopularViewFlipper.getDisplayedChild()].getPlaceName());
             }
