@@ -185,6 +185,10 @@ public class SearchResultsActivity extends AppCompatActivity
         }
     }
 
+    public NestedScrollView getNsView(){
+        return nsview;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -319,14 +323,7 @@ public class SearchResultsActivity extends AppCompatActivity
                 getResources().getColor(R.color.colorPrimary)
         );
 
-        if(fragmentType.equals("Home"))
-            new LoadSearchData().execute(params);
-        else{
-            if(Utilities.checkNetworkState(this))
-                new LoadSearchData().execute(params);
-            else
-                loading_msg.setText(R.string.loading_msg_5);
-        }
+        new LoadSearchData().execute(params);
 
     }
 
@@ -673,8 +670,18 @@ public class SearchResultsActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("name", name);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        setHeaderText(savedInstanceState.getString("name"));
+    }
+
+    @Override
     public void onLocationFoundCity(String city) {
-        //new LoadSearchData().execute("General", city);
         runTask("General", city);
         locationHandler.changeApiState("disconnect");
     }
@@ -846,6 +853,7 @@ public class SearchResultsActivity extends AppCompatActivity
                     toggleLoadingScreen(View.GONE, AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                     break;
                 case "No result found.":
+                    loading_msg.setText(result);
                     break;
                 default:
                     loading_img.setImageResource(android.R.drawable.stat_notify_error);

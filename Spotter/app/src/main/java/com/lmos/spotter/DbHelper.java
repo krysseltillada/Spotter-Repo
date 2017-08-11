@@ -38,6 +38,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String KEY_LAT = "latitude";
     private static final String KEY_LNG = "longitude";
     private static final String KEY_DEALS = "deals";
+    private static final String KEY_CONTACTS = "contacts";
     private static final String KEY_CLASS = "class";
     private static final String KEY_PRICE_RANGE = "price_range";
     private static final String KEY_IMAGE = "image";
@@ -82,6 +83,7 @@ public class DbHelper extends SQLiteOpenHelper {
                         KEY_LNG + " DOUBLE," +
                         KEY_TYPE + " TEXT," +
                         KEY_DEALS + " TEXT," +
+                        KEY_CONTACTS + " TEXT," +
                         KEY_CLASS + " INTEGER," +
                         KEY_PRICE_RANGE + " TEXT," +
                         KEY_IMAGE + " TEXT," +
@@ -94,7 +96,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL(
                 "Create virtual table " + TABLE_PLACE_NAME + " using fts4 (" +
-                        KEY_PLACEID + " TEXT," +
+                        KEY_PLACEID + " TEXT UNIQUE," +
                         KEY_NAME + " TEXT," +
                         KEY_ADDRESS + " TEXT," +
                         KEY_TYPE + " TEXT," +
@@ -147,6 +149,7 @@ public class DbHelper extends SQLiteOpenHelper {
         cv.put(KEY_LAT, place.getPlaceLat());
         cv.put(KEY_LNG, place.getPlaceLng());
         cv.put(KEY_DEALS, place.getPlaceDeals());
+        cv.put(KEY_CONTACTS, place.getPlaceLinks());
         cv.put(KEY_CLASS, place.getPlaceClass());
         cv.put(KEY_PRICE_RANGE, place.getPlacePriceRange());
         cv.put(KEY_IMAGE, place.getPlaceImageLink());
@@ -206,26 +209,36 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        if(places.isEmpty())
-            Log.d("DBHelper", "NULL");
-        else
-            Log.d("DBHelper", String.valueOf(places.size()));
+        try{
 
-        for(Place place : places ){
+            if(places != null || !places.isEmpty()) {
+                Log.d("DBHelper", "NULL");
+                for(Place place : places ){
 
-            ContentValues cv = new ContentValues();
-            cv.put(KEY_PLACEID, place.getPlaceID());
-            cv.put(KEY_NAME, place.getPlaceName());
-            cv.put(KEY_ADDRESS, place.getPlaceAddress());
-            cv.put(KEY_TYPE, place.getPlaceType());
-            cv.put(KEY_LAT, place.getPlaceLat());
-            cv.put(KEY_LNG, place.getPlaceLng());
+                    ContentValues cv = new ContentValues();
+                    cv.put(KEY_PLACEID, place.getPlaceID());
+                    cv.put(KEY_NAME, place.getPlaceName());
+                    cv.put(KEY_ADDRESS, place.getPlaceAddress());
+                    cv.put(KEY_TYPE, place.getPlaceType());
+                    cv.put(KEY_LAT, place.getPlaceLat());
+                    cv.put(KEY_LNG, place.getPlaceLng());
 
-            db.insert(TABLE_PLACE_NAME, null, cv);
+                    db.insert(TABLE_PLACE_NAME, null, cv);
+
+                }
+
+                db.close();
+            }else
+                Log.d("DBHelper", String.valueOf(places.size()));
 
         }
+        catch (SQLiteConstraintException e){
+            e.printStackTrace();
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
 
-        db.close();
 
     }
 
@@ -243,7 +256,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery("Select * from favorites WHERE type = '" + placeType + "'", null);
 
-
         while(cursor.moveToNext()){
 
             Place place = new Place();
@@ -258,6 +270,7 @@ public class DbHelper extends SQLiteOpenHelper {
             place.setplaceClass(cursor.getString(cursor.getColumnIndex(KEY_CLASS)));
             place.setplaceType(cursor.getString(cursor.getColumnIndex(KEY_TYPE)));
             place.setPlaceDeals(cursor.getString(cursor.getColumnIndex(KEY_DEALS)));
+            place.setPlaceLinks(cursor.getString(cursor.getColumnIndex(KEY_CONTACTS)));
             place.setplacePriceRange(cursor.getString(cursor.getColumnIndex(KEY_PRICE_RANGE)));
             place.setplaceImageLink(cursor.getString(cursor.getColumnIndex(KEY_IMAGE)));
             place.setRecommended(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDED)));
@@ -285,12 +298,15 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
-                "Select " + KEY_PLACEID + " from " + TABLE_PLACE_NAME +
-                        " order by " + KEY_PLACEID + " desc limit 1",
+                "Select " + KEY_PLACEID + " from " + TABLE_PLACE_NAME,
                 null
         );
 
-        String placeID = cursor.getString(cursor.getColumnIndex(KEY_PLACEID));
+        cursor.moveToLast();
+        String placeID = "";
+        placeID = cursor.getString(cursor.getColumnIndex(KEY_PLACEID));
+
+        Log.d("SyncService", placeID);
 
         return placeID;
     }

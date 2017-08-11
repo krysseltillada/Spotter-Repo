@@ -1,8 +1,6 @@
 package com.lmos.spotter;
 
 import android.content.Context;
-
-import java.util.List;
 import android.util.Log;
 
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
@@ -159,12 +157,12 @@ public class AppScript {
         }catch(UnknownHostException e){
             Utilities.logError(context, e.getMessage());
             e.printStackTrace();
-            response = "Couldn't connect to server. Make sure you have stable internet connection.";
+            response = "Couldn't connect to server.\n Make sure you have stable internet connection.";
         }catch (SocketTimeoutException | ConnectException e){
             e.printStackTrace();
             Utilities.logError(context, e.getMessage());
             Log.d("debug", e.getMessage());
-            response = "Couldn't connect to server.";
+            response = "Couldn't connect to server.\n Please try again later.";
         }catch (IOException e) {
             e.printStackTrace();
             Utilities.logError(context, e.getMessage());
@@ -211,6 +209,7 @@ public class AppScript {
         try {
 
             final JSONObject jsonObject = new JSONObject(processResult);
+            Log.d("SPLASH", jsonObject.toString());
             String response_code = jsonObject.getString("response_code");
 
             Log.d("debug", processResult);
@@ -220,7 +219,6 @@ public class AppScript {
             if (response_code.equals("0x01") || response_code.equals("0x02") || response_code.equals("0x03")) {
 
                 if (!response_code.equals("0x03")) {
-
 
                     JSONArray accountProfile = jsonObject.getJSONArray("response_data");
 
@@ -262,15 +260,15 @@ public class AppScript {
                         setPlace.setUserReviews(place_item.getString("userReviews"));
                         setPlace.setplaceImageLink(place_item.getString("Image"));
                         setPlace.setBookmarks(place_item.getString("bookmarks"));
+                        setPlace.setPlaceDeals(place_item.getString("Deals"));
+                        setPlace.setPlaceLinks(place_item.getString("Contacts"));
 
                         if (response_code.equals("0x10")) {
-
                             JSONObject responseData = new JSONObject(jsonObject.getString("response_offsetCount"));
                             offSet = responseData.getString("endOffset");
                             tableCount = responseData.getString("tableCount");
                         }
-
-                    }
+                     }
 
                     place.add(setPlace);
 
@@ -293,9 +291,10 @@ public class AppScript {
         }catch(JSONException e){
                 e.printStackTrace();
                 Utilities.logError(context, e.getMessage());
-                response = "check your network connection and try again.";
-            }
+                response = "Check your network connection and try again.";
         }
+
+    }
 
     public List<Place> getPlaceNames() { return placeNames; }
     public List<Place> getPlacesList () {
