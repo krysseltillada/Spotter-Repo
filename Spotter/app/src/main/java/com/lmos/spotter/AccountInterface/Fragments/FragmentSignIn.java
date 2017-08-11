@@ -70,4 +70,8 @@ public class FragmentSignIn extends Fragment {
         return signInView;
     }
 
+    public void clearText(){
+        password.getText().clear();
+    }
+
 }

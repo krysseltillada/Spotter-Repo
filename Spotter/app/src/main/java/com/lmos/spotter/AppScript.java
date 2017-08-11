@@ -209,6 +209,7 @@ public class AppScript {
         try {
 
             final JSONObject jsonObject = new JSONObject(processResult);
+            Log.d("SPLASH", jsonObject.toString());
             String response_code = jsonObject.getString("response_code");
 
             Log.d("debug", processResult);
@@ -218,7 +219,6 @@ public class AppScript {
             if (response_code.equals("0x01") || response_code.equals("0x02") || response_code.equals("0x03")) {
 
                 if (!response_code.equals("0x03")) {
-
 
                     JSONArray accountProfile = jsonObject.getJSONArray("response_data");
 
@@ -268,8 +268,7 @@ public class AppScript {
                             offSet = responseData.getString("endOffset");
                             tableCount = responseData.getString("tableCount");
                         }
-
-                    }
+                     }
 
                     place.add(setPlace);
 
@@ -293,8 +292,9 @@ public class AppScript {
                 e.printStackTrace();
                 Utilities.logError(context, e.getMessage());
                 response = "Check your network connection and try again.";
-            }
         }
+
+    }
 
     public List<Place> getPlaceNames() { return placeNames; }
     public List<Place> getPlacesList () {

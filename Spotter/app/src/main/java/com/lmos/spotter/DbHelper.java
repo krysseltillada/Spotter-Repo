@@ -96,7 +96,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL(
                 "Create virtual table " + TABLE_PLACE_NAME + " using fts4 (" +
-                        KEY_PLACEID + " TEXT," +
+                        KEY_PLACEID + " TEXT UNIQUE," +
                         KEY_NAME + " TEXT," +
                         KEY_ADDRESS + " TEXT," +
                         KEY_TYPE + " TEXT," +
@@ -209,25 +209,36 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        if(places != null || !places.isEmpty()) {
-            Log.d("DBHelper", "NULL");
-            for(Place place : places ){
+        try{
 
-                ContentValues cv = new ContentValues();
-                cv.put(KEY_PLACEID, place.getPlaceID());
-                cv.put(KEY_NAME, place.getPlaceName());
-                cv.put(KEY_ADDRESS, place.getPlaceAddress());
-                cv.put(KEY_TYPE, place.getPlaceType());
-                cv.put(KEY_LAT, place.getPlaceLat());
-                cv.put(KEY_LNG, place.getPlaceLng());
+            if(places != null || !places.isEmpty()) {
+                Log.d("DBHelper", "NULL");
+                for(Place place : places ){
 
-                db.insert(TABLE_PLACE_NAME, null, cv);
+                    ContentValues cv = new ContentValues();
+                    cv.put(KEY_PLACEID, place.getPlaceID());
+                    cv.put(KEY_NAME, place.getPlaceName());
+                    cv.put(KEY_ADDRESS, place.getPlaceAddress());
+                    cv.put(KEY_TYPE, place.getPlaceType());
+                    cv.put(KEY_LAT, place.getPlaceLat());
+                    cv.put(KEY_LNG, place.getPlaceLng());
 
-            }
+                    db.insert(TABLE_PLACE_NAME, null, cv);
 
-            db.close();
-        }else
-            Log.d("DBHelper", String.valueOf(places.size()));
+                }
+
+                db.close();
+            }else
+                Log.d("DBHelper", String.valueOf(places.size()));
+
+        }
+        catch (SQLiteConstraintException e){
+            e.printStackTrace();
+        }
+        catch (SQLiteException e){
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -244,7 +255,6 @@ public class DbHelper extends SQLiteOpenHelper {
         List<Place> bookmarks = new ArrayList<>();
 
         Cursor cursor = db.rawQuery("Select * from favorites WHERE type = '" + placeType + "'", null);
-
 
         while(cursor.moveToNext()){
 
@@ -288,12 +298,15 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
-                "Select " + KEY_PLACEID + " from " + TABLE_PLACE_NAME +
-                        " order by " + KEY_PLACEID + " desc limit 1",
+                "Select " + KEY_PLACEID + " from " + TABLE_PLACE_NAME,
                 null
         );
 
-        String placeID = cursor.getString(cursor.getColumnIndex(KEY_PLACEID));
+        cursor.moveToLast();
+        String placeID = "";
+        placeID = cursor.getString(cursor.getColumnIndex(KEY_PLACEID));
+
+        Log.d("SyncService", placeID);
 
         return placeID;
     }

@@ -180,6 +180,10 @@ public class SearchResultsActivity extends AppCompatActivity
         }
     }
 
+    public NestedScrollView getNsView(){
+        return nsview;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -660,8 +664,18 @@ public class SearchResultsActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("name", name);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        setHeaderText(savedInstanceState.getString("name"));
+    }
+
+    @Override
     public void onLocationFoundCity(String city) {
-        //new LoadSearchData().execute("General", city);
         runTask("General", city);
         locationHandler.changeApiState("disconnect");
     }
