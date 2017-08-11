@@ -91,6 +91,26 @@
                                             android:cropToPadding="false"
                                             android:visibility="visible" />
 
+                                        <ImageView
+                                            android:id="@+id/featureImageView2"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:adjustViewBounds="false"
+                                            android:background="@drawable/sample"
+                                            android:contentDescription="@string/most_popular_desc"
+                                            android:cropToPadding="false"
+                                            android:visibility="visible" />
+
+                                        <ImageView
+                                            android:id="@+id/featureImageView3"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:adjustViewBounds="false"
+                                            android:background="@drawable/sample"
+                                            android:contentDescription="@string/most_popular_desc"
+                                            android:cropToPadding="false"
+                                            android:visibility="visible" />
+
 
                                     </ViewFlipper>
 

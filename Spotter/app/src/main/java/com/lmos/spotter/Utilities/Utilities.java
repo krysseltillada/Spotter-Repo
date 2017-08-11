@@ -860,6 +860,10 @@ public class Utilities {
 
     }
 
+    public static boolean isDateInRange(Date startDate, Date inDate, Date endDate) {
+        return !(inDate.before(startDate) || inDate.after(endDate));
+    }
+
     public static void inflateOptionItem(Context activity, View parent, int layout, PopupMenu.OnMenuItemClickListener onMenuItemClickListener){
 
         PopupMenu optionMenu = new PopupMenu(activity, parent, Gravity.END);

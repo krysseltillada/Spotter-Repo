@@ -47,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -72,8 +73,11 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +101,7 @@ public class HomeActivity extends AppCompatActivity
     private TextView txtOfflineMessage;
     private TextView txtHome;
     private TextView txtMostPopular;
+    private TextView featureLabel;
     private SearchView searchBTN;
     private FloatingActionButton floatingActionButton;
     private AppBarLayout appBarLayout;
@@ -118,7 +123,9 @@ public class HomeActivity extends AppCompatActivity
     private ViewFlipper mostPopularViewFlipper;
     private ViewFlipper featureViewFlipper;
     private ImageView[] mostPopularImages;
+    private ImageView[] featuredImages;
     private Place[] mostPopularPlaces;
+    private ArrayList<Place> featuredPlacesList;
     private SwipeRefreshLayout pullUpLoadLayout;
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
@@ -129,6 +136,8 @@ public class HomeActivity extends AppCompatActivity
 
     LinearLayout []frontLayouts;
     LinearLayout navHeaderLayout;
+
+    String currentDate;
 
     static private boolean isLoadingItem = false;
     //static private boolean isLoadingPlace = false;
@@ -142,12 +151,21 @@ public class HomeActivity extends AppCompatActivity
         mostPopularImages = new ImageView[3];
         mostPopularPlaces = new Place[3];
 
+        featuredImages = new ImageView[3];
+
         frontLayouts = new LinearLayout[4];
+
+        featuredPlacesList = new ArrayList<>();
+
 
         for (int i = 0; i != mostPopularPlaces.length; ++i)
             mostPopularPlaces[i] = new Place();
 
+
+
         initComp();
+
+        currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
         loadData("General");
 
@@ -161,6 +179,7 @@ public class HomeActivity extends AppCompatActivity
             isTimeout = false;
             currentCount = 0;
 
+
             imgOfflineImage.setVisibility(View.GONE);
             txtOfflineMessage.setVisibility(View.GONE);
 
@@ -168,6 +187,7 @@ public class HomeActivity extends AppCompatActivity
 
             if (homeNestedScrollView.getVisibility() != View.VISIBLE)
                 homeNestedScrollView.setVisibility(View.VISIBLE);
+
 
             loadPlacesByType(pt, false);
 
@@ -267,7 +287,6 @@ public class HomeActivity extends AppCompatActivity
 
         });
 
-
         placeLoader.execute("0", pageCount, pType, sType);
 
         homeNestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -346,6 +365,7 @@ public class HomeActivity extends AppCompatActivity
 
             String selectedSortType = tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getText().toString();
 
+            getFeaturedPlaces(currentDate, type);
             getMostPopular(type);
             loadPlacesFromServer(type, (selectedSortType.equals("Most Viewed") ? "Views" :
                     (selectedSortType.equals("Most Popular")) ? "Rating" : "Recommended"));
@@ -587,6 +607,7 @@ public class HomeActivity extends AppCompatActivity
 
                     String selectedSortType = tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getText().toString();
 
+                    getFeaturedPlaces(currentDate, placeType);
                     getMostPopular(placeType);
                     loadPlacesFromServer(placeType, (selectedSortType.equals("Most Viewed") ? "Views" :
                             (selectedSortType.equals("Most Popular")) ? "Rating" : "Recommended"));
@@ -620,10 +641,16 @@ public class HomeActivity extends AppCompatActivity
         mostPopularViewFlipper = (ViewFlipper) findViewById(R.id.mostPopularViewFlipper);
         featureViewFlipper = (ViewFlipper) findViewById(R.id.featureViewFlipper);
 
+        featureLabel = (TextView)findViewById(R.id.mostFeaturePlaceName);
+
         frontLayouts[0] = (LinearLayout) findViewById(R.id.mostPopularBlackBackground1);
         frontLayouts[1] = (LinearLayout) findViewById(R.id.mostPopularBlackBackground);
         frontLayouts[2] = (LinearLayout) findViewById(R.id.featureLabelBlackBackground);
         frontLayouts[3] = (LinearLayout) findViewById(R.id.featurePlaceBlackBackground);
+
+        featuredImages[0] = (ImageView) findViewById(R.id.featureImageView1);
+        featuredImages[1] = (ImageView) findViewById(R.id.featureImageView2);
+        featuredImages[2] = (ImageView) findViewById(R.id.featureImageView3);
 
         mostPopularImages[0] = (ImageView) findViewById(R.id.popularImageView1);
         mostPopularImages[1] = (ImageView) findViewById(R.id.popularImageView2);
@@ -830,6 +857,8 @@ public class HomeActivity extends AppCompatActivity
                                 .putExtra("data", new String[]{"Location", ""}));
             }
 
+
+
         });
 
     }
@@ -957,12 +986,173 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    private void getFeaturedPlaces(final String date, final String pt) {
+
+        RequestQueue requestFeaturedPlaces = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest stringFeaturedPlaces = new StringRequest(Request.Method.POST,
+                "http://admin-spotter.000webhostapp.com/app_scripts/getFeaturePlace.php",
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+
+                        if (!response.equals("no data")) {
+
+                            try {
+
+                                Log.d("debug", response);
+
+                                JSONArray featuredPlaces = new JSONObject(response).getJSONArray("featurePlaces");
+
+                                for (int i = 0; i != featuredPlaces.length(); ++i) {
+
+                                    JSONObject featuredPlaceJSON = featuredPlaces.getJSONObject(i);
+
+                                    Place featuredPlace = new Place();
+
+                                    String imageLink = featuredPlaceJSON.getString("ImageLink");
+
+                                    if (imageLink.length() > 0) {
+
+                                        JSONObject placeImage = new JSONObject(imageLink);
+
+                                        JSONObject placeImages = new JSONObject(placeImage.getString("placeImages"));
+
+                                        JSONArray imageLinks = placeImages.getJSONArray("previewImages");
+
+                                        Random randomImage = new Random();
+
+                                        Picasso.with(getApplicationContext())
+                                                .load(imageLinks.getString(randomImage.nextInt(imageLinks.length())))
+                                                .placeholder(R.drawable.landscape_placeholder)
+                                                .fit()
+                                                .into(featuredImages[i]);
+
+
+                                    } else {
+
+                                        Picasso.with(getApplicationContext())
+                                                .load("http://vignette2.wikia.nocookie.net/date-a-live/images/5/57/Yoshino.%28Date.A.Live%29.full.1536435.jpg/revision/latest?cb=20140225221532")
+                                                .placeholder(R.drawable.loadingplace)
+                                                .fit()
+                                                .into(featuredImages[i]);
+
+                                    }
+
+                                    featuredPlace.setPlaceID(featuredPlaceJSON.getString("placeID"));
+                                    featuredPlace.setplaceName(featuredPlaceJSON.getString("Name"));
+                                    featuredPlace.setplaceType(featuredPlaceJSON.getString("Type"));
+                                    featuredPlace.setplaceAddress(featuredPlaceJSON.getString("Address"));
+                                    featuredPlace.setPlaceLat(featuredPlaceJSON.getString("Latitude"));
+                                    featuredPlace.setPlaceLng(featuredPlaceJSON.getString("Longitude"));
+                                    featuredPlace.setplaceLocality(featuredPlaceJSON.getString("Locality"));
+                                    featuredPlace.setplaceDescription(featuredPlaceJSON.getString("Description"));
+                                    featuredPlace.setplaceImageLink(imageLink);
+                                    featuredPlace.setplaceClass(featuredPlaceJSON.getString("Class"));
+                                    featuredPlace.setplacePriceRange(featuredPlaceJSON.getString("PriceRange"));
+                                    featuredPlace.setRecommended(featuredPlaceJSON.getString("Recommended"));
+                                    featuredPlace.setRating(featuredPlaceJSON.getString("Rating"));
+                                    featuredPlace.setUserReviews(featuredPlaceJSON.getString("userReviews"));
+                                    featuredPlace.setBookmarks(featuredPlaceJSON.getString("Bookmarks"));
+
+                                    featuredPlacesList.add(featuredPlace);
+
+                                }
+
+                                startFeaturedFlipping();
+
+                            } catch (JSONException e) {
+                                Log.d("debug", e.getMessage());
+                            }
+
+                        } else {
+
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return new HashMap<String, String>(){{
+                   put("date", date);
+                   put("placeType", pt);
+                }};
+            }
+        };
+
+        requestFeaturedPlaces.add(stringFeaturedPlaces);
+
+    }
+
+    private void startFeaturedFlipping () {
+
+        featureViewFlipper.setDisplayedChild(0);
+
+        featureViewFlipper.setVisibility(View.VISIBLE);
+
+        for (LinearLayout frontLayout : frontLayouts)
+            frontLayout.setVisibility(View.VISIBLE);
+
+        appBarLayout.setExpanded(true);
+
+        featureViewFlipper.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                searchBTN.setIconified(true);
+                Utilities.hideSoftKeyboard(getCurrentFocus(), HomeActivity.this);
+                Intent sendFeaturedPlace = new Intent(getApplicationContext(), SearchResultsActivity.class);
+                sendFeaturedPlace.putExtra("Place", featuredPlacesList.get(featureViewFlipper.getDisplayedChild()));
+                sendFeaturedPlace.putExtra("data", new String[]{ "Home", "" });
+                startActivity(sendFeaturedPlace);
+            }
+
+        });
+
+        featureViewFlipper.startFlipping();
+
+        featureViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
+        featureViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
+        featureViewFlipper.setFlipInterval(3000);
+
+        featureViewFlipper.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+               if ( !(featureViewFlipper.getDisplayedChild() >= 0 && featureViewFlipper.getDisplayedChild() <= featuredPlacesList.size() - 1))
+                   Log.d("debug", "out");
+               else {
+                   featureLabel.setAnimation(AnimationUtils.loadAnimation(HomeActivity.this, android.R.anim.fade_in));
+                   featureLabel.setText(featuredPlacesList.get(featureViewFlipper.getDisplayedChild()).getPlaceName());
+               }
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+    }
+
     private void startMostPopularFlipping() {
 
         mostPopularViewFlipper.setDisplayedChild(0);
         mostPopularName.setText(mostPopularPlaces[0].getPlaceName());
 
-        featureViewFlipper.setVisibility(View.VISIBLE);
         mostPopularViewFlipper.setVisibility(View.VISIBLE);
 
         for (LinearLayout frontLayout : frontLayouts)
