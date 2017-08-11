@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -129,6 +130,12 @@ public class HomeActivity extends AppCompatActivity
     private SwipeRefreshLayout pullUpLoadLayout;
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
+
+    ImageView leftFeature;
+    ImageView rightFeature;
+
+    ImageView leftPopular;
+    ImageView rightPopular;
 
     boolean isTimeout = false;
     int timeoutCount = 5;
@@ -630,6 +637,59 @@ public class HomeActivity extends AppCompatActivity
         pullUpLoadLayout.setProgressViewOffset(false, 0, 180);
         pullUpLoadLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent);
 
+        leftPopular = (ImageView) findViewById(R.id.popularLeft);
+        rightPopular = (ImageView) findViewById(R.id.popularRight);
+
+        leftFeature = (ImageView) findViewById(R.id.featureLeft);
+        rightFeature = (ImageView) findViewById(R.id.featureRight);
+
+        leftFeature.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                int indexPopular = featureViewFlipper.getDisplayedChild() - 1;
+                featureViewFlipper.setDisplayedChild((indexPopular < 0) ? 2 : indexPopular);
+
+
+            }
+        });
+
+        rightFeature.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int indexPopular = featureViewFlipper.getDisplayedChild() + 1;
+                featureViewFlipper.setDisplayedChild((indexPopular > 2) ? 0 : indexPopular);
+
+
+            }
+        });
+
+        leftPopular.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                int indexPopular = mostPopularViewFlipper.getDisplayedChild() - 1;
+                mostPopularViewFlipper.setDisplayedChild((indexPopular < 0) ? 2 : indexPopular);
+
+
+            }
+        });
+
+        rightPopular.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int indexPopular = mostPopularViewFlipper.getDisplayedChild() + 1;
+                mostPopularViewFlipper.setDisplayedChild((indexPopular > 2) ? 0 : indexPopular);
+
+
+            }
+        });
+
+
         txtMostPopular = (TextView)findViewById(R.id.home_header_lbl);
 
         imgOfflineImage = (ImageView)findViewById(R.id.imgOfflineImage);
@@ -1118,14 +1178,20 @@ public class HomeActivity extends AppCompatActivity
 
         });
 
-        if (!placeType.equals("General"))
+        if (!placeType.equals("General")) {
+            rightFeature.setVisibility(View.GONE);
+            leftFeature.setVisibility(View.GONE);
             featureViewFlipper.stopFlipping();
-        else
+        }
+        else {
+            rightFeature.setVisibility(View.VISIBLE);
+            leftFeature.setVisibility(View.VISIBLE);
             featureViewFlipper.startFlipping();
+        }
 
         featureViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
         featureViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
-        featureViewFlipper.setFlipInterval(3000);
+        featureViewFlipper.setFlipInterval(5000);
 
         featureViewFlipper.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
 
@@ -1183,7 +1249,7 @@ public class HomeActivity extends AppCompatActivity
 
         mostPopularViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
         mostPopularViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
-        mostPopularViewFlipper.setFlipInterval(3000);
+        mostPopularViewFlipper.setFlipInterval(5000);
 
         mostPopularViewFlipper.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
 
