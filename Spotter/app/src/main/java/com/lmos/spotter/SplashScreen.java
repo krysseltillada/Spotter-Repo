@@ -60,6 +60,7 @@ import io.branch.referral.util.LinkProperties;
 public class SplashScreen extends AppCompatActivity {
 
     private static final String LOGIN_PREFS = "LoginSharedPreference";
+    public static boolean isLinkClicked = false;
     final int SPLASH_REQUEST = 1902;
     TextView splash_msg;
 
@@ -242,9 +243,11 @@ public class SplashScreen extends AppCompatActivity {
 
                         Log.d("debug", "link clicked: " + branchUniversalObject.convertToJson().toString());
 
+
                         HashMap<String, String> linkMetaData = branchUniversalObject.getMetadata();
 
                         Intent send_data = new Intent(SplashScreen.this, SearchResultsActivity.class);
+                        send_data.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         send_data.putExtra("data", new String[] {
 
                                 linkMetaData.get("placeType"),
@@ -417,8 +420,10 @@ public class SplashScreen extends AppCompatActivity {
                 LoginActivity.set_login_prefs.apply();
 
             } else {
-                logoImage.setVisibility(View.VISIBLE);
-                finishSplash(1);
+                    Log.d("debug", "hit");
+                    logoImage.setVisibility(View.VISIBLE);
+                    finishSplash(0);
+
             }
         }
     }

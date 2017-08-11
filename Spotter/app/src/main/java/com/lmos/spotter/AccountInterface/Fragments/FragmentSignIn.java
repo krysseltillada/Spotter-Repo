@@ -43,8 +43,8 @@ public class FragmentSignIn extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if(username.getText().toString().length() > 6 ||
-                        password.getText().toString().length() > 6) {
+                if(username.getText().toString().length() >= 6 ||
+                        password.getText().toString().length() >= 6) {
 
                     final Map<String, String> map_data = new HashMap<String, String>() {{
 

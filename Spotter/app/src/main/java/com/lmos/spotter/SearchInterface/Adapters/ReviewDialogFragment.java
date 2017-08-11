@@ -42,7 +42,7 @@ import java.util.HashMap;
 public class ReviewDialogFragment extends DialogFragment {
 
     public interface OnReviewPost {
-        public void reviewPost(String placeID);
+         void reviewPost(String placeID);
     }
 
     OnReviewPost onReviewPost;
@@ -61,8 +61,8 @@ public class ReviewDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         final AlertDialog errorDialog = new AlertDialog.Builder(getActivity()).setTitle("error")
-                .setMessage("check your internet connection")
-                .setNeutralButton("ok", new DialogInterface.OnClickListener() {
+                .setMessage("Check your internet connection")
+                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -77,7 +77,7 @@ public class ReviewDialogFragment extends DialogFragment {
         isRecommended = (CheckBox)view.findViewById(R.id.checkboxIsRecommended);
 
          final AlertDialog postReview = new AlertDialog.Builder(getActivity())
-                 .setTitle("post a review")
+                 .setTitle("Post a review")
                  .setView(view)
                  .setPositiveButton("post review", new DialogInterface.OnClickListener() {
 
@@ -92,7 +92,7 @@ public class ReviewDialogFragment extends DialogFragment {
                              postReviewProgress = new ProgressDialog(ReviewDialogFragment.this.getContext());
 
                              postReviewProgress.setIndeterminate(true);
-                             postReviewProgress.setMessage("posting your review");
+                             postReviewProgress.setMessage("Posting your review");
                              postReviewProgress.setCancelable(false);
                              postReviewProgress.show();
 
@@ -146,7 +146,7 @@ public class ReviewDialogFragment extends DialogFragment {
                              postReviewRequest.add(postReviewString);
 
                          } else {
-                             Toast.makeText(getContext(), "write a review", Toast.LENGTH_LONG).show();
+                             Toast.makeText(getContext(), "Write a review", Toast.LENGTH_LONG).show();
                          }
 
                      }
