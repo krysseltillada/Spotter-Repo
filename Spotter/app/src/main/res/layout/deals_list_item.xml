@@ -42,26 +42,34 @@
             android:textColor="@color/white"
             android:textSize="@dimen/max_font_size"/>
 
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/desc_holder_nsview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/expand_deal"
+            android:visibility="gone">
+
             <TextView
                 android:id="@+id/deal_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/deal_name"
-                android:maxLines="50"
-                android:visibility="gone"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+        </android.support.v4.widget.NestedScrollView>
 
         <ImageButton
             android:id="@+id/deal_contact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/transparent"
             android:padding="@dimen/min_padding"
+            android:src="@drawable/ic_insert_invitation_black_36dp"
             android:tint="@color/colorPrimary"
-            android:visibility="gone"
-            android:src="@drawable/ic_insert_invitation_black_36dp"/>
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

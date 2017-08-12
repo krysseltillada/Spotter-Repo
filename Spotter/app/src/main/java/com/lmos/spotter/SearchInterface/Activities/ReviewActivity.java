@@ -76,6 +76,11 @@ public class ReviewActivity extends AppCompatActivity {
     private RecyclerView reviewList;
     private boolean isHasReviews;
 
+    private float sumRating = 0;
+    private int noOfUserReviews = 0;
+    private int userRecommend = 0;
+    private int userBookmark = 0;
+
     private void initComp() {
 
         setContentView(R.layout.activity_review);
@@ -141,8 +146,9 @@ public class ReviewActivity extends AppCompatActivity {
 
                                 userReviewList.add(0, addReview);
 
-                                placeUserReviews.setText(String.valueOf(
-                                        Integer.parseInt(placeUserReviews.getText().toString() + 1)));
+                                placeUserReviews.setText((noOfUserReviews += 1) + " user reviews.");
+
+                                placeRecommend.setText((userRecommend += 1) + " recommended this.");
 
                                 if(mAdapter != null)
                                     mAdapter.notifyItemInserted(0);
@@ -322,11 +328,6 @@ public class ReviewActivity extends AppCompatActivity {
 
     class ReviewGetData extends AsyncTask<String, Void, List<UserReview>> {
 
-        private float sumRating = 0;
-        private int noOfUserReviews = 0;
-        private int userRecommend = 0;
-        private int userBookmark = 0;
-
 
         @Override
         protected List<UserReview> doInBackground(String... params) {
@@ -411,25 +412,12 @@ public class ReviewActivity extends AppCompatActivity {
                 mAdapter = new SearchReviewsAdapter(getApplicationContext(), userReviewList);
                 reviewList.setAdapter(mAdapter);
 
-                for (UserReview userReview : userReviewList) {
-
-                    Log.d("debug", "\n");
-
-                    Log.d("debug", "username: " + userReview.userName);
-                    Log.d("debug", "review: " + userReview.getReview());
-                    Log.d("debug", "rating: " + userReview.getRating());
-                    Log.d("debug", "isRecommended: " + userReview.isRecommend());
-                    Log.d("debug", "Date posted: " + userReview.getDate());
-                }
-
                 isHasReviews = true;
 
             } else {
                 reviewProgressBar.setVisibility(View.GONE);
                 reviewListMsg.setVisibility(View.VISIBLE);
-
                 isHasReviews = false;
-
             }
 
             invalidateOptionsMenu();

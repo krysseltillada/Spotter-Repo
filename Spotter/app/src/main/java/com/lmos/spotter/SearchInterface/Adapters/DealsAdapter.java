@@ -3,9 +3,9 @@ package com.lmos.spotter.SearchInterface.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.lmos.spotter.Deals;
 import com.lmos.spotter.R;
-import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -52,8 +51,18 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
     @Override
     public void onBindViewHolder(DealsViewHolder holder, final int position) {
 
-        holder.dealName.setText(deals.get(position).getDealName());
+        if(deals.get(position).getDealName().isEmpty() && deals.get(position).getDealDesc().isEmpty()){
+            holder.dealName.setVisibility(View.GONE);
+            holder.dealDesc.setVisibility(View.GONE);
+            holder.expand.setVisibility(View.GONE);
+            holder.contact.setVisibility(View.GONE);
+        }
+        else if(deals.get(position).getDealName().isEmpty() && !deals.get(position).getDealName().isEmpty()){
+            holder.toggleDesc(View.VISIBLE, AnimationUtils.loadAnimation(context, R.anim.slide_up));
+        }
+
         holder.dealDesc.setText(deals.get(position).getDealDesc());
+        holder.dealName.setText(deals.get(position).getDealName());
 
         Picasso.with(context)
                 .load(deals.get(position).getDealImg())
@@ -92,6 +101,7 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
         TextView dealName, dealDesc;
         ImageView dealImg;
         ImageButton expand, contact;
+        NestedScrollView nestedScrollView;
 
         public DealsViewHolder(View itemView) {
             super(itemView);
@@ -101,6 +111,7 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
             dealImg = (ImageView) itemView.findViewById(R.id.deal_img);
             expand = (ImageButton) itemView.findViewById(R.id.expand_deal);
             contact = (ImageButton) itemView.findViewById(R.id.deal_contact);
+            nestedScrollView = (NestedScrollView) itemView.findViewById(R.id.desc_holder_nsview);
 
             expand.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -127,6 +138,7 @@ public class DealsAdapter extends RecyclerView.Adapter<DealsAdapter.DealsViewHol
             dealDesc.setVisibility(visibility);
             dealDesc.setAnimation(animation);
             contact.setVisibility(visibility);
+            nestedScrollView.setVisibility(visibility);
             dealImg.setAlpha(alpha);
             expand.setAnimation(
                     (visibility == View.VISIBLE)?

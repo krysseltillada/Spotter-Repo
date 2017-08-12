@@ -36,21 +36,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.maps.model.LatLng;
 import com.lmos.spotter.AccountInterface.Activities.LoginActivity;
 import com.lmos.spotter.AppScript;
 import com.lmos.spotter.DbHelper;
 import com.lmos.spotter.Item;
-import com.lmos.spotter.MainInterface.Activities.BookMarksActivity;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Fragments.FragmentSearchResult;
@@ -109,6 +105,7 @@ public class SearchResultsActivity extends AppCompatActivity
     Activity activity = this;
     Place temp_place;
     String name;
+    LatLng userLocation;
     int tries = 0;
     boolean sync = true;
     private String fragmentType;
@@ -185,16 +182,13 @@ public class SearchResultsActivity extends AppCompatActivity
         }
     }
 
-    public NestedScrollView getNsView(){
-        return nsview;
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
         if(fragmentType.equals("Location"))
             locationHandler.changeApiState("connect");
     }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -605,6 +599,7 @@ public class SearchResultsActivity extends AppCompatActivity
     public void onBackPressed() {
 
         Log.d("debug", String.valueOf(getSupportFragmentManager().getBackStackEntryCount()));
+        Log.d("debug", "I AM ON BACKPRESSED");
 
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 
@@ -682,13 +677,21 @@ public class SearchResultsActivity extends AppCompatActivity
 
     @Override
     public void onLocationFoundCity(String city) {
-        runTask("General", city);
+
+        if(city.equals("Service not Available"))
+            loading_msg.setText("Error occurred while getting your location.\nPlease restart your device and try again");
+        else
+            runTask("General", city);
+
         locationHandler.changeApiState("disconnect");
     }
 
     @Override
     public void onLocationFoundLatLng(double lat, double lng, float bearing) {
         locationHandler.getLocality(lat, lng);
+        userLocation = new LatLng(lat, lng);
+        Log.d("LOCATION", String.valueOf(userLocation.latitude) + " " + String.valueOf(userLocation.longitude));
+        locationHandler.stopLocationRequest();
     }
 
     @Override
@@ -789,6 +792,26 @@ public class SearchResultsActivity extends AppCompatActivity
 
                         result = appScript.getResult();
 
+                        if(userLocation != null){
+
+                            for(Place index : placesList){
+
+                                index.setDistance(
+                                        String.valueOf(
+                                                Utilities.CalculationByDistance(
+                                                        userLocation,
+                                                        new LatLng(
+                                                                Double.parseDouble(index.getPlaceLat()),
+                                                                Double.parseDouble(index.getPlaceLng())
+                                                        )
+                                                )
+                                        )
+                                );
+
+                            }
+
+                        }
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -801,26 +824,23 @@ public class SearchResultsActivity extends AppCompatActivity
                                     temp_place = placesList.get(0);
                                     setShowBookmarkInAppBar(true);
                                     toggleTab = View.GONE;
+
                                 }
                                 if(type.equals("Undefined")){
                                     setShowBookmarkInAppBar(false);
                                     setHeaderText("Results for " + data[1]);
-                                    contentSettings(
-                                            View.VISIBLE,
-                                            toggleTab,
-                                            70,
-                                            getResources().getColor(R.color.colorPrimary)
-                                    );
                                 }
-                                else {
+                                else
                                     setHeaderText(data[1]);
-                                    contentSettings(
-                                            View.VISIBLE,
-                                            toggleTab,
-                                            200,
-                                            getResources().getColor(R.color.blackTransparent)
-                                    );
-                                }
+
+                                contentSettings(
+                                        View.VISIBLE,
+                                        toggleTab,
+                                        (type.equals("General")) ?
+                                            150 : (type.equals("Undefined")) ? 100 : 270,
+                                        getResources().getColor(R.color.blackTransparent)
+                                );
+
                             }
                         });
 

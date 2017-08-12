@@ -48,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -405,6 +406,8 @@ public class FragmentSearchResult extends Fragment
             locationHandler.changeApiState("disconnect");}
     }
 
+
+
     class loadReview extends AsyncTask<String, Void, String>{
 
         @Override
@@ -436,6 +439,8 @@ public class FragmentSearchResult extends Fragment
 
                     userReviewList.add(userReview);
                 }
+
+                Collections.reverse(userReviewList);
 
                 result = "Done.";
 

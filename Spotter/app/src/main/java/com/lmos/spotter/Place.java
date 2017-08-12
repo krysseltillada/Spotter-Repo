@@ -41,6 +41,7 @@ public class Place implements Parcelable {
     private String userReviews;
     private String bookmarks;
     private String placeLinks;
+    private String distance;
 
     public Place(){}
     public Place(Parcel in){
@@ -62,6 +63,7 @@ public class Place implements Parcelable {
         userReviews = in.readString();
         bookmarks = in.readString();
         placeLinks = in.readString();
+        distance = in.readString();
 
     }
 
@@ -92,6 +94,14 @@ public class Place implements Parcelable {
     public String getUserReviews() {return userReviews;}
 
     public void setUserReviews(String us) {userReviews = us;}
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 
     public String getPlaceID() {
         return placeID;
@@ -184,6 +194,7 @@ public class Place implements Parcelable {
         dest.writeString(userReviews);
         dest.writeString(bookmarks);
         dest.writeString(placeLinks);
+        dest.writeString(distance);
 
     }
 

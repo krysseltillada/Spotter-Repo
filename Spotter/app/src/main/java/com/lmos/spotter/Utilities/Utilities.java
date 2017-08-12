@@ -164,51 +164,6 @@ public class Utilities {
 
     }
 
-    public static class ConnectionNotifier {
-
-        static OnDeviceOfflineListener onDeviceOfflineListener;
-
-        static Thread connectionNotifierThread;
-        Context context;
-
-        public ConnectionNotifier (Context con) {
-            context = con;
-        }
-
-        public interface OnDeviceOfflineListener {
-
-            void OnDeviceOfflineListener (boolean networkState);
-
-        }
-
-        public ConnectionNotifier start () {
-
-            if (connectionNotifierThread == null) {
-                connectionNotifierThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        for(;true;) {
-
-                            if (onDeviceOfflineListener != null && context != null)
-                                onDeviceOfflineListener.OnDeviceOfflineListener(Utilities.checkNetworkState(context));
-
-                        }
-                    }
-                });
-                connectionNotifierThread.start();
-            }
-
-            return this;
-        }
-
-        public ConnectionNotifier setDeviceOfflineListener (OnDeviceOfflineListener offlineListener) {
-            onDeviceOfflineListener = offlineListener;
-            return this;
-        }
-
-    }
-
     public static void animateViewColor (final View view, int colorFrom, int colorTo, int duration) {
 
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
@@ -843,7 +798,6 @@ public class Utilities {
                 true);
     }
 
-
     public static void setNavTitleStyle(AppCompatActivity appCompatActivity, int navId, int titleId, int styleId) {
 
         NavigationView navigationView = (NavigationView) appCompatActivity.findViewById(navId);
@@ -1000,6 +954,50 @@ public class Utilities {
         void onDbResponse(String response, String undo_id);
     }
 
+    public static class ConnectionNotifier {
+
+        static OnDeviceOfflineListener onDeviceOfflineListener;
+
+        static Thread connectionNotifierThread;
+        Context context;
+
+        public ConnectionNotifier (Context con) {
+            context = con;
+        }
+
+        public ConnectionNotifier start () {
+
+            if (connectionNotifierThread == null) {
+                connectionNotifierThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        for(;true;) {
+
+                            if (onDeviceOfflineListener != null && context != null)
+                                onDeviceOfflineListener.OnDeviceOfflineListener(Utilities.checkNetworkState(context));
+
+                        }
+                    }
+                });
+                connectionNotifierThread.start();
+            }
+
+            return this;
+        }
+
+        public ConnectionNotifier setDeviceOfflineListener (OnDeviceOfflineListener offlineListener) {
+            onDeviceOfflineListener = offlineListener;
+            return this;
+        }
+
+        public interface OnDeviceOfflineListener {
+
+            void OnDeviceOfflineListener (boolean networkState);
+
+        }
+
+    }
 
     public static class BlurImg {
 
@@ -1082,7 +1080,8 @@ public class Utilities {
                             Log.d("LocationHandler", "Connecting...");
                     break;
                 case "disconnect":
-                    apiClient.disconnect();
+                    if(apiClient.isConnected())
+                        apiClient.disconnect();
                     break;
                 case "reconnect":
                     apiClient.reconnect();
@@ -1202,7 +1201,10 @@ public class Utilities {
 
         }
 
-        public void stopLocationRequest(){ LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this); }
+        public void stopLocationRequest(){
+            if(apiClient.isConnected())
+                LocationServices.FusedLocationApi.removeLocationUpdates(apiClient, this);
+        }
 
         public void getLocality(Double lat, Double lng){
             new getLocationName().execute(lat, lng);
@@ -1276,11 +1278,11 @@ public class Utilities {
 
             int returnVal = 0;
 
-            if(Double.parseDouble(o1.getPlaceRating()) < Double.parseDouble(o2.getPlaceRating()))
-                returnVal = 1;
-            else if(Double.parseDouble(o1.getPlaceRating()) > Double.parseDouble(o2.getPlaceRating()))
+            if(Double.parseDouble(o1.getDistance()) < Double.parseDouble(o2.getDistance()))
                 returnVal = -1;
-            else if(Double.parseDouble(o1.getPlaceRating()) == Double.parseDouble(o2.getPlaceRating()))
+            else if(Double.parseDouble(o1.getDistance()) > Double.parseDouble(o2.getDistance()))
+                returnVal = 1;
+            else if(Double.parseDouble(o1.getDistance()) == Double.parseDouble(o2.getDistance()))
                 returnVal = 0;
 
             return returnVal;
