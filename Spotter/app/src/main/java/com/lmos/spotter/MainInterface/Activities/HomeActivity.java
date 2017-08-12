@@ -1185,8 +1185,6 @@ public class HomeActivity extends AppCompatActivity
         for (LinearLayout frontLayout : frontLayouts)
             frontLayout.setVisibility(View.VISIBLE);
 
-        appBarLayout.setExpanded(true);
-
         featureViewFlipper.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -1254,8 +1252,6 @@ public class HomeActivity extends AppCompatActivity
 
         for (LinearLayout frontLayout : frontLayouts)
             frontLayout.setVisibility(View.VISIBLE);
-
-        appBarLayout.setExpanded(true);
 
         mostPopularViewFlipper.setOnClickListener(new View.OnClickListener() {
 

@@ -161,14 +161,8 @@ public class ReviewDialogFragment extends DialogFragment {
          return postReview;
     }
 
-    /*
-
     public interface OnReviewPost {
         void reviewPost(String... post_data);
-    } */
-
-    public interface OnReviewPost {
-        void reviewPost(String placeID);
     }
 
 }

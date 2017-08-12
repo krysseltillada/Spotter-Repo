@@ -126,11 +126,7 @@ public class ReviewActivity extends AppCompatActivity {
 
                         reviewDialogFragment.setOnReviewPost(new ReviewDialogFragment.OnReviewPost() {
                             @Override
-                            public void reviewPost(String placeID) {
-
-                                loadReviews(placeID);
-
-                                /*
+                            public void reviewPost(String ...post_data) {
 
                                 UserReview addReview = new UserReview();
 
@@ -149,7 +145,7 @@ public class ReviewActivity extends AppCompatActivity {
                                 placeUserReviews.setText(userReviewList.size() + " user reviews");
 
                                 if(mAdapter != null)
-                                    mAdapter.notifyItemInserted(0); */
+                                    mAdapter.notifyItemInserted(0);
 
                             }
                         });

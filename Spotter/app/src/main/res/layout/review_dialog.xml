@@ -23,7 +23,7 @@
             android:id="@+id/textInputEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 1234567890_@."
+            android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 1234567890_@.?!#'&quot;()"
             android:hint="Write your review here"
             android:maxLength="100"
             android:textAlignment="textStart"
