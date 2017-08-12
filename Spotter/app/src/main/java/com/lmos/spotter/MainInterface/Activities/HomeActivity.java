@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -65,6 +66,7 @@ import com.lmos.spotter.MainInterface.Adapters.MainInterfaceAdapter;
 import com.lmos.spotter.Place;
 import com.lmos.spotter.R;
 import com.lmos.spotter.SearchInterface.Activities.SearchResultsActivity;
+import com.lmos.spotter.SplashScreen;
 import com.lmos.spotter.Utilities.ActivityType;
 import com.lmos.spotter.Utilities.PlaceType;
 import com.lmos.spotter.Utilities.Utilities;
@@ -130,6 +132,12 @@ public class HomeActivity extends AppCompatActivity
     private AdView bannerAdView;
     private InterstitialAd interstitialAd;
 
+    ImageView leftFeature;
+    ImageView rightFeature;
+
+    ImageView leftPopular;
+    ImageView rightPopular;
+
     boolean isTimeout = false;
     int timeoutCount = 5;
     int currentCount = 0;
@@ -145,6 +153,8 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d("debug", "oncreate");
 
         placeDataList = new ArrayList<>();
 
@@ -216,6 +226,8 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        Log.d("debug", "onResume");
         /** Re-run placeLoader here **/
         displayUserInfo();
 
@@ -349,8 +361,8 @@ public class HomeActivity extends AppCompatActivity
 
         if (!type.equals(placeType) || forceLoad) {
 
-            appBarLayout.setExpanded(false);
             homeNestedScrollView.smoothScrollTo(0, 0);
+            tabLayoutRecyclerView.setVisibility(View.GONE);
 
             txtHome.setText((type.equals("General") ? "Home" : type));
 
@@ -543,6 +555,10 @@ public class HomeActivity extends AppCompatActivity
 
         homeActivityWindow = getWindow();
 
+        homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorAccent));
+
         userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
         setContentView(R.layout.activity_home_menu);
@@ -589,7 +605,6 @@ public class HomeActivity extends AppCompatActivity
 
                 if (Utilities.checkNetworkState(HomeActivity.this)) {
 
-                    appBarLayout.setExpanded(false);
 
                     if (homeNestedScrollView.getVisibility() != View.VISIBLE) {
                         homeNestedScrollView.setVisibility(View.VISIBLE);
@@ -614,6 +629,7 @@ public class HomeActivity extends AppCompatActivity
 
                 } else {
 
+
                     pullUpLoadLayout.setEnabled(true);
                     imgOfflineImage.setVisibility(View.VISIBLE);
                     txtOfflineMessage.setVisibility(View.VISIBLE);
@@ -629,6 +645,59 @@ public class HomeActivity extends AppCompatActivity
 
         pullUpLoadLayout.setProgressViewOffset(false, 0, 180);
         pullUpLoadLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent);
+
+        leftPopular = (ImageView) findViewById(R.id.popularLeft);
+        rightPopular = (ImageView) findViewById(R.id.popularRight);
+
+        leftFeature = (ImageView) findViewById(R.id.featureLeft);
+        rightFeature = (ImageView) findViewById(R.id.featureRight);
+
+        leftFeature.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                int indexPopular = featureViewFlipper.getDisplayedChild() - 1;
+                featureViewFlipper.setDisplayedChild((indexPopular < 0) ? 2 : indexPopular);
+
+
+            }
+        });
+
+        rightFeature.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int indexPopular = featureViewFlipper.getDisplayedChild() + 1;
+                featureViewFlipper.setDisplayedChild((indexPopular > 2) ? 0 : indexPopular);
+
+
+            }
+        });
+
+        leftPopular.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                int indexPopular = mostPopularViewFlipper.getDisplayedChild() - 1;
+                mostPopularViewFlipper.setDisplayedChild((indexPopular < 0) ? 2 : indexPopular);
+
+
+            }
+        });
+
+        rightPopular.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int indexPopular = mostPopularViewFlipper.getDisplayedChild() + 1;
+                mostPopularViewFlipper.setDisplayedChild((indexPopular > 2) ? 0 : indexPopular);
+
+
+            }
+        });
+
 
         txtMostPopular = (TextView)findViewById(R.id.home_header_lbl);
 
@@ -866,9 +935,10 @@ public class HomeActivity extends AppCompatActivity
     private void getMostPopular(final String type) {
 
         mostPopularViewFlipper.stopFlipping();
-
         mostPopularViewFlipper.setVisibility(View.INVISIBLE);
-        featureViewFlipper.setVisibility(View.INVISIBLE);
+
+        leftPopular.setVisibility(View.GONE);
+        rightPopular.setVisibility(View.GONE);
 
         for (LinearLayout frontLayout : frontLayouts)
             frontLayout.setVisibility(View.INVISIBLE);
@@ -948,6 +1018,8 @@ public class HomeActivity extends AppCompatActivity
                                 mostPopularPlaces[i].setRating(mostPopularData.getString("Rating"));
                                 mostPopularPlaces[i].setUserReviews(mostPopularData.getString("userReviews"));
                                 mostPopularPlaces[i].setBookmarks(mostPopularData.getString("Bookmarks"));
+                                mostPopularPlaces[i].setPlaceDeals(mostPopularData.getString("Deals"));
+                                mostPopularPlaces[i].setPlaceLinks(mostPopularData.getString("Contacts"));
 
                             }
 
@@ -987,6 +1059,12 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void getFeaturedPlaces(final String date, final String pt) {
+
+        featureViewFlipper.stopFlipping();
+        featureViewFlipper.setVisibility(View.INVISIBLE);
+
+        leftFeature.setVisibility(View.GONE);
+        rightFeature.setVisibility(View.GONE);
 
         RequestQueue requestFeaturedPlaces = Volley.newRequestQueue(getApplicationContext());
 
@@ -1057,6 +1135,8 @@ public class HomeActivity extends AppCompatActivity
                                     featuredPlace.setRating(featuredPlaceJSON.getString("Rating"));
                                     featuredPlace.setUserReviews(featuredPlaceJSON.getString("userReviews"));
                                     featuredPlace.setBookmarks(featuredPlaceJSON.getString("Bookmarks"));
+                                    featuredPlace.setPlaceDeals(featuredPlaceJSON.getString("Deals"));
+                                    featuredPlace.setPlaceLinks(featuredPlaceJSON.getString("Contacts"));
 
                                     featuredPlacesList.add(featuredPlace);
 
@@ -1099,10 +1179,11 @@ public class HomeActivity extends AppCompatActivity
 
         featureViewFlipper.setVisibility(View.VISIBLE);
 
+        rightFeature.setVisibility(View.VISIBLE);
+        leftFeature.setVisibility(View.VISIBLE);
+
         for (LinearLayout frontLayout : frontLayouts)
             frontLayout.setVisibility(View.VISIBLE);
-
-        appBarLayout.setExpanded(true);
 
         featureViewFlipper.setOnClickListener(new View.OnClickListener() {
 
@@ -1118,14 +1199,20 @@ public class HomeActivity extends AppCompatActivity
 
         });
 
-        if (!placeType.equals("General"))
+        if (!placeType.equals("General")) {
+            rightFeature.setVisibility(View.GONE);
+            leftFeature.setVisibility(View.GONE);
             featureViewFlipper.stopFlipping();
-        else
+        }
+        else {
+            rightFeature.setVisibility(View.VISIBLE);
+            leftFeature.setVisibility(View.VISIBLE);
             featureViewFlipper.startFlipping();
+        }
 
         featureViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
         featureViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
-        featureViewFlipper.setFlipInterval(3000);
+        featureViewFlipper.setFlipInterval(4000);
 
         featureViewFlipper.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
 
@@ -1160,10 +1247,11 @@ public class HomeActivity extends AppCompatActivity
 
         mostPopularViewFlipper.setVisibility(View.VISIBLE);
 
+        leftPopular.setVisibility(View.VISIBLE);
+        rightPopular.setVisibility(View.VISIBLE);
+
         for (LinearLayout frontLayout : frontLayouts)
             frontLayout.setVisibility(View.VISIBLE);
-
-        appBarLayout.setExpanded(true);
 
         mostPopularViewFlipper.setOnClickListener(new View.OnClickListener() {
 
@@ -1183,7 +1271,7 @@ public class HomeActivity extends AppCompatActivity
 
         mostPopularViewFlipper.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
         mostPopularViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
-        mostPopularViewFlipper.setFlipInterval(3000);
+        mostPopularViewFlipper.setFlipInterval(5000);
 
         mostPopularViewFlipper.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
 
@@ -1282,7 +1370,7 @@ public class HomeActivity extends AppCompatActivity
 
                             LoginActivity.set_login_prefs = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE).edit();
 
-                            Toast.makeText(HomeActivity.this, "updated successfully..", Toast.LENGTH_LONG).show();
+                            Toast.makeText(HomeActivity.this, "Updated successfully", Toast.LENGTH_LONG).show();
                             LoginActivity.set_login_prefs.putString("accountImage", Utilities.BlurImg.bitmapToString(profilePicture));
                             LoginActivity.set_login_prefs.apply();
                             userProfileImage.setImageDrawable(new BitmapDrawable(getResources(), Utilities.rotateBitmapCorrectly(profilePicture, HomeActivity.this)));
@@ -1337,8 +1425,12 @@ public class HomeActivity extends AppCompatActivity
 
             if (!searchBTN.isIconified())
                 searchBTN.setIconified(true);
-            else
-                super.onBackPressed();
+            else {
+                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                homeIntent.addCategory( Intent.CATEGORY_HOME );
+                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(homeIntent);
+            }
 
         }
     }
@@ -1401,6 +1493,7 @@ public class HomeActivity extends AppCompatActivity
 
                 mainInterfaceAdapter.notifyDataSetChanged();
 
+                tabLayoutRecyclerView.setVisibility(View.VISIBLE);
                 recycleViewProgressBar.setVisibility(View.GONE);
 
                 Log.d("debug", "place data size: " + placeDataList.size());

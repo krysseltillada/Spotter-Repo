@@ -23,8 +23,8 @@
             android:id="@+id/textInputEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 123567890_@."
-            android:hint="write your review here"
+            android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM 1234567890_@.?!#'&quot;()"
+            android:hint="Write your review here"
             android:maxLength="100"
             android:textAlignment="textStart"
             android:textSize="16sp" />
@@ -40,7 +40,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="recommend this place?"/>
+            android:text="Recommend this place?"/>
 
         <CheckBox
             android:id="@+id/checkboxIsRecommended"

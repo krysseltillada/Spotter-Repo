@@ -24,11 +24,14 @@
                 <TextView
 
                     android:id="@+id/txtPlaceName"
-                    android:layout_width="250dp"
+                    android:layout_width="180dp"
+                    android:scrollHorizontally="true"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="6dp"
-                    android:text="Pico Cove Hotel"
+                    android:text="Pico Cove Hotedadadadadadadadaadadadal"
                     android:textAlignment="textStart"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16sp" />

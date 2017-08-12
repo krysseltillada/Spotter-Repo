@@ -34,6 +34,7 @@ import java.util.HashMap;
 
 public class ReviewDialogFragment extends DialogFragment {
 
+
     OnReviewPost onReviewPost;
     TextInputEditText reviewEditText;
     RatingBar reviewRatingBar;
@@ -49,8 +50,8 @@ public class ReviewDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         final AlertDialog errorDialog = new AlertDialog.Builder(getActivity()).setTitle("error")
-                .setMessage("check your internet connection")
-                .setNeutralButton("ok", new DialogInterface.OnClickListener() {
+                .setMessage("Check your internet connection")
+                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -80,7 +81,7 @@ public class ReviewDialogFragment extends DialogFragment {
                              postReviewProgress = new ProgressDialog(ReviewDialogFragment.this.getContext());
 
                              postReviewProgress.setIndeterminate(true);
-                             postReviewProgress.setMessage("posting your review");
+                             postReviewProgress.setMessage("Posting your review");
                              postReviewProgress.setCancelable(false);
                              postReviewProgress.show();
 
@@ -101,12 +102,16 @@ public class ReviewDialogFragment extends DialogFragment {
                                                  errorDialog.show();
                                              } else {
                                                  if (onReviewPost != null)
+                                                     /*
                                                     onReviewPost.reviewPost(
                                                             userPreference.getString("accountName", ""),
                                                             reviewEditText.getText().toString(),
                                                             Float.toString(reviewRatingBar.getRating()),
-                                                            Boolean.toString(isRecommended.isChecked())
-                                                    );
+                                                            Boolean.toString(isRecommended.isChecked()),
+
+                                                    ); */
+
+                                                     onReviewPost.reviewPost(ReviewActivity.placeID);
                                              }
 
                                          }
@@ -138,7 +143,7 @@ public class ReviewDialogFragment extends DialogFragment {
                              postReviewRequest.add(postReviewString);
 
                          } else {
-                             Toast.makeText(getContext(), "write a review", Toast.LENGTH_LONG).show();
+                             Toast.makeText(getContext(), "Write a review", Toast.LENGTH_LONG).show();
                          }
 
                      }
