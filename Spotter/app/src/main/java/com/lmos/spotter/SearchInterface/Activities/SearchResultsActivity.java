@@ -104,7 +104,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
     Activity activity = this;
     Place temp_place;
-    String name;
+    static String name;
     LatLng userLocation;
     int tries = 0;
     boolean sync = true;
@@ -241,7 +241,6 @@ public class SearchResultsActivity extends AppCompatActivity
         }
 
     }
-
 
     public void switchFragment(final String type, String cmd, final Fragment fragment){
 
@@ -577,6 +576,7 @@ public class SearchResultsActivity extends AppCompatActivity
 
             case android.R.id.home:
                 onBackPressed();
+                setHeaderText(name);
                 return true;
 
             case R.id.add_to_bookmark:
@@ -656,6 +656,9 @@ public class SearchResultsActivity extends AppCompatActivity
                             bookmarkServer.putExtra("accountID", login_prefs.getString("accountID", null));
                             bookmarkServer.putExtra("placeID", undo_id);
                             startService(bookmarkServer);
+                            Fragment frag = getSupportFragmentManager().findFragmentByTag("");
+                            if(frag != null && frag instanceof FragmentSearchResult)
+                                ((FragmentSearchResult) frag).updateBookmark();
                         }
 
                     }

@@ -58,8 +58,6 @@ public class GeneralResultsAdapter extends RecyclerView.Adapter<GeneralResultsAd
         holder.priceRange.setText(places.get(position).getPlacePriceRange());
         holder.rating.setText(places.get(position).getPlaceRating());
 
-        Log.d("DISTANCE", places.get(position).getDistance());
-
         try{
 
             Log.d("JSON-IMAGE", places.get(position).getPlaceImageLink());

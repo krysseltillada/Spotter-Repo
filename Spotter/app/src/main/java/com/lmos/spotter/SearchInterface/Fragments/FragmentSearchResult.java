@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -142,6 +143,10 @@ public class FragmentSearchResult extends Fragment
 
     }
 
+    public void updateBookmark(){
+        place_bookmark.setText((Integer.parseInt(place.getBookmarks()) + 1) + " people bookmarked this.");
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -180,8 +185,15 @@ public class FragmentSearchResult extends Fragment
         super.onResume();
         if (tempUserRev != Integer.parseInt(place.getUserReviews())){
             loadReviewData();
-            String revCount = "Users Review (" + place.getUserReviews() + ")";
+            String revCount = "Users Review (" + userReviewList.size() + ")";
             review_count.setText(revCount);
+            place_rate.setRating(Float.parseFloat(place.getPlaceRating()));
+            place_rate_label.setText(place_rate.getRating() + " Stars");
+            place_recommended.setText(place.getRecommended() + " people recommmended this.");
+        }
+        else{
+            if(userReviewList != null && userReviewList.size() > 0)
+                showReview.setText("SHOW ALL");
         }
     }
 
@@ -267,8 +279,18 @@ public class FragmentSearchResult extends Fragment
                                         reviews.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
                                         reviewPb.setVisibility(View.GONE);
                                         reviews.setVisibility(View.VISIBLE);
+                                        no_review.setVisibility(View.GONE);
                                         showReview.setText("Show All");
                                     }
+
+                                    review_count.setText("Users Review(1)");
+                                    place_recommended.setText(
+                                            (addReview.isRecommend())?
+                                                    "1 people  recommended this." :
+                                                    "0 people recommended this."
+                                    );
+                                    place_rate.setRating(addReview.getRating());
+                                    place_rate_label.setText(addReview.getRating() + " Stars");
 
                                 }
                             });

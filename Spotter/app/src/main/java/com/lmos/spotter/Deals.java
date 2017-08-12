@@ -23,7 +23,7 @@ public class Deals {
     }
 
     public void setDealDesc(String dealDesc) {
-        this.dealDesc = dealDesc;
+        this.dealDesc = parseRaw(dealDesc);
     }
 
     public String getDealImg() {
@@ -41,4 +41,12 @@ public class Deals {
     public void setDealName(String dealName) {
         this.dealName = dealName;
     }
+
+    private String parseRaw(String args){
+
+        args.replace("|", "\n");
+
+        return args;
+    }
+
 }

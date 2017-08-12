@@ -102,16 +102,13 @@ public class ReviewDialogFragment extends DialogFragment {
                                                  errorDialog.show();
                                              } else {
                                                  if (onReviewPost != null)
-                                                     /*
                                                     onReviewPost.reviewPost(
                                                             userPreference.getString("accountName", ""),
                                                             reviewEditText.getText().toString(),
                                                             Float.toString(reviewRatingBar.getRating()),
-                                                            Boolean.toString(isRecommended.isChecked()),
+                                                            Boolean.toString(isRecommended.isChecked())
+                                                    );
 
-                                                    ); */
-
-                                                     onReviewPost.reviewPost(ReviewActivity.placeID);
                                              }
 
                                          }

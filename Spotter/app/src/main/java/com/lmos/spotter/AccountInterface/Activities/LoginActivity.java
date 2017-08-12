@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final ProgressDialog syncProgressDialog = new ProgressDialog(this);
 
-        syncProgressDialog.setMessage("syncing bookmarks");
+        syncProgressDialog.setMessage("Synchronizing bookmarks");
         syncProgressDialog.setIndeterminate(true);
         syncProgressDialog.setCancelable(false);
         syncProgressDialog.show();
@@ -168,6 +168,8 @@ public class LoginActivity extends AppCompatActivity {
                         place.setplacePriceRange(bookmarkElement.getString("PriceRange"));
                         place.setplaceImageLink(bookmarkElement.getString("Image"));
                         place.setPlaceLat(bookmarkElement.getString("Latitude"));
+                        place.setPlaceDeals(bookmarkElement.getString("Deals"));
+                        place.setPlaceLinks(bookmarkElement.getString("Contacts"));
                         place.setPlaceLng(bookmarkElement.getString("Longitude"));
                         place.setPlaceRating(bookmarkElement.getString("Rating"));
                         place.setRecommended(bookmarkElement.getString("Recommended"));

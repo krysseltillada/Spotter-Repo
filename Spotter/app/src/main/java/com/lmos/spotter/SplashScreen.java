@@ -344,6 +344,7 @@ public class SplashScreen extends AppCompatActivity {
     class GetPlaceNames extends AsyncTask<Void, String, Void>{
 
         Activity activity;
+        File database = getApplicationContext().getDatabasePath("Spotter");
 
         public GetPlaceNames(Activity activity){
             this.activity = activity;
@@ -358,12 +359,12 @@ public class SplashScreen extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            File database = getApplicationContext().getDatabasePath("Spotter");
             DbHelper dbHelper = new DbHelper(getApplicationContext());
 
             if(!database.exists()){
 
                 if(Utilities.checkNetworkState(activity)){
+
 
                     publishProgress("We're setting things up for you, please wait a moment.");
                     AppScript appScript = new AppScript(activity){{
@@ -400,6 +401,9 @@ public class SplashScreen extends AppCompatActivity {
 
             Utilities.loadGifImageView(getApplicationContext(), loadingSplashImage, R.drawable.loadingplaces);
 
+            if(!database.exists())
+                logoImage.setVisibility(View.GONE);
+
             isGettingData = true;
         }
 
@@ -412,6 +416,7 @@ public class SplashScreen extends AppCompatActivity {
             Log.d("debug", "arrrrrrr");
 
             if (LoginActivity.login_prefs.getBoolean("isFirstInstalled", true)) {
+
 
                 slidePager.setVisibility(View.VISIBLE);
                 prevButton.setVisibility(View.VISIBLE);

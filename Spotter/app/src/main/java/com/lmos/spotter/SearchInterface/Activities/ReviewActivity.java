@@ -151,6 +151,21 @@ public class ReviewActivity extends AppCompatActivity {
 
                                 placeRecommend.setText((userRecommend += 1) + " recommended this.");
 
+                                float aveStars = 0;
+
+                                for(UserReview index : userReviewList)
+                                    aveStars += index.getRating();
+
+                                placeRatingBar.setRating(aveStars / userReviewList.size());
+                                placeRatingText.setText(placeRatingBar.getRating() + " Stars");
+
+                                FragmentSearchResult.place.setRating(
+                                        String.valueOf(aveStars / userReviewList.size()));
+
+                                FragmentSearchResult.place.setRecommended(
+                                        String.valueOf(noOfUserReviews += 1));
+
+
                                 if(mAdapter != null)
                                     mAdapter.notifyItemInserted(0);
 

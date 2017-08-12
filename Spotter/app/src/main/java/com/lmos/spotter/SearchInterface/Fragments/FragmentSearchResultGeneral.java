@@ -62,7 +62,9 @@ public class FragmentSearchResultGeneral extends Fragment {
             Log.d("type", p.getPlaceType());
         }
         Log.d("SetPlace", String.valueOf(setPlace.size()));
-        Collections.sort(setPlace, new Utilities.SortPlaces());
+
+        if(places.get(0).getDistance() != null)
+            Collections.sort(setPlace, new Utilities.SortPlaces());
 
         return setPlace;
     }

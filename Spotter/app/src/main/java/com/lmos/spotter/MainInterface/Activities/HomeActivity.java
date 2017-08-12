@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -555,9 +556,14 @@ public class HomeActivity extends AppCompatActivity
 
         homeActivityWindow = getWindow();
 
-        homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorAccent));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+
+            homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorAccent));
+
+        }
 
         userData = getSharedPreferences(LoginActivity.LOGIN_PREFS, MODE_PRIVATE);
 
@@ -757,9 +763,13 @@ public class HomeActivity extends AppCompatActivity
                                                getResources().getColor(R.color.cardview_dark_background),
                                                250);
 
-                    homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                    homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorAccent));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                        homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                        homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorAccent));
+
+                    }
 
                     tabLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out));
                     tabLayout.setVisibility(View.GONE);
@@ -778,9 +788,13 @@ public class HomeActivity extends AppCompatActivity
                                                getResources().getColor(R.color.colorPrimary),
                                                250);
 
-                    homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                    homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorPrimary));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                        homeActivityWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                        homeActivityWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        homeActivityWindow.setStatusBarColor(ContextCompat.getColor(HomeActivity.this,R.color.colorPrimary));
+
+                    }
 
                     tabLayout.setVisibility(View.VISIBLE);
                     tabLayout.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in));
